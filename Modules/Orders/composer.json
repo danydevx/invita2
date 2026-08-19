@@ -1,0 +1,32 @@
+{
+    "name": "nwidart/orders",
+    "description": "Orders module for Laravel SaaS - Cart and order management",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Orders\\Providers\\OrdersServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Orders\\": "app/",
+            "Modules\\Orders\\Database\\Factories\\": "database/factories/",
+            "Modules\\Orders\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Orders\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,30 @@
+/* DEBUG: Test section schemes CSS - Direct link test */
+
+.test-section-debug {
+  background: red !important;
+  color: white !important;
+  padding: 50px !important;
+  text-align: center !important;
+  font-size: 24px !important;
+  font-weight: bold !important;
+}
+
+.section--accent-test {
+  background: #F59E0B !important;
+  color: #ffffff !important;
+  padding: 50px !important;
+  text-align: center !important;
+  font-size: 24px !important;
+}
+
+.section--secondary-test {
+  background: #4200db !important;
+  color: #ffffff !important;
+  padding: 50px !important;
+  text-align: center !important;
+  font-size: 24px !important;
+}
+
+#services.section--secondary {
+  background: #4200db !important;
+}

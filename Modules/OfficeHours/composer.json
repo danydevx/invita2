@@ -1,0 +1,32 @@
+{
+    "name": "nwidart/officehours",
+    "description": "Office hours module for business locations",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\OfficeHours\\Providers\\OfficeHoursServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\OfficeHours\\": "app/",
+            "Modules\\OfficeHours\\Database\\Factories\\": "database/factories/",
+            "Modules\\OfficeHours\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\OfficeHours\\Tests\\": "tests/"
+        }
+    }
+}

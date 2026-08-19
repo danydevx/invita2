@@ -1,0 +1,9 @@
+{
+    "name": "Hero",
+    "alias": "hero",
+    "description": "Hero customization module for business minisites",
+    "keywords": [],
+    "priority": 0,
+    "providers": [],
+    "files": []
+}

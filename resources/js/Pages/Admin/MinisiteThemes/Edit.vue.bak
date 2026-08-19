@@ -1,0 +1,1809 @@
+<template>
+  <AdminLayout>
+    <Head :title="`Editar Theme: ${theme?.name}`" />
+
+    <PageHeader
+      title="Editar Theme"
+      :breadcrumbs="[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Themes', href: '/admin/minisite-themes' },
+        { label: theme?.name || '...', active: true },
+      ]"
+      :backHref="'/admin/minisite-themes'"
+    />
+
+    <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ $page.props.flash.success }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div v-if="$page.props.flash?.error" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ $page.props.flash.error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <ul class="nav nav-tabs mb-4" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'general' }" @click="activeTab = 'general'" type="button">
+              <i class="bi bi-sliders me-1"></i>General
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'colors' }" @click="activeTab = 'colors'" type="button">
+              <i class="bi bi-droplet me-1"></i>Colores
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'fonts' }" @click="activeTab = 'fonts'" type="button">
+              <i class="bi bi-type me-1"></i>Tipografias
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'buttons' }" @click="activeTab = 'buttons'" type="button">
+              <i class="bi bi-ui-checks me-1"></i>Botones
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'layout' }" @click="activeTab = 'layout'" type="button">
+              <i class="bi bi-layout-sidebar me-1"></i>Layout
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'sections' }" @click="activeTab = 'sections'" type="button">
+              <i class="bi bi-grid me-1"></i>Secciones
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'schemes' }" @click="activeTab = 'schemes'" type="button">
+              <i class="bi bi-palette me-1"></i>Schemes
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="{ active: activeTab === 'preview' }" @click="activeTab = 'preview'" type="button">
+              <i class="bi bi-eye me-1"></i>Vista Previa
+            </button>
+          </li>
+        </ul>
+
+        <form @submit.prevent="submitForm">
+          <div class="tab-content">
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'general' }" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input v-model="form.name" type="text" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Slug (identificador único)</label>
+                    <input v-model="form.slug" type="text" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea v-model="form.description" class="form-control" rows="2"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">URL de imagen de preview</label>
+                <input v-model="form.preview_image" type="text" class="form-control" placeholder="https://...">
+              </div>
+
+              <div class="mb-3 form-check">
+                <input v-model="form.is_active" type="checkbox" class="form-check-input" id="activeCheck">
+                <label class="form-check-label" for="activeCheck">Theme activo</label>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'colors' }" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Colores Principales</h6>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Primary</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_primary" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_primary" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Secondary</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_secondary" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_secondary" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Tertiary</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_tertiary" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_tertiary" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Quaternary</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_quaternary" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_quaternary" class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-2">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Colores de Marca</h6>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Accent</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_accent" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_accent" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Hover</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_hover" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_hover" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Link</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_link" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_link" class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-2">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Colores de Fondo y Texto</h6>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Background</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_background" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_background" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Text</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_text" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_text" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Brand Text Light</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_text_light" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_text_light" class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-2">
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Header BG Color</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_bgcolor_header" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_bgcolor_header" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small">Footer BG Color</label>
+                  <div class="d-flex gap-2">
+                    <input type="color" v-model="form.css_variables.colors.brand_bgcolor_footer" class="form-control form-control-color" style="width: 50px;">
+                    <input type="text" v-model="form.css_variables.colors.brand_bgcolor_footer" class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'fonts' }" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Fuente para Encabezados</label>
+                  <select v-model="form.css_variables.fonts.font_heading" class="form-select">
+                    <option v-for="font in fontOptions" :key="font.value" :value="font.value">{{ font.label }}</option>
+                  </select>
+                  <small class="text-muted d-block mb-3">Usada en títulos y subtítulos</small>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Fuente para Cuerpo de Texto</label>
+                  <select v-model="form.css_variables.fonts.font_body" class="form-select">
+                    <option v-for="font in fontOptions" :key="font.value" :value="font.value">{{ font.label }}</option>
+                  </select>
+                  <small class="text-muted d-block mb-3">Usada en párrafos y texto general</small>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Fuente para Botones</label>
+                  <select v-model="form.css_variables.fonts.font_buttons" class="form-select">
+                    <option v-for="font in fontOptions" :key="font.value" :value="font.value">{{ font.label }}</option>
+                  </select>
+                  <small class="text-muted d-block mb-3">Usada en botones y elementos interactivos</small>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h6 class="card-title">Vista Previa de Fuentes</h6>
+                    <div class="p-3 border rounded bg-white">
+                      <h4 :style="{ fontFamily: form.css_variables.fonts.font_heading }">Encabezado H4</h4>
+                      <p class="mb-2" :style="{ fontFamily: form.css_variables.fonts.font_body }">
+                        Este es un párrafo de ejemplo. El cuerpo de texto se muestra así.
+                      </p>
+                      <button class="btn btn-primary" :style="{ fontFamily: form.css_variables.fonts.font_buttons }">
+                        Botón de Ejemplo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'buttons' }" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Estilo de Botones</label>
+                  <div class="d-flex gap-2">
+                    <div
+                      class="btn btn-primary flex-grow-1"
+                      :style="{ borderRadius: getButtonsBorderRadius('rounded') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.buttons_style === 'rounded' }"
+                      @click="form.css_variables.buttons_style = 'rounded'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-circle me-1"></i> Redondos
+                    </div>
+                    <div
+                      class="btn btn-primary flex-grow-1"
+                      :style="{ borderRadius: getButtonsBorderRadius('square') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.buttons_style === 'square' }"
+                      @click="form.css_variables.buttons_style = 'square'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-square me-1"></i> Cuadrados
+                    </div>
+                    <div
+                      class="btn btn-primary flex-grow-1"
+                      :style="{ borderRadius: getButtonsBorderRadius('round') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.buttons_style === 'round' }"
+                      @click="form.css_variables.buttons_style = 'round'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-app me-1"></i> Esquinas Redondas
+                    </div>
+                  </div>
+                  <small class="text-muted d-block mt-2">Selecciona el estilo de los botones</small>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label d-block">Botones en Mayúsculas</label>
+                  <div class="form-check form-switch">
+                    <input v-model="form.css_variables.buttons_uppercase" type="checkbox" class="form-check-input" id="buttonsUppercaseSwitch">
+                    <label class="form-check-label" for="buttonsUppercaseSwitch">
+                      {{ form.css_variables.buttons_uppercase ? 'Sí' : 'No' }}
+                    </label>
+                  </div>
+                  <small class="text-muted d-block mt-2">Muestra el texto de los botones en mayúsculas</small>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-2">
+                <div class="col-12">
+                  <label class="form-label">Estilo de Tarjetas</label>
+                  <div class="d-flex gap-2">
+                    <div
+                      class="btn btn-outline-secondary flex-grow-1"
+                      :style="{ borderRadius: getCardBorderRadius('rounded') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.card_style === 'rounded', 'bg-secondary text-white': form.css_variables.card_style === 'rounded' }"
+                      @click="form.css_variables.card_style = 'rounded'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-circle me-1"></i> Redondas
+                    </div>
+                    <div
+                      class="btn btn-outline-secondary flex-grow-1"
+                      :style="{ borderRadius: getCardBorderRadius('square') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.card_style === 'square', 'bg-secondary text-white': form.css_variables.card_style === 'square' }"
+                      @click="form.css_variables.card_style = 'square'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-square me-1"></i> Cuadradas
+                    </div>
+                    <div
+                      class="btn btn-outline-secondary flex-grow-1"
+                      :style="{ borderRadius: getCardBorderRadius('round') }"
+                      :class="{ 'border border-2 border-dark': form.css_variables.card_style === 'round', 'bg-secondary text-white': form.css_variables.card_style === 'round' }"
+                      @click="form.css_variables.card_style = 'round'"
+                      style="cursor: pointer;"
+                    >
+                      <i class="bi bi-app me-1"></i> Esquinas Suaves
+                    </div>
+                  </div>
+                  <small class="text-muted d-block mt-2">Selecciona el estilo de las tarjetas y cards</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'layout' }" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Estilo de Página</h6>
+                  <p class="text-muted small">Define el estilo visual general del minisitio.</p>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Estilo de Página</label>
+                  <select v-model="form.layout_config.page_style" class="form-select">
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                    <option value="clean">Limpio</option>
+                    <option value="warm">Cálido</option>
+                    <option value="fresh">Fresco</option>
+                    <option value="dramatic">Dramático</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Estilo de Secciones</label>
+                  <select v-model="form.layout_config.section_style" class="form-select">
+                    <option value="spacious">Espacioso</option>
+                    <option value="classic">Clásico</option>
+                    <option value="cozy">Acogedor</option>
+                    <option value="dramatic">Dramático</option>
+                    <option value="balanced">Balanceado</option>
+                    <option value="rounded">Redondeado</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Estilo de Hero</label>
+                  <select v-model="form.layout_config.hero_style" class="form-select">
+                    <option value="fullwidth">Ancho Completo</option>
+                    <option value="centered">Centrado</option>
+                    <option value="split">Dividido</option>
+                    <option value="boxed">En Caja</option>
+                    <option value="fullbleed">Full Bleed</option>
+                    <option value="friendly">Amigable</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Cards por Fila</label>
+                  <select v-model="form.layout_config.cards_per_row" class="form-select">
+                    <option :value="2">2 Cards</option>
+                    <option :value="3">3 Cards</option>
+                    <option :value="4">4 Cards</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'sections' }" role="tabpanel">
+              <div class="row g-4">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Variantes de Seccion</h6>
+                  <p class="text-muted small">Define como se mostrara cada seccion en el minisitio.</p>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0"><i class="bi bi-briefcase me-2"></i>Servicios</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex gap-3">
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.services === 'cards' || !form.section_config?.section_variants?.services }"
+                          @click="setSectionVariant('services', 'cards')"
+                        >
+                          <div class="variant-preview">
+                            <div class="d-flex gap-2">
+                              <div class="card-preview" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Tarjetas</span>
+                        </div>
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.services === 'list' }"
+                          @click="setSectionVariant('services', 'list')"
+                        >
+                          <div class="variant-preview">
+                            <div class="list-preview">
+                              <div class="line" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Lista</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Ubicaciones</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex gap-3">
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.locations === 'cards' || !form.section_config?.section_variants?.locations }"
+                          @click="setSectionVariant('locations', 'cards')"
+                        >
+                          <div class="variant-preview">
+                            <div class="d-flex gap-2">
+                              <div class="card-preview" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Tarjetas</span>
+                        </div>
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.locations === 'list' }"
+                          @click="setSectionVariant('locations', 'list')"
+                        >
+                          <div class="variant-preview">
+                            <div class="list-preview">
+                              <div class="line" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Lista</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0"><i class="bi bi-images me-2"></i>Galeria</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex gap-3">
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.gallery === 'grid' || !form.section_config?.section_variants?.gallery }"
+                          @click="setSectionVariant('gallery', 'grid')"
+                        >
+                          <div class="variant-preview">
+                            <div class="grid-preview"></div>
+                          </div>
+                          <span class="variant-label">Cuadricula</span>
+                        </div>
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.gallery === 'carousel' }"
+                          @click="setSectionVariant('gallery', 'carousel')"
+                        >
+                          <div class="variant-preview">
+                            <div class="carousel-preview">
+                              <div class="carousel-track">
+                                <div class="carousel-item" v-for="i in 3" :key="i"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Carrusel</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0"><i class="bi bi-box-seam me-2"></i>Productos</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex gap-3">
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.products === 'cards' || !form.section_config?.section_variants?.products }"
+                          @click="setSectionVariant('products', 'cards')"
+                        >
+                          <div class="variant-preview">
+                            <div class="d-flex gap-2">
+                              <div class="card-preview" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Tarjetas</span>
+                        </div>
+                        <div
+                          class="variant-option"
+                          :class="{ active: form.section_config?.section_variants?.products === 'list' }"
+                          @click="setSectionVariant('products', 'list')"
+                        >
+                          <div class="variant-preview">
+                            <div class="list-preview">
+                              <div class="line" v-for="i in 3" :key="i"></div>
+                            </div>
+                          </div>
+                          <span class="variant-label">Lista</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-5 pt-4 border-top">
+                <h6 class="text-muted mb-3">Esquemas de Sección</h6>
+                <p class="text-muted small mb-4">Define el esquema de color para cada sección del minisitio.</p>
+
+                <div class="row g-3 mb-4">
+                  <div v-for="section in sectionSchemeList" :key="section.key" class="col-12 col-md-6 col-lg-4">
+                    <div class="border rounded p-3 h-100">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0 text-capitalize">{{ section.label }}</h6>
+                      </div>
+                      <select
+                        v-model="form.section_config.section_schemes[section.key]"
+                        class="form-select form-select-sm mb-2"
+                      >
+                        <option v-for="opt in schemeOptions" :key="opt.value" :value="opt.value">
+                          {{ opt.label }}
+                        </option>
+                      </select>
+                      <div v-if="section.hasGradient && form.section_config.section_schemes[section.key] === 'gradient'" class="row g-2">
+                        <div class="col-6">
+                          <select v-model="form.section_config.section_schemes[section.key + '_gradient_start']" class="form-select form-select-sm">
+                            <option value="brand_primary">Start: Primary</option>
+                            <option value="brand_secondary">Start: Secondary</option>
+                            <option value="brand_accent">Start: Accent</option>
+                          </select>
+                        </div>
+                        <div class="col-6">
+                          <select v-model="form.section_config.section_schemes[section.key + '_gradient_end']" class="form-select form-select-sm">
+                            <option value="brand_primary">End: Primary</option>
+                            <option value="brand_secondary">End: Secondary</option>
+                            <option value="brand_accent">End: Accent</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="scheme-mini-preview mt-2 rounded" :style="getSchemePreviewStyle(section.key)">
+                        <span class="small text-capitalize d-block">{{ form.section_config.section_schemes[section.key] }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h6 class="text-muted mb-3 mt-5">Preview de Esquemas</h6>
+                <div class="d-flex flex-wrap gap-3">
+                  <div
+                    v-for="scheme in getAllSchemesPreview()"
+                    :key="scheme.name"
+                    class="scheme-preview-box p-3 rounded"
+                    :style="scheme.style"
+                    style="width: 140px;"
+                  >
+                    <div class="fw-bold text-capitalize mb-2">{{ scheme.name }}</div>
+                    <p class="mb-1 small" :style="{ color: scheme.style['--preview-text-muted'] }">Texto muted</p>
+                    <p class="mb-1 small">Texto normal</p>
+                    <a href="#" class="small d-block">Enlace</a>
+                    <i class="bi bi-star small"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'schemes' }" role="tabpanel">
+              <div class="row g-4">
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Paletas de Schemes</h6>
+                  <p class="text-muted small">Personaliza los colores de cada scheme. Estos colores se aplican a las secciones que usen ese scheme.</p>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h6 class="mb-0">Seleccionar Scheme</h6>
+                    </div>
+                    <div class="card-body">
+                      <select v-model="selectedSchemeKey" class="form-select">
+                        <option v-for="s in schemeList" :key="s.key" :value="s.key">
+                          {{ s.label }}
+                        </option>
+                      </select>
+
+                      <hr>
+
+                      <div class="d-flex flex-wrap gap-2">
+                        <div
+                          v-for="s in schemeList"
+                          :key="s.key"
+                          class="scheme-color-box"
+                          :style="{ background: getSchemePreviewBg(s.key) }"
+                          :class="{ 'scheme-color-box-selected': selectedSchemeKey === s.key }"
+                          @click="selectedSchemeKey = s.key"
+                          :title="s.label"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-8">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0 text-capitalize">Colores: {{ selectedSchemeKey }}</h6>
+                      <div class="scheme-preview-mini" :style="{ background: getSelectedSchemeBg(), color: getSelectedSchemeText() }">
+                        <span class="small">Preview</span>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Background</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.bg" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.bg" class="form-control form-control-sm" placeholder="#000000">
+                          </div>
+                          <div class="form-check mt-2" v-if="!isHeaderOrFooter">
+                            <input type="checkbox" v-model="editingScheme.is_gradient" class="form-check-input" id="isGradientCheck">
+                            <label class="form-check-label small" for="isGradientCheck">Usar gradiente</label>
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="editingScheme.is_gradient">
+                          <label class="form-label small">Color Inicio Gradiente</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.bg_start" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.bg_start" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="editingScheme.is_gradient">
+                          <label class="form-label small">Color Fin Gradiente</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.bg_end" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.bg_end" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Texto Principal</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Encabezados (h1-h6)</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.heading" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.heading" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Enlaces</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.link" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.link" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Iconos</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.icon" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.icon" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Card Fondo</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.card_bg" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.card_bg" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Card Texto</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.card_text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.card_text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Card Encabezado</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.card_heading" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.card_heading" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Card Borde</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.card_border" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.card_border" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Bordes</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.border" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.border" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Botón Borde</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_border" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_border" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Botón Hover Fondo</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_hover_bg" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_hover_bg" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Botón Hover Texto</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_hover_text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_hover_text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Sombra</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.shadow_color" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.shadow_color" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Divisor</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.divider_color" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.divider_color" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Iconos</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.icon" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.icon" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="isHeaderOrFooter">
+                          <label class="form-label small">Link Hover</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.link_hover" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.link_hover" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                          <h6 class="text-muted mb-3">Navegación</h6>
+                        </div>
+                        </div>
+
+                        <div class="col-6 col-md-4" v-if="!isHeaderOrFooter">
+                          <label class="form-label small">Botón Texto</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Botón Borde</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_border" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_border" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Botón Hover Fondo</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_hover_bg" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_hover_bg" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Botón Hover Texto</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.button_hover_text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.button_hover_text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Sombra</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.shadow_color" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.shadow_color" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Divisor</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.divider_color" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.divider_color" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                          <h6 class="text-muted mb-3">Navegación</h6>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Nav Fondo</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.nav_bg" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.nav_bg" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Nav Texto</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.nav_text" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.nav_text" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Nav Link</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.nav_link" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.nav_link" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Nav Link Hover</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.nav_link_hover" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.nav_link_hover" class="form-control form-control-sm">
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                          <label class="form-label small">Nav Borde</label>
+                          <div class="d-flex align-items-center gap-2">
+                            <input type="color" v-model="editingScheme.nav_border" class="form-control form-control-color" style="width: 50px;">
+                            <input type="text" v-model="editingScheme.nav_border" class="form-control form-control-sm">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-4">
+                        <button type="button" class="btn btn-primary btn-sm" @click="saveSchemeColors">
+                          <i class="bi bi-check me-1"></i>Guardar Colores del Scheme
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <h6 class="text-muted mb-3">Preview de Todos los Schemes</h6>
+                  <div class="d-flex flex-wrap gap-3">
+                    <div
+                      v-for="s in schemeList"
+                      :key="s.key"
+                      class="scheme-preview-box p-3 rounded"
+                      :style="getSchemePreviewStyle(s.key)"
+                      style="width: 140px;"
+                    >
+                      <div class="fw-bold text-capitalize mb-2" :style="{ color: getSchemeHeading(s.key) }">{{ s.label }}</div>
+                      <p class="mb-1 small" :style="{ color: getSchemeText(s.key) }">Texto normal</p>
+                      <a href="#" class="small d-block" :style="{ color: getSchemeLink(s.key) }">Enlace</a>
+                      <i class="bi bi-star small" :style="{ color: getSchemeIcon(s.key) }"></i>
+                      <div
+                        class="card mt-2"
+                        :style="getCardPreviewStyle(s.key)"
+                        style="font-size: 0.65rem; padding: 0.25rem 0.4rem;"
+                      >
+                        <div :style="{ color: getCardHeadingColor(s.key) }">Título</div>
+                        <div>Texto</div>
+                      </div>
+                      <button
+                        class="btn btn-sm mt-2"
+                        :style="getButtonPreviewStyle(s.key)"
+                        style="font-size: 0.65rem; padding: 0.2rem 0.5rem;"
+                      >
+                        Botón
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'preview' }" role="tabpanel">
+              <div class="preview-frame" :style="getPreviewStyle()">
+                <div class="preview-header" :style="{ backgroundColor: form.css_variables.colors.brand_bgcolor_header || '#1a1a2e' }">
+                  <h1 :style="{ color: form.css_variables.colors.brand_primary }">Mi Negocio</h1>
+                </div>
+                <div class="preview-content">
+                  <div class="preview-section" :style="{ borderLeftColor: form.css_variables.colors.brand_secondary }">
+                    <h3 :style="{ color: form.css_variables.colors.brand_primary }">Nuestros Servicios</h3>
+                    <p>Descubre todo lo que podemos ofrecerte con la mejor calidad.</p>
+                    <button
+                      class="btn btn-primary"
+                      :style="{
+                        backgroundColor: form.css_variables.colors.brand_primary,
+                        borderColor: form.css_variables.colors.brand_primary,
+                        borderRadius: getButtonsBorderRadius(form.css_variables.buttons_style),
+                        textTransform: form.css_variables.buttons_uppercase ? 'uppercase' : 'none'
+                      }"
+                    >
+                      Conocer más
+                    </button>
+                  </div>
+                  <div class="preview-section" :style="{ borderLeftColor: form.css_variables.colors.brand_accent }">
+                    <h3 :style="{ color: form.css_variables.colors.brand_accent }">Contáctanos</h3>
+                    <p>Estamos aquí para ayudarte.</p>
+                    <a
+                      href="#"
+                      :style="{ color: form.css_variables.colors.brand_link }"
+                      class="me-3"
+                    >
+                      Visitar nuestro sitio
+                    </a>
+                    <a
+                      href="#"
+                      :style="{ color: form.css_variables.colors.brand_hover }"
+                    >
+                      Enviar mensaje (hover)
+                    </a>
+                  </div>
+                </div>
+                <div class="preview-footer" :style="{ backgroundColor: form.css_variables.colors.brand_bgcolor_footer || '#1a1a2e' }">
+                  <p :style="{ color: form.css_variables.colors.brand_primary }">© 2024 Mi Negocio - Todos los derechos reservados</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-4 pt-4 border-top">
+            <button type="submit" class="btn btn-primary" :disabled="sending">
+              {{ sending ? 'Guardando...' : 'Guardar Theme' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </AdminLayout>
+</template>
+
+<script setup>
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import PageHeader from '@/Components/Admin/PageHeader.vue'
+import { toast } from 'vue3-toastify'
+
+const page = usePage()
+const theme = computed(() => page.props.theme)
+const errors = computed(() => page.props.errors || {})
+
+const activeTab = ref('general')
+const sending = ref(false)
+
+const fontOptions = [
+  { value: 'Poppins', label: 'Poppins' },
+  { value: 'Montserrat', label: 'Montserrat' },
+  { value: 'Playfair Display', label: 'Playfair Display' },
+  { value: 'Merriweather', label: 'Merriweather' },
+  { value: 'Oswald', label: 'Oswald' },
+  { value: 'Raleway', label: 'Raleway' },
+  { value: 'Ubuntu', label: 'Ubuntu' },
+  { value: 'Lato', label: 'Lato' },
+  { value: 'Inter', label: 'Inter' },
+  { value: 'Nunito', label: 'Nunito' },
+  { value: 'Open Sans', label: 'Open Sans' },
+  { value: 'Roboto', label: 'Roboto' },
+  { value: 'Source Sans Pro', label: 'Source Sans Pro' },
+]
+
+const defaultCssVariables = {
+  colors: {
+    brand_primary: '#3B82F6',
+    brand_secondary: '#8B5CF6',
+    brand_tertiary: '#EC4899',
+    brand_quaternary: '#10B981',
+    brand_accent: '#F59E0B',
+    brand_hover: '#1F2937',
+    brand_link: '#3B82F6',
+    brand_background: '#FFFFFF',
+    brand_text: '#1a1a2e',
+    brand_text_light: '#6B7280',
+    brand_bgcolor_header: '#FFFFFF',
+    brand_bgcolor_footer: '#F8F9FA',
+  },
+  fonts: {
+    font_heading: 'Poppins',
+    font_body: 'Open Sans',
+    font_buttons: 'Poppins',
+  },
+  buttons_style: 'round',
+  buttons_uppercase: false,
+  card_style: 'rounded',
+}
+
+const defaultLayoutConfig = {
+  page_style: 'light',
+  section_style: 'spacious',
+  cards_per_row: 3,
+  hero_style: 'fullwidth',
+}
+
+const defaultSectionConfig = {
+  section_variants: {
+    services: 'cards',
+    locations: 'cards',
+    gallery: 'grid',
+    products: 'cards',
+  },
+  section_schemes: {
+    hero: 'gradient',
+    about: 'light',
+    services: 'neutral',
+    products: 'light',
+    gallery: 'dark',
+    menu: 'neutral',
+    appointments: 'primary',
+    reviews: 'light',
+    locations: 'neutral',
+    contact: 'dark',
+    promotions: 'accent',
+  },
+  header_colors: {
+    bg: 'white',
+    text: 'brand_text',
+    heading: 'brand_primary',
+    link: 'brand_primary',
+    link_hover: 'brand_accent',
+    border: 'rgba(0,0,0,0.1)',
+    nav_bg: 'white',
+    nav_text: 'brand_text',
+    nav_link: 'brand_primary',
+    nav_link_hover: 'brand_accent',
+    nav_border: 'rgba(0,0,0,0.1)',
+  },
+  footer_colors: {
+    bg: 'brand_text',
+    text: 'white',
+    heading: 'white',
+    link: 'white',
+    link_hover: 'rgba(255,255,255,0.8)',
+    border: 'rgba(255,255,255,0.1)',
+    nav_bg: 'brand_text',
+    nav_text: 'white',
+    nav_link: 'white',
+    nav_link_hover: 'rgba(255,255,255,0.8)',
+    nav_border: 'rgba(255,255,255,0.1)',
+  },
+}
+
+const schemeDefinitions = {
+  hero: { bg_type: 'gradient', bg_start: 'brand_primary', bg_end: 'brand_secondary', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'transparent', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_primary', card_border: 'rgba(0,0,0,0.1)', button_bg: 'white', button_text: 'brand_primary', button_border: 'transparent', button_hover_bg: 'brand_primary', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.2)', divider_color: 'rgba(255,255,255,0.3)', nav_bg: 'brand_primary', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(255,255,255,0.2)' },
+  primary: { bg_type: 'solid', bg: 'brand_primary', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'rgba(26,26,46,0.3)', card_bg: 'white', card_text: 'white', card_heading: 'white', card_border: 'rgba(255,255,255,0.2)', button_bg: 'white', button_text: 'brand_primary', button_border: 'transparent', button_hover_bg: 'brand_primary', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.2)', divider_color: 'rgba(255,255,255,0.3)', nav_bg: 'brand_primary', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(255,255,255,0.2)' },
+  secondary: { bg_type: 'solid', bg: 'brand_secondary', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'rgba(22,33,62,0.3)', card_bg: 'white', card_text: 'white', card_heading: 'white', card_border: 'rgba(255,255,255,0.2)', button_bg: 'white', button_text: 'brand_secondary', button_border: 'transparent', button_hover_bg: 'brand_secondary', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.2)', divider_color: 'rgba(255,255,255,0.3)', nav_bg: 'brand_secondary', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(255,255,255,0.2)' },
+  accent: { bg_type: 'solid', bg: 'brand_accent', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'rgba(245,158,11,0.3)', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_accent', card_border: 'rgba(245,158,11,0.3)', button_bg: 'white', button_text: 'brand_accent', button_border: 'transparent', button_hover_bg: 'brand_accent', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.2)', divider_color: 'rgba(255,255,255,0.3)', nav_bg: 'brand_accent', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(245,158,11,0.3)' },
+  light: { bg_type: 'solid', bg: 'white', text: 'brand_text', heading: 'brand_primary', link: 'brand_accent', icon: 'brand_accent', border: 'rgba(0,0,0,0.1)', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_primary', card_border: 'rgba(0,0,0,0.1)', button_bg: 'brand_primary', button_text: 'white', button_border: 'brand_primary', button_hover_bg: 'brand_text', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.1)', divider_color: 'rgba(0,0,0,0.1)', nav_bg: 'white', nav_text: 'brand_text', nav_link: 'brand_primary', nav_link_hover: 'brand_accent', nav_border: 'rgba(0,0,0,0.1)' },
+  neutral: { bg_type: 'solid', bg: '#f8f9fa', text: 'brand_text', heading: 'brand_primary', link: 'brand_accent', icon: 'brand_accent', border: 'rgba(0,0,0,0.1)', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_primary', card_border: 'rgba(0,0,0,0.1)', button_bg: 'brand_primary', button_text: 'white', button_border: 'brand_primary', button_hover_bg: 'brand_text', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.1)', divider_color: 'rgba(0,0,0,0.1)', nav_bg: '#f8f9fa', nav_text: 'brand_text', nav_link: 'brand_primary', nav_link_hover: 'brand_accent', nav_border: 'rgba(0,0,0,0.1)' },
+  dark: { bg_type: 'solid', bg: 'brand_text', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'rgba(255,255,255,0.1)', card_bg: 'rgba(0,0,0,0.3)', card_text: 'white', card_heading: 'white', card_border: 'rgba(255,255,255,0.1)', button_bg: 'white', button_text: 'brand_text', button_border: 'transparent', button_hover_bg: 'white', button_hover_text: 'brand_text', shadow_color: 'rgba(0,0,0,0.3)', divider_color: 'rgba(255,255,255,0.2)', nav_bg: 'brand_text', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(255,255,255,0.1)' },
+  transparent: { bg_type: 'solid', bg: 'transparent', text: 'brand_text', heading: 'brand_primary', link: 'brand_accent', icon: 'brand_accent', border: 'rgba(0,0,0,0.1)', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_primary', card_border: 'rgba(0,0,0,0.1)', button_bg: 'brand_primary', button_text: 'white', button_border: 'brand_primary', button_hover_bg: 'brand_text', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.1)', divider_color: 'rgba(0,0,0,0.1)', nav_bg: 'white', nav_text: 'brand_text', nav_link: 'brand_primary', nav_link_hover: 'brand_accent', nav_border: 'rgba(0,0,0,0.1)' },
+  gradient: { bg_type: 'gradient', bg_start: 'brand_primary', bg_end: 'brand_secondary', text: 'white', heading: 'white', link: 'white', icon: 'white', border: 'transparent', card_bg: 'white', card_text: 'brand_text', card_heading: 'brand_primary', card_border: 'rgba(0,0,0,0.1)', button_bg: 'white', button_text: 'brand_primary', button_border: 'transparent', button_hover_bg: 'brand_primary', button_hover_text: 'white', shadow_color: 'rgba(0,0,0,0.2)', divider_color: 'rgba(255,255,255,0.3)', nav_bg: 'brand_primary', nav_text: 'white', nav_link: 'white', nav_link_hover: 'rgba(255,255,255,0.8)', nav_border: 'rgba(255,255,255,0.2)' },
+}
+
+const sectionSchemeList = [
+  { key: 'hero', label: 'Hero', hasGradient: true },
+  { key: 'about', label: 'Nosotros', hasGradient: false },
+  { key: 'services', label: 'Servicios', hasGradient: false },
+  { key: 'products', label: 'Productos', hasGradient: false },
+  { key: 'gallery', label: 'Galería', hasGradient: false },
+  { key: 'menu', label: 'Menú', hasGradient: false },
+  { key: 'appointments', label: 'Reservas', hasGradient: false },
+  { key: 'reviews', label: 'Reseñas', hasGradient: false },
+  { key: 'locations', label: 'Ubicaciones', hasGradient: false },
+  { key: 'contact', label: 'Contacto', hasGradient: false },
+  { key: 'promotions', label: 'Promociones', hasGradient: false },
+]
+
+const colorOptions = [
+  { value: 'brand_primary', label: 'Primary' },
+  { value: 'brand_secondary', label: 'Secondary' },
+  { value: 'brand_accent', label: 'Accent' },
+  { value: 'brand_background', label: 'Background' },
+  { value: 'brand_text', label: 'Text' },
+  { value: 'white', label: 'White' },
+  { value: 'black', label: 'Black' },
+  { value: 'transparent', label: 'Transparent' },
+]
+
+const schemeOptions = [
+  { value: 'hero', label: 'Hero' },
+  { value: 'primary', label: 'Primary' },
+  { value: 'secondary', label: 'Secondary' },
+  { value: 'accent', label: 'Accent' },
+  { value: 'light', label: 'Light' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'transparent', label: 'Transparent' },
+  { value: 'gradient', label: 'Gradient' },
+]
+
+const form = reactive({
+  name: '',
+  slug: '',
+  description: '',
+  preview_image: '',
+  is_active: true,
+  css_variables: { ...defaultCssVariables },
+  layout_config: { ...defaultLayoutConfig },
+  section_config: { ...defaultSectionConfig },
+})
+
+const initForm = () => {
+  if (theme.value) {
+    form.name = theme.value.name
+    form.slug = theme.value.slug
+    form.description = theme.value.description || ''
+    form.preview_image = theme.value.preview_image || ''
+    form.is_active = theme.value.is_active
+    form.css_variables = {
+      ...defaultCssVariables,
+      ...theme.value.css_variables,
+      colors: { ...defaultCssVariables.colors, ...(theme.value.css_variables?.colors || {}) },
+      fonts: { ...defaultCssVariables.fonts, ...(theme.value.css_variables?.fonts || {}) },
+    }
+    form.layout_config = { ...defaultLayoutConfig, ...(theme.value.layout_config || {}) }
+    form.section_config = {
+      ...defaultSectionConfig,
+      ...(theme.value.section_config || {}),
+      section_variants: {
+        ...defaultSectionConfig.section_variants,
+        ...(theme.value.section_config?.section_variants || {}),
+      },
+      section_schemes: {
+        ...defaultSectionConfig.section_schemes,
+        ...(theme.value.section_config?.section_schemes || {}),
+      },
+      header_colors: {
+        ...defaultSectionConfig.header_colors,
+        ...(theme.value.section_config?.header_colors || {}),
+      },
+      footer_colors: {
+        ...defaultSectionConfig.footer_colors,
+        ...(theme.value.section_config?.footer_colors || {}),
+      },
+    }
+  }
+}
+
+initForm()
+
+const getButtonsBorderRadius = (style) => {
+  const radius = {
+    rounded: '50px',
+    square: '0px',
+    round: '8px',
+  }
+  return radius[style] || '8px'
+}
+
+const getCardBorderRadius = (style) => {
+  const radius = {
+    rounded: '50px',
+    square: '0px',
+    round: '12px',
+  }
+  return radius[style] || '12px'
+}
+
+const getPreviewStyle = () => {
+  return {
+    '--preview-primary': form.css_variables.colors.brand_primary || '#1a1a2e',
+    '--preview-secondary': form.css_variables.colors.brand_secondary || '#6B7280',
+    '--preview-accent': form.css_variables.colors.brand_accent || '#3B82F6',
+    backgroundColor: form.css_variables.colors.brand_background || '#f8f9fa',
+  }
+}
+
+const setSectionVariant = (section, variant) => {
+  if (!form.section_config.section_variants) {
+    form.section_config.section_variants = { ...defaultSectionConfig.section_variants }
+  }
+  form.section_config.section_variants[section] = variant
+}
+
+const getSchemePreviewStyle = (schemeName) => {
+  if (schemeName === selectedSchemeKey.value) {
+    const scheme = editingScheme
+    const colors = form.css_variables.colors
+    const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') || c === 'transparent' ? c : colors[c] || c
+
+    let bg = resolveColor(scheme.bg)
+    if (scheme.is_gradient) {
+      bg = `linear-gradient(${resolveColor(scheme.bg_start)}, ${resolveColor(scheme.bg_end)})`
+    } else if (scheme.bg === 'transparent') {
+      bg = '#f8f9fa'
+    }
+
+    return {
+      background: bg,
+      color: resolveColor(scheme.text),
+      border: `1px solid ${resolveColor(scheme.border)}`,
+    }
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeName]
+  if (customPalette) {
+    const bg = customPalette.is_gradient
+      ? `linear-gradient(${customPalette.bg_start}, ${customPalette.bg_end})`
+      : (customPalette.bg === 'transparent' ? '#f8f9fa' : customPalette.bg)
+    return {
+      background: bg,
+      color: customPalette.text,
+      border: customPalette.border !== 'transparent' ? `1px solid ${customPalette.border}` : '1px solid #e5e7eb',
+    }
+  }
+
+  const scheme = schemeDefinitions[schemeName]
+  if (!scheme) return {}
+
+  const colors = form.css_variables.colors
+
+  const bgType = scheme.bg_type
+  let bg = scheme.bg
+  if (bgType === 'gradient') {
+    const startColor = scheme.bg_start.startsWith('#') ? scheme.bg_start : colors[scheme.bg_start] || scheme.bg_start
+    const endColor = scheme.bg_end.startsWith('#') ? scheme.bg_end : colors[scheme.bg_end] || scheme.bg_end
+    bg = `linear-gradient(${startColor}, ${endColor})`
+  } else if (bg === 'transparent') {
+    bg = '#f8f9fa'
+  } else if (!bg.startsWith('#') && !bg.startsWith('rgba')) {
+    bg = colors[bg] || bg
+  }
+
+  const textColor = scheme.text.startsWith('#') || scheme.text.startsWith('rgba') ? scheme.text : colors[scheme.text] || scheme.text
+  const borderColor = scheme.border === 'transparent' ? '#e5e7eb' : (scheme.border.startsWith('#') || scheme.border.startsWith('rgba') ? scheme.border : colors[scheme.border] || scheme.border)
+
+  return {
+    background: bg,
+    color: textColor,
+    border: `1px solid ${borderColor}`,
+  }
+}
+
+const getButtonPreviewStyle = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+    return {
+      backgroundColor: resolveColor(editingScheme.button_bg),
+      color: resolveColor(editingScheme.button_text),
+      borderColor: resolveColor(editingScheme.button_border),
+    }
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) {
+    return {
+      backgroundColor: customPalette.button_bg || '#ffffff',
+      color: customPalette.button_text || '#374151',
+      borderColor: customPalette.button_border || 'rgba(0,0,0,0.1)',
+    }
+  }
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return {}
+
+  const colors = form.css_variables.colors
+  const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+
+  return {
+    backgroundColor: resolveColor(scheme.button_bg),
+    color: resolveColor(scheme.button_text),
+    borderColor: resolveColor(scheme.button_border),
+  }
+}
+
+const getCardPreviewStyle = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+    return {
+      backgroundColor: resolveColor(editingScheme.card_bg),
+      color: resolveColor(editingScheme.card_text),
+      borderColor: resolveColor(editingScheme.card_border),
+    }
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) {
+    return {
+      backgroundColor: customPalette.card_bg || '#ffffff',
+      color: customPalette.card_text || '#374151',
+      borderColor: customPalette.card_border || 'rgba(0,0,0,0.1)',
+    }
+  }
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return {}
+
+  const colors = form.css_variables.colors
+  const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+
+  return {
+    backgroundColor: resolveColor(scheme.card_bg),
+    color: resolveColor(scheme.card_text),
+    borderColor: resolveColor(scheme.card_border),
+  }
+}
+
+const getCardHeadingColor = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const c = editingScheme.card_heading
+    return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) return customPalette.card_heading || '#374151'
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return '#374151'
+  const colors = form.css_variables.colors
+  const c = scheme.card_heading
+  return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+}
+
+const getSchemeHeading = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const c = editingScheme.heading
+    return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) return customPalette.heading || '#ffffff'
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return '#ffffff'
+  const colors = form.css_variables.colors
+  const c = scheme.heading
+  return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+}
+
+const getSchemeLink = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const c = editingScheme.link
+    return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) return customPalette.link || '#ffffff'
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return '#ffffff'
+  const colors = form.css_variables.colors
+  const c = scheme.link
+  return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+}
+
+const getSchemeIcon = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const c = editingScheme.icon
+    return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) return customPalette.icon || 'rgba(255,255,255,0.8)'
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return 'rgba(255,255,255,0.8)'
+  const colors = form.css_variables.colors
+  const c = scheme.icon
+  return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+}
+
+const getSchemeText = (schemeKey) => {
+  if (schemeKey === selectedSchemeKey.value) {
+    const colors = form.css_variables.colors
+    const c = editingScheme.text
+    return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) return customPalette.text || '#ffffff'
+  const scheme = schemeDefinitions[schemeKey]
+  if (!scheme) return '#ffffff'
+  const colors = form.css_variables.colors
+  const c = scheme.text
+  return c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+}
+
+const getColorValue = (c) => {
+  if (!c) return '#000000'
+  if (c.startsWith('#') || c.startsWith('rgba') || c === 'transparent') return c
+  return form.css_variables.colors[c] || c
+}
+
+const getAllSchemesPreview = () => {
+  return ['hero', 'primary', 'secondary', 'accent', 'light', 'neutral', 'dark', 'transparent', 'gradient'].map(name => ({
+    name,
+    style: getSchemePreviewStyle(name)
+  }))
+}
+
+const schemeList = [
+  { key: 'primary', label: 'Primary' },
+  { key: 'secondary', label: 'Secondary' },
+  { key: 'accent', label: 'Accent' },
+  { key: 'light', label: 'Light' },
+  { key: 'neutral', label: 'Neutral' },
+  { key: 'dark', label: 'Dark' },
+  { key: 'transparent', label: 'Transparent' },
+  { key: 'gradient', label: 'Gradient' },
+  { key: 'header', label: 'Header' },
+  { key: 'footer', label: 'Footer' },
+]
+
+const selectedSchemeKey = ref('primary')
+
+const isHeaderOrFooter = computed(() => ['header', 'footer'].includes(selectedSchemeKey.value))
+
+const editingScheme = reactive({
+  bg: 'white',
+  bg_start: 'brand_primary',
+  bg_end: 'brand_secondary',
+  text: 'brand_text',
+  heading: 'brand_primary',
+  link: 'brand_primary',
+  icon: 'brand_primary',
+  border: 'rgba(0,0,0,0.1)',
+  card_bg: 'white',
+  card_text: 'brand_text',
+  card_heading: 'brand_primary',
+  card_border: 'rgba(0,0,0,0.1)',
+  button_bg: 'brand_primary',
+  button_text: 'white',
+  button_border: 'brand_primary',
+  button_hover_bg: 'brand_text',
+  button_hover_text: 'white',
+  shadow_color: 'rgba(0,0,0,0.1)',
+  divider_color: 'rgba(0,0,0,0.1)',
+  is_gradient: false,
+  nav_bg: 'white',
+  nav_text: 'brand_text',
+  nav_link: 'brand_primary',
+  nav_link_hover: 'brand_accent',
+  nav_border: 'rgba(0,0,0,0.1)',
+  link_hover: 'brand_accent',
+})
+
+const loadSchemeForEditing = (schemeKey) => {
+  if (schemeKey === 'header') {
+    Object.assign(editingScheme, form.section_config.header_colors)
+    return
+  }
+  if (schemeKey === 'footer') {
+    Object.assign(editingScheme, form.section_config.footer_colors)
+    return
+  }
+
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) {
+    Object.assign(editingScheme, customPalette)
+  } else {
+    const def = schemeDefinitions[schemeKey]
+    if (def) {
+      editingScheme.bg = def.bg
+      editingScheme.bg_start = def.bg_start
+      editingScheme.bg_end = def.bg_end
+      editingScheme.text = def.text
+      editingScheme.heading = def.heading
+      editingScheme.link = def.link
+      editingScheme.icon = def.icon
+      editingScheme.border = def.border
+      editingScheme.card_bg = def.card_bg
+      editingScheme.card_text = def.card_text
+      editingScheme.card_heading = def.card_heading
+      editingScheme.card_border = def.card_border
+      editingScheme.button_bg = def.button_bg
+      editingScheme.button_text = def.button_text
+      editingScheme.button_border = def.button_border
+      editingScheme.button_hover_bg = def.button_hover_bg
+      editingScheme.button_hover_text = def.button_hover_text
+      editingScheme.shadow_color = def.shadow_color || 'rgba(0,0,0,0.15)'
+      editingScheme.divider_color = def.divider_color || 'rgba(255,255,255,0.2)'
+      editingScheme.is_gradient = def.bg_type === 'gradient'
+      editingScheme.nav_bg = def.nav_bg
+      editingScheme.nav_text = def.nav_text
+      editingScheme.nav_link = def.nav_link
+      editingScheme.nav_link_hover = def.nav_link_hover
+      editingScheme.nav_border = def.nav_border
+    }
+  }
+}
+
+const saveSchemeColors = () => {
+  if (selectedSchemeKey.value === 'header') {
+    form.section_config.header_colors = { ...editingScheme }
+    toast.success('Colores del header guardados')
+    return
+  }
+  if (selectedSchemeKey.value === 'footer') {
+    form.section_config.footer_colors = { ...editingScheme }
+    toast.success('Colores del footer guardados')
+    return
+  }
+
+  if (!form.section_config.scheme_palettes) {
+    form.section_config.scheme_palettes = {}
+  }
+  form.section_config.scheme_palettes[selectedSchemeKey.value] = { ...editingScheme }
+  toast.success('Colores del scheme guardados')
+}
+
+const getSchemePreviewBg = (schemeKey) => {
+  const customPalette = form.section_config.scheme_palettes?.[schemeKey]
+  if (customPalette) {
+    if (customPalette.is_gradient) {
+      return `linear-gradient(${customPalette.bg_start}, ${customPalette.bg_end})`
+    }
+    return customPalette.bg
+  }
+  const def = schemeDefinitions[schemeKey]
+  if (!def) return '#6B7280'
+
+  const colors = form.css_variables.colors
+  const resolveColor = (c) => c.startsWith('#') || c.startsWith('rgba') ? c : colors[c] || c
+
+  if (def.bg_type === 'gradient') {
+    return `linear-gradient(${resolveColor(def.bg_start)}, ${resolveColor(def.bg_end)})`
+  }
+  const bg = def.bg === 'transparent' ? '#f8f9fa' : resolveColor(def.bg)
+  return bg
+}
+
+const getSelectedSchemeBg = () => {
+  if (editingScheme.is_gradient) {
+    return `linear-gradient(${editingScheme.bg_start}, ${editingScheme.bg_end})`
+  }
+  return editingScheme.bg
+}
+
+const getSelectedSchemeText = () => editingScheme.text
+
+watch(selectedSchemeKey, (newVal) => {
+  loadSchemeForEditing(newVal)
+})
+
+onMounted(() => {
+  loadSchemeForEditing(selectedSchemeKey.value)
+})
+
+const submitForm = () => {
+  sending.value = true
+
+  router.put(`/admin/minisite-themes/${theme.value.id}`, form, {
+    onSuccess: () => {
+      sending.value = false
+      toast.success('Theme actualizado correctamente')
+    },
+    onError: () => {
+      sending.value = false
+      toast.error('Error al guardar el theme')
+    },
+    onFinish: () => {
+      sending.value = false
+    },
+  })
+}
+</script>
+
+<style scoped>
+.preview-frame {
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 400px;
+  background-color: #f8f9fa;
+}
+
+.preview-header {
+  padding: 2rem;
+  text-align: center;
+}
+
+.preview-content {
+  padding: 2rem;
+}
+
+.preview-section {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.8);
+}
+
+.preview-footer {
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+.variant-option {
+  flex: 1;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.variant-option:hover {
+  border-color: #adb5bd;
+}
+
+.variant-option.active {
+  border-color: #3B82F6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.variant-preview {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.card-preview {
+  width: 30px;
+  height: 40px;
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  border-radius: 4px;
+}
+
+.list-preview {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+.list-preview .line {
+  height: 8px;
+  background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 100%);
+  border-radius: 2px;
+}
+
+.list-preview .line:nth-child(2) {
+  width: 80%;
+}
+
+.list-preview .line:nth-child(3) {
+  width: 60%;
+}
+
+.grid-preview {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #e9ecef 25%, transparent 25%, transparent 50%, #e9ecef 50%, #e9ecef 75%, transparent 75%);
+  background-size: 12px 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.carousel-preview {
+  width: 80px;
+  height: 50px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 4px;
+}
+
+.carousel-item {
+  width: 20px;
+  height: 50px;
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.variant-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.variant-option.active .variant-label {
+  color: #3B82F6;
+}
+
+.scheme-mini-preview {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+}
+
+.scheme-preview-box {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.scheme-preview-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.scheme-color-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid #dee2e6;
+  transition: all 0.2s;
+}
+
+.scheme-color-box:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.scheme-color-box-selected {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.scheme-preview-mini {
+  width: 60px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+</style>

@@ -1,0 +1,33 @@
+// =============================================
+// SECTION — CTA
+// =============================================
+
+.directory-section--cta {
+    padding: @section-spacing 0;
+    background: linear-gradient(135deg, @color-accent 0%, darken(@color-accent, 15%) 100%);
+    color: @color-white;
+    text-align: center;
+
+    &__title {
+        font-size: @font-size-3xl;
+        font-weight: @font-weight-bold;
+        color: @color-white;
+        margin-bottom: @space-md;
+    }
+
+    &__description {
+        font-size: @font-size-lg;
+        color: rgba(@color-white, 0.9);
+        margin-bottom: @space-xl;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: @space-md;
+    flex-wrap: wrap;
+}

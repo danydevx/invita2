@@ -1,0 +1,142 @@
+// =============================================
+// COMPONENT — Rating
+// =============================================
+
+.rating {
+    display: inline-flex;
+    align-items: center;
+    gap: @space-xs;
+
+    &__stars {
+        display: flex;
+        gap: 2px;
+    }
+
+    &__star {
+        color: @color-gray-300;
+        font-size: @font-size-base;
+
+        &--filled {
+            color: @color-warning;
+        }
+
+        &--half {
+            position: relative;
+            color: @color-gray-300;
+
+            &::before {
+                content: '\f589';
+                position: absolute;
+                left: 0;
+                top: 0;
+                color: @color-warning;
+                width: 50%;
+                overflow: hidden;
+            }
+        }
+    }
+
+    &__score {
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+    }
+
+    &__count {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+    }
+
+    // --- Sizes ---
+    &--sm {
+        .rating__star {
+            font-size: @font-size-sm;
+        }
+    }
+
+    &--lg {
+        .rating__star {
+            font-size: @font-size-xl;
+        }
+    }
+}
+
+// --- Stars Display ---
+.stars {
+    display: inline-flex;
+    gap: 2px;
+    color: @color-warning;
+}
+
+// --- Review Summary ---
+.review-summary {
+    display: flex;
+    align-items: center;
+    gap: @space-lg;
+    padding: @space-lg;
+    background: @color-surface-muted;
+    border-radius: @radius-lg;
+
+    &__score {
+        .flex-center();
+        .flex-column();
+
+        .score-value {
+            font-size: @font-size-4xl;
+            font-weight: @font-weight-bold;
+            color: @color-heading;
+            line-height: 1;
+        }
+
+        .score-count {
+            font-size: @font-size-sm;
+            color: @color-text-light;
+            margin-top: @space-xs;
+        }
+    }
+
+    &__stars {
+        margin-bottom: @space-xs;
+    }
+
+    &__breakdown {
+        flex: 1;
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+        gap: @space-sm;
+        margin-bottom: @space-xs;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__bar-label {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        width: 50px;
+    }
+
+    &__bar-track {
+        flex: 1;
+        height: 6px;
+        background: @color-gray-200;
+        border-radius: @radius-pill;
+        overflow: hidden;
+    }
+
+    &__bar-fill {
+        height: 100%;
+        background: @color-warning;
+        border-radius: @radius-pill;
+    }
+
+    &__bar-count {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        width: 30px;
+        text-align: right;
+    }
+}

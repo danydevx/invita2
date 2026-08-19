@@ -1,0 +1,31 @@
+<?php
+
+namespace Modules\AiChatbot\Observers;
+
+use Modules\AiChatbot\Events\BusinessContentChanged;
+use Modules\Appointments\Models\BusinessAvailability;
+use Modules\Appointments\Models\BusinessAvailabilityException;
+
+class AvailabilityObserver
+{
+    public function created($model): void
+    {
+        if (!$model->is_active) return;
+        $this->reindexAppointments($model->business_id);
+    }
+
+    public function updated($model): void
+    {
+        $this->reindexAppointments($model->business_id);
+    }
+
+    public function deleted($model): void
+    {
+        $this->reindexAppointments($model->business_id);
+    }
+
+    private function reindexAppointments(int $businessId): void
+    {
+        event(new BusinessContentChanged($businessId, 'appointment', $businessId, 'updated'));
+    }
+}

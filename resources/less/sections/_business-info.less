@@ -1,0 +1,70 @@
+// =============================================
+// SECTION — Business Info
+// =============================================
+
+.business-section {
+    padding: @section-spacing 0;
+
+    &--alt {
+        background: @color-gray-50;
+    }
+}
+
+.business-info {
+    &__description {
+        font-size: @font-size-lg;
+        color: @color-text;
+        line-height: @line-height-relaxed;
+        margin-bottom: @space-2xl;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: @space-xl;
+
+        .media-tablet({
+            grid-template-columns: repeat(2, 1fr);
+        });
+
+        .media-mobile({
+            grid-template-columns: 1fr;
+        });
+    }
+
+    &__item {
+        display: flex;
+        align-items: flex-start;
+        gap: @space-md;
+    }
+
+    &__icon {
+        width: 48px;
+        height: 48px;
+        border-radius: @radius-lg;
+        background: @color-gray-100;
+        .flex-center();
+        color: @color-accent;
+        flex-shrink: 0;
+    }
+
+    &__label {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        margin-bottom: @space-xs;
+    }
+
+    &__value {
+        font-size: @font-size-base;
+        font-weight: @font-weight-medium;
+        color: @color-heading;
+
+        a {
+            color: @color-accent;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

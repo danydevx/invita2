@@ -1,0 +1,185 @@
+.public-site { min-height: 100vh; background: var(--brand-background, #fff); color: var(--brand-text, #374151); }
+.business-logo { max-height: 60px; border-radius: var(--brand-card-radius, 12px); }
+.business-name { font-size: var(--font-size-h4, 1.5rem); font-weight: 600; margin: 0; }
+.site-header { background: var(--brand-bgcolor-header, #FFFFFF); color: var(--brand-text, #374151); padding: 1rem; border-bottom: 1px solid #e5e7eb; }
+.site-hero { background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%); color: #fff; padding: 3rem 1rem; text-align: center; }
+.site-footer { background: var(--brand-bgcolor-footer, #F3F4F6); color: var(--brand-text, #374151); padding: 2rem 1rem; text-align: center; border-top: 1px solid #e5e7eb; }
+
+.service-card, .product-card, .review-card { background: #fff; border: 1px solid #e5e7eb; border-radius: var(--brand-card-radius, 12px); padding: 1.25rem; margin-bottom: 1rem; transition: all 0.2s; }
+.public-site :deep(.card) { border-radius: var(--brand-card-radius, 12px) !important; overflow: hidden; }
+.public-site :deep(.card-img-top) { border-radius: 0 !important; }
+
+/* Buttons */
+.btn-site { padding: 0.75rem 1.5rem; border-radius: var(--brand-button-radius, 8px); font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.2s; cursor: pointer; border: none; font-size: var(--font-size-btn, 0.875rem); }
+.btn-site-primary { background: var(--brand-primary); color: #fff; }
+.btn-site-primary:hover { opacity: 0.85; color: #fff; }
+.btn-site-outline { background: transparent; border: 2px solid var(--brand-primary); color: var(--brand-primary); }
+.btn-site-outline:hover { background: var(--brand-primary); color: #fff; }
+.btn-site-lg { padding: 1rem 2rem; font-size: var(--font-size-base, 1rem); }
+.btn-site-sm { padding: 0.5rem 1rem; font-size: var(--font-size-sm, 0.875rem); }
+.btn-site-light { background: #fff; color: var(--brand-primary); border: 2px solid #fff; }
+.btn-site-light:hover { opacity: 0.9; }
+.btn-site-block { display: block; width: 100%; }
+
+/* Text colors */
+.text-site-primary { color: var(--brand-primary) !important; }
+.text-site-secondary { color: var(--brand-secondary) !important; }
+.text-site-accent { color: var(--brand-accent) !important; }
+.text-site-muted { color: var(--brand-text-light) !important; }
+.text-site-white { color: #ffffff !important; }
+.text-site-warning { color: #EAB308 !important; }
+.text-site-danger { color: #EF4444 !important; }
+.text-site-dark { color: var(--brand-text) !important; }
+
+/* Background colors */
+.bg-site-primary { background-color: var(--brand-primary) !important; }
+.bg-site-secondary { background-color: var(--brand-secondary) !important; }
+.bg-site-accent { background-color: var(--brand-accent) !important; }
+.bg-site-light { background-color: #ffffff !important; }
+.bg-site-dark { background-color: var(--brand-text) !important; }
+
+/* Borders */
+.border-site { border: 1px solid var(--border-color, #e5e7eb) !important; }
+.border-site-primary { border-color: var(--brand-primary) !important; }
+.rounded-site { border-radius: var(--brand-card-radius, 12px) !important; }
+.rounded-circle-site { border-radius: 50% !important; }
+.rounded-0 { border-radius: 0 !important; }
+.rounded-8 { border-radius: 8px !important; }
+.rounded-20 { border-radius: 20px !important; }
+.rounded-pill-site { border-radius: 9999px !important; }
+
+/* Utility */
+.text-site-left { text-align: left; }
+.text-site-center { text-align: center; }
+.text-site-right { text-align: right; }
+.fw-site-bold { font-weight: 700; }
+.fw-site-semibold { font-weight: 600; }
+.fw-site-medium { font-weight: 500; }
+
+/* Section schemes - inherit from parent */
+.section--light { background: #ffffff; color: var(--brand-text); }
+.section--light h1,.section--light h2,.section--light h3,.section--light h4,.section--light h5,.section--light h6 { color: var(--brand-primary); }
+.section--light .text-muted { color: var(--brand-text-light) !important; }
+.section--light a { color: var(--brand-accent); }
+.section--light i { color: var(--brand-accent); }
+
+.section--dark { background: var(--brand-text); color: #ffffff; }
+.section--dark h1,.section--dark h2,.section--dark h3,.section--dark h4,.section--dark h5,.section--dark h6 { color: #ffffff; }
+.section--dark .text-muted { color: rgba(255,255,255,0.7) !important; }
+.section--dark a { color: #ffffff; }
+.section--dark i { color: rgba(255,255,255,0.8); }
+
+.section--primary { background: var(--brand-primary); color: #ffffff; }
+.section--primary h1,.section--primary h2,.section--primary h3,.section--primary h4,.section--primary h5,.section--primary h6 { color: #ffffff; }
+.section--primary .text-muted { color: rgba(255,255,255,0.7) !important; }
+.section--primary a { color: #ffffff; }
+.section--primary i { color: rgba(255,255,255,0.8); }
+
+.section--secondary { background: var(--brand-secondary); color: #ffffff; }
+.section--secondary h1,.section--secondary h2,.section--secondary h3,.section--secondary h4,.section--secondary h5,.section--secondary h6 { color: #ffffff; }
+.section--secondary .text-muted { color: rgba(255,255,255,0.7) !important; }
+.section--secondary a { color: #ffffff; }
+
+.section--accent { background: var(--brand-accent); color: #ffffff; }
+.section--accent h1,.section--accent h2,.section--accent h3,.section--accent h4,.section--accent h5,.section--accent h6 { color: #ffffff; }
+.section--accent .text-muted { color: rgba(255,255,255,0.7) !important; }
+.section--accent a { color: #ffffff; }
+
+.section--gradient { background: linear-gradient(var(--brand-primary), var(--brand-secondary)); color: #ffffff; }
+.section--gradient h1,.section--gradient h2,.section--gradient h3,.section--gradient h4,.section--gradient h5,.section--gradient h6 { color: #ffffff; }
+.section--gradient .text-muted { color: rgba(255,255,255,0.7) !important; }
+.section--gradient a { color: #ffffff; }
+
+.section--neutral { background: #f8f9fa; color: var(--brand-text); }
+.section--neutral h1,.section--neutral h2,.section--neutral h3,.section--neutral h4,.section--neutral h5,.section--neutral h6 { color: var(--brand-primary); }
+.section--neutral .text-muted { color: var(--brand-text-light) !important; }
+.section--neutral a { color: var(--brand-accent); }
+
+.section--transparent { background: transparent; color: var(--brand-text); }
+.section--transparent h1,.section--transparent h2,.section--transparent h3,.section--transparent h4,.section--transparent h5,.section--transparent h6 { color: var(--brand-primary); }
+.section--transparent a { color: var(--brand-accent); }
+
+/* Card backgrounds within sections - override component styles */
+.section--primary .card,
+.section--primary .service-card,
+.section--primary .service-card-light,
+.section--primary .service-card-dark,
+.section--primary .service-card-accent,
+.section--primary .product-card,
+.section--primary .review-card { background: var(--brand-primary-card-bg, rgba(255,255,255,0.15)) !important; }
+
+.section--secondary .card,
+.section--secondary .service-card,
+.section--secondary .service-card-light,
+.section--secondary .service-card-dark,
+.section--secondary .service-card-accent,
+.section--secondary .product-card,
+.section--secondary .review-card { background: var(--brand-secondary-card-bg, rgba(255,255,255,0.15)) !important; }
+
+.section--accent .card,
+.section--accent .service-card,
+.section--accent .service-card-light,
+.section--accent .service-card-dark,
+.section--accent .service-card-accent,
+.section--accent .product-card,
+.section--accent .review-card { background: var(--brand-accent-card-bg, rgba(255,255,255,0.15)) !important; }
+
+.section--dark .card,
+.section--dark .service-card,
+.section--dark .service-card-light,
+.section--dark .service-card-dark,
+.section--dark .service-card-accent,
+.section--dark .product-card,
+.section--dark .review-card { background: var(--brand-dark-card-bg, rgba(0,0,0,0.3)) !important; }
+
+.section--gradient .card,
+.section--gradient .service-card,
+.section--gradient .service-card-light,
+.section--gradient .service-card-dark,
+.section--gradient .service-card-accent,
+.section--gradient .product-card,
+.section--gradient .review-card { background: var(--brand-gradient-card-bg, rgba(255,255,255,0.15)) !important; }
+
+.section--light .card,
+.section--light .service-card,
+.section--light .service-card-light,
+.section--light .service-card-dark,
+.section--light .service-card-accent,
+.section--light .product-card,
+.section--light .review-card { background: var(--brand-light-card-bg, #ffffff) !important; }
+
+.section--neutral .card,
+.section--neutral .service-card,
+.section--neutral .service-card-light,
+.section--neutral .service-card-dark,
+.section--neutral .service-card-accent,
+.section--neutral .product-card,
+.section--neutral .review-card { background: var(--brand-neutral-card-bg, #ffffff) !important; }
+
+/* Button scheme base styles */
+.btn-scheme {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  font-size: var(--font-size-btn, 0.875rem);
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--brand-button-radius, 8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.section--primary .btn-scheme,
+.section--secondary .btn-scheme,
+.section--accent .btn-scheme,
+.section--gradient .btn-scheme,
+.section--dark .btn-scheme {
+  border-color: rgba(255,255,255,0.3);
+}
+
+.section--light .btn-scheme,
+.section--neutral .btn-scheme,
+.section--transparent .btn-scheme {
+  border-color: rgba(0,0,0,0.1);
+}

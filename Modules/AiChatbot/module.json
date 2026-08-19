@@ -1,0 +1,11 @@
+{
+    "name": "AiChatbot",
+    "alias": "aichatbot",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AiChatbot\\Providers\\AiChatbotServiceProvider"
+    ],
+    "files": []
+}

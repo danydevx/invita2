@@ -1,0 +1,106 @@
+// =============================================
+// SECTION — Results (Map + List)
+// =============================================
+
+.directory-section--results {
+    padding: @section-spacing 0;
+}
+
+.results-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: @space-xl;
+    align-items: start;
+
+    .media-desktop-lg({
+        grid-template-columns: 1fr 450px;
+    });
+
+    .media-tablet({
+        grid-template-columns: 1fr;
+    });
+
+    .media-mobile({
+        grid-template-columns: 1fr;
+    });
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: @space-lg;
+    }
+
+    &__map {
+        position: sticky;
+        top: @space-xl;
+        height: calc(100vh - @space-4xl);
+        border-radius: @radius-lg;
+        overflow: hidden;
+        background: @color-gray-100;
+
+        .media-tablet({
+            display: none;
+        });
+
+        .media-mobile({
+            display: none;
+        });
+    }
+}
+
+.results-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @space-lg;
+
+    &__text {
+        font-size: @font-size-base;
+        color: @color-text-light;
+    }
+}
+
+.map-toggle {
+    display: none;
+    .media-mobile({
+        display: flex;
+    });
+    .media-tablet({
+        display: flex;
+    });
+}
+
+// --- Category Banner ---
+.category-banner {
+    background: @color-surface-muted;
+    padding: @space-md 0;
+    border-bottom: 1px solid @color-border;
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        gap: @space-md;
+    }
+
+    &__title {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+    }
+
+    &__link {
+        font-size: @font-size-sm;
+        color: @color-accent;
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "name": "nwidart/features",
+    "description": "Features module for managing business amenities and characteristics",
+    "authors": [
+        {
+            "name": "SaaS Team",
+            "email": "team@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Features\\Providers\\RouteServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Features\\": "app/",
+            "Modules\\Features\\Database\\Factories\\": "database/factories/",
+            "Modules\\Features\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Features\\Tests\\": "tests/"
+        }
+    }
+}

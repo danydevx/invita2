@@ -1,0 +1,89 @@
+// =============================================
+// COMPONENT — Service Card
+// =============================================
+
+.service-card {
+    background: @color-surface;
+    border: 1px solid @color-border;
+    border-radius: @radius-lg;
+    padding: @space-lg;
+    transition: transform @transition-fast, box-shadow @transition-fast;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: @shadow-md;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: @space-md;
+    }
+
+    &__title {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+        margin-bottom: @space-xs;
+    }
+
+    &__category {
+        font-size: @font-size-xs;
+        color: @color-text-light;
+    }
+
+    &__price {
+        font-size: @font-size-xl;
+        font-weight: @font-weight-bold;
+        color: @color-accent;
+    }
+
+    &__description {
+        font-size: @font-size-sm;
+        color: @color-text;
+        margin-bottom: @space-md;
+        .truncate(3);
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: @space-md;
+        border-top: 1px solid @color-border-light;
+    }
+
+    &__duration {
+        display: flex;
+        align-items: center;
+        gap: @space-xs;
+        font-size: @font-size-sm;
+        color: @color-text-light;
+
+        i {
+            color: @color-text-muted;
+        }
+    }
+
+    &__action {
+        font-size: @font-size-sm;
+        font-weight: @font-weight-medium;
+        color: @color-accent;
+    }
+}
+
+// --- Services Grid ---
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: @space-lg;
+
+    .media-tablet({
+        grid-template-columns: repeat(2, 1fr);
+    });
+
+    .media-mobile({
+        grid-template-columns: 1fr;
+    });
+}

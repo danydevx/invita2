@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/about",
+    "description": "About section module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\About\\": "app/",
+            "Modules\\About\\Database\\Factories\\": "database/factories/",
+            "Modules\\About\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

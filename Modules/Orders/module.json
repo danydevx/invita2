@@ -1,0 +1,11 @@
+{
+    "name": "Orders",
+    "alias": "orders",
+    "description": "Orders module - Cart and order management for restaurants and businesses",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Orders\\Providers\\OrdersServiceProvider"
+    ],
+    "files": []
+}

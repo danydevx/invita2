@@ -1,0 +1,109 @@
+// =============================================
+// COMPONENT — Review Card
+// =============================================
+
+.review-card {
+    background: @color-surface;
+    border: 1px solid @color-border;
+    border-radius: @radius-lg;
+    padding: @space-lg;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: @space-md;
+    }
+
+    &__author {
+        display: flex;
+        align-items: center;
+        gap: @space-md;
+    }
+
+    &__avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: @radius-circle;
+        background: @color-accent;
+        .flex-center();
+        color: @color-white;
+        font-weight: @font-weight-bold;
+        font-size: @font-size-lg;
+    }
+
+    &__name {
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+        margin-bottom: @space-xs;
+    }
+
+    &__date {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+    }
+
+    &__rating {
+        margin-bottom: @space-md;
+    }
+
+    &__comment {
+        font-size: @font-size-base;
+        color: @color-text;
+        line-height: @line-height-relaxed;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: @space-md;
+        padding-top: @space-md;
+        border-top: 1px solid @color-border-light;
+    }
+
+    &__business {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+    }
+
+    &__helpful {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        display: flex;
+        align-items: center;
+        gap: @space-xs;
+
+        &:hover {
+            color: @color-accent;
+        }
+    }
+}
+
+// --- Reviews List ---
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: @space-lg;
+}
+
+// --- Review CTA ---
+.review-cta {
+    text-align: center;
+    padding: @space-xl;
+    background: @color-surface-muted;
+    border-radius: @radius-lg;
+
+    &__title {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+        margin-bottom: @space-sm;
+    }
+
+    &__text {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        margin-bottom: @space-lg;
+    }
+}

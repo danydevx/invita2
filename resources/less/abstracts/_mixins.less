@@ -1,0 +1,158 @@
+// =============================================
+// MIXINS — Directorio
+// =============================================
+
+// --- Flexbox ---
+.flex-center() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between() {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-column() {
+    display: flex;
+    flex-direction: column;
+}
+
+// --- Responsive Breakpoints ---
+@mobile: ~"(max-width: 575.98px)";
+@tablet: ~"(min-width: 576px) and (max-width: 991.98px)";
+@tablet-up: ~"(min-width: 576px)";
+@desktop: ~"(min-width: 992px)";
+@desktop-lg: ~"(min-width: 1200px)";
+
+// --- Media Queries ---
+.media-mobile(@content) {
+    @media @mobile {
+        @content();
+    }
+}
+
+.media-tablet(@content) {
+    @media @tablet {
+        @content();
+    }
+}
+
+.media-tablet-up(@content) {
+    @media @tablet-up {
+        @content();
+    }
+}
+
+.media-desktop(@content) {
+    @media @desktop {
+        @content();
+    }
+}
+
+.media-desktop-lg(@content) {
+    @media @desktop-lg {
+        @content();
+    }
+}
+
+// --- Typography ---
+.heading-style() {
+    font-family: @font-family-heading;
+    font-weight: @font-weight-bold;
+    color: @color-heading;
+    line-height: @line-height-tight;
+}
+
+.text-style(@size: @font-size-base, @color: @color-text) {
+    font-size: @size;
+    color: @color;
+    line-height: @line-height-normal;
+}
+
+// --- Card Base ---
+.card-base() {
+    background: @color-surface;
+    border: 1px solid @color-border;
+    border-radius: @radius-lg;
+    overflow: hidden;
+}
+
+// --- Button Base ---
+.btn-base() {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: @space-sm @space-lg;
+    font-size: @font-size-sm;
+    font-weight: @font-weight-semibold;
+    line-height: 1;
+    border-radius: @radius-md;
+    border: none;
+    cursor: pointer;
+    transition: all @transition-fast;
+    text-decoration: none;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// --- Section Padding ---
+.section-padding(@top: @section-spacing, @bottom: @section-spacing) {
+    padding-top: @top;
+    padding-bottom: @bottom;
+
+    .media-mobile({
+        padding-top: @section-spacing-sm;
+        padding-bottom: @section-spacing-sm;
+    });
+}
+
+// --- Image Cover ---
+.img-cover() {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+// --- Truncate Text ---
+.truncate(@lines: 1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    & when (@lines = 1) {
+        white-space: nowrap;
+    }
+
+    & when (@lines > 1) {
+        display: -webkit-box;
+        -webkit-line-clamp: @lines;
+        -webkit-box-orient: vertical;
+    }
+}
+
+// --- Focus Ring ---
+.focus-ring() {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(@color-accent, 0.3);
+}
+
+// --- Visually Hidden (Accessibility) ---
+.visually-hidden() {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

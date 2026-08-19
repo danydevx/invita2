@@ -1,0 +1,38 @@
+:root {
+    --brand-primary: #8B7355;
+    --brand-secondary: #C9A86C;
+    --brand-accent: #D4AF37;
+    --brand-background: #FDF8F3;
+    --brand-text: #2D2D2D;
+    --brand-text-light: #7A7A7A;
+    --brand-bgcolor-header: #FDF8F3;
+    --brand-bgcolor-footer: #8B7355;
+    --brand-button-radius: 0px;
+}
+
+.public-site {
+    .site-hero {
+        background: linear-gradient(135deg, #8B7355 0%, #C9A86C 100%);
+    }
+
+    .service-card, .product-card {
+        border: 1px solid #e5d4b3;
+        border-radius: 0px;
+        box-shadow: 0 2px 8px rgba(139, 115, 85, 0.1);
+
+        &:hover {
+            box-shadow: 0 8px 30px rgba(201, 168, 108, 0.25);
+            transform: translateY(-2px);
+        }
+    }
+
+    .site-btn-primary {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .site-btn-secondary {
+        border-color: #8B7355;
+        color: #8B7355;
+    }
+}

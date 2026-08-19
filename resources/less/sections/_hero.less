@@ -1,0 +1,48 @@
+// =============================================
+// SECTION — Hero
+// =============================================
+
+.directory-hero {
+    position: relative;
+    background: linear-gradient(135deg, @color-primary 0%, lighten(@color-primary, 10%) 100%);
+    color: @color-white;
+    padding: @space-4xl 0;
+
+    .media-mobile({
+        padding: @space-2xl 0;
+    });
+
+    &__content {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    &__eyebrow {
+        display: inline-block;
+        font-size: @font-size-sm;
+        font-weight: @font-weight-semibold;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(@color-white, 0.7);
+        margin-bottom: @space-md;
+    }
+
+    &__title {
+        font-size: @font-size-5xl;
+        font-weight: @font-weight-bold;
+        color: @color-white;
+        margin-bottom: @space-lg;
+        line-height: 1.1;
+
+        .media-mobile({
+            font-size: @font-size-3xl;
+        });
+    }
+
+    &__description {
+        font-size: @font-size-lg;
+        color: rgba(@color-white, 0.85);
+        margin-bottom: @space-xl;
+    }
+}

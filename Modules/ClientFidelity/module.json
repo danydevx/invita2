@@ -1,0 +1,11 @@
+{
+    "name": "ClientFidelity",
+    "alias": "clientfidelity",
+    "description": "Client fidelity cards module for managing loyalty programs",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ClientFidelity\\Providers\\ClientFidelityServiceProvider"
+    ],
+    "files": []
+}

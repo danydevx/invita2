@@ -1,0 +1,44 @@
+// =============================================
+// SECTION — Business Gallery
+// =============================================
+
+.business-gallery {
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: @space-md;
+
+        .media-tablet({
+            grid-template-columns: repeat(3, 1fr);
+        });
+
+        .media-mobile({
+            grid-template-columns: repeat(2, 1fr);
+        });
+    }
+
+    &__item {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: @radius-lg;
+        overflow: hidden;
+        cursor: pointer;
+
+        &:hover::after {
+            opacity: 1;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(@color-black, 0.3);
+            opacity: 0;
+            transition: opacity @transition-fast;
+        }
+
+        img {
+            .img-cover();
+        }
+    }
+}

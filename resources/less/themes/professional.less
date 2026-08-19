@@ -1,0 +1,32 @@
+:root {
+    --brand-primary: #0D7377;
+    --brand-secondary: #14A085;
+    --brand-accent: #32E0C4;
+    --brand-background: #F8FFFE;
+    --brand-text: #212121;
+    --brand-text-light: #757575;
+    --brand-bgcolor-header: #ffffff;
+    --brand-bgcolor-footer: #0D7377;
+    --brand-button-radius: 8px;
+}
+
+.public-site {
+    .site-hero {
+        background: linear-gradient(135deg, #0D7377 0%, #14A085 100%);
+    }
+
+    .service-card, .product-card {
+        border: 1px solid #e0f7f5;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(13, 115, 119, 0.08);
+
+        &:hover {
+            border-color: #32E0C4;
+            box-shadow: 0 8px 25px rgba(13, 115, 119, 0.15);
+        }
+    }
+
+    .review-card {
+        border-color: #e0f7f5;
+    }
+}

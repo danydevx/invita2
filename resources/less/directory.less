@@ -1,0 +1,241 @@
+// =============================================
+// DIRECTORY.LESS — Main entry point
+// =============================================
+
+// Abstracts
+@import 'abstracts/_variables';
+@import 'abstracts/_mixins';
+
+// Base
+@import 'base/_reset';
+
+// Sections
+@import 'sections/_hero';
+@import 'sections/_categories';
+@import 'sections/_featured-businesses';
+@import 'sections/_recent-businesses';
+@import 'sections/_cta';
+@import 'sections/_search-hero';
+@import 'sections/_results';
+@import 'sections/_business-hero';
+@import 'sections/_business-info';
+@import 'sections/_business-gallery';
+@import 'sections/_business-location';
+
+// Components
+@import 'components/_section-header';
+@import 'components/_category-card';
+@import 'components/_business-card';
+@import 'components/_rating';
+@import 'components/_service-card';
+@import 'components/_review-card';
+
+// --- Page Layout ---
+.directory-page {
+    min-height: 100vh;
+    background-color: @color-gray-50;
+}
+
+.directory-content {
+    padding: @space-2xl 0;
+}
+
+// --- Search Form ---
+.directory-search {
+    display: flex;
+    gap: @space-md;
+    max-width: 600px;
+    margin: 0 auto;
+
+    .media-mobile({
+        flex-direction: column;
+    });
+
+    &__field {
+        flex: 1;
+    }
+
+    &__input {
+        width: 100%;
+        padding: @space-md @space-lg;
+        border: 1px solid @color-border;
+        border-radius: @radius-lg;
+        font-size: @font-size-base;
+
+        &:focus {
+            outline: none;
+            border-color: @color-accent;
+            box-shadow: 0 0 0 3px rgba(@color-accent, 0.1);
+        }
+    }
+}
+
+// --- Filter Form ---
+.directory-filters {
+    background: @color-surface;
+    padding: @space-xl;
+    border-radius: @radius-xl;
+    box-shadow: @shadow-md;
+    border: 1px solid @color-border;
+
+    .filter-group {
+        margin-bottom: 0;
+
+        label {
+            font-weight: @font-weight-medium;
+            font-size: @font-size-sm;
+            color: @color-text-light;
+            margin-bottom: @space-xs;
+            display: block;
+        }
+    }
+}
+
+// --- Map Container ---
+.directory-map-container {
+    background: @color-surface;
+    height: 450px;
+    border-radius: @radius-lg;
+    overflow: hidden;
+    box-shadow: @shadow-md;
+
+    .media-mobile({
+        height: 300px;
+    });
+
+    #directory-map {
+        height: 100%;
+        width: 100%;
+    }
+
+    .leaflet-popup-content-wrapper {
+        border-radius: @radius-md;
+    }
+}
+
+.map-popup {
+    min-width: 200px;
+
+    .popup-name {
+        font-weight: @font-weight-semibold;
+        font-size: @font-size-sm;
+        color: @color-heading;
+        margin-bottom: @space-xs;
+    }
+
+    .popup-address {
+        font-size: @font-size-xs;
+        color: @color-text-light;
+        margin-bottom: @space-sm;
+    }
+
+    .popup-link {
+        font-size: @font-size-xs;
+        color: @color-accent;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// --- Pagination ---
+.directory-pagination {
+    margin-top: @space-2xl;
+    justify-content: center;
+
+    .pagination {
+        display: flex;
+        gap: @space-sm;
+
+        .page-item {
+            .page-link {
+                border-radius: @radius-md;
+                border: 1px solid @color-border;
+                color: @color-text;
+                padding: @space-sm @space-md;
+                font-size: @font-size-sm;
+                font-weight: @font-weight-medium;
+                transition: all @transition-fast;
+
+                &:hover {
+                    background-color: @color-gray-100;
+                    border-color: @color-gray-300;
+                }
+            }
+
+            &.active .page-link {
+                background-color: @color-primary;
+                border-color: @color-primary;
+                color: @color-white;
+
+                &:hover {
+                    background-color: lighten(@color-primary, 10%);
+                }
+            }
+
+            &.disabled .page-link {
+                color: @color-text-muted;
+                background-color: @color-gray-50;
+                border-color: @color-border;
+            }
+        }
+
+        .page-indicator {
+            padding: @space-sm @space-md;
+            color: @color-text-light;
+            font-size: @font-size-sm;
+        }
+    }
+}
+
+// --- Directory Footer ---
+.directory-footer {
+    background: @color-primary;
+    color: @color-white;
+    padding: @space-2xl 0;
+    text-align: center;
+
+    &__brand {
+        font-size: @font-size-xl;
+        font-weight: @font-weight-bold;
+        margin-bottom: @space-sm;
+    }
+
+    &__copyright {
+        font-size: @font-size-sm;
+        color: rgba(@color-white, 0.7);
+    }
+}
+
+// --- Directory Header ---
+.directory-header {
+    background: linear-gradient(135deg, @color-primary 0%, lighten(@color-primary, 10%) 100%);
+    color: @color-white;
+    padding: @space-3xl 0;
+
+    .directory-title {
+        font-size: @font-size-3xl;
+        font-weight: @font-weight-bold;
+        margin-bottom: @space-sm;
+    }
+
+    .directory-subtitle {
+        font-size: @font-size-base;
+        opacity: 0.85;
+    }
+}
+
+// --- Results Header ---
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @space-lg;
+
+    .results-count {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+    }
+}

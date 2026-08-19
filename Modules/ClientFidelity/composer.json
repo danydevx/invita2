@@ -1,0 +1,13 @@
+{
+    "name": "modules/client-fidelity",
+    "description": "Client fidelity cards module",
+    "type": "laravel-module",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ClientFidelity\\": "app/"
+        }
+    }
+}

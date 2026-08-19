@@ -1,0 +1,17 @@
+// =============================================
+// SECTION — Featured Businesses
+// =============================================
+
+.directory-section--featured {
+    padding: @section-spacing 0;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: @space-lg;
+
+    .media-mobile({
+        grid-template-columns: 1fr;
+    });
+}

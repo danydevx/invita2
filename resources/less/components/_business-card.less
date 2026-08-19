@@ -1,0 +1,192 @@
+// =============================================
+// COMPONENT — Business Card
+// =============================================
+
+.business-card {
+    display: block;
+    background: @color-surface;
+    border: 1px solid @color-border;
+    border-radius: @radius-lg;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform @transition-fast, box-shadow @transition-fast;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: @shadow-md;
+    }
+
+    // --- Horizontal Variant ---
+    &--horizontal {
+        display: flex;
+        flex-direction: row;
+
+        .business-card__image-wrap {
+            width: 200px;
+            min-height: 160px;
+            flex-shrink: 0;
+        }
+
+        .business-card__image {
+            height: 100%;
+        }
+
+        .media-mobile({
+            flex-direction: column;
+
+            .business-card__image-wrap {
+                width: 100%;
+                height: 160px;
+            }
+        });
+    }
+
+    // --- Compact Variant ---
+    &--compact {
+        .business-card__body {
+            padding: @space-md;
+        }
+
+        .business-card__title {
+            font-size: @font-size-base;
+        }
+    }
+
+    &__image-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        background: @color-gray-100;
+    }
+
+    &__image {
+        .img-cover();
+        transition: transform @transition-normal;
+    }
+
+    &:hover .business-card__image {
+        transform: scale(1.05);
+    }
+
+    &__badge {
+        position: absolute;
+        top: @space-sm;
+        left: @space-sm;
+    }
+
+    &__favorite {
+        position: absolute;
+        top: @space-sm;
+        right: @space-sm;
+        width: 32px;
+        height: 32px;
+        .flex-center();
+        background: @color-white;
+        border-radius: @radius-circle;
+        box-shadow: @shadow-sm;
+        color: @color-text-light;
+        transition: color @transition-fast;
+
+        &:hover {
+            color: @color-danger;
+        }
+    }
+
+    &__body {
+        padding: @space-lg;
+    }
+
+    &__category {
+        display: inline-block;
+        font-size: @font-size-xs;
+        font-weight: @font-weight-semibold;
+        color: @color-accent;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: @space-xs;
+    }
+
+    &__title {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+        margin-bottom: @space-sm;
+        .truncate(2);
+    }
+
+    &__location {
+        display: flex;
+        align-items: center;
+        gap: @space-xs;
+        font-size: @font-size-sm;
+        color: @color-text-light;
+        margin-bottom: @space-sm;
+
+        i {
+            color: @color-text-muted;
+        }
+    }
+
+    &__rating {
+        display: flex;
+        align-items: center;
+        gap: @space-xs;
+        margin-bottom: @space-sm;
+    }
+
+    &__rating-score {
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+    }
+
+    &__rating-count {
+        font-size: @font-size-sm;
+        color: @color-text-light;
+    }
+
+    &__description {
+        font-size: @font-size-sm;
+        color: @color-text;
+        .truncate(2);
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: @space-md;
+        border-top: 1px solid @color-border-light;
+        margin-top: @space-md;
+    }
+
+    &__price {
+        font-size: @font-size-base;
+        font-weight: @font-weight-bold;
+        color: @color-heading;
+    }
+
+    &__action {
+        font-size: @font-size-sm;
+        font-weight: @font-weight-medium;
+        color: @color-accent;
+        display: flex;
+        align-items: center;
+        gap: @space-xs;
+
+        i {
+            transition: transform @transition-fast;
+        }
+
+        &:hover i {
+            transform: translateX(2px);
+        }
+    }
+}
+
+// --- Business Card List ---
+.business-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: @space-lg;
+}

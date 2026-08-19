@@ -1,0 +1,27 @@
+// =============================================
+// SECTION — Recent Businesses
+// =============================================
+
+.directory-section--recent {
+    padding: @section-spacing 0;
+    background: @color-gray-50;
+}
+
+.recent-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: @space-lg;
+
+    .media-desktop({
+        grid-template-columns: repeat(4, 1fr);
+    });
+
+    .media-tablet({
+        grid-template-columns: repeat(2, 1fr);
+    });
+
+    .media-mobile({
+        grid-template-columns: repeat(2, 1fr);
+        gap: @space-md;
+    });
+}

@@ -1,0 +1,20 @@
+{
+    "name": "nwidart/properties",
+    "description": "Modulo de propiedades inmobiliarias",
+    "authors": [
+        {
+            "name": "SaaS Team"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Properties\\": "app/",
+            "Modules\\Properties\\Console\\Commands\\": "Console/Commands/",
+            "Modules\\Properties\\Database\\Factories\\": "database/factories/",
+            "Modules\\Properties\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

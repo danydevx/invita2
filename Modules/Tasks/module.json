@@ -1,0 +1,11 @@
+{
+    "name": "Tasks",
+    "alias": "tasks",
+    "description": "Tasks module for business management",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Tasks\\Providers\\TasksServiceProvider"
+    ],
+    "files": []
+}

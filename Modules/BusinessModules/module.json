@@ -1,0 +1,9 @@
+{
+    "name": "BusinessModules",
+    "alias": "businessmodules",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [],
+    "files": []
+}

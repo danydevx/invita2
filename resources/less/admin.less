@@ -1,0 +1,132 @@
+:root {
+    --brand-primary: #111827;
+    --brand-secondary: #6B7280;
+    --brand-background: #FFFFFF;
+    --brand-text: #111827;
+    --brand-accent: #3B82F6;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: var(--brand-background);
+    color: var(--brand-text);
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+
+    .sidebar {
+        width: 250px;
+        background: var(--brand-primary);
+        color: #fff;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+
+        @media (max-width: 768px) {
+            display: none;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+            h3 {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+
+            .business-name {
+                font-size: 0.875rem;
+                opacity: 0.7;
+                margin-top: 0.25rem;
+            }
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+
+            .nav-item {
+                a {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem 1.5rem;
+                    color: rgba(255,255,255,0.8);
+                    text-decoration: none;
+                    transition: all 0.2s;
+
+                    i {
+                        margin-right: 0.75rem;
+                        width: 20px;
+                    }
+
+                    &:hover, &.active {
+                        background: rgba(255,255,255,0.1);
+                        color: #fff;
+                    }
+
+                    &.active {
+                        border-left: 3px solid var(--brand-accent);
+                    }
+                }
+            }
+        }
+    }
+
+    .main-content {
+        flex: 1;
+        margin-left: 250px;
+        background: #f8f9fa;
+
+        @media (max-width: 768px) {
+            margin-left: 0;
+        }
+
+        .topbar {
+            background: #fff;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .page-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .topbar-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+        }
+
+        .page-content {
+            padding: 1.5rem;
+        }
+    }
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--brand-primary);
+    }
+}
+
+@import 'components/_datatable';

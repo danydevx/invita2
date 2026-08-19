@@ -1,0 +1,289 @@
+<?php
+
+namespace App\Http\Controllers\Member;
+
+use App\Http\Controllers\Controller;
+use App\Services\ActivityService;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Modules\Businesses\Models\Business;
+use Modules\Locations\Models\BusinessLocation;
+use Modules\Services\Models\BusinessService;
+use Illuminate\Support\Facades\Storage;
+
+class ServiceController extends Controller
+{
+    public function index(Request $request, Business $business)
+    {
+        $this->authorize('viewAny', [BusinessService::class, $business]);
+
+        $perPage = min((int) $request->get('per_page', 10), 100);
+        $search = $request->get('search', '');
+        $sort = $request->get('sort', 'sort_order');
+        $direction = $request->get('direction', 'asc');
+
+        $allowedSorts = ['name', 'price', 'duration_minutes', 'is_active', 'sort_order', 'created_at'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'sort_order';
+        }
+        $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+        $query = $business->services()
+            ->with('location')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy($sort, $direction)
+            ->orderBy('name');
+
+        $services = $query->paginate($perPage);
+
+        $services->getCollection()->transform(function ($service) {
+            if ($service->image) {
+                $service->image = "/storage/{$service->image}";
+            }
+            return $service;
+        });
+
+        $locations = $business->locations()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $dataTable = [
+            'data' => $services->items(),
+            'current_page' => $services->currentPage(),
+            'last_page' => $services->lastPage(),
+            'per_page' => $services->perPage(),
+            'total' => $services->total(),
+            'from' => $services->firstItem(),
+            'to' => $services->lastItem(),
+        ];
+
+        return Inertia::render('Member/Services/Index', [
+            'business' => [
+                'id' => $business->id,
+                'name' => $business->name,
+            ],
+            'services' => $services,
+            'locations' => $locations,
+            'dataTable' => $dataTable,
+        ]);
+    }
+
+    public function create(Request $request, Business $business)
+    {
+        $this->authorize('create', [BusinessService::class, $business]);
+
+        $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Member/Services/Create', [
+            'business' => [
+                'id' => $business->id,
+                'name' => $business->name,
+            ],
+            'locations' => $locations,
+        ]);
+    }
+
+    public function store(Request $request, Business $business, ActivityService $activity)
+    {
+        $this->authorize('create', [BusinessService::class, $business]);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
+            'duration_minutes' => ['required', 'integer', 'min:1'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'deposit_required' => ['boolean'],
+            'deposit_amount' => ['nullable', 'numeric', 'min:0'],
+            'allows_online_booking' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+        ]);
+
+        $data['business_id'] = $business->id;
+        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('services', 'public');
+            $data['image'] = $path;
+        }
+
+        $service = $business->services()->create($data);
+
+        $activity->log('service_created', [
+            'actor' => $request->user(),
+            'subject' => $service,
+            'description' => 'Servicio creado',
+            'request' => $request,
+        ]);
+
+        return redirect()->route('member.businesses.services.index', $business->id)
+            ->with('success', 'Servicio creado correctamente.');
+    }
+
+    public function edit(Request $request, Business $business, BusinessService $service)
+    {
+        $this->authorize('update', [BusinessService::class, $service]);
+
+        $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $serviceImages = $service->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
+
+        return Inertia::render('Member/Services/Edit', [
+            'business' => [
+                'id' => $business->id,
+                'name' => $business->name,
+            ],
+            'service' => [
+                'id' => $service->id,
+                'name' => $service->name,
+                'slug' => $service->slug,
+                'description' => $service->description,
+                'image' => $service->image,
+                'duration_minutes' => $service->duration_minutes,
+                'price' => $service->price,
+                'deposit_required' => $service->deposit_required,
+                'deposit_amount' => $service->deposit_amount,
+                'allows_online_booking' => $service->allows_online_booking,
+                'whatsapp_contact' => $service->whatsapp_contact,
+                'is_active' => $service->is_active,
+                'sort_order' => $service->sort_order,
+                'business_location_id' => $service->business_location_id,
+            ],
+            'locations' => $locations,
+            'serviceImages' => $serviceImages->map(fn($img) => [
+                'id' => $img->id,
+                'url' => $img->path ? "/storage/{$img->path}" : null,
+                'filename' => $img->filename,
+                'is_primary' => $img->is_primary,
+            ]),
+        ]);
+    }
+
+    public function update(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    {
+        $this->authorize('update', [BusinessService::class, $service]);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
+            'duration_minutes' => ['required', 'integer', 'min:1'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'deposit_required' => ['boolean'],
+            'deposit_amount' => ['nullable', 'numeric', 'min:0'],
+            'allows_online_booking' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+        ]);
+
+        if (isset($data['name'])) {
+            $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('services', 'public');
+            $data['image'] = $path;
+        } else {
+            unset($data['image']);
+        }
+
+        $service->update($data);
+
+        $activity->log('service_updated', [
+            'actor' => $request->user(),
+            'subject' => $service,
+            'description' => 'Servicio actualizado',
+            'request' => $request,
+        ]);
+
+        return redirect()->route('member.businesses.services.index', $business->id)
+            ->with('success', 'Servicio actualizado correctamente.');
+    }
+
+    public function destroy(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    {
+        $this->authorize('delete', [BusinessService::class, $service]);
+
+        $activity->log('service_deleted', [
+            'actor' => $request->user(),
+            'subject' => $service,
+            'description' => 'Servicio eliminado',
+        ]);
+
+        $service->delete();
+
+        return redirect()->route('member.businesses.services.index', $business->id)
+            ->with('success', 'Servicio eliminado correctamente.');
+    }
+
+    public function clone(Request $request, Business $business, \Modules\Services\Models\BusinessService $service)
+    {
+        $this->authorize('create', [\Modules\Services\Models\BusinessService::class, $business]);
+
+        $newService = $service->replicate();
+        $newService->name = $service->name . ' (Copia)';
+        $newService->slug = \Illuminate\Support\Str::slug($service->name) . '-' . time();
+        $newService->save();
+
+        return redirect()->route('member.businesses.services.edit', [$business->id, $newService->id])
+            ->with('success', 'Servicio clonado correctamente.');
+    }
+
+    public function bulkDelete(Request $request, Business $business)
+    {
+        $this->authorize('deleteAny', [\Modules\Services\Models\BusinessService::class, $business]);
+
+        $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('business_id', $business->id)],
+        ]);
+
+        $count = \Modules\Services\Models\BusinessService::where('business_id', $business->id)
+            ->whereIn('id', $request->ids)
+            ->delete();
+
+        return redirect()->back()->with('success', $count . ' servicio(s) eliminado(s).');
+    }
+
+    public function reorder(Request $request, Business $business)
+    {
+        $user = $request->user();
+
+        if ($user->hasAnyRole(['superadmin', 'admin'])) {
+            // allowed
+        } else {
+            abort_unless($business->user_id === $user->id, 403);
+        }
+
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('business_id', $business->id)],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'perPage' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $page = $data['page'] ?? 1;
+        $perPage = $data['perPage'] ?? count($data['ids']);
+        $start = (($page - 1) * $perPage) + 1;
+
+        \DB::transaction(function () use ($data, $business, $start) {
+            foreach ($data['ids'] as $index => $id) {
+                \Modules\Services\Models\BusinessService::where('id', $id)
+                    ->where('business_id', $business->id)
+                    ->update(['sort_order' => $start + $index]);
+            }
+        });
+
+        return back(303);
+    }
+}

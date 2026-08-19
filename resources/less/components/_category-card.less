@@ -1,0 +1,71 @@
+// =============================================
+// COMPONENT — Category Card
+// =============================================
+
+.category-card {
+    .flex-center();
+    .flex-column();
+    padding: @space-lg @space-md;
+    background: @color-surface;
+    border: 1px solid @color-border;
+    border-radius: @radius-lg;
+    text-decoration: none;
+    transition: transform @transition-fast, box-shadow @transition-fast;
+    height: 100%;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: @shadow-lg;
+        border-color: transparent;
+    }
+
+    &__icon {
+        font-size: 2.5rem;
+        margin-bottom: @space-md;
+        line-height: 1;
+    }
+
+    &__title {
+        font-size: @font-size-base;
+        font-weight: @font-weight-semibold;
+        color: @color-heading;
+        text-align: center;
+        margin-bottom: @space-xs;
+    }
+
+    &__count {
+        font-size: @font-size-xs;
+        color: @color-text-light;
+        text-align: center;
+    }
+
+    // --- Icon Colors ---
+    &--barber .category-card__icon { color: @category-barber; }
+    &--beauty .category-card__icon { color: @category-beauty; }
+    &--dentist .category-card__icon { color: @category-dentist; }
+    &--medical .category-card__icon { color: @category-medical; }
+    &--doctor .category-card__icon { color: @category-doctor; }
+    &--spa .category-card__icon { color: @category-spa; }
+    &--veterinarian .category-card__icon { color: @category-veterinarian; }
+    &--physio .category-card__icon { color: @category-physio; }
+    &--psychologist .category-card__icon { color: @category-psychologist; }
+    &--nutritionist .category-card__icon { color: @category-nutritionist; }
+    &--tattoo .category-card__icon { color: @category-tattoo; }
+    &--generic .category-card__icon { color: @category-generic; }
+}
+
+// --- Categories Grid ---
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: @space-lg;
+
+    .media-mobile({
+        grid-template-columns: repeat(2, 1fr);
+        gap: @space-md;
+    });
+
+    .media-tablet({
+        grid-template-columns: repeat(3, 1fr);
+    });
+}
