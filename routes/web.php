@@ -105,6 +105,7 @@ use App\Http\Controllers\Member\PromotionController;
 use App\Http\Controllers\Member\ReviewController;
 use App\Http\Controllers\Member\SeoController;
 use App\Http\Controllers\Member\ServiceController;
+use App\Http\Controllers\Member\ServiceCategoryController;
 use Modules\ListingServices\Http\Controllers\ServiceImageController;
 use Modules\Properties\Http\Controllers\Member\PropertyImageController;
 use App\Http\Controllers\Member\SessionController as MemberSessionController;
@@ -351,6 +352,20 @@ Route::post('/member/listings/{listing}/services/{service}/images', [ServiceImag
 Route::delete('/member/listings/{listing}/services/{service}/images/{image}', [ServiceImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.services.images.destroy');
+
+Route::get('/member/listings/{listing}/service-categories', [ServiceCategoryController::class, 'index'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.service-categories.index');
+Route::post('/member/listings/{listing}/service-categories', [ServiceCategoryController::class, 'store'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.service-categories.store');
+Route::put('/member/listings/{listing}/service-categories/{category}', [ServiceCategoryController::class, 'update'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.service-categories.update');
+Route::delete('/member/listings/{listing}/service-categories/{category}', [ServiceCategoryController::class, 'destroy'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.service-categories.destroy');
+
 Route::post('/member/listings/{listing}/properties/{property}/images', [PropertyImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.properties.images.store');

@@ -70,7 +70,7 @@
                       <span v-else class="text-muted">—</span>
                     </td>
                     <td><i :class="feature.icon || 'bi bi-check'"></i></td>
-                    <td>{{ feature.businesses_count || 0 }}</td>
+                    <td>{{ feature.listing_features_count || 0 }}</td>
                     <td>
                       <span v-if="feature.is_active" class="badge bg-success">Activo</span>
                       <span v-else class="badge bg-secondary">Inactivo</span>

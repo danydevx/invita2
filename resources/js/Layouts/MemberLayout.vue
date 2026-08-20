@@ -21,10 +21,6 @@
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
           </Link>
-          <Link href="/member/account" class="sidebar-link" :class="{ active: isActive('/member/account') }">
-            <i class="bi bi-wallet2"></i>
-            <span>Cuenta</span>
-          </Link>
         </div>
 
         <div class="sidebar-section">
@@ -133,6 +129,35 @@
               <a
                 href="#"
                 class="sidebar-link"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/services`) || isActive(`/member/listings/${primaryBusiness.id}/service-categories`) }"
+                @click.prevent="servicesSubmenuOpen = !servicesSubmenuOpen"
+              >
+                <i class="bi bi-briefcase"></i>
+                <span>Servicios</span>
+                <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': servicesSubmenuOpen }"></i>
+              </a>
+              <div v-show="servicesSubmenuOpen" class="sidebar-submenu">
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/services`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/services`) }"
+                >
+                  <i class="bi bi-list"></i>
+                  <span>Lista</span>
+                </Link>
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/service-categories`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/service-categories`) }"
+                >
+                  <i class="bi bi-folder"></i>
+                  <span>Categorías</span>
+                </Link>
+              </div>
+
+              <a
+                href="#"
+                class="sidebar-link"
                 :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) || isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
                 @click.prevent="menuSubmenuOpen = !menuSubmenuOpen"
               >
@@ -205,6 +230,10 @@
 
         <div class="sidebar-section">
           <div class="sidebar-section-title">Cuenta</div>
+          <Link href="/member/account" class="sidebar-link" :class="{ active: isActive('/member/account') }">
+            <i class="bi bi-wallet2"></i>
+            <span>Detalles</span>
+          </Link>
           <Link href="/member/profile" class="sidebar-link" :class="{ active: isActive('/member/profile') }">
             <i class="bi bi-person"></i>
             <span>Perfil</span>
@@ -484,6 +513,7 @@ const openBusiness = ref(null)
 const teamSubmenuOpen = ref(false)
 const productsSubmenuOpen = ref(false)
 const menuSubmenuOpen = ref(false)
+const servicesSubmenuOpen = ref(false)
 
 const checkAndOpenSubmenu = (path) => {
   if (!primaryBusiness.value) return
@@ -500,6 +530,10 @@ const checkAndOpenSubmenu = (path) => {
   if (path.startsWith(`/member/listings/${bizId}/menu-products`) ||
       path.startsWith(`/member/listings/${bizId}/menu-categories`)) {
     menuSubmenuOpen.value = true
+  }
+  if (path.startsWith(`/member/listings/${bizId}/services`) ||
+      path.startsWith(`/member/listings/${bizId}/service-categories`)) {
+    servicesSubmenuOpen.value = true
   }
 }
 
@@ -540,7 +574,7 @@ const hasRealListing = computed(() => {
 })
 
 const primaryBusinessModules = computed(() => {
-  const excludeKeys = ['team_members', 'packages', 'products', 'restaurant_menu']
+  const excludeKeys = ['team_members', 'packages', 'products', 'restaurant_menu', 'services']
   return (primaryBusiness.value?.modules || []).filter(m => !excludeKeys.includes(m.key))
 })
 
@@ -642,9 +676,12 @@ const alertClass = (type, priority) => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
 .member-layout {
   display: flex;
   min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .sidebar {

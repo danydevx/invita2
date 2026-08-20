@@ -40,7 +40,7 @@ class TaskController extends Controller
             ]);
 
         return Inertia::render('Member/Tasks/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

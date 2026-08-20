@@ -54,6 +54,16 @@
               />
             </div>
 
+            <div class="col-12 col-md-6">
+              <FieldSelect
+                id="service-category"
+                label="Categoria"
+                v-model="form.category_id"
+                :options="categoryOptions"
+                :formError="errors.category_id"
+              />
+            </div>
+
             <div class="col-12 col-md-3">
               <FieldNumber
                 id="service-duration"
@@ -105,7 +115,7 @@
               <FieldPhone
                 id="service-whatsapp"
                 label="WhatsApp"
-                placeholder="+54 9 11 1234-5678"
+                placeholder="55 1234 5678"
                 v-model="form.whatsapp_contact"
                 :formError="errors.whatsapp_contact"
               />
@@ -179,6 +189,7 @@ import FieldImage from '@/Components/Fields/FieldImage.vue'
 const props = defineProps({
   listing: { type: Object, required: true },
   locations: { type: Array, default: () => [] },
+  categories: { type: Array, default: () => [] },
 })
 
 const page = usePage()
@@ -187,6 +198,11 @@ const listing = computed(() => page.props.listing)
 const locationOptions = computed(() => [
   { value: '', label: 'Todas las ubicaciones' },
   ...props.locations.map(l => ({ value: l.id, label: l.name }))
+])
+
+const categoryOptions = computed(() => [
+  { value: '', label: 'Sin categoria' },
+  ...props.categories.map(c => ({ value: c.id, label: c.name }))
 ])
 
 const mainImage = ref(null)
@@ -205,6 +221,7 @@ const form = reactive({
   is_active: true,
   sort_order: 0,
   business_location_id: '',
+  category_id: '',
 })
 
 const errors = reactive({

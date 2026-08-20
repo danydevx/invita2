@@ -13,6 +13,7 @@ class ListingService extends Model
 
     protected $fillable = [
         'listing_id',
+        'category_id',
         'business_location_id',
         'name',
         'slug',
@@ -41,6 +42,11 @@ class ListingService extends Model
     public function listing(): BelongsTo
     {
         return $this->belongsTo(\Modules\Listings\Models\Listing::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ListingServiceCategory::class, 'category_id');
     }
 
     public function location(): BelongsTo

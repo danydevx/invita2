@@ -56,7 +56,7 @@ class Feature extends Model
     public function locations(): HasManyThrough
     {
         return $this->hasManyThrough(
-            BusinessLocation::class,
+            ListingLocation::class,
             ListingFeature::class,
             'feature_id',
             'id',

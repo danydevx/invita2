@@ -35,7 +35,7 @@ class ListingFeature extends Model
 
     public function location(): BelongsTo
     {
-        return $this->belongsTo(BusinessLocation::class, 'location_id');
+        return $this->belongsTo(ListingLocation::class, 'location_id');
     }
 
     public function isForEntireBusiness(): bool

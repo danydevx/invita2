@@ -6,6 +6,7 @@ use Modules\ListingFeatures\Http\Controllers\Member\FeatureController;
 Route::middleware(['auth', 'verified'])->prefix('member/listings/{listing}')->name('member.listings.')->group(function () {
     Route::get('/features', [FeatureController::class, 'index'])->name('features.index');
     Route::post('/features', [FeatureController::class, 'store'])->name('features.store');
+    Route::post('/features/import', [FeatureController::class, 'importBulk'])->name('features.import-bulk');
     Route::post('/features/import/{feature}', [FeatureController::class, 'import'])->name('features.import');
     Route::put('/features/{feature}', [FeatureController::class, 'update'])->name('features.update');
     Route::delete('/features/{feature}', [FeatureController::class, 'destroy'])->name('features.destroy');

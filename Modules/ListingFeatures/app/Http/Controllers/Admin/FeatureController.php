@@ -17,6 +17,7 @@ class FeatureController extends Controller
         $this->authorize('viewAnyAdmin', Feature::class);
 
         $query = Feature::with('category')
+            ->withCount('listingFeatures')
             ->whereNull('listing_id')
             ->whereNull('source_feature_id');
 

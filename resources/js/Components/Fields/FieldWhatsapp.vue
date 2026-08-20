@@ -96,7 +96,7 @@ export default {
   computed: {
     selectedCountry: {
       get() {
-        return this.countryValue || '+1'
+        return this.countryValue || '+52'
       },
       set(val) {
         this.$emit('update:countryValue', val)

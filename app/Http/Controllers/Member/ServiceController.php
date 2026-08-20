@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
 use Modules\ListingLocations\Models\ListingLocation;
 use Modules\ListingServices\Models\ListingService;
+use Modules\ListingServices\Models\ListingServiceCategory;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
@@ -79,6 +80,7 @@ class ServiceController extends Controller
         $this->authorize('create', [ListingService::class, $business]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingServiceCategory::where('listing_id', $business->id)->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Member/Services/Create', [
             'listing' => [
@@ -86,6 +88,7 @@ class ServiceController extends Controller
                 'name' => $business->name,
             ],
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -106,6 +109,7 @@ class ServiceController extends Controller
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_service_categories,id'],
         ]);
 
         $data['listing_id'] = $business->id;
@@ -114,6 +118,10 @@ class ServiceController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('services', 'public');
             $data['image'] = $path;
+        }
+
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
         }
 
         $service = $business->services()->create($data);
@@ -134,6 +142,7 @@ class ServiceController extends Controller
         $this->authorize('update', [ListingService::class, $service]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingServiceCategory::where('listing_id', $business->id)->where('is_active', true)->orderBy('name')->get(['id', 'name']);
         $serviceImages = $service->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
 
         return Inertia::render('Member/Services/Edit', [
@@ -156,8 +165,10 @@ class ServiceController extends Controller
                 'is_active' => $service->is_active,
                 'sort_order' => $service->sort_order,
                 'business_location_id' => $service->business_location_id,
+                'category_id' => $service->category_id,
             ],
             'locations' => $locations,
+            'categories' => $categories,
             'serviceImages' => $serviceImages->map(fn($img) => [
                 'id' => $img->id,
                 'url' => $img->path ? "/storage/{$img->path}" : null,
@@ -184,6 +195,7 @@ class ServiceController extends Controller
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_service_categories,id'],
         ]);
 
         if (isset($data['name'])) {
@@ -195,6 +207,10 @@ class ServiceController extends Controller
             $data['image'] = $path;
         } else {
             unset($data['image']);
+        }
+
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
         }
 
         $service->update($data);

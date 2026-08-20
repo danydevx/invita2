@@ -111,7 +111,7 @@ class FeatureController extends Controller
         $featureCount = ListingFeature::where('listing_id', $business->id)->count();
 
         return Inertia::render('Member/Features/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
