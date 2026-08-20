@@ -5,7 +5,7 @@ namespace Modules\Orders\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Orders\Enums\OrderType;
 use Modules\Orders\Enums\ProductType;
 use Modules\Orders\Models\Order;
@@ -19,7 +19,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'business_id' => 'required|exists:businesses,id',
+            'listing_id' => 'required|exists:businesses,id',
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'nullable|email|max:255',
             'customer_phone' => 'required|string|max:20',
@@ -43,7 +43,7 @@ class OrderController extends Controller
             'pickup_time' => 'nullable|string',
         ]);
 
-        $business = Business::find($validated['business_id']);
+        $business = Listing::find($validated['listing_id']);
 
         $setting = OrderSetting::getForBusiness($business->id);
         if (!$setting || !$setting->is_active) {
@@ -83,7 +83,7 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'] ?? null,
             'customer_phone' => $validated['customer_phone'],

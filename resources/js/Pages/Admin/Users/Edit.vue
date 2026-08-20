@@ -2,7 +2,13 @@
   <AdminLayout>
     <Head title="Editar usuario" />
 
-    <PageHeader :title="'Editar usuario'" :breadcrumbs="breadcrumbs" backHref="/admin/users" />
+    <PageHeader :title="'Editar usuario'" :breadcrumbs="breadcrumbs" backHref="/admin/users">
+      <template #actions>
+        <Link :href="`/admin/users/${user.id}/subscriptions`" class="btn btn-outline-secondary">
+          Suscripcion
+        </Link>
+      </template>
+    </PageHeader>
 
     <div class="card border-0 shadow-sm">
       <div class="card-body">
@@ -98,83 +104,6 @@
             </div>
           </div>
 
-          <div class="col-12">
-            <div class="card border rounded-3">
-              <div class="card-body">
-                <h3 class="h6 mb-3">Suscripcion</h3>
-                <div class="row g-3">
-                  <div class="col-12 col-md-6">
-                    <label class="form-label">Plan</label>
-                    <select v-model="form.subscription.plan_id" class="form-select">
-                      <option value="">Sin plan</option>
-                      <option v-for="plan in plans" :key="plan.id" :value="plan.id">
-                        {{ plan.label }}
-                      </option>
-                    </select>
-                    <div v-if="form.errors['subscription.plan_id']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.plan_id'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-6">
-                    <label class="form-label">Estado</label>
-                    <select v-model="form.subscription.status" class="form-select">
-                      <option value="">Selecciona</option>
-                      <option value="pending">Pendiente</option>
-                      <option value="trial">Trial</option>
-                      <option value="active">Activa</option>
-                      <option value="expired">Vencida</option>
-                      <option value="canceled">Cancelada</option>
-                    </select>
-                    <div v-if="form.errors['subscription.status']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.status'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <label class="form-label">Inicio</label>
-                    <input v-model="form.subscription.starts_at" type="date" class="form-control" />
-                    <div v-if="form.errors['subscription.starts_at']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.starts_at'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <label class="form-label">Fin</label>
-                    <input v-model="form.subscription.ends_at" type="date" class="form-control" />
-                    <div v-if="form.errors['subscription.ends_at']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.ends_at'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <label class="form-label">Trial termina</label>
-                    <input v-model="form.subscription.trial_ends_at" type="date" class="form-control" />
-                    <div v-if="form.errors['subscription.trial_ends_at']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.trial_ends_at'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <label class="form-label">Precio</label>
-                    <input v-model="form.subscription.price" type="number" class="form-control" min="0" step="0.01" />
-                    <div v-if="form.errors['subscription.price']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.price'] }}
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <label class="form-label">Periodo</label>
-                    <input v-model="form.subscription.billing_period" type="text" class="form-control" />
-                    <div v-if="form.errors['subscription.billing_period']" class="text-danger small mt-1">
-                      {{ form.errors['subscription.billing_period'] }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="col-12 d-flex gap-2">
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Actualizando...' : 'Actualizar' }}
@@ -211,14 +140,6 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  plans: {
-    type: Array,
-    default: () => [],
-  },
-  subscription: {
-    type: Object,
-    default: null,
-  },
 })
 
 const visibleRoleIds = new Set(props.roles.map((role) => role.id))
@@ -230,15 +151,6 @@ const form = useForm({
   password_confirmation: '',
   roles: props.userRoles.filter((roleId) => visibleRoleIds.has(roleId)),
   is_active: props.user.is_active ?? true,
-  subscription: {
-    plan_id: props.subscription?.plan_id ?? '',
-    status: props.subscription?.status ?? '',
-    starts_at: props.subscription?.starts_at ?? '',
-    ends_at: props.subscription?.ends_at ?? '',
-    trial_ends_at: props.subscription?.trial_ends_at ?? '',
-    price: props.subscription?.price ?? '',
-    billing_period: props.subscription?.billing_period ?? '',
-  },
 })
 
 const breadcrumbs = [

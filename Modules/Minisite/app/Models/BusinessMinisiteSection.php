@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessMinisiteSection extends Model
 {
+
+    protected $table = 'listing_minisite_sections';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'section_type',
         'section_key',
         'title',
@@ -31,7 +34,7 @@ class BusinessMinisiteSection extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public static function getSectionTypes(): array

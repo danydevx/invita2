@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_location_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('slug');
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['business_id', 'slug']);
-            $table->index('business_id');
+            $table->unique(['listing_id', 'slug']);
+            $table->index('listing_id');
             $table->index('business_location_id');
         });
     }

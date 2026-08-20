@@ -9,7 +9,7 @@ use App\Services\SystemAnnouncementService;
 use App\Services\TemplateRenderService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -92,7 +92,7 @@ class HandleInertiaRequests extends Middleware
 
     private function buildBusinessMenu($user, array $planModuleKeys = [], $moduleVisibility = null): array
     {
-        $businesses = Business::where('user_id', $user->id)
+        $businesses = Listing::where('user_id', $user->id)
             ->with(['modules.moduleDefinition', 'industry'])
             ->get()
             ->map(fn ($biz) => [
@@ -109,7 +109,7 @@ class HandleInertiaRequests extends Middleware
                     ->map(fn ($m) => [
                         'key' => $m->module_key,
                         'title' => $m->moduleDefinition->menu_title,
-                        'url' => '/member/businesses/'.$biz->id.'/'.$this->getModulePath($m->module_key),
+                        'url' => '/member/listings/'.$biz->id.'/'.$this->getModulePath($m->module_key),
                     ])->values(),
             ])
             ->filter(fn ($biz) => count($biz['modules']) > 0)

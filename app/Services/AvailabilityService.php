@@ -3,14 +3,14 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Appointments\Models\BusinessAvailability;
 use Modules\Appointments\Models\BusinessAvailabilityException;
 use Modules\Appointments\Models\BusinessAppointment;
 
 class AvailabilityService
 {
-    public function isDateAvailable(Business $business, string $date): bool
+    public function isDateAvailable(Listing $business, string $date): bool
     {
         $carbon = Carbon::parse($date);
 
@@ -34,7 +34,7 @@ class AvailabilityService
         return (bool) $schedule->is_available;
     }
 
-    public function getTimeRange(Business $business, string $date): ?array
+    public function getTimeRange(Listing $business, string $date): ?array
     {
         $carbon = Carbon::parse($date);
 
@@ -68,7 +68,7 @@ class AvailabilityService
     }
 
     public function isSlotAvailable(
-        Business $business,
+        Listing $business,
         string $date,
         string $startTime,
         ?int $excludeAppointmentId = null,
@@ -138,7 +138,7 @@ class AvailabilityService
     }
 
     public function getAvailableSlotsForDate(
-        Business $business,
+        Listing $business,
         string $date,
         int $serviceDurationMinutes = 30
     ): array {
@@ -206,7 +206,7 @@ class AvailabilityService
         return $slots;
     }
 
-    public function getOccupancyForDate(Business $business, string $date): int
+    public function getOccupancyForDate(Listing $business, string $date): int
     {
         return $business->appointments()
             ->where('appointment_date', $date)

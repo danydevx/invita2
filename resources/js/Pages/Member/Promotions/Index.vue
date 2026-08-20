@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/promotions/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/promotions/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Promocion
         </Link>
@@ -20,7 +20,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/promotions/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/promotions/bulk-delete`"
           item-name="promociones"
           @deleted="onBulkDeleted"
         />
@@ -29,11 +29,11 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/promotions`"
+      :endpoint="`/member/listings/${business?.id}/promotions`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/promotions/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/promotions/reorder`"
       search-placeholder="Buscar promociones..."
       empty-title="No hay promociones"
       empty-text="Comienza creando tu primera promocion."
@@ -91,7 +91,7 @@
           >
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/businesses/${business?.id}/promotions/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/promotions/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button
@@ -128,7 +128,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Promociones', active: true },
       ]
     }
@@ -181,7 +181,7 @@ const isExpired = (date) => {
 
 const deletePromotion = (row) => {
   if (!confirm(`Eliminar la promocion "${row.name}"?`)) return
-  router.delete(`/member/businesses/${business.value.id}/promotions/${row.id}`, {
+  router.delete(`/member/listings/${business.value.id}/promotions/${row.id}`, {
     preserveScroll: true,
   })
 }
@@ -189,7 +189,7 @@ const deletePromotion = (row) => {
 const clonePromotion = (row) => {
   if (!confirm(`Clonar la promocion "${row.name}"?`)) return
   cloning.value = row.id
-  router.post(`/member/businesses/${business.value.id}/promotions/${row.id}/clone`, {}, {
+  router.post(`/member/listings/${business.value.id}/promotions/${row.id}/clone`, {}, {
     preserveScroll: true,
     onFinish: () => {
       cloning.value = null
@@ -202,7 +202,7 @@ const deleteSelected = () => {
 
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} promocion${count > 1 ? 'es' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
-    router.post(`/member/businesses/${business.value.id}/promotions/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/promotions/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

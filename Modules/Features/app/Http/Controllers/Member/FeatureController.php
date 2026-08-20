@@ -5,7 +5,7 @@ namespace Modules\Features\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Features\Models\Feature;
 use Modules\Features\Models\FeatureCategory;
 use Modules\Features\Models\BusinessFeature;
@@ -48,12 +48,12 @@ class FeatureController extends Controller
                 ];
             });
 
-        $importedSourceIds = Feature::where('business_id', $business->id)
+        $importedSourceIds = Feature::where('listing_id', $business->id)
             ->whereNotNull('source_feature_id')
             ->pluck('source_feature_id')
             ->toArray();
 
-        $availableFeatures = Feature::whereNull('business_id')
+        $availableFeatures = Feature::whereNull('listing_id')
             ->whereNull('source_feature_id')
             ->where('is_active', true)
             ->whereNotIn('id', $importedSourceIds)
@@ -76,14 +76,14 @@ class FeatureController extends Controller
                 ];
             });
 
-        $customFeatures = Feature::where('business_id', $business->id)
+        $customFeatures = Feature::where('listing_id', $business->id)
             ->whereNull('source_feature_id')
-            ->whereNotNull('business_id')
+            ->whereNotNull('listing_id')
             ->orderBy('sort_order')
             ->get();
 
         $businessFeaturesPaginated = BusinessFeature::with('feature', 'location')
-            ->where('business_id', $business->id)
+            ->where('listing_id', $business->id)
             ->orderBy('sort_order')
             ->paginate(30);
 
@@ -108,7 +108,7 @@ class FeatureController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $featureCount = BusinessFeature::where('business_id', $business->id)->count();
+        $featureCount = BusinessFeature::where('listing_id', $business->id)->count();
 
         return Inertia::render('Member/Features/Index', [
             'business' => [
@@ -135,7 +135,7 @@ class FeatureController extends Controller
     {
         $this->authorize('createMember', [Feature::class, $business]);
 
-        $currentCount = BusinessFeature::where('business_id', $business->id)->count();
+        $currentCount = BusinessFeature::where('listing_id', $business->id)->count();
         if ($currentCount >= self::MAX_FEATURES_PER_BUSINESS) {
             return redirect()->back()->with('error', 'Has alcanzado el limite de ' . self::MAX_FEATURES_PER_BUSINESS . ' features.');
         }
@@ -152,7 +152,7 @@ class FeatureController extends Controller
         ]);
 
         $feature = Feature::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'icon' => $validated['icon'] ?? null,
@@ -171,7 +171,7 @@ class FeatureController extends Controller
             : null;
 
         BusinessFeature::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'feature_id' => $feature->id,
             'location_id' => $locationId,
             'is_active' => $feature->is_active,
@@ -189,7 +189,7 @@ class FeatureController extends Controller
             'feature_ids.*' => ['required', 'exists:features,id'],
         ]);
 
-        $currentCount = BusinessFeature::where('business_id', $business->id)->count();
+        $currentCount = BusinessFeature::where('listing_id', $business->id)->count();
         $remainingSlots = self::MAX_FEATURES_PER_BUSINESS - $currentCount;
 
         if ($remainingSlots <= 0) {
@@ -200,7 +200,7 @@ class FeatureController extends Controller
         $importedCount = 0;
         $errors = [];
 
-        $importedSourceIds = Feature::where('business_id', $business->id)
+        $importedSourceIds = Feature::where('listing_id', $business->id)
             ->whereNotNull('source_feature_id')
             ->pluck('source_feature_id')
             ->toArray();
@@ -217,7 +217,7 @@ class FeatureController extends Controller
             }
 
             $clone = Feature::create([
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'source_feature_id' => $sourceFeature->id,
                 'title' => $sourceFeature->title,
                 'description' => $sourceFeature->description,
@@ -228,7 +228,7 @@ class FeatureController extends Controller
             ]);
 
             BusinessFeature::create([
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'feature_id' => $clone->id,
                 'location_id' => null,
                 'is_active' => true,
@@ -252,12 +252,12 @@ class FeatureController extends Controller
             return redirect()->back()->with('error', 'Solo puedes importar features predefinidas.');
         }
 
-        $currentCount = BusinessFeature::where('business_id', $business->id)->count();
+        $currentCount = BusinessFeature::where('listing_id', $business->id)->count();
         if ($currentCount >= self::MAX_FEATURES_PER_BUSINESS) {
             return redirect()->back()->with('error', 'Has alcanzado el limite de ' . self::MAX_FEATURES_PER_BUSINESS . ' features.');
         }
 
-        $existingClone = Feature::where('business_id', $business->id)
+        $existingClone = Feature::where('listing_id', $business->id)
             ->where('source_feature_id', $feature->id)
             ->first();
 
@@ -266,7 +266,7 @@ class FeatureController extends Controller
         }
 
         $clone = Feature::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'source_feature_id' => $feature->id,
             'title' => $feature->title,
             'description' => $feature->description,
@@ -276,10 +276,10 @@ class FeatureController extends Controller
             'is_active' => true,
         ]);
 
-        $maxSortOrder = BusinessFeature::where('business_id', $business->id)->max('sort_order') ?? 0;
+        $maxSortOrder = BusinessFeature::where('listing_id', $business->id)->max('sort_order') ?? 0;
 
         BusinessFeature::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'feature_id' => $clone->id,
             'location_id' => null,
             'is_active' => true,
@@ -351,7 +351,7 @@ class FeatureController extends Controller
             'is_active' => ['boolean'],
         ]);
 
-        $businessFeature = BusinessFeature::where('business_id', $business->id)
+        $businessFeature = BusinessFeature::where('listing_id', $business->id)
             ->where('feature_id', $validated['feature_id'])
             ->first();
 
@@ -374,7 +374,7 @@ class FeatureController extends Controller
             abort(403, 'No tienes permiso para remover esta asignacion.');
         }
 
-        $businessFeature = BusinessFeature::where('business_id', $business->id)
+        $businessFeature = BusinessFeature::where('listing_id', $business->id)
             ->where('id', $assignmentId)
             ->first();
 
@@ -408,7 +408,7 @@ class FeatureController extends Controller
 
         foreach ($validated['order'] as $index => $id) {
             BusinessFeature::where('id', $id)
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->update(['sort_order' => $index]);
         }
 

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 Route::prefix('admin/businesses/{business}')->middleware(['auth', 'role:superadmin|admin'])->group(function () {
     Route::resource('menu-categories', \App\Http\Controllers\Admin\MenuCategoryController::class)->names([

@@ -4,15 +4,15 @@ namespace Modules\Features\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 
 class BusinessFeature extends Model
 {
-    protected $table = 'business_features';
+    protected $table = 'listing_features';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'feature_id',
         'location_id',
         'is_active',
@@ -23,9 +23,9 @@ class BusinessFeature extends Model
         'is_active' => 'boolean',
     ];
 
-    public function business(): BelongsTo
+    public function listing(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function feature(): BelongsTo

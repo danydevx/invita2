@@ -7,12 +7,12 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Gallery\Models\BusinessGallery;
 
 class GalleryGroupController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessGallery::class, $business]);
 
@@ -41,7 +41,7 @@ class GalleryGroupController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessGallery::class, $business]);
 
@@ -53,7 +53,7 @@ class GalleryGroupController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessGallery::class, $business]);
 
@@ -67,7 +67,7 @@ class GalleryGroupController extends Controller
 
         $gallery = DB::transaction(function () use ($business, $data) {
             if (! empty($data['is_primary'])) {
-                BusinessGallery::where('business_id', $business->id)->update(['is_primary' => false]);
+                BusinessGallery::where('listing_id', $business->id)->update(['is_primary' => false]);
             }
 
             return $business->galleries()->create([
@@ -90,9 +90,9 @@ class GalleryGroupController extends Controller
             ->with('success', 'Galería creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessGallery $gallery)
+    public function edit(Request $request, Listing $business, BusinessGallery $gallery)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessGallery::class, $gallery]);
 
         return Inertia::render('Member/Galleries/Edit', [
@@ -111,9 +111,9 @@ class GalleryGroupController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessGallery::class, $gallery]);
 
         $data = $request->validate([
@@ -126,7 +126,7 @@ class GalleryGroupController extends Controller
 
         DB::transaction(function () use ($business, $gallery, $data) {
             if (! empty($data['is_primary'])) {
-                BusinessGallery::where('business_id', $business->id)
+                BusinessGallery::where('listing_id', $business->id)
                     ->where('id', '!=', $gallery->id)
                     ->update(['is_primary' => false]);
             }
@@ -151,9 +151,9 @@ class GalleryGroupController extends Controller
             ->with('success', 'Galería actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
         $this->authorize('delete', [BusinessGallery::class, $gallery]);
 
         $activity->log('gallery_deleted', [
@@ -168,13 +168,13 @@ class GalleryGroupController extends Controller
             ->with('success', 'Galería eliminada correctamente.');
     }
 
-    public function setPrimary(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function setPrimary(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessGallery::class, $gallery]);
 
         DB::transaction(function () use ($business, $gallery) {
-            BusinessGallery::where('business_id', $business->id)
+            BusinessGallery::where('listing_id', $business->id)
                 ->where('id', '!=', $gallery->id)
                 ->update(['is_primary' => false]);
 

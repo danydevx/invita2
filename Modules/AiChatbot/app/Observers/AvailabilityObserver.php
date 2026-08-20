@@ -11,17 +11,17 @@ class AvailabilityObserver
     public function created($model): void
     {
         if (!$model->is_active) return;
-        $this->reindexAppointments($model->business_id);
+        $this->reindexAppointments($model->listing_id);
     }
 
     public function updated($model): void
     {
-        $this->reindexAppointments($model->business_id);
+        $this->reindexAppointments($model->listing_id);
     }
 
     public function deleted($model): void
     {
-        $this->reindexAppointments($model->business_id);
+        $this->reindexAppointments($model->listing_id);
     }
 
     private function reindexAppointments(int $businessId): void

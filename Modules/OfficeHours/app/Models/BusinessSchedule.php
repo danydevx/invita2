@@ -4,14 +4,14 @@ namespace Modules\OfficeHours\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessSchedule extends Model
 {
-    protected $table = 'business_schedules';
+    protected $table = 'listing_schedules';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_location_id',
         'name',
         'days_of_week',
@@ -49,7 +49,7 @@ class BusinessSchedule extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function location(): BelongsTo

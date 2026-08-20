@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Cliente"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/clients`"
+      :backHref="`/member/listings/${business.id}/clients`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -144,7 +144,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/businesses/${business.id}/clients`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business.id}/clients`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -182,9 +182,9 @@ const business = computed(() => page.props.business)
 const client = computed(() => page.props.client)
 
 const breadcrumbs = computed(() => [
-  { label: 'Mis Negocios', href: '/member/businesses' },
-  { label: business.value.name, href: `/member/businesses/${business.value.id}/edit` },
-  { label: 'Clientes', href: `/member/businesses/${business.value.id}/clients` },
+  { label: 'Mis Negocios', href: '/member/listings' },
+  { label: business.value.name, href: `/member/listings/${business.value.id}/edit` },
+  { label: 'Clientes', href: `/member/listings/${business.value.id}/clients` },
   { label: client.value.customer_name, active: true },
 ])
 
@@ -277,7 +277,7 @@ const submit = () => {
   form.state_code = locationData.value.state_code
   form.municipality = locationData.value.municipality
 
-  router.put(`/member/businesses/${business.value.id}/clients/${client.value.id}`, form, {
+  router.put(`/member/listings/${business.value.id}/clients/${client.value.id}`, form, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

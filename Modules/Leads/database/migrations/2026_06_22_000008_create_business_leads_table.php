@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_location_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamps();
 
-            $table->index('business_id');
+            $table->index('listing_id');
             $table->index('user_id');
             $table->index('status');
             $table->index('email');

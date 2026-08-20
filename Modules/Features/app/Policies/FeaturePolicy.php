@@ -4,7 +4,7 @@ namespace Modules\Features\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Modules\Features\Models\Feature;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class FeaturePolicy
 {
@@ -46,7 +46,7 @@ class FeaturePolicy
 
     public function viewMember($user, Feature $feature, Business $business): bool
     {
-        return $feature->business_id === $business->id || $feature->isPredefined();
+        return $feature->listing_id === $business->id || $feature->isPredefined();
     }
 
     public function createMember($user, Business $business): bool
@@ -56,7 +56,7 @@ class FeaturePolicy
 
     public function updateMember($user, Feature $feature, Business $business): bool
     {
-        if ($feature->business_id !== $business->id) {
+        if ($feature->listing_id !== $business->id) {
             return false;
         }
 
@@ -69,7 +69,7 @@ class FeaturePolicy
 
     public function deleteMember($user, Feature $feature, Business $business): bool
     {
-        if ($feature->business_id !== $business->id) {
+        if ($feature->listing_id !== $business->id) {
             return false;
         }
 

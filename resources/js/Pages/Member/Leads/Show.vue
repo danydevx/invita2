@@ -5,7 +5,7 @@
     <PageHeader
       title="Detalle del Contacto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/leads`"
+      :backHref="`/member/listings/${business.id}/leads`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -55,7 +55,7 @@
         </div>
 
         <div class="mt-4 d-flex gap-2">
-          <Link :href="`/member/businesses/${business.id}/leads/${lead.id}/edit`" class="btn btn-primary">
+          <Link :href="`/member/listings/${business.id}/leads/${lead.id}/edit`" class="btn btn-primary">
             <i class="bi bi-pencil me-1"></i>Editar
           </Link>
           <button
@@ -90,8 +90,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Leads', href: `/member/businesses/${biz.id}/leads` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Leads', href: `/member/listings/${biz.id}/leads` },
         { label: lead.value.name, active: true },
       ]
     }
@@ -124,7 +124,7 @@ const statusClass = (status) => {
 
 const deleteLead = () => {
   if (confirm('¿Estás seguro de eliminar este contacto?')) {
-    router.delete(`/member/businesses/${business.value.id}/leads/${lead.value.id}`, {
+    router.delete(`/member/listings/${business.value.id}/leads/${lead.value.id}`, {
       preserveScroll: true,
     })
   }

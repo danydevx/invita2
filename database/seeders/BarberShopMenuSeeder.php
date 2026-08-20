@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuCategory;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 use Modules\RestaurantMenu\Entities\MenuProductVariant;
@@ -13,7 +13,7 @@ class BarberShopMenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $business = Business::find(1);
+        $business = Listing::find(1);
 
         if (!$business) {
             $this->command->error('Business ID 1 not found');
@@ -71,7 +71,7 @@ class BarberShopMenuSeeder extends Seeder
             unset($catData['children'], $catData['image']);
 
             $parentCategory = MenuCategory::create([
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'title' => $catData['title'],
                 'description' => $catData['description'] ?? null,
                 'image' => $catImage,
@@ -84,7 +84,7 @@ class BarberShopMenuSeeder extends Seeder
                 unset($childData['image']);
 
                 $category = MenuCategory::create([
-                    'business_id' => $business->id,
+                    'listing_id' => $business->id,
                     'parent_id' => $parentCategory->id,
                     'title' => $childData['title'],
                     'description' => $childData['description'] ?? null,
@@ -96,7 +96,7 @@ class BarberShopMenuSeeder extends Seeder
                 $products = $this->getProductsForCategory($childData['title']);
                 foreach ($products as $prodIndex => $prodData) {
                     $product = MenuProduct::create([
-                        'business_id' => $business->id,
+                        'listing_id' => $business->id,
                         'category_id' => $category->id,
                         'title' => $prodData['title'],
                         'description' => $prodData['description'] ?? null,

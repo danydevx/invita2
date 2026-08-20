@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\BusinessModules\Models\BusinessModule;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessModulePolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

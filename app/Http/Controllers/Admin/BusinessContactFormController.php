@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessContactFormController extends Controller
 {
-    public function submissions(Request $request, Business $business)
+    public function submissions(Request $request, Listing $business)
     {
         $submissions = $business->leads()
             ->where('source', 'website')

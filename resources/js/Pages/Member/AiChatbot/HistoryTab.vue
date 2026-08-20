@@ -122,7 +122,7 @@ const detailLoading = ref(false)
 
 const loadConversations = () => {
   loading.value = true
-  fetch(`/member/businesses/${props.business.id}/ai-chatbot/history-json`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/history-json`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -145,7 +145,7 @@ const viewConversation = (conv) => {
   detailMessages.value = []
   detailLoading.value = true
 
-  fetch(`/member/businesses/${props.business.id}/ai-chatbot/history-json/${conv.session_id}`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/history-json/${conv.session_id}`, {
     method: 'GET',
     credentials: 'include',
     headers: {

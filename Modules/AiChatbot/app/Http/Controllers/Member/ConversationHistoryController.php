@@ -11,11 +11,11 @@ use Modules\AiChatbot\Models\AiMessage;
 
 class ConversationHistoryController extends Controller
 {
-    public function index(Request $request, \Modules\Businesses\Models\Business $business)
+    public function index(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $conversations = AiConversation::where('business_id', $business->id)
+        $conversations = AiConversation::where('listing_id', $business->id)
             ->orderBy('last_activity_at', 'desc')
             ->limit(100)
             ->get()
@@ -42,11 +42,11 @@ class ConversationHistoryController extends Controller
         ]);
     }
 
-    public function show(Request $request, \Modules\Businesses\Models\Business $business, $sessionId)
+    public function show(Request $request, \Modules\Listings\Models\Listing $business, $sessionId)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $conversation = AiConversation::where('business_id', $business->id)
+        $conversation = AiConversation::where('listing_id', $business->id)
             ->where('session_id', $sessionId)
             ->with('messages')
             ->firstOrFail();
@@ -93,11 +93,11 @@ class ConversationHistoryController extends Controller
         return $content;
     }
 
-    public function indexJson(Request $request, \Modules\Businesses\Models\Business $business)
+    public function indexJson(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $conversations = AiConversation::where('business_id', $business->id)
+        $conversations = AiConversation::where('listing_id', $business->id)
             ->orderBy('last_activity_at', 'desc')
             ->limit(100)
             ->get()
@@ -119,11 +119,11 @@ class ConversationHistoryController extends Controller
         return response()->json(['conversations' => $conversations]);
     }
 
-    public function showJson(Request $request, \Modules\Businesses\Models\Business $business, $sessionId)
+    public function showJson(Request $request, \Modules\Listings\Models\Listing $business, $sessionId)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $conversation = AiConversation::where('business_id', $business->id)
+        $conversation = AiConversation::where('listing_id', $business->id)
             ->where('session_id', $sessionId)
             ->with('messages')
             ->first();
@@ -158,13 +158,13 @@ class ConversationHistoryController extends Controller
         ]);
     }
 
-    public function embeddingsJson(Request $request, \Modules\Businesses\Models\Business $business)
+    public function embeddingsJson(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
         $type = $request->get('type');
 
-        $query = \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id);
+        $query = \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id);
 
         if ($type) {
             if ($type === 'restaurant_menu') {

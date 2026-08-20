@@ -5,7 +5,7 @@
     <PageHeader
       title="Nueva Propiedad"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/properties`"
+      :backHref="`/member/listings/${business?.id}/properties`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -230,7 +230,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Propiedad' }}
             </button>
-            <Link :href="`/member/businesses/${business?.id}/properties`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business?.id}/properties`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -311,8 +311,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Propiedades', href: `/member/businesses/${biz.id}/properties` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Propiedades', href: `/member/listings/${biz.id}/properties` },
         { label: 'Nueva Propiedad', active: true },
       ]
     }
@@ -353,11 +353,11 @@ if (formSchema.value?.sections) {
 }
 
 const selectType = (typeId) => {
-  window.location.href = `/member/businesses/${business.value.id}/properties/create?type=${typeId}`
+  window.location.href = `/member/listings/${business.value.id}/properties/create?type=${typeId}`
 }
 
 const changeType = () => {
-  window.location.href = `/member/businesses/${business.value.id}/properties/create`
+  window.location.href = `/member/listings/${business.value.id}/properties/create`
 }
 
 const getFieldColClass = (fieldType) => {
@@ -444,7 +444,7 @@ const submit = () => {
     formData.append('main_image', mainImageFile.value)
   }
 
-  router.post(`/member/businesses/${business.value.id}/properties`, formData, {
+  router.post(`/member/listings/${business.value.id}/properties`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

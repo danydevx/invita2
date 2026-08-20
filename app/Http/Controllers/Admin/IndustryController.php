@@ -58,7 +58,7 @@ class IndustryController extends Controller
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['boolean'],
             'module_ids' => ['array'],
-            'module_ids.*' => ['exists:business_module_definitions,id'],
+            'module_ids.*' => ['exists:listing_module_definitions,id'],
         ]);
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
@@ -110,7 +110,7 @@ class IndustryController extends Controller
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['boolean'],
             'module_ids' => ['array'],
-            'module_ids.*' => ['exists:business_module_definitions,id'],
+            'module_ids.*' => ['exists:listing_module_definitions,id'],
         ]);
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
@@ -131,9 +131,9 @@ class IndustryController extends Controller
 
     public function destroy(Industry $industry)
     {
-        if ($industry->businesses()->count() > 0) {
+        if ($industry->listings()->count() > 0) {
             return redirect()->route('admin.industries.index')
-                ->with('error', 'No se puede eliminar una industria que tiene negocios asociados.');
+                ->with('error', 'No se puede eliminar una industria que tiene listados asociados.');
         }
 
         $industry->moduleDefinitions()->detach();

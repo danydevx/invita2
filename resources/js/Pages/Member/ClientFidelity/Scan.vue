@@ -11,13 +11,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/businesses/${business?.id}/fidelity-cards`"
+        :href="`/member/listings/${business?.id}/fidelity-cards`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-credit-card me-1"></i>Tarjetas
       </Link>
       <Link
-        :href="`/member/businesses/${business?.id}/fidelity-cards/scan-view`"
+        :href="`/member/listings/${business?.id}/fidelity-cards/scan-view`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-qr-code-scan me-1"></i>Escanear
@@ -111,15 +111,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/businesses/${biz.id}/fidelity-cards` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
         { label: 'Escanear', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/businesses/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
     { label: 'Escanear', active: true },
   ]
 })
@@ -172,7 +172,7 @@ const stopScanner = async () => {
 const submitCode = () => {
   if (!form.public_code) return
 
-  form.post(`/member/businesses/${business.value.id}/fidelity-cards/scan-by-code`, {
+  form.post(`/member/listings/${business.value.id}/fidelity-cards/scan-by-code`, {
     preserveScroll: true,
     onSuccess: (page) => {
       if (page.props.lastScannedCard) {

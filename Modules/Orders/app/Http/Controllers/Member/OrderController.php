@@ -5,7 +5,7 @@ namespace Modules\Orders\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Orders\Enums\OrderStatus;
 use Modules\Orders\Models\Order;
 use Modules\Orders\Models\OrderSetting;
@@ -16,7 +16,7 @@ class OrderController extends Controller
     {
         abort_unless($business->user_id === Auth::id(), 403);
 
-        $query = Order::where('business_id', $business->id)
+        $query = Order::where('listing_id', $business->id)
             ->with(['items', 'deliveryAddress'])
             ->orderByDesc('created_at');
 
@@ -61,7 +61,7 @@ class OrderController extends Controller
     public function show(Business $business, Order $order)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($order->business_id === $business->id, 403);
+        abort_unless($order->listing_id === $business->id, 403);
 
         $order->load(['items', 'deliveryAddress', 'pickupLocation']);
 
@@ -74,7 +74,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Business $business, Order $order)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($order->business_id === $business->id, 403);
+        abort_unless($order->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'status' => ['required', 'in:' . implode(',', array_column(OrderStatus::cases(), 'value'))],
@@ -90,7 +90,7 @@ class OrderController extends Controller
         abort_unless($business->user_id === Auth::id(), 403);
 
         $setting = OrderSetting::firstOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'order_type' => 'both',
                 'delivery_radius_km' => 10,
@@ -125,7 +125,7 @@ class OrderController extends Controller
         ]);
 
         $setting = OrderSetting::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             $validated
         );
 
@@ -141,7 +141,7 @@ class OrderController extends Controller
             'ids.*' => 'exists:orders,id',
         ]);
 
-        Order::where('business_id', $business->id)
+        Order::where('listing_id', $business->id)
             ->whereIn('id', $validated['ids'])
             ->delete();
 

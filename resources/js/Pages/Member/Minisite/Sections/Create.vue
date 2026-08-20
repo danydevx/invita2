@@ -5,7 +5,7 @@
     <PageHeader
       title="Nueva Sección"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/minisite/sections`"
+      :backHref="`/member/listings/${business?.id}/minisite/sections`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -451,17 +451,17 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Minisite', href: `/member/businesses/${biz.id}/minisite` },
-        { label: 'Secciones', href: `/member/businesses/${biz.id}/minisite/sections` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Minisite', href: `/member/listings/${biz.id}/minisite` },
+        { label: 'Secciones', href: `/member/listings/${biz.id}/minisite/sections` },
         { label: 'Nueva', active: true },
       ]
     }
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Minisite', href: `/member/businesses/${business.value?.id}/minisite` },
-    { label: 'Secciones', href: `/member/businesses/${business.value?.id}/minisite/sections` },
+    { label: 'Minisite', href: `/member/listings/${business.value?.id}/minisite` },
+    { label: 'Secciones', href: `/member/listings/${business.value?.id}/minisite/sections` },
     { label: 'Nueva', active: true },
   ]
 })
@@ -552,7 +552,7 @@ const createSection = () => {
     is_active: true,
   }
 
-  router.post(`/member/businesses/${business.value.id}/minisite/sections`, data, {
+  router.post(`/member/listings/${business.value.id}/minisite/sections`, data, {
     onFinish: () => {
       sending.value = false
     },

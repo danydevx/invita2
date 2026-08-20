@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Paquete"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/packages`"
+      :backHref="`/member/listings/${business?.id}/packages`"
     />
 
     <div class="row">
@@ -184,7 +184,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/businesses/${business?.id}/packages`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${business?.id}/packages`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -225,15 +225,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Paquetes', href: `/member/businesses/${biz.id}/packages` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Paquetes', href: `/member/listings/${biz.id}/packages` },
         { label: pkg.value?.title || 'Editar', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Paquetes', href: `/member/businesses/${business.value?.id}/packages` },
+    { label: 'Paquetes', href: `/member/listings/${business.value?.id}/packages` },
     { label: pkg.value?.title || 'Editar', active: true },
   ]
 })
@@ -276,7 +276,7 @@ const removeFeature = (index) => {
 }
 
 const submit = () => {
-  form.post(`/member/businesses/${business.value.id}/packages/${pkg.value.id}`, {
+  form.post(`/member/listings/${business.value.id}/packages/${pkg.value.id}`, {
     preserveScroll: true,
   })
 }

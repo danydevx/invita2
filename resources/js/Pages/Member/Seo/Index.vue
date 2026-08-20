@@ -269,7 +269,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'SEO', active: true },
       ]
     }
@@ -345,7 +345,7 @@ const submit = () => {
     data.append('og_image', form.og_image)
   }
 
-  router.post(`/member/businesses/${business.value.id}/seo`, data, {
+  router.post(`/member/listings/${business.value.id}/seo`, data, {
     onFinish: () => {
       sending.value = false
     },

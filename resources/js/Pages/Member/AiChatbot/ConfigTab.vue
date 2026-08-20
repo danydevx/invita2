@@ -89,7 +89,7 @@
                   </option>
                 </select>
                 <small class="text-muted">
-                  <a :href="`/member/businesses/${business.id}/ai-chatbot/presets`" target="_blank">
+                  <a :href="`/member/listings/${business.id}/ai-chatbot/presets`" target="_blank">
                     Gestionar presets
                   </a>
                 </small>
@@ -814,7 +814,7 @@ const saveSettings = () => {
     formData.append('chatbot_avatar', form.chatbot_avatar_file)
   }
 
-  router.post(`/member/businesses/${props.business.id}/ai-chatbot/settings`, formData, {
+  router.post(`/member/listings/${props.business.id}/ai-chatbot/settings`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       successMessage.value = 'Configuración guardada correctamente.'

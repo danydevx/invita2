@@ -4,7 +4,7 @@ namespace Modules\ClientFidelity\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Modules\ClientFidelity\Models\ClientFidelityCard;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class ClientFidelityCardPolicy
 {
@@ -17,7 +17,7 @@ class ClientFidelityCardPolicy
 
     public function view(Business $business, ClientFidelityCard $card): bool
     {
-        return $card->business_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $business->id && $business->user_id === auth()->id();
     }
 
     public function create(Business $business): bool
@@ -27,21 +27,21 @@ class ClientFidelityCardPolicy
 
     public function update(Business $business, ClientFidelityCard $card): bool
     {
-        return $card->business_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $business->id && $business->user_id === auth()->id();
     }
 
     public function delete(Business $business, ClientFidelityCard $card): bool
     {
-        return $card->business_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $business->id && $business->user_id === auth()->id();
     }
 
     public function scan(Business $business, ClientFidelityCard $card): bool
     {
-        return $card->business_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $business->id && $business->user_id === auth()->id();
     }
 
     public function reset(Business $business, ClientFidelityCard $card): bool
     {
-        return $card->business_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $business->id && $business->user_id === auth()->id();
     }
 }

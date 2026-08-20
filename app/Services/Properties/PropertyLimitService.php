@@ -2,16 +2,16 @@
 
 namespace App\Services\Properties;
 
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use App\Models\Plan;
 use App\Models\Subscription;
 use Modules\Properties\Models\Property;
 
 class PropertyLimitService
 {
-    protected ?Business $business = null;
+    protected ?Listing $business = null;
 
-    public function forBusiness(Business $business): self
+    public function forBusiness(Listing $business): self
     {
         $service = new self();
         $service->business = $business;

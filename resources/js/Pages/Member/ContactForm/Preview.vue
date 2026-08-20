@@ -4,7 +4,7 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/member/businesses/${business?.id}/contact-forms/${form?.id}/edit`" class="text-decoration-none text-muted small">
+        <Link :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/edit`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>
           Volver al editor
         </Link>

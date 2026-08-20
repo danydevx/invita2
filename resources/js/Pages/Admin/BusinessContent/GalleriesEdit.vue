@@ -55,7 +55,7 @@
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Guardando...' : 'Guardar cambios' }}
             </button>
-            <Link :href="`/admin/businesses/${business.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/admin/listings/${business.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -82,6 +82,6 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.put(`/admin/businesses/${business.value.id}/galleries/${gallery.value.id}`)
+  form.put(`/admin/listings/${business.value.id}/galleries/${gallery.value.id}`)
 }
 </script>

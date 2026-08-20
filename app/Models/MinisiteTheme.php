@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Listings\Models\Listing;
 
 class MinisiteTheme extends Model
 {
@@ -25,12 +26,12 @@ class MinisiteTheme extends Model
         'is_active' => 'boolean',
     ];
 
-    public function businesses(): HasMany
+    public function listings(): HasMany
     {
-        return $this->hasMany(\Modules\Businesses\Models\Business::class);
+        return $this->hasMany(Listing::class);
     }
 
-    public static function getByBusinessType(string $businessType): ?self
+    public static function getByListingType(string $listingType): ?self
     {
         $mapping = [
             'barber_shop' => 'modern',
@@ -44,10 +45,15 @@ class MinisiteTheme extends Model
             'psychologist' => 'professional',
             'nutritionist' => 'professional',
             'veterinarian' => 'friendly',
+            'wedding' => 'elegant',
+            'birthday' => 'festive',
+            'baby_shower' => 'playful',
+            'corporate' => 'professional',
+            'graduation' => 'celebratory',
             'generic' => 'modern',
         ];
 
-        $slug = $mapping[$businessType] ?? 'modern';
+        $slug = $mapping[$listingType] ?? 'modern';
 
         return static::where('slug', $slug)->where('is_active', true)->first();
     }

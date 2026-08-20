@@ -6,15 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Branding\Models\BusinessBrandingSetting;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BrandingController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('updateForBusiness', [BusinessBrandingSetting::class, $business]);
 
-        $branding = BusinessBrandingSetting::where('business_id', $business->id)->first();
+        $branding = BusinessBrandingSetting::where('listing_id', $business->id)->first();
 
         return Inertia::render('Member/Branding/Index', [
             'business' => [
@@ -25,7 +25,7 @@ class BrandingController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business)
+    public function update(Request $request, Listing $business)
     {
         $this->authorize('updateForBusiness', [BusinessBrandingSetting::class, $business]);
 
@@ -49,7 +49,7 @@ class BrandingController extends Controller
         $animations = $validated['animations'] ? json_decode($validated['animations'], true) : null;
 
         $branding = BusinessBrandingSetting::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'colors' => $colors,
                 'fonts' => $fonts,

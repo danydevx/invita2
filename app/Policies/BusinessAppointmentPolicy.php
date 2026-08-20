@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessAppointmentPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -17,7 +17,7 @@ class BusinessAppointmentPolicy
         return $user->id === $business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($business->is_published && $business->is_active) {
             return true;
@@ -65,7 +65,7 @@ class BusinessAppointmentPolicy
         return $user->id === $appointment->business->user_id;
     }
 
-    public function deleteAny(User $user, Business $business): bool
+    public function deleteAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

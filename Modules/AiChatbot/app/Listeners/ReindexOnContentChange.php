@@ -11,7 +11,7 @@ class ReindexOnContentChange
 {
     public function handle(BusinessContentChanged $event): void
     {
-        $settings = BusinessAiSetting::where('business_id', $event->businessId)->first();
+        $settings = BusinessAiSetting::where('listing_id', $event->businessId)->first();
 
         if (!$settings || !$settings->is_enabled) {
             return;
@@ -32,7 +32,7 @@ class ReindexOnContentChange
             }
         } catch (\Exception $e) {
             Log::error('Auto-reindex failed', [
-                'business_id' => $event->businessId,
+                'listing_id' => $event->businessId,
                 'source_type' => $event->sourceType,
                 'source_id' => $event->sourceId,
                 'action' => $event->action,

@@ -75,7 +75,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <Link
-            :href="`/member/businesses/${business?.id}/ai-chatbot/presets`"
+            :href="`/member/listings/${business?.id}/ai-chatbot/presets`"
             class="nav-link"
           >
             <i class="bi bi-robot me-2"></i>Presets
@@ -181,7 +181,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'AI Chatbot', active: true },
       ]
     }
@@ -205,7 +205,7 @@ const refreshPage = () => {
 }
 
 const loadAnalyticsData = (period = '30days') => {
-  fetch(`/member/businesses/${business.value.id}/ai-chatbot/analytics-json?period=${period}`, {
+  fetch(`/member/listings/${business.value.id}/ai-chatbot/analytics-json?period=${period}`, {
     headers: {
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
     },

@@ -151,7 +151,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Acerca De', active: true },
       ]
     }
@@ -258,7 +258,7 @@ const submit = () => {
     data.append('remove_logo', '1')
   }
 
-  form.post(`/member/businesses/${props.business.id}/about`, {
+  form.post(`/member/listings/${props.business.id}/about`, {
     forceFormData: true,
     preserveScroll: true,
     onFinish: () => {

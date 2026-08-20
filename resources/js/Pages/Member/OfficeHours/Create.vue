@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Nuevo Horario'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/locations/${location.id}/schedules`"
+      :backHref="`/member/listings/${business.id}/locations/${location.id}/schedules`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -136,7 +136,7 @@
               {{ sending ? 'Guardando...' : 'Guardar Horario' }}
             </button>
             <Link
-              :href="`/member/businesses/${business.id}/locations/${location.id}/schedules`"
+              :href="`/member/listings/${business.id}/locations/${location.id}/schedules`"
               class="btn btn-outline-secondary"
             >
               Cancelar
@@ -193,10 +193,10 @@ const breadcrumbs = computed(() => {
   const biz = businessMenu.value.find(b => b.id === business.value.id)
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: biz?.name || '', href: `/member/businesses/${business.value.id}/edit` },
-    { label: 'Ubicaciones', href: `/member/businesses/${business.value.id}/locations` },
-    { label: location.value.name, href: `/member/businesses/${business.value.id}/locations/${location.value.id}/edit` },
-    { label: 'Horarios', href: `/member/businesses/${business.value.id}/locations/${location.value.id}/schedules` },
+    { label: biz?.name || '', href: `/member/listings/${business.value.id}/edit` },
+    { label: 'Ubicaciones', href: `/member/listings/${business.value.id}/locations` },
+    { label: location.value.name, href: `/member/listings/${business.value.id}/locations/${location.value.id}/edit` },
+    { label: 'Horarios', href: `/member/listings/${business.value.id}/locations/${location.value.id}/schedules` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -257,7 +257,7 @@ const submit = () => {
   }
   formData.append('is_active', form.is_active ? '1' : '0')
 
-  router.post(`/member/businesses/${business.value.id}/locations/${location.value.id}/schedules`, formData, {
+  router.post(`/member/listings/${business.value.id}/locations/${location.value.id}/schedules`, formData, {
     preserveScroll: true,
     onError: (serverErrors) => {
       sending.value = false

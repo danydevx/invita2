@@ -12,7 +12,7 @@ class TeamMemberPosition extends Model
     protected $table = 'team_member_positions';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'parent_id',
         'name',
         'slug',
@@ -28,7 +28,7 @@ class TeamMemberPosition extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
     }
 
     public function parent(): BelongsTo
@@ -52,7 +52,7 @@ class TeamMemberPosition extends Model
         $originalSlug = $slug;
         $count = 1;
 
-        $query = static::where('business_id', $businessId)->where('slug', $slug);
+        $query = static::where('listing_id', $businessId)->where('slug', $slug);
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
@@ -60,7 +60,7 @@ class TeamMemberPosition extends Model
         while ($query->exists()) {
             $slug = $originalSlug . '-' . $count;
             $count++;
-            $query = static::where('business_id', $businessId)->where('slug', $slug);
+            $query = static::where('listing_id', $businessId)->where('slug', $slug);
             if ($excludeId) {
                 $query->where('id', '!=', $excludeId);
             }

@@ -5,7 +5,7 @@
     <PageHeader
       title="Nuevo Formulario"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${business?.id}/contact-forms`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -94,7 +94,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Formulario' }}
             </button>
-            <Link :href="`/member/businesses/${business?.id}/contact-forms`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business?.id}/contact-forms`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -137,8 +137,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Formularios', href: `/member/businesses/${biz.id}/contact-forms` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Formularios', href: `/member/listings/${biz.id}/contact-forms` },
         { label: 'Nuevo Formulario', active: true },
       ]
     }
@@ -151,7 +151,7 @@ const breadcrumbs = computed(() => {
 
 const submit = () => {
   sending.value = true
-  router.post(`/member/businesses/${business.value.id}/contact-forms`, form.value, {
+  router.post(`/member/listings/${business.value.id}/contact-forms`, form.value, {
     onFinish: () => {
       sending.value = false
     },

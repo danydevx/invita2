@@ -4,12 +4,15 @@ namespace Modules\ContactForm\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessContactFormField extends Model
 {
+
+    protected $table = 'listing_contact_form_fields';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_contact_form_id',
         'field_name',
         'field_type',
@@ -34,7 +37,7 @@ class BusinessContactFormField extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function contactForm(): BelongsTo

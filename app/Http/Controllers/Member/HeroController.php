@@ -7,12 +7,12 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Hero\Models\BusinessHero;
 
 class HeroController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessHero::class, $business]);
 
@@ -27,7 +27,7 @@ class HeroController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, ActivityService $activity)
+    public function update(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('update', [BusinessHero::class, $business]);
 
@@ -55,7 +55,7 @@ class HeroController extends Controller
         ]);
 
         $hero = BusinessHero::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'title' => $data['title'] ?? null,
                 'subtitle' => $data['subtitle'] ?? null,

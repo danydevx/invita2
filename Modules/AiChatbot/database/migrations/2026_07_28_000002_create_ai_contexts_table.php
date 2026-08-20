@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('ai_contexts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->string('title', 255);
             $table->text('content');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index(['business_id', 'is_active']);
+            $table->index(['listing_id', 'is_active']);
         });
     }
 

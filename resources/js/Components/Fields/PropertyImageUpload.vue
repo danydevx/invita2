@@ -273,7 +273,7 @@ const startUpload = () => {
     formData.append(`images[${index}]`, item.file)
   })
 
-  router.post(`/member/businesses/${props.businessId}/properties/${props.propertyId}/images`, formData, {
+  router.post(`/member/listings/${props.businessId}/properties/${props.propertyId}/images`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       files.value = []
@@ -293,7 +293,7 @@ const deleteImage = (imageId) => {
   if (!confirm('¿Eliminar esta imagen?')) return
 
   deletingId.value = imageId
-  router.delete(`/member/businesses/${props.businessId}/properties/${props.propertyId}/images/${imageId}`, {
+  router.delete(`/member/listings/${props.businessId}/properties/${props.propertyId}/images/${imageId}`, {
     preserveScroll: true,
     onSuccess: () => {
       emit('updated')

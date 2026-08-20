@@ -4,12 +4,12 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Ubicaciones</h1>
       </div>
-      <Link :href="`/admin/businesses/${business.id}/locations/create`" class="btn btn-primary btn-sm">
+      <Link :href="`/admin/listings/${business.id}/locations/create`" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg me-1"></i>
         Nueva Ubicacion
       </Link>
@@ -57,7 +57,7 @@
                   <span v-else class="badge bg-secondary">Inactiva</span>
                 </td>
                 <td class="text-end">
-                  <Link :href="`/admin/businesses/${business.id}/locations/${loc.id}/edit`" class="btn btn-sm btn-outline-primary">
+                  <Link :href="`/admin/listings/${business.id}/locations/${loc.id}/edit`" class="btn btn-sm btn-outline-primary">
                     Editar
                   </Link>
                 </td>

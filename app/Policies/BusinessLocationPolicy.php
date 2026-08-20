@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\Locations\Models\BusinessLocation;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessLocationPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -17,7 +17,7 @@ class BusinessLocationPolicy
         return $user->id === $business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -44,7 +44,7 @@ class BusinessLocationPolicy
         return $user->id === $location->business->user_id;
     }
 
-    public function deleteAny(User $user, Business $business): bool
+    public function deleteAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

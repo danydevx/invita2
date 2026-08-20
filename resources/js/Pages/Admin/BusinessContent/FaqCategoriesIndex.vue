@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/businesses/${business.id}/faqs`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${business.id}/faqs`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver a Preguntas
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Categorias de FAQs</h1>
@@ -143,7 +143,7 @@ const closeModal = () => {
 
 const createCategory = () => {
   sending.value = true
-  router.post(`/admin/businesses/${business.value.id}/faq-categories`, form, {
+  router.post(`/admin/listings/${business.value.id}/faq-categories`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -153,7 +153,7 @@ const createCategory = () => {
 
 const updateCategory = () => {
   sending.value = true
-  router.put(`/admin/businesses/${business.value.id}/faq-categories/${editingCategory.value.id}`, form, {
+  router.put(`/admin/listings/${business.value.id}/faq-categories/${editingCategory.value.id}`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()

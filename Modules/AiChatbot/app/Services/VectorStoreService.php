@@ -23,7 +23,7 @@ class VectorStoreService
 
     public function storeEmbedding(string $sourceType, int|string $sourceId, string $text): void
     {
-        $existing = AiEmbedding::where('business_id', $this->settings->business_id)
+        $existing = AiEmbedding::where('listing_id', $this->settings->listing_id)
             ->where('source_type', $sourceType)
             ->where('source_id', $sourceId)
             ->first();
@@ -39,7 +39,7 @@ class VectorStoreService
     public function deleteEmbedding(string $sourceType, int|string $sourceId): void
     {
         if (is_int($sourceId) || ctype_digit($sourceId)) {
-            AiEmbedding::where('business_id', $this->settings->business_id)
+            AiEmbedding::where('listing_id', $this->settings->listing_id)
                 ->where('source_type', $sourceType)
                 ->where(function ($q) use ($sourceId) {
                     $q->where('source_id', $sourceId)
@@ -47,7 +47,7 @@ class VectorStoreService
                 })
                 ->delete();
         } else {
-            AiEmbedding::where('business_id', $this->settings->business_id)
+            AiEmbedding::where('listing_id', $this->settings->listing_id)
                 ->where('source_type', $sourceType)
                 ->where('source_id', $sourceId)
                 ->delete();
@@ -63,7 +63,7 @@ class VectorStoreService
             $queryEmbedding = $this->embeddingService->embed($query);
         } catch (\Exception $e) {
             Log::error('VectorStore search embedding error', [
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'error' => $e->getMessage(),
             ]);
             return [];
@@ -72,7 +72,7 @@ class VectorStoreService
         $results = [];
         $processed = 0;
 
-        AiEmbedding::where('business_id', $this->settings->business_id)
+        AiEmbedding::where('listing_id', $this->settings->listing_id)
             ->select(['id', 'source_type', 'source_id', 'chunk_text', 'embedding'])
             ->chunk(self::CHUNK_SIZE, function ($embeddings) use ($queryEmbedding, $minSimilarity, &$results, &$processed) {
                 foreach ($embeddings as $embedding) {
@@ -115,7 +115,7 @@ class VectorStoreService
             $queryEmbedding = $this->embeddingService->embed($query);
         } catch (\Exception $e) {
             Log::error('VectorStore searchInContexts embedding error', [
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'context_ids' => $contextIds,
                 'error' => $e->getMessage(),
             ]);
@@ -125,7 +125,7 @@ class VectorStoreService
         $results = [];
         $processed = 0;
 
-        AiEmbedding::where('business_id', $this->settings->business_id)
+        AiEmbedding::where('listing_id', $this->settings->listing_id)
             ->where(function ($q) use ($contextIds) {
                 foreach ($contextIds as $contextId) {
                     $parts = explode('_', $contextId);
@@ -178,9 +178,9 @@ class VectorStoreService
 
     public function reindexBusiness(): array
     {
-        $businessId = $this->settings->business_id;
+        $businessId = $this->settings->listing_id;
 
-        AiEmbedding::where('business_id', $businessId)->delete();
+        AiEmbedding::where('listing_id', $businessId)->delete();
 
         $stats = [
             'products' => 0,
@@ -221,7 +221,7 @@ class VectorStoreService
         }
 
         $contentHash = $this->getContentHash($text);
-        $existingWithHash = AiEmbedding::where('business_id', $this->settings->business_id)
+        $existingWithHash = AiEmbedding::where('listing_id', $this->settings->listing_id)
             ->where('content_hash', $contentHash)
             ->first();
 
@@ -238,7 +238,7 @@ class VectorStoreService
             $embeddingArray = $this->embeddingService->embed($text);
 
             AiEmbedding::create([
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'source_type' => $sourceType,
                 'source_id' => $sourceId,
                 'chunk_text' => $text,
@@ -265,7 +265,7 @@ class VectorStoreService
         }
 
         $contentHash = $this->getContentHash($text);
-        $existingWithHash = AiEmbedding::where('business_id', $this->settings->business_id)
+        $existingWithHash = AiEmbedding::where('listing_id', $this->settings->listing_id)
             ->where('content_hash', $contentHash)
             ->where('id', '!=', $embedding->id)
             ->first();
@@ -389,13 +389,13 @@ class VectorStoreService
 
     private function indexProducts(int $businessId): int
     {
-        $products = \Modules\Products\Models\BusinessProduct::where('business_id', $businessId)
+        $products = \Modules\Products\Models\BusinessProduct::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
         $count = 0;
         foreach ($products as $product) {
-            AiEmbedding::where('business_id', $businessId)
+            AiEmbedding::where('listing_id', $businessId)
                 ->where('source_type', 'product')
                 ->where('source_id', $product->id)
                 ->delete();
@@ -424,13 +424,13 @@ class VectorStoreService
 
     private function indexServices(int $businessId): int
     {
-        $services = \Modules\Services\Models\BusinessService::where('business_id', $businessId)
+        $services = \Modules\Services\Models\BusinessService::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
         $count = 0;
         foreach ($services as $service) {
-            AiEmbedding::where('business_id', $businessId)
+            AiEmbedding::where('listing_id', $businessId)
                 ->where('source_type', 'service')
                 ->where('source_id', $service->id)
                 ->delete();
@@ -459,7 +459,7 @@ class VectorStoreService
 
     private function indexPromotions(int $businessId): int
     {
-        $promotions = \Modules\Promotions\Models\BusinessPromotion::where('business_id', $businessId)
+        $promotions = \Modules\Promotions\Models\BusinessPromotion::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -483,7 +483,7 @@ class VectorStoreService
 
     private function indexFaqs(int $businessId): int
     {
-        $faqs = \Modules\Faqs\Models\BusinessFaq::where('business_id', $businessId)
+        $faqs = \Modules\Faqs\Models\BusinessFaq::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -498,7 +498,7 @@ class VectorStoreService
 
     private function indexLocations(int $businessId): int
     {
-        $locations = \Modules\Locations\Models\BusinessLocation::where('business_id', $businessId)
+        $locations = \Modules\Locations\Models\BusinessLocation::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -534,7 +534,7 @@ class VectorStoreService
 
     private function indexAbout(int $businessId): int
     {
-        $abouts = \Modules\About\Models\BusinessAbout::where('business_id', $businessId)
+        $abouts = \Modules\About\Models\BusinessAbout::where('listing_id', $businessId)
             ->get();
 
         foreach ($abouts as $about) {
@@ -548,7 +548,7 @@ class VectorStoreService
 
     private function indexCustomContexts(int $businessId): int
     {
-        $contexts = \Modules\AiChatbot\Models\AiContext::where('business_id', $businessId)
+        $contexts = \Modules\AiChatbot\Models\AiContext::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -565,7 +565,7 @@ class VectorStoreService
     {
         $count = 0;
 
-        $categories = \Modules\RestaurantMenu\Entities\MenuCategory::where('business_id', $businessId)
+        $categories = \Modules\RestaurantMenu\Entities\MenuCategory::where('listing_id', $businessId)
             ->where('active', true)
             ->with(['activeProducts.variants', 'children.activeProducts.variants'])
             ->whereNull('parent_id')
@@ -654,7 +654,7 @@ class VectorStoreService
             return 0;
         }
 
-        $socialNetworks = \Modules\SocialMedia\Models\BusinessSocialNetwork::where('business_id', $businessId)
+        $socialNetworks = \Modules\SocialMedia\Models\BusinessSocialNetwork::where('listing_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -681,7 +681,7 @@ class VectorStoreService
 
         $count = 0;
 
-        $availabilities = \Modules\Appointments\Models\BusinessAvailability::where('business_id', $businessId)
+        $availabilities = \Modules\Appointments\Models\BusinessAvailability::where('listing_id', $businessId)
             ->orderBy('day_of_week')
             ->get();
 
@@ -701,7 +701,7 @@ class VectorStoreService
             $count++;
         }
 
-        $exceptions = \Modules\Appointments\Models\BusinessAvailabilityException::where('business_id', $businessId)
+        $exceptions = \Modules\Appointments\Models\BusinessAvailabilityException::where('listing_id', $businessId)
             ->where('exception_date', '>=', now()->toDateString())
             ->orderBy('exception_date')
             ->limit(30)

@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Formulario de Contacto</h1>
@@ -45,7 +45,7 @@
                 </td>
                 <td>{{ formatDate(sub.created_at) }}</td>
                 <td class="text-end">
-                  <Link :href="`/admin/businesses/${business.id}/leads/${sub.id}`" class="btn btn-sm btn-outline-primary">
+                  <Link :href="`/admin/listings/${business.id}/leads/${sub.id}`" class="btn btn-sm btn-outline-primary">
                     Ver
                   </Link>
                 </td>

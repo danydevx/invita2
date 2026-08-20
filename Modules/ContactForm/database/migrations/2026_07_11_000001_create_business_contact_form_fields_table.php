@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_contact_form_fields', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('field_name');
             $table->string('field_type');
             $table->string('label');
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('order')->default(0);
             $table->timestamps();
 
-            $table->index('business_id');
-            $table->unique(['business_id', 'field_name']);
+            $table->index('listing_id');
+            $table->unique(['listing_id', 'field_name']);
         });
     }
 

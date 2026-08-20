@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_minisite_sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->string('section_type', 50);
             $table->string('section_key', 100);
             $table->string('title')->nullable();
@@ -19,8 +19,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->unique(['business_id', 'section_key']);
-            $table->index(['business_id', 'section_type']);
+            $table->unique(['listing_id', 'section_key']);
+            $table->index(['listing_id', 'section_type']);
         });
     }
 

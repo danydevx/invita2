@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Properties\Models\Property;
 use Modules\Properties\Models\PropertyType;
 
@@ -23,7 +23,7 @@ class PropertyFactory extends Factory
         $price = $this->faker->numberBetween(100000, 5000000);
 
         return [
-            'business_id' => Business::factory(),
+            'listing_id' => Listing::factory(),
             'property_type_id' => PropertyType::factory(),
             'title' => $this->faker->sentence(4),
             'slug' => $this->faker->unique()->slug(3),

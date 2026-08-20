@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Enums\BusinessType;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Enums\ListingType;
+use Modules\Listings\Models\Listing;
 use Modules\Leads\Models\BusinessLead;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\Services\Models\BusinessService;
@@ -27,9 +27,9 @@ class DirectoryController extends Controller
         $hasFilters = $request->filled('search') || $request->filled('type') || $request->filled('location');
 
         if (!$hasFilters) {
-            $businessTypes = BusinessType::cases();
+            $businessTypes = ListingType::cases();
 
-            $featuredQuery = Business::where('is_active', true)
+            $featuredQuery = Listing::where('is_active', true)
                 ->where('is_published', true)
                 ->with(['locations' => function ($q) {
                     $q->where('is_active', true);
@@ -45,7 +45,7 @@ class DirectoryController extends Controller
 
             $featuredBusinesses = $featuredQuery->get();
 
-            $recentQuery = Business::where('is_active', true)
+            $recentQuery = Listing::where('is_active', true)
                 ->where('is_published', true)
                 ->with(['locations' => function ($q) {
                     $q->where('is_active', true);
@@ -70,7 +70,7 @@ class DirectoryController extends Controller
             ]);
         }
 
-        $query = Business::where('is_active', true)
+        $query = Listing::where('is_active', true)
             ->where('is_published', true)
             ->with(['locations' => function ($q) {
                 $q->where('is_active', true);
@@ -124,7 +124,7 @@ class DirectoryController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $businessTypes = BusinessType::cases();
+        $businessTypes = ListingType::cases();
 
         $mapMarkers = $businesses->getCollection()->map(function ($business) {
             $locations = $business->locations->filter(function ($loc) {
@@ -156,7 +156,7 @@ class DirectoryController extends Controller
 
     public function show(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -217,7 +217,7 @@ class DirectoryController extends Controller
 
     public function storeAppointment(Request $request, string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -239,7 +239,7 @@ class DirectoryController extends Controller
         $endTime = date('H:i', strtotime($data['start_time'].' + '.$service->duration_minutes.' minutes'));
 
         $appointment = BusinessAppointment::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_location_id' => $location->id,
             'business_service_id' => $service->id,
             'customer_name' => $data['customer_name'],
@@ -256,7 +256,7 @@ class DirectoryController extends Controller
 
     public function storeContact(Request $request, string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -269,7 +269,7 @@ class DirectoryController extends Controller
         ]);
 
         $lead = BusinessLead::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,

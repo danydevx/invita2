@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Modules\About\Models\BusinessAbout;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class AboutController extends Controller
 {
     private const MAX_FILE_SIZE_KB = 5120;
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessAbout::class, $business]);
 
@@ -30,7 +30,7 @@ class AboutController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, ActivityService $activity)
+    public function update(Request $request, Listing $business, ActivityService $activity)
     {
         $user = $request->user();
         if (!$user->hasAnyRole(['superadmin', 'admin']) && $business->user_id !== $user->id) {
@@ -54,7 +54,7 @@ class AboutController extends Controller
         ]);
 
         $about = BusinessAbout::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'title' => $data['title'] ?? null,
                 'subtitle' => $data['subtitle'] ?? null,
@@ -94,7 +94,7 @@ class AboutController extends Controller
     private function saveImage(BusinessAbout $about, $file, string $field): void
     {
         $disk = 'public';
-        $path = $file->store('about/' . $about->business_id, ['disk' => $disk]);
+        $path = $file->store('about/' . $about->listing_id, ['disk' => $disk]);
         $about->update([$field => Storage::disk($disk)->url($path)]);
     }
 

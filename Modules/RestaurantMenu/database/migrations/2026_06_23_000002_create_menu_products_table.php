@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('menu_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained('menu_categories')->onDelete('cascade');
             $table->string('image')->nullable();
             $table->string('title');
@@ -23,10 +23,10 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['business_id', 'slug']);
-            $table->index(['business_id', 'category_id']);
-            $table->index(['business_id', 'active']);
-            $table->index(['business_id', 'featured']);
+            $table->unique(['listing_id', 'slug']);
+            $table->index(['listing_id', 'category_id']);
+            $table->index(['listing_id', 'active']);
+            $table->index(['listing_id', 'featured']);
         });
     }
 

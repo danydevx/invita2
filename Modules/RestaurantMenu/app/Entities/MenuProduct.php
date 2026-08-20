@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class MenuProduct extends Model
 {
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'category_id',
         'image',
         'title',
@@ -36,7 +36,7 @@ class MenuProduct extends Model
 
         static::creating(function ($product) {
             if (empty($product->slug)) {
-                $product->slug = static::generateUniqueSlug($product->business_id, $product->title, $product->id);
+                $product->slug = static::generateUniqueSlug($product->listing_id, $product->title, $product->id);
             }
         });
     }
@@ -47,7 +47,7 @@ class MenuProduct extends Model
         $originalSlug = $slug;
         $count = 1;
 
-        $query = static::where('business_id', $businessId)->where('slug', $slug);
+        $query = static::where('listing_id', $businessId)->where('slug', $slug);
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
@@ -55,7 +55,7 @@ class MenuProduct extends Model
         while ($query->exists()) {
             $slug = $originalSlug . '-' . $count;
             $count++;
-            $query = static::where('business_id', $businessId)->where('slug', $slug);
+            $query = static::where('listing_id', $businessId)->where('slug', $slug);
             if ($excludeId) {
                 $query->where('id', '!=', $excludeId);
             }
@@ -66,7 +66,7 @@ class MenuProduct extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function category(): BelongsTo

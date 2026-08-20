@@ -11,7 +11,7 @@ class ClientFidelityCardResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'business_id' => $this->business_id,
+            'listing_id' => $this->listing_id,
             'client_name' => $this->client_name,
             'client_email' => $this->client_email,
             'client_phone' => $this->client_phone,

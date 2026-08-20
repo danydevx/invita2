@@ -7,7 +7,7 @@
         <h1 class="h4 mb-0">Galerías</h1>
         <p class="text-muted mb-0">{{ business.name }}</p>
       </div>
-      <Link :href="`/admin/businesses/${business.id}/galleries/create`" class="btn btn-primary">
+      <Link :href="`/admin/listings/${business.id}/galleries/create`" class="btn btn-primary">
         <i class="bi bi-plus-lg me-1"></i>
         Nueva galería
       </Link>
@@ -52,7 +52,7 @@
                   >
                     <i class="bi bi-star me-1"></i>Hacer principal
                   </button>
-                  <Link :href="`/admin/businesses/${business.id}/galleries/${gallery.id}/edit`" class="btn btn-sm btn-outline-primary me-2">
+                  <Link :href="`/admin/listings/${business.id}/galleries/${gallery.id}/edit`" class="btn btn-sm btn-outline-primary me-2">
                     Editar
                   </Link>
                   <button
@@ -83,13 +83,13 @@ const galleries = computed(() => page.props.galleries || [])
 
 const setPrimary = (gallery) => {
   if (confirm(`Marcar "${gallery.name}" como galería principal?`)) {
-    router.post(`/admin/businesses/${business.value.id}/galleries/${gallery.id}/set-primary`)
+    router.post(`/admin/listings/${business.value.id}/galleries/${gallery.id}/set-primary`)
   }
 }
 
 const confirmDestroy = (gallery) => {
   if (confirm(`Eliminar "${gallery.name}" y todas sus imagenes?`)) {
-    router.delete(`/admin/businesses/${business.value.id}/galleries/${gallery.id}`)
+    router.delete(`/admin/listings/${business.value.id}/galleries/${gallery.id}`)
   }
 }
 </script>

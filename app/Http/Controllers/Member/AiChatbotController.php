@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class AiChatbotController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $user = $request->user();
 

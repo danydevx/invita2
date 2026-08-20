@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 
 class Feature extends Model
 {
     protected $fillable = [
         'category_id',
-        'business_id',
+        'listing_id',
         'source_feature_id',
         'title',
         'description',
@@ -35,7 +35,7 @@ class Feature extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function sourceFeature(): BelongsTo
@@ -67,12 +67,12 @@ class Feature extends Model
 
     public function isPredefined(): bool
     {
-        return is_null($this->business_id) && is_null($this->source_feature_id);
+        return is_null($this->listing_id) && is_null($this->source_feature_id);
     }
 
     public function isCustom(): bool
     {
-        return !is_null($this->business_id) && is_null($this->source_feature_id);
+        return !is_null($this->listing_id) && is_null($this->source_feature_id);
     }
 
     public function isClone(): bool

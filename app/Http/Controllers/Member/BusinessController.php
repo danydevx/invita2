@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessController extends Controller
 {
@@ -37,17 +37,17 @@ class BusinessController extends Controller
     {
         $user = $request->user();
 
-        if ($planLimits->exceeded($user, 'max_businesses', $user->businesses()->count())) {
+        if ($planLimits->exceeded($user, 'max_businesses', $user->listings()->count())) {
             return redirect()->route('member.businesses.index')
                 ->with('error', 'Has alcanzado el limite de negocios de tu plan.');
         }
 
-        return inertia('Member/Businesses/Create', [
+        return inertia('Member/Listings/Create', [
             'industries' => Industry::where('is_active', true)
                 ->orderBy('name')
                 ->get(['id', 'name', 'icon']),
             'maxBusinesses' => $planLimits->max($user, 'max_businesses'),
-            'businessCount' => $user->businesses()->count(),
+            'businessCount' => $user->listings()->count(),
             'planName' => $planLimits->currentPlan($user)?->name ?? 'Sin plan',
         ]);
     }
@@ -55,7 +55,7 @@ class BusinessController extends Controller
     public function store(Request $request, PlanLimits $planLimits, ActivityService $activity)
     {
         $user = $request->user();
-        $businessCount = $user->businesses()->count();
+        $businessCount = $user->listings()->count();
 
         if ($planLimits->exceeded($user, 'max_businesses', $businessCount)) {
             return redirect()->route('member.businesses.index')
@@ -78,11 +78,11 @@ class BusinessController extends Controller
 
         $industry = Industry::where('is_active', true)->findOrFail($validated['industry_id']);
 
-        $business = Business::create([
+        $listing = Listing::create([
             ...$validated,
             'user_id' => $user->id,
             'slug' => $this->uniqueSlug($validated['name']),
-            'business_type' => $industry->businessType(),
+            'business_type' => $industry->listingType(),
             'timezone' => $validated['timezone'] ?? 'UTC',
             'currency' => strtoupper($validated['currency'] ?? 'USD'),
             'is_active' => true,
@@ -92,16 +92,16 @@ class BusinessController extends Controller
         $activity->log('business_created', [
             'user' => $user,
             'actor' => $user,
-            'subject' => $business,
+            'subject' => $listing,
             'description' => 'Negocio creado por miembro',
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.edit', $business)
+        return redirect()->route('member.businesses.edit', $listing)
             ->with('success', 'Negocio creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business)
+    public function edit(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -110,13 +110,13 @@ class BusinessController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'icon']);
 
-        return inertia('Member/Businesses/Edit', [
+        return inertia('Member/Listings/Edit', [
             'business' => $business,
             'industries' => $industries,
         ]);
     }
 
-    public function update(Request $request, Business $business)
+    public function update(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -170,7 +170,7 @@ class BusinessController extends Controller
         $slug = $base;
         $suffix = 2;
 
-        while (Business::where('slug', $slug)->exists()) {
+        while (Listing::where('slug', $slug)->exists()) {
             $slug = $base.'-'.$suffix;
             $suffix++;
         }

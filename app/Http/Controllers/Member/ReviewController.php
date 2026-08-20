@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Reviews\Models\BusinessReview;
 
 class ReviewController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessReview::class, $business]);
 
@@ -74,7 +74,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessReview::class, $business]);
 
@@ -86,7 +86,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessReview::class, $business]);
 
@@ -101,7 +101,7 @@ class ReviewController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $review = $business->reviews()->create($data);
 
@@ -116,7 +116,7 @@ class ReviewController extends Controller
             ->with('success', 'Resena creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessReview $review)
+    public function edit(Request $request, Listing $business, BusinessReview $review)
     {
         $this->authorize('update', [BusinessReview::class, $review]);
 
@@ -139,7 +139,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessReview $review, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
     {
         $this->authorize('update', [BusinessReview::class, $review]);
 
@@ -167,7 +167,7 @@ class ReviewController extends Controller
             ->with('success', 'Resena actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessReview $review, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessReview::class, $review]);
 
@@ -181,7 +181,7 @@ class ReviewController extends Controller
             ->with('success', 'Resena eliminada correctamente.');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -192,7 +192,7 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_reviews', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_reviews', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -204,7 +204,7 @@ class ReviewController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\Reviews\Models\BusinessReview::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });
@@ -212,7 +212,7 @@ class ReviewController extends Controller
         return back(303);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -240,7 +240,7 @@ class ReviewController extends Controller
             ->with('success', $message);
     }
 
-    public function clone(Request $request, Business $business, BusinessReview $review, ActivityService $activity)
+    public function clone(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
     {
         $this->authorize('create', [BusinessReview::class, $business]);
 

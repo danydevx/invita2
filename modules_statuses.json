@@ -25,5 +25,9 @@
     "Properties": true,
     "OfficeHours": true,
     "Orders": true,
-    "ClientFidelity": true
+    "ClientFidelity": true,
+    "Listings": true,
+    "Guests": true,
+    "Packages": true,
+    "Checkin": true
 }

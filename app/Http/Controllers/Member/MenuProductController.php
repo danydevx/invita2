@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuCategory;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 use Illuminate\Support\Facades\Auth;
@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Storage;
 
 class MenuProductController extends Controller
 {
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
-        $categories = MenuCategory::where('business_id', $business->id)
+        $categories = MenuCategory::where('listing_id', $business->id)
             ->where('active', true)
             ->orderBy('sort_order')
             ->get()
@@ -34,17 +34,17 @@ class MenuProductController extends Controller
         ]);
     }
 
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
-        $query = MenuProduct::where('business_id', $business->id)->with('category', 'variants', 'images');
+        $query = MenuProduct::where('listing_id', $business->id)->with('category', 'variants', 'images');
 
         $categoryId = $request->query('category');
         if ($categoryId) {
             $category = MenuCategory::where('id', $categoryId)
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->first();
             if ($category) {
                 $query->where('category_id', $category->id);
@@ -60,7 +60,7 @@ class MenuProductController extends Controller
 
         $products = $query->orderBy('sort_order')->paginate(20);
 
-        $categories = MenuCategory::where('business_id', $business->id)
+        $categories = MenuCategory::where('listing_id', $business->id)
             ->where('active', true)
             ->orderBy('sort_order')
             ->get()
@@ -80,7 +80,7 @@ class MenuProductController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -98,9 +98,9 @@ class MenuProductController extends Controller
         ]);
 
         $category = MenuCategory::find($validated['category_id']);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
-        $validated['business_id'] = $business->id;
+        $validated['listing_id'] = $business->id;
         $validated['slug'] = MenuProduct::generateUniqueSlug($business->id, $validated['title']);
 
         if ($request->hasFile('image')) {
@@ -138,11 +138,11 @@ class MenuProductController extends Controller
             ->with('success', 'Producto creado exitosamente.');
     }
 
-    public function update(Request $request, Business $business, MenuProduct $product)
+    public function update(Request $request, Listing $business, MenuProduct $product)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'category_id' => 'required|exists:menu_categories,id',
@@ -157,7 +157,7 @@ class MenuProductController extends Controller
         ]);
 
         $category = MenuCategory::find($validated['category_id']);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products/' . $business->id, ['disk' => 'public']);
@@ -197,11 +197,11 @@ class MenuProductController extends Controller
         return redirect()->back()->with('success', 'Producto actualizado exitosamente.');
     }
 
-    public function destroy(Business $business, MenuProduct $product)
+    public function destroy(Listing $business, MenuProduct $product)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $product->variants()->delete();
         $product->images()->delete();
@@ -210,13 +210,13 @@ class MenuProductController extends Controller
         return redirect()->back()->with('success', 'Producto eliminado exitosamente.');
     }
 
-    public function edit(Request $request, Business $business, MenuProduct $product)
+    public function edit(Request $request, Listing $business, MenuProduct $product)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
-        $categories = MenuCategory::where('business_id', $business->id)
+        $categories = MenuCategory::where('listing_id', $business->id)
             ->where('active', true)
             ->orderBy('sort_order')
             ->get()
@@ -234,14 +234,14 @@ class MenuProductController extends Controller
         ]);
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('menu_products', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('menu_products', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -253,7 +253,7 @@ class MenuProductController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\RestaurantMenu\Entities\MenuProduct::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });
@@ -261,19 +261,19 @@ class MenuProductController extends Controller
         return back(303);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('menu_products', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('menu_products', 'id')->where('listing_id', $business->id)],
         ]);
 
         $count = count($data['ids']);
 
-        $products = \Modules\RestaurantMenu\Entities\MenuProduct::where('business_id', $business->id)
+        $products = \Modules\RestaurantMenu\Entities\MenuProduct::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->get();
 
@@ -291,11 +291,11 @@ class MenuProductController extends Controller
             ->with('success', $message);
     }
 
-    public function clone(Business $business, MenuProduct $product)
+    public function clone(Listing $business, MenuProduct $product)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $newProduct = $product->replicate();
         $newProduct->title = $product->title . ' (Copia)';

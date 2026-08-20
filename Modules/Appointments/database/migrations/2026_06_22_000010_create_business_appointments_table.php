@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_location_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_service_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
 
-            $table->index(['business_id', 'appointment_date']);
+            $table->index(['listing_id', 'appointment_date']);
             $table->index('confirmation_token');
         });
     }

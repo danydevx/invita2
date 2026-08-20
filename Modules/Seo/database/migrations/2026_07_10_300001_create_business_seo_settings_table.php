@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_seo_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->unique()->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->unique()->constrained()->cascadeOnDelete();
 
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();

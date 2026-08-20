@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_locations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('address_line_1')->nullable();
             $table->string('address_line_2')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index('business_id');
+            $table->index('listing_id');
         });
     }
 

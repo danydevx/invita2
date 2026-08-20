@@ -12,11 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('property_type_id')->constrained()->cascadeOnDelete();
             $table->foreignId('general_field_section_id')->constrained()->cascadeOnDelete();
-            $table->json('custom_settings')->nullable();
-            $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['property_type_id', 'general_field_section_id']);
+            $table->unique(['property_type_id', 'general_field_section_id'], 'pf_gf_unique');
         });
     }
 

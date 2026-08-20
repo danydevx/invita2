@@ -251,6 +251,28 @@ class BusinessModuleDefinitionSeeder extends Seeder
                 'show_in_menu' => true,
                 'menu_title' => 'Fidelidad',
             ],
+            [
+                'key' => 'guests',
+                'name' => 'Invitados',
+                'description' => 'Gestión de invitados y confirmación de asistencia (RSVP)',
+                'icon' => 'bi bi-people-fill',
+                'sort_order' => 25,
+                'has_settings' => true,
+                'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'Invitados',
+            ],
+            [
+                'key' => 'checkin',
+                'name' => 'Check-in',
+                'description' => 'Registro de asistencia el día del evento',
+                'icon' => 'bi bi-qr-code-scan',
+                'sort_order' => 26,
+                'has_settings' => false,
+                'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'Check-in',
+            ],
         ];
 
         foreach ($modules as $module) {

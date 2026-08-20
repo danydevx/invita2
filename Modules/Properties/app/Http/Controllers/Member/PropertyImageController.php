@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Properties\Models\Property;
 use Modules\Properties\Models\PropertyImage;
 
@@ -22,7 +22,7 @@ class PropertyImageController extends Controller
     public function store(Request $request, Business $business, Property $property)
     {
         $user = Auth::user();
-        abort_unless($property->business_id === $business->id, 403);
+        abort_unless($property->listing_id === $business->id, 403);
         abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
 
         $files = $request->file('images');
@@ -74,7 +74,7 @@ class PropertyImageController extends Controller
     public function destroy(Business $business, Property $property, PropertyImage $image)
     {
         $user = Auth::user();
-        abort_unless($property->business_id === $business->id, 403);
+        abort_unless($property->listing_id === $business->id, 403);
         abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
         abort_unless($image->property_id === $property->id, 403);
 

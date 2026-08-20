@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessServiceImage extends Model
 {
-    protected $table = 'business_service_images';
+    protected $table = 'listing_service_images';
 
     protected $fillable = [
         'business_service_id',

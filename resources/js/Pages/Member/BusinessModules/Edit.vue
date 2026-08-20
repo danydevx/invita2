@@ -8,7 +8,7 @@
         <p class="text-muted mb-0">Gestiona el contenido de cada modulo.</p>
       </div>
       <div class="d-flex gap-2">
-        <Link :href="`/member/businesses/${business.id}/edit`" class="btn btn-outline-primary btn-sm">
+        <Link :href="`/member/listings/${business.id}/edit`" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-pencil me-1"></i>Editar negocio
         </Link>
         <Link href="/member/business-modules" class="btn btn-outline-secondary btn-sm">
@@ -178,7 +178,7 @@ const getModuleIcon = (key) => moduleIcons[key] || 'bi bi-box'
 
 const getModuleUrl = (key) => {
   const path = moduleUrls[key] || key
-  return `/member/businesses/${props.business.id}/${path}`
+  return `/member/listings/${props.business.id}/${path}`
 }
 
 const goToModule = (mod) => {
@@ -202,7 +202,7 @@ const toggleModule = (mod) => {
   const newState = !mod.is_enabled
 
   router.put(
-    `/member/businesses/${props.business.id}/modules`,
+    `/member/listings/${props.business.id}/modules`,
     {
       modules: [{ id: mod.id, is_enabled: newState }],
     },

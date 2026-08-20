@@ -5,7 +5,7 @@
     <PageHeader
       title="Nuevo Miembro"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/team-members`"
+      :backHref="`/member/listings/${business?.id}/team-members`"
     />
 
     <div class="row">
@@ -96,7 +96,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/businesses/${business?.id}/team-members`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${business?.id}/team-members`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -146,15 +146,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Mi Equipo', href: `/member/businesses/${biz.id}/team-members` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Mi Equipo', href: `/member/listings/${biz.id}/team-members` },
         { label: 'Nuevo', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Mi Equipo', href: `/member/businesses/${business.value?.id}/team-members` },
+    { label: 'Mi Equipo', href: `/member/listings/${business.value?.id}/team-members` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -178,7 +178,7 @@ const handleImageChange = (e) => {
 }
 
 const submit = () => {
-  form.post(`/member/businesses/${business.value.id}/team-members`, {
+  form.post(`/member/listings/${business.value.id}/team-members`, {
     preserveScroll: true,
   })
 }

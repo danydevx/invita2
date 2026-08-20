@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/orders/settings`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/orders/settings`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-gear me-1"></i>
           Configuración
         </Link>
@@ -38,7 +38,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/orders`"
+      :endpoint="`/member/listings/${business?.id}/orders`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar por orden, cliente..."
@@ -85,7 +85,7 @@
       <template #cell-actions="{ row }">
         <div class="actions">
           <Link
-            :href="`/member/businesses/${business?.id}/orders/${row.id}`"
+            :href="`/member/listings/${business?.id}/orders/${row.id}`"
             class="btn btn-sm btn-outline-primary"
           >
             <i class="bi bi-eye"></i>
@@ -103,7 +103,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/orders/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/orders/bulk-delete`"
           item-name="pedidos"
           @deleted="onBulkDeleted"
         />
@@ -145,7 +145,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Pedidos', active: true },
       ]
     }
@@ -187,14 +187,14 @@ const filterByStatus = () => {
   if (statusFilter.value) {
     params.status = statusFilter.value
   }
-  router.get(`/member/businesses/${business.value.id}/orders`, params, {
+  router.get(`/member/listings/${business.value.id}/orders`, params, {
     preserveScroll: true,
   })
 }
 
 const clearFilter = () => {
   statusFilter.value = null
-  router.get(`/member/businesses/${business.value.id}/orders`, {}, {
+  router.get(`/member/listings/${business.value.id}/orders`, {}, {
     preserveScroll: true,
   })
 }
@@ -225,7 +225,7 @@ const getStatusClass = (status) => {
 const deleteOrder = (order) => {
   if (!confirm(`Eliminar el pedido ${order.order_number}?`)) return
 
-  router.delete(`/member/businesses/${business.value.id}/orders/${order.id}`, {
+  router.delete(`/member/listings/${business.value.id}/orders/${order.id}`, {
     preserveScroll: true,
   })
 }

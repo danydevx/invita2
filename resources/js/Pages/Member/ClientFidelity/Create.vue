@@ -73,7 +73,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/businesses/${business?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
+                <Link :href="`/member/listings/${business?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
                   Cancelar
                 </Link>
               </div>
@@ -118,15 +118,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/businesses/${biz.id}/fidelity-cards` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
         { label: 'Nueva', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/businesses/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
     { label: 'Nueva', active: true },
   ]
 })
@@ -140,7 +140,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/businesses/${business.value.id}/fidelity-cards`, {
+  form.post(`/member/listings/${business.value.id}/fidelity-cards`, {
     preserveScroll: true,
   })
 }

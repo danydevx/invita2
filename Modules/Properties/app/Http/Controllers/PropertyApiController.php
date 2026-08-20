@@ -7,7 +7,7 @@ use App\Http\Resources\Properties\PropertyCollection;
 use App\Http\Resources\Properties\PropertyResource;
 use App\Http\Resources\Properties\PropertyTypeResource;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Properties\Models\Property;
 use Modules\Properties\Models\PropertyType;
 
@@ -17,7 +17,7 @@ class PropertyApiController extends Controller
     {
         $perPage = min((int) $request->get('per_page', 12), 50);
 
-        $query = Property::where('business_id', $business->id)
+        $query = Property::where('listing_id', $business->id)
             ->where('status', 'published')
             ->where('is_public', true)
             ->with(['propertyType', 'values.propertyField']);
@@ -59,7 +59,7 @@ class PropertyApiController extends Controller
 
     public function show(Business $business, Property $property)
     {
-        if ($property->business_id !== $business->id) {
+        if ($property->listing_id !== $business->id) {
             abort(404);
         }
 

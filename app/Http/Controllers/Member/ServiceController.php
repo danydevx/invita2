@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\Services\Models\BusinessService;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessService::class, $business]);
 
@@ -74,7 +74,7 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessService::class, $business]);
 
@@ -89,7 +89,7 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessService::class, $business]);
 
@@ -108,7 +108,7 @@ class ServiceController extends Controller
             'business_location_id' => ['nullable', 'exists:business_locations,id'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
         if ($request->hasFile('image')) {
@@ -129,7 +129,7 @@ class ServiceController extends Controller
             ->with('success', 'Servicio creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessService $service)
+    public function edit(Request $request, Listing $business, BusinessService $service)
     {
         $this->authorize('update', [BusinessService::class, $service]);
 
@@ -167,7 +167,7 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $this->authorize('update', [BusinessService::class, $service]);
 
@@ -210,7 +210,7 @@ class ServiceController extends Controller
             ->with('success', 'Servicio actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessService::class, $service]);
 
@@ -226,7 +226,7 @@ class ServiceController extends Controller
             ->with('success', 'Servicio eliminado correctamente.');
     }
 
-    public function clone(Request $request, Business $business, \Modules\Services\Models\BusinessService $service)
+    public function clone(Request $request, Listing $business, \Modules\Services\Models\BusinessService $service)
     {
         $this->authorize('create', [\Modules\Services\Models\BusinessService::class, $business]);
 
@@ -239,23 +239,23 @@ class ServiceController extends Controller
             ->with('success', 'Servicio clonado correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [\Modules\Services\Models\BusinessService::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $count = \Modules\Services\Models\BusinessService::where('business_id', $business->id)
+        $count = \Modules\Services\Models\BusinessService::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
         return redirect()->back()->with('success', $count . ' servicio(s) eliminado(s).');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -267,7 +267,7 @@ class ServiceController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -279,7 +279,7 @@ class ServiceController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\Services\Models\BusinessService::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });

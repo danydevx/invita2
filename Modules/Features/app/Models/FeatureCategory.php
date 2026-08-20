@@ -28,7 +28,7 @@ class FeatureCategory extends Model
     public function predefinedFeatures(): HasMany
     {
         return $this->hasMany(Feature::class, 'category_id')
-            ->whereNull('business_id')
+            ->whereNull('listing_id')
             ->whereNull('source_feature_id');
     }
 }

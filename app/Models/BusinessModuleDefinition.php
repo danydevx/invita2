@@ -11,7 +11,7 @@ class BusinessModuleDefinition extends Model
 {
     use HasFactory;
 
-    protected $table = 'business_module_definitions';
+    protected $table = 'listing_module_definitions';
 
     protected $fillable = [
         'key',
@@ -38,7 +38,7 @@ class BusinessModuleDefinition extends Model
 
     public function planModules(): HasMany
     {
-        return $this->hasMany(PlanBusinessModule::class, 'module_definition_id');
+        return $this->hasMany(PlanBusinessModule::class, 'module_key', 'key');
     }
 
     public function businessModules(): HasMany

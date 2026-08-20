@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('business_ai_settings', function (Blueprint $table) {
-            $table->foreignId('preset_id')->nullable()->after('business_id')
+            $table->foreignId('preset_id')->nullable()->after('listing_id')
                   ->constrained('chatbot_presets')->nullOnDelete();
             $table->enum('personality', ['professional', 'friendly', 'formal', 'casual'])
                   ->default('friendly')->after('chatbot_avatar');

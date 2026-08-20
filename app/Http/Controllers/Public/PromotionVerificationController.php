@@ -5,19 +5,19 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Promotions\Models\BusinessPromotion;
 
 class PromotionVerificationController extends Controller
 {
     public function verify(string $slug, int $promotionId, string $couponCode)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
 
-        $promotion = BusinessPromotion::where('business_id', $business->id)
+        $promotion = BusinessPromotion::where('listing_id', $business->id)
             ->where('id', $promotionId)
             ->first();
 
@@ -44,7 +44,7 @@ class PromotionVerificationController extends Controller
         return $this->renderResult(true, '¡Cupón válido!', $business, $promotion);
     }
 
-    private function renderResult(bool $valid, string $message, Business $business, ?BusinessPromotion $promotion)
+    private function renderResult(bool $valid, string $message, Listing $business, ?BusinessPromotion $promotion)
     {
         $promotionData = null;
         if ($promotion) {

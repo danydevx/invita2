@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_packages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('short_description');
             $table->text('long_description')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index(['business_id', 'is_active']);
+            $table->index(['listing_id', 'is_active']);
         });
     }
 

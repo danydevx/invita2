@@ -14,20 +14,20 @@ use Inertia\Inertia;
 
 class ChatbotPresetsController extends Controller
 {
-    public function index(Request $request, \Modules\Businesses\Models\Business $business)
+    public function index(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
         $presets = ChatbotPreset::where(function ($q) use ($business) {
-            $q->whereNull('business_id')
-              ->orWhere('business_id', $business->id);
+            $q->whereNull('listing_id')
+              ->orWhere('listing_id', $business->id);
         })
         ->orderBy('is_system', 'desc')
         ->orderBy('name')
         ->get();
 
-        $businessPresets = $presets->where('business_id', $business->id);
-        $globalPresets = $presets->whereNull('business_id');
+        $businessPresets = $presets->where('listing_id', $business->id);
+        $globalPresets = $presets->whereNull('listing_id');
 
         return Inertia::render('Member/AiChatbot/Presets/Index', [
             'business' => $business,
@@ -36,12 +36,12 @@ class ChatbotPresetsController extends Controller
         ]);
     }
 
-    public function create(Request $request, \Modules\Businesses\Models\Business $business)
+    public function create(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
         $personalities = ChatbotPersonality::getActiveForSelect();
-        $contexts = AiContext::where('business_id', $business->id)
+        $contexts = AiContext::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('title')
             ->get(['id', 'title'])
@@ -55,7 +55,7 @@ class ChatbotPresetsController extends Controller
         ]);
     }
 
-    public function store(Request $request, \Modules\Businesses\Models\Business $business)
+    public function store(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -97,7 +97,7 @@ class ChatbotPresetsController extends Controller
             'context_ids' => $validated['context_ids'] ?? [],
             'is_active' => $validated['is_active'] ?? true,
             'is_system' => false,
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'copied_from_id' => $validated['copied_from_id'] ?? null,
             'created_by' => Auth::id(),
         ]);
@@ -106,13 +106,13 @@ class ChatbotPresetsController extends Controller
             ->with('success', 'Preset creado exitosamente.');
     }
 
-    public function edit(Request $request, \Modules\Businesses\Models\Business $business, ChatbotPreset $preset)
+    public function edit(Request $request, \Modules\Listings\Models\Listing $business, ChatbotPreset $preset)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
-        abort_unless($preset->business_id === $business->id, 403);
+        abort_unless($preset->listing_id === $business->id, 403);
 
         $personalities = ChatbotPersonality::getActiveForSelect();
-        $contexts = AiContext::where('business_id', $business->id)
+        $contexts = AiContext::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('title')
             ->get(['id', 'title'])
@@ -127,10 +127,10 @@ class ChatbotPresetsController extends Controller
         ]);
     }
 
-    public function update(Request $request, \Modules\Businesses\Models\Business $business, ChatbotPreset $preset)
+    public function update(Request $request, \Modules\Listings\Models\Listing $business, ChatbotPreset $preset)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
-        abort_unless($preset->business_id === $business->id, 403);
+        abort_unless($preset->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:100',
@@ -173,10 +173,10 @@ class ChatbotPresetsController extends Controller
         return redirect()->back()->with('success', 'Preset actualizado.');
     }
 
-    public function destroy(Request $request, \Modules\Businesses\Models\Business $business, ChatbotPreset $preset)
+    public function destroy(Request $request, \Modules\Listings\Models\Listing $business, ChatbotPreset $preset)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
-        abort_unless($preset->business_id === $business->id, 403);
+        abort_unless($preset->listing_id === $business->id, 403);
         abort_if($preset->is_system, 403, 'No se puede eliminar un preset del sistema.');
 
         $preset->delete();
@@ -185,7 +185,7 @@ class ChatbotPresetsController extends Controller
             ->with('success', 'Preset eliminado.');
     }
 
-    public function duplicate(Request $request, \Modules\Businesses\Models\Business $business, ChatbotPreset $preset)
+    public function duplicate(Request $request, \Modules\Listings\Models\Listing $business, ChatbotPreset $preset)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -193,7 +193,7 @@ class ChatbotPresetsController extends Controller
         $newPreset->name = $preset->name . ' (Copia)';
         $newPreset->slug = ChatbotPreset::generateUniqueSlug(Str::slug($preset->name), null, $business->id);
         $newPreset->is_system = false;
-        $newPreset->business_id = $business->id;
+        $newPreset->listing_id = $business->id;
         $newPreset->copied_from_id = $preset->id;
         $newPreset->created_by = Auth::id();
         $newPreset->save();

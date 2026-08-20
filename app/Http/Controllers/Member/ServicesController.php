@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Services\Models\BusinessService;
 
 class ServicesController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessService::class, $business]);
 
@@ -26,7 +26,7 @@ class ServicesController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessService::class, $business]);
 
@@ -43,7 +43,7 @@ class ServicesController extends Controller
             'sort_order' => ['integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']) . '-' . $business->id;
 
         $service = BusinessService::create($data);
@@ -58,7 +58,7 @@ class ServicesController extends Controller
         return redirect()->back()->with('success', 'Servicio creado correctamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $this->authorize('update', $service);
 
@@ -87,7 +87,7 @@ class ServicesController extends Controller
         return redirect()->back()->with('success', 'Servicio actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $this->authorize('delete', $service);
 

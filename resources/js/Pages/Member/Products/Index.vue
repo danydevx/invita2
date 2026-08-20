@@ -17,10 +17,10 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/businesses/${business?.id}/product-categories`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/product-categories`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-folder me-1"></i>Categorias
         </Link>
-        <Link :href="`/member/businesses/${business?.id}/products/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/products/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nuevo Producto
         </Link>
@@ -43,12 +43,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/products`"
+      :endpoint="`/member/listings/${business?.id}/products`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/products/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/products/reorder`"
       search-placeholder="Buscar productos..."
       empty-title="No hay productos"
       :empty-text="selectedCategoryName ? `No hay productos en la categoria '${selectedCategoryName}'.` : 'Comienza creando tu primer producto.'"
@@ -58,7 +58,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/products/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/products/bulk-delete`"
           item-name="productos"
           @deleted="onBulkDeleted"
         />
@@ -125,7 +125,7 @@
             <i class="bi bi-copy"></i>
           </button>
           <Link
-            :href="`/member/businesses/${business?.id}/products/${row.id}/edit`"
+            :href="`/member/listings/${business?.id}/products/${row.id}/edit`"
             class="btn btn-sm btn-outline-primary"
           >
             <i class="bi bi-pencil"></i>
@@ -170,7 +170,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Productos', active: true },
       ]
     }
@@ -223,7 +223,7 @@ const onBulkDeleted = () => {
 }
 
 const filterProducts = () => {
-  let url = `/member/businesses/${business.value.id}/products`
+  let url = `/member/listings/${business.value.id}/products`
   if (filterCategory.value) {
     url += `?category=${filterCategory.value}`
   }
@@ -232,13 +232,13 @@ const filterProducts = () => {
 
 const clearFilter = () => {
   filterCategory.value = null
-  window.location.href = `/member/businesses/${business.value.id}/products`
+  window.location.href = `/member/listings/${business.value.id}/products`
 }
 
 const deleteProduct = (product) => {
   if (confirm(`Eliminar el producto "${product.name}"?`)) {
     deleting.value = product.id
-    router.delete(`/member/businesses/${business.value.id}/products/${product.id}`, {
+    router.delete(`/member/listings/${business.value.id}/products/${product.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -253,7 +253,7 @@ const deleteProduct = (product) => {
 const cloneProduct = (product) => {
   if (confirm(`Clonar el producto "${product.name}"?`)) {
     cloning.value = product.id
-    router.post(`/member/businesses/${business.value.id}/products/${product.id}/clone`, {}, {
+    router.post(`/member/listings/${business.value.id}/products/${product.id}/clone`, {}, {
       preserveScroll: true,
       onFinish: () => {
         cloning.value = null
@@ -268,7 +268,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} producto${count > 1 ? 's' : ''} seleccionado${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/products/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/products/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

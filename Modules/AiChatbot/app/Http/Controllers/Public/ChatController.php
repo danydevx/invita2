@@ -12,9 +12,9 @@ class ChatController extends Controller
 {
     public function chat(Request $request, $slug)
     {
-        $business = \Modules\Businesses\Models\Business::where('slug', $slug)->firstOrFail();
+        $business = \Modules\Listings\Models\Listing::where('slug', $slug)->firstOrFail();
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings || !$settings->is_enabled) {
             return response()->json([
@@ -63,9 +63,9 @@ class ChatController extends Controller
 
     public function streamChat(Request $request, $slug)
     {
-        $business = \Modules\Businesses\Models\Business::where('slug', $slug)->firstOrFail();
+        $business = \Modules\Listings\Models\Listing::where('slug', $slug)->firstOrFail();
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings || !$settings->is_enabled) {
             return response()->stream(function () {
@@ -166,9 +166,9 @@ class ChatController extends Controller
 
     public function getSettings(Request $request, $slug)
     {
-        $business = \Modules\Businesses\Models\Business::where('slug', $slug)->firstOrFail();
+        $business = \Modules\Listings\Models\Listing::where('slug', $slug)->firstOrFail();
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings || !$settings->is_enabled) {
             return response()->json([
@@ -227,9 +227,9 @@ class ChatController extends Controller
 
     public function conversation(Request $request, $slug)
     {
-        $business = \Modules\Businesses\Models\Business::where('slug', $slug)->firstOrFail();
+        $business = \Modules\Listings\Models\Listing::where('slug', $slug)->firstOrFail();
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings || !$settings->is_enabled) {
             return response()->json([
@@ -240,7 +240,7 @@ class ChatController extends Controller
 
         $sessionId = $request->get('session_id') ?? $request->session()->getId();
 
-        $conversation = \Modules\AiChatbot\Models\AiConversation::where('business_id', $business->id)
+        $conversation = \Modules\AiChatbot\Models\AiConversation::where('listing_id', $business->id)
             ->where('session_id', $sessionId)
             ->with('messages')
             ->first();
@@ -266,9 +266,9 @@ class ChatController extends Controller
 
     public function captureLead(Request $request, $slug)
     {
-        $business = \Modules\Businesses\Models\Business::where('slug', $slug)->firstOrFail();
+        $business = \Modules\Listings\Models\Listing::where('slug', $slug)->firstOrFail();
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings || !$settings->is_enabled || !$settings->lead_capture_enabled) {
             return response()->json(['success' => false, 'error' => 'Lead capture not available'], 400);
@@ -282,7 +282,7 @@ class ChatController extends Controller
 
         try {
             $lead = \Modules\Leads\Models\BusinessLead::create([
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'name' => $data['name'] ?? 'Chatbot Visitor',
                 'email' => $data['email'],
                 'status' => 'new',

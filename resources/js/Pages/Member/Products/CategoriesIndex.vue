@@ -5,7 +5,7 @@
     <PageHeader
       title="Categorias de Productos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/products`"
+      :backHref="`/member/listings/${business?.id}/products`"
     >
       <template #actions>
         <button class="btn btn-primary btn-sm" @click="openCreateModal">
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/product-categories`"
+      :endpoint="`/member/listings/${business?.id}/product-categories`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
@@ -151,8 +151,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Productos', href: `/member/businesses/${biz.id}/products` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Productos', href: `/member/listings/${biz.id}/products` },
         { label: 'Categorias', active: true },
       ]
     }
@@ -234,7 +234,7 @@ const createCategory = () => {
   formData.append('description', form.description || '')
   formData.append('parent_id', form.parent_id ?? '')
   formData.append('is_active', form.is_active ? '1' : '0')
-  router.post(`/member/businesses/${business.value.id}/product-categories`, formData, {
+  router.post(`/member/listings/${business.value.id}/product-categories`, formData, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -252,7 +252,7 @@ const updateCategory = () => {
   formData.append('description', form.description || '')
   formData.append('parent_id', form.parent_id ?? '')
   formData.append('is_active', form.is_active ? '1' : '0')
-  router.put(`/member/businesses/${business.value.id}/product-categories/${editingCategory.value.id}`, formData, {
+  router.put(`/member/listings/${business.value.id}/product-categories/${editingCategory.value.id}`, formData, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -265,7 +265,7 @@ const updateCategory = () => {
 
 const deleteCategory = (category) => {
   if (confirm(`Eliminar la categoria "${category.name}"?`)) {
-    router.delete(`/member/businesses/${business.value.id}/product-categories/${category.id}`, {
+    router.delete(`/member/listings/${business.value.id}/product-categories/${category.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

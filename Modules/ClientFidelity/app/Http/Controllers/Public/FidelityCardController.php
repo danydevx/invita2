@@ -6,17 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\ClientFidelity\Models\ClientFidelityCard;
 
 class FidelityCardController extends Controller
 {
     public function show(string $slug, string $publicCode)
     {
-        $business = Business::where('slug', $slug)->firstOrFail();
+        $business = Listing::where('slug', $slug)->firstOrFail();
 
         $card = ClientFidelityCard::where('public_code', strtoupper($publicCode))
-            ->where('business_id', $business->id)
+            ->where('listing_id', $business->id)
             ->first();
 
         if (!$card) {
@@ -48,7 +48,7 @@ class FidelityCardController extends Controller
         ]);
 
         $card = ClientFidelityCard::where('public_code', strtoupper($request->public_code))
-            ->where('business_id', $business->id)
+            ->where('listing_id', $business->id)
             ->first();
 
         if (!$card) {

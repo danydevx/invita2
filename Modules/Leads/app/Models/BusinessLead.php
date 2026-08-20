@@ -9,8 +9,11 @@ use Modules\Leads\Enums\LeadSource;
 
 class BusinessLead extends Model
 {
+
+    protected $table = 'listing_leads';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_contact_form_id',
         'business_location_id',
         'user_id',
@@ -32,7 +35,7 @@ class BusinessLead extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function location(): BelongsTo

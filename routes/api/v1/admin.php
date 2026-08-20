@@ -7,52 +7,52 @@ use App\Http\Controllers\Api\V1\Admin\UserController;
 Route::prefix('admin')->middleware(['auth:api', 'role:superadmin|admin'])->group(function () {
 
     Route::get('/businesses', [BusinessController::class, 'index'])
-        ->name('api.v1.admin.businesses.index');
+        ->name('api.v1.admin.listings.index');
 
-    Route::get('/businesses/{business}', [BusinessController::class, 'show'])
-        ->name('api.v1.admin.businesses.show');
+    Route::get('/listings/{listing}', [BusinessController::class, 'show'])
+        ->name('api.v1.admin.listings.show');
 
-    Route::get('/businesses/{business}/stats', [BusinessController::class, 'stats'])
-        ->name('api.v1.admin.businesses.stats');
+    Route::get('/listings/{listing}/stats', [BusinessController::class, 'stats'])
+        ->name('api.v1.admin.listings.stats');
 
-    Route::get('/businesses/{business}/locations', [BusinessController::class, 'locations'])
-        ->name('api.v1.admin.businesses.locations');
+    Route::get('/listings/{listing}/locations', [BusinessController::class, 'locations'])
+        ->name('api.v1.admin.listings.locations');
 
-    Route::get('/businesses/{business}/gallery', [BusinessController::class, 'gallery'])
-        ->name('api.v1.admin.businesses.gallery');
+    Route::get('/listings/{listing}/gallery', [BusinessController::class, 'gallery'])
+        ->name('api.v1.admin.listings.gallery');
 
-    Route::get('/businesses/{business}/faqs', [BusinessController::class, 'faqs'])
-        ->name('api.v1.admin.businesses.faqs');
+    Route::get('/listings/{listing}/faqs', [BusinessController::class, 'faqs'])
+        ->name('api.v1.admin.listings.faqs');
 
-    Route::get('/businesses/{business}/seo', [BusinessController::class, 'seo'])
-        ->name('api.v1.admin.businesses.seo');
+    Route::get('/listings/{listing}/seo', [BusinessController::class, 'seo'])
+        ->name('api.v1.admin.listings.seo');
 
-    Route::get('/businesses/{business}/branding', [BusinessController::class, 'branding'])
-        ->name('api.v1.admin.businesses.branding');
+    Route::get('/listings/{listing}/branding', [BusinessController::class, 'branding'])
+        ->name('api.v1.admin.listings.branding');
 
-    Route::get('/businesses/{business}/hero', [BusinessController::class, 'hero'])
-        ->name('api.v1.admin.businesses.hero');
+    Route::get('/listings/{listing}/hero', [BusinessController::class, 'hero'])
+        ->name('api.v1.admin.listings.hero');
 
-    Route::get('/businesses/{business}/about', [BusinessController::class, 'about'])
-        ->name('api.v1.admin.businesses.about');
+    Route::get('/listings/{listing}/about', [BusinessController::class, 'about'])
+        ->name('api.v1.admin.listings.about');
 
-    Route::get('/businesses/{business}/services', [BusinessController::class, 'services'])
-        ->name('api.v1.admin.businesses.services');
+    Route::get('/listings/{listing}/services', [BusinessController::class, 'services'])
+        ->name('api.v1.admin.listings.services');
 
-    Route::get('/businesses/{business}/products', [BusinessController::class, 'products'])
-        ->name('api.v1.admin.businesses.products');
+    Route::get('/listings/{listing}/products', [BusinessController::class, 'products'])
+        ->name('api.v1.admin.listings.products');
 
-    Route::get('/businesses/{business}/reviews', [BusinessController::class, 'reviews'])
-        ->name('api.v1.admin.businesses.reviews');
+    Route::get('/listings/{listing}/reviews', [BusinessController::class, 'reviews'])
+        ->name('api.v1.admin.listings.reviews');
 
-    Route::get('/businesses/{business}/leads', [BusinessController::class, 'leads'])
-        ->name('api.v1.admin.businesses.leads');
+    Route::get('/listings/{listing}/leads', [BusinessController::class, 'leads'])
+        ->name('api.v1.admin.listings.leads');
 
-    Route::get('/businesses/{business}/appointments', [BusinessController::class, 'appointments'])
-        ->name('api.v1.admin.businesses.appointments');
+    Route::get('/listings/{listing}/appointments', [BusinessController::class, 'appointments'])
+        ->name('api.v1.admin.listings.appointments');
 
-    Route::get('/businesses/{business}/appointment-slots', [BusinessController::class, 'appointmentSlots'])
-        ->name('api.v1.admin.businesses.appointment-slots');
+    Route::get('/listings/{listing}/appointment-slots', [BusinessController::class, 'appointmentSlots'])
+        ->name('api.v1.admin.listings.appointment-slots');
 
     Route::get('/users', [UserController::class, 'index'])
         ->name('api.v1.admin.users.index');

@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Crypt;
 
 class BusinessAiSetting extends Model
 {
-    protected $table = 'business_ai_settings';
+    protected $table = 'listing_ai_settings';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'preset_id',
         'provider',
         'api_key',
@@ -69,7 +69,7 @@ class BusinessAiSetting extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function preset(): BelongsTo

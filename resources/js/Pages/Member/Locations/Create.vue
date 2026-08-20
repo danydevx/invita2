@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Nueva Ubicacion'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/locations`"
+      :backHref="`/member/listings/${business.id}/locations`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -206,7 +206,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Ubicacion' }}
             </button>
-            <Link :href="`/member/businesses/${business.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${business.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -275,8 +275,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Ubicaciones', href: `/member/businesses/${biz.id}/locations` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Ubicaciones', href: `/member/listings/${biz.id}/locations` },
         { label: 'Nueva Ubicacion', active: true },
       ]
     }
@@ -398,9 +398,9 @@ const submit = () => {
     formData.append('image', locationImage.value)
   }
 
-  router.post(`/member/businesses/${business.value.id}/locations`, formData, {
+  router.post(`/member/listings/${business.value.id}/locations`, formData, {
     onSuccess: () => {
-      window.location.href = `/member/businesses/${business.value.id}/locations?success=created`
+      window.location.href = `/member/listings/${business.value.id}/locations?success=created`
     },
     onError: (serverErrors) => {
       sending.value = false

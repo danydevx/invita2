@@ -30,7 +30,7 @@ class StorePropertyRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:180',
-                Rule::unique('properties')->where('business_id', $business?->id),
+                Rule::unique('properties')->where('listing_id', $business?->id),
             ],
             'description' => ['nullable', 'string', 'max:5000'],
             'operation_type' => [

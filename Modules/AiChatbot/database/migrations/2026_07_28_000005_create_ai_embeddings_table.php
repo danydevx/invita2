@@ -10,15 +10,15 @@ return new class extends Migration
     {
         Schema::create('ai_embeddings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->string('source_type', 50);
             $table->unsignedBigInteger('source_id');
             $table->text('chunk_text');
             $table->longText('embedding');
             $table->timestamps();
 
-            $table->index(['business_id', 'source_type']);
-            $table->index(['business_id', 'source_id']);
+            $table->index(['listing_id', 'source_type']);
+            $table->index(['listing_id', 'source_id']);
         });
     }
 

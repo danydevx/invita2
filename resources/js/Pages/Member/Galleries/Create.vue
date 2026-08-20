@@ -5,7 +5,7 @@
     <PageHeader
       title="Nueva galería"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id || ''}/galleries`"
+      :backHref="`/member/listings/${business?.id || ''}/galleries`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -63,7 +63,7 @@
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Guardando...' : 'Crear galería' }}
             </button>
-            <Link :href="`/member/businesses/${business?.id || ''}/galleries`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business?.id || ''}/galleries`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -91,15 +91,15 @@ const breadcrumbs = computed(() => {
   const biz = businessMenu.value.find((b) => b.id === business.value?.id)
   if (biz) {
     return [
-      { label: 'Mis Negocios', href: '/member/businesses' },
-      { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-      { label: 'Galerías', href: `/member/businesses/${biz.id}/galleries` },
+      { label: 'Mis Negocios', href: '/member/listings' },
+      { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+      { label: 'Galerías', href: `/member/listings/${biz.id}/galleries` },
       { label: 'Nueva galería', active: true },
     ]
   }
   return [
-    { label: 'Mis Negocios', href: '/member/businesses' },
-    { label: 'Galerías', href: `/member/businesses/${business.value?.id}/galleries` },
+    { label: 'Mis Negocios', href: '/member/listings' },
+    { label: 'Galerías', href: `/member/listings/${business.value?.id}/galleries` },
     { label: 'Nueva galería', active: true },
   ]
 })
@@ -113,6 +113,6 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/businesses/${business.value.id}/galleries`)
+  form.post(`/member/listings/${business.value.id}/galleries`)
 }
 </script>

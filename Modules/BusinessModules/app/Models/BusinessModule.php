@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessModule extends Model
 {
+    protected $table = 'listing_modules';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'module_definition_id',
         'module_key',
         'module_name',
@@ -23,7 +25,7 @@ class BusinessModule extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
     }
 
     public function moduleDefinition(): BelongsTo

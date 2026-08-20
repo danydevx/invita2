@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/businesses/${business.id}/leads`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${business.id}/leads`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver a Leads
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ lead.name }}</h1>
@@ -96,7 +96,7 @@ const form = reactive({
 })
 
 const submit = () => {
-  router.put(`/admin/businesses/${business.value.id}/leads/${lead.value.id}`, form)
+  router.put(`/admin/listings/${business.value.id}/leads/${lead.value.id}`, form)
 }
 
 const formatDate = (date) => {

@@ -8,8 +8,11 @@ use Modules\Appointments\Enums\AppointmentStatus;
 
 class BusinessAppointment extends Model
 {
+
+    protected $table = 'listing_appointments';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_location_id',
         'business_service_id',
         'user_id',
@@ -37,7 +40,7 @@ class BusinessAppointment extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function location(): BelongsTo

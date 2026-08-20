@@ -5,7 +5,7 @@
     <PageHeader
       :title="currentGallery?.name || 'Galería'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id || ''}/galleries`"
+      :backHref="`/member/listings/${business?.id || ''}/galleries`"
     >
       <template #description>
         <p class="text-muted mb-0">Gestiona las imagenes de esta galería. Arrastra para reordenar.</p>
@@ -22,7 +22,7 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li v-for="gallery in galleries" :key="gallery.id">
-              <Link class="dropdown-item" :href="`/member/businesses/${business?.id}/gallery/${gallery.id}`">
+              <Link class="dropdown-item" :href="`/member/listings/${business?.id}/gallery/${gallery.id}`">
                 {{ gallery.name }}
                 <i v-if="gallery.is_primary" class="bi bi-star-fill text-warning ms-1"></i>
               </Link>
@@ -60,11 +60,11 @@
     <BaseDataTable
       v-else
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/gallery/${currentGallery?.id}`"
+      :endpoint="`/member/listings/${business?.id}/gallery/${currentGallery?.id}`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/gallery/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/gallery/reorder`"
       search-placeholder="Buscar imagenes..."
       empty-title="No hay imagenes"
       empty-text="Sube tu primera imagen para empezar."
@@ -93,7 +93,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/gallery/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/gallery/bulk-delete`"
           item-name="imagenes"
           @deleted="onBulkDeleted"
         />
@@ -191,16 +191,16 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find((b) => b.id === bizId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/businesses' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Galerías', href: `/member/businesses/${biz.id}/galleries` },
+        { label: 'Mis Negocios', href: '/member/listings' },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Galerías', href: `/member/listings/${biz.id}/galleries` },
         { label: currentGallery.value?.name || 'Galería', active: true },
       ]
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/businesses' },
-    { label: 'Galerías', href: `/member/businesses/${business.value?.id}/galleries` },
+    { label: 'Mis Negocios', href: '/member/listings' },
+    { label: 'Galerías', href: `/member/listings/${business.value?.id}/galleries` },
     { label: currentGallery.value?.name || 'Galería', active: true },
   ]
 })
@@ -258,7 +258,7 @@ const onImageUploaded = () => {
 const saveEdit = () => {
   saving.value = true
 
-  router.put(`/member/businesses/${business.value.id}/gallery/${editForm.id}`, {
+  router.put(`/member/listings/${business.value.id}/gallery/${editForm.id}`, {
     business_gallery_id: currentGallery.value.id,
     title: editForm.title,
     description: editForm.description,
@@ -276,7 +276,7 @@ const saveEdit = () => {
 
 const deleteImage = (img) => {
   if (confirm('Estas seguro de eliminar esta imagen?')) {
-    router.delete(`/member/businesses/${business.value.id}/gallery/${img.id}`, {
+    router.delete(`/member/listings/${business.value.id}/gallery/${img.id}`, {
       preserveScroll: true,
     })
   }
@@ -287,7 +287,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} imagen${count > 1 ? 'es' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/gallery/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/gallery/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

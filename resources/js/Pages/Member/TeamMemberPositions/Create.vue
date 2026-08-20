@@ -5,7 +5,7 @@
     <PageHeader
       title="Nuevo Puesto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/team-member-positions`"
+      :backHref="`/member/listings/${business?.id}/team-member-positions`"
     />
 
     <div class="row">
@@ -60,7 +60,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/businesses/${business?.id}/team-member-positions`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${business?.id}/team-member-positions`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -107,16 +107,16 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Equipo', href: `/member/businesses/${biz.id}/team-members` },
-        { label: 'Puestos', href: `/member/businesses/${biz.id}/team-member-positions` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Equipo', href: `/member/listings/${biz.id}/team-members` },
+        { label: 'Puestos', href: `/member/listings/${biz.id}/team-member-positions` },
         { label: 'Nuevo', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Puestos', href: `/member/businesses/${business.value?.id}/team-member-positions` },
+    { label: 'Puestos', href: `/member/listings/${business.value?.id}/team-member-positions` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -129,7 +129,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/businesses/${business.value.id}/team-member-positions`, {
+  form.post(`/member/listings/${business.value.id}/team-member-positions`, {
     preserveScroll: true,
   })
 }

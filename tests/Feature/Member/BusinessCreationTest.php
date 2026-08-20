@@ -11,8 +11,8 @@ use App\Services\PlanLimits;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Mockery;
-use Modules\Businesses\Enums\BusinessType;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Enums\ListingType;
+use Modules\Listings\Models\Listing;
 use Tests\TestCase;
 
 class BusinessCreationTest extends TestCase
@@ -24,8 +24,8 @@ class BusinessCreationTest extends TestCase
         $barberIndustry = new Industry(['slug' => 'barberia']);
         $unknownIndustry = new Industry(['slug' => 'future-industry']);
 
-        $this->assertSame(BusinessType::BARBER_SHOP, $barberIndustry->businessType());
-        $this->assertSame(BusinessType::GENERIC, $unknownIndustry->businessType());
+        $this->assertSame(ListingType::BARBER_SHOP, $barberIndustry->businessType());
+        $this->assertSame(ListingType::GENERIC, $unknownIndustry->businessType());
     }
 
     public function test_plan_limits_uses_active_subscription(): void
@@ -75,6 +75,6 @@ class BusinessCreationTest extends TestCase
         );
 
         $this->assertSame(route('member.businesses.index'), $response->getTargetUrl());
-        $this->assertSame(0, Business::count());
+        $this->assertSame(0, Listing::count());
     }
 }

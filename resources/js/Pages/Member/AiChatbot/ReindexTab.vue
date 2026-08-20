@@ -140,7 +140,7 @@ const viewContent = (type, label) => {
   showModal.value = true
   loadingModal.value = true
 
-  fetch(`/member/businesses/${props.business.id}/ai-chatbot/embeddings-json?type=${type}`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/embeddings-json?type=${type}`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -169,7 +169,7 @@ const reindex = () => {
   reindexing.value = true
   reindexResult.value = null
 
-  router.post(`/member/businesses/${props.business.id}/ai-chatbot/reindex`, {}, {
+  router.post(`/member/listings/${props.business.id}/ai-chatbot/reindex`, {}, {
     preserveScroll: true,
     onSuccess: (page) => {
       if (page.props.reindexResult) {

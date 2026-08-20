@@ -10,7 +10,7 @@ class ChatbotTopQuestion extends Model
     protected $table = 'chatbot_top_questions';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'question',
         'question_hash',
         'times_asked',
@@ -28,14 +28,14 @@ class ChatbotTopQuestion extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public static function trackQuestion(int $businessId, string $question, bool $lowConfidence = false, bool $noAnswer = false): void
     {
         $hash = md5(strtolower(trim($question)));
 
-        $existing = self::where('business_id', $businessId)
+        $existing = self::where('listing_id', $businessId)
             ->where('question_hash', $hash)
             ->first();
 
@@ -51,7 +51,7 @@ class ChatbotTopQuestion extends Model
             $existing->save();
         } else {
             self::create([
-                'business_id' => $businessId,
+                'listing_id' => $businessId,
                 'question' => mb_substr(trim($question), 0, 500),
                 'question_hash' => $hash,
                 'times_asked' => 1,
@@ -64,7 +64,7 @@ class ChatbotTopQuestion extends Model
 
     public static function getTopQuestions(int $businessId, int $limit = 10): array
     {
-        return self::where('business_id', $businessId)
+        return self::where('listing_id', $businessId)
             ->orderBy('times_asked', 'desc')
             ->limit($limit)
             ->get()
@@ -73,7 +73,7 @@ class ChatbotTopQuestion extends Model
 
     public static function getUnansweredQuestions(int $businessId, int $limit = 10): array
     {
-        return self::where('business_id', $businessId)
+        return self::where('listing_id', $businessId)
             ->where('no_answer', true)
             ->orderBy('times_asked', 'desc')
             ->limit($limit)
@@ -83,7 +83,7 @@ class ChatbotTopQuestion extends Model
 
     public static function getLowConfidenceQuestions(int $businessId, int $limit = 10): array
     {
-        return self::where('business_id', $businessId)
+        return self::where('listing_id', $businessId)
             ->where('low_confidence', true)
             ->orderBy('times_asked', 'desc')
             ->limit($limit)

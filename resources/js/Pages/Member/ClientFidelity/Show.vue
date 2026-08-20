@@ -40,7 +40,7 @@
             <div class="d-grid gap-2">
               <Link
                 v-if="card?.is_active && !card?.is_completed"
-                :href="`/member/businesses/${business?.id}/fidelity-cards/${card?.id}/scan`"
+                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/scan`"
                 method="post"
                 class="btn btn-success btn-sm"
                 as="button"
@@ -49,7 +49,7 @@
               </Link>
               <Link
                 v-if="card?.is_completed || card?.reset_count > 0"
-                :href="`/member/businesses/${business?.id}/fidelity-cards/${card?.id}/reset`"
+                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/reset`"
                 method="post"
                 class="btn btn-warning btn-sm"
                 as="button"
@@ -57,7 +57,7 @@
                 <i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar
               </Link>
               <Link
-                :href="`/member/businesses/${business?.id}/fidelity-cards/${card?.id}/edit`"
+                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/edit`"
                 class="btn btn-outline-primary btn-sm"
               >
                 <i class="bi bi-pencil me-1"></i>Editar
@@ -166,15 +166,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/businesses/${biz.id}/fidelity-cards` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
         { label: card.value?.client_name || 'Ver', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/businesses/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
     { label: card.value?.client_name || 'Ver', active: true },
   ]
 })
@@ -194,7 +194,7 @@ const deleteCard = () => {
   if (!confirm(`¿Estás seguro de eliminar la tarjeta de "${card.value?.client_name}"?`)) {
     return
   }
-  router.delete(`/member/businesses/${business.value?.id}/fidelity-cards/${card.value?.id}`, {
+  router.delete(`/member/listings/${business.value?.id}/fidelity-cards/${card.value?.id}`, {
     preserveScroll: true,
   })
 }

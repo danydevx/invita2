@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PlanBusinessModule;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +13,7 @@ class BusinessModuleController extends Controller
 {
     public function index(Request $request)
     {
-        $businesses = Business::with(['user', 'modules.moduleDefinition' => fn ($q) => $q->where('is_active', true)])
+        $businesses = Listing::with(['user', 'modules.moduleDefinition' => fn ($q) => $q->where('is_active', true)])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
@@ -22,7 +22,7 @@ class BusinessModuleController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Business $business)
+    public function edit(Request $request, Listing $business)
     {
         $business->load('modules.moduleDefinition');
         $business->load('user.subscriptions.plan');
@@ -57,7 +57,7 @@ class BusinessModuleController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, ActivityService $activity)
+    public function update(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'modules' => ['required', 'array'],

@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Editar Pregunta Frecuente'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/faqs`"
+      :backHref="`/member/listings/${business.id}/faqs`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -66,7 +66,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/businesses/${business.id}/faqs`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${business.id}/faqs`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -146,8 +146,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Preguntas Frecuentes', href: `/member/businesses/${biz.id}/faqs` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Preguntas Frecuentes', href: `/member/listings/${biz.id}/faqs` },
         { label: 'Editar Pregunta', active: true },
       ]
     }
@@ -165,7 +165,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.put(`/member/businesses/${props.business.id}/faqs/${props.faq.id}`, form.value, {
+  router.put(`/member/listings/${props.business.id}/faqs/${props.faq.id}`, form.value, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

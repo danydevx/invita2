@@ -7,12 +7,12 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 
 class LocationController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLocation::class, $business]);
 
@@ -71,7 +71,7 @@ class LocationController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessLocation::class, $business]);
 
@@ -83,7 +83,7 @@ class LocationController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessLocation::class, $business]);
 
@@ -147,7 +147,7 @@ class LocationController extends Controller
             ->with('success', 'Ubicacion creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessLocation $location)
+    public function edit(Request $request, Listing $business, BusinessLocation $location)
     {
         $this->authorize('update', [BusinessLocation::class, $location]);
 
@@ -179,7 +179,7 @@ class LocationController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessLocation $location, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessLocation $location, ActivityService $activity)
     {
         $this->authorize('update', [BusinessLocation::class, $location]);
 
@@ -252,23 +252,23 @@ class LocationController extends Controller
             ->with('success', 'Ubicacion actualizada correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [\Modules\Locations\Models\BusinessLocation::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_locations', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_locations', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $count = \Modules\Locations\Models\BusinessLocation::where('business_id', $business->id)
+        $count = \Modules\Locations\Models\BusinessLocation::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
         return redirect()->back()->with('success', $count . ' ubicacion(es) eliminada(s).');
     }
 
-    public function destroy(Request $request, Business $business, BusinessLocation $location, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessLocation $location, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessLocation::class, $location]);
 

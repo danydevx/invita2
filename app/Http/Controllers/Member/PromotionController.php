@@ -7,12 +7,12 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Promotions\Models\BusinessPromotion;
 
 class PromotionController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessPromotion::class, $business]);
 
@@ -80,7 +80,7 @@ class PromotionController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessPromotion::class, $business]);
 
@@ -95,7 +95,7 @@ class PromotionController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessPromotion::class, $business]);
 
@@ -113,7 +113,7 @@ class PromotionController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
         if ($request->hasFile('image')) {
@@ -134,7 +134,7 @@ class PromotionController extends Controller
             ->with('success', 'Promocion creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessPromotion $promotion)
+    public function edit(Request $request, Listing $business, BusinessPromotion $promotion)
     {
         $this->authorize('update', [BusinessPromotion::class, $promotion]);
 
@@ -165,7 +165,7 @@ class PromotionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
     {
         $this->authorize('update', [BusinessPromotion::class, $promotion]);
 
@@ -214,7 +214,7 @@ class PromotionController extends Controller
             ->with('success', 'Promocion actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessPromotion::class, $promotion]);
 
@@ -232,7 +232,7 @@ class PromotionController extends Controller
             ->with('success', 'Promocion eliminada correctamente.');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -244,7 +244,7 @@ class PromotionController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -256,7 +256,7 @@ class PromotionController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\Promotions\Models\BusinessPromotion::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });
@@ -264,16 +264,16 @@ class PromotionController extends Controller
         return back(303);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [BusinessPromotion::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $promotions = \Modules\Promotions\Models\BusinessPromotion::where('business_id', $business->id)
+        $promotions = \Modules\Promotions\Models\BusinessPromotion::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->get();
 
@@ -288,7 +288,7 @@ class PromotionController extends Controller
         return redirect()->back()->with('success', count($promotions) . ' promocion(es) eliminada(s).');
     }
 
-    public function regenerateQrCode(Request $request, Business $business, BusinessPromotion $promotion)
+    public function regenerateQrCode(Request $request, Listing $business, BusinessPromotion $promotion)
     {
         $this->authorize('update', [BusinessPromotion::class, $promotion]);
 
@@ -303,7 +303,7 @@ class PromotionController extends Controller
             ->with('success', 'Código QR regenerado correctamente.');
     }
 
-    public function clone(Request $request, Business $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function clone(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
     {
         $this->authorize('create', [BusinessPromotion::class, $business]);
 

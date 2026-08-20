@@ -9,7 +9,7 @@ use Modules\AiChatbot\Http\Controllers\Admin\ChatbotPersonalityController;
 use Modules\AiChatbot\Http\Controllers\Admin\AiChatbotSettingsController;
 use App\Http\Controllers\Admin\BusinessContactFormController;
 use App\Http\Controllers\Admin\BusinessContentController;
-use App\Http\Controllers\Admin\BusinessController;
+use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\BusinessHeroController;
 use App\Http\Controllers\Admin\BusinessLeadsController;
 use App\Http\Controllers\Admin\BusinessModuleController;
@@ -42,6 +42,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SecurityEventController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SlotController as AdminSlotController;
 use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
 use App\Http\Controllers\Admin\SystemAnnouncementController as AdminSystemAnnouncementController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\Admin\SystemErrorController;
 use App\Http\Controllers\Admin\SystemModuleController;
 use App\Http\Controllers\Admin\SystemMonitorController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UserSubscriptionController;
 use App\Http\Controllers\Admin\UserProfileController;
 use App\Http\Controllers\Admin\WebhookController as AdminWebhookController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -267,701 +269,701 @@ Route::get('/member/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.dashboard');
 
-Route::get('/member/business-modules', fn () => redirect()->route('member.businesses.index'))
+Route::get('/member/business-modules', fn () => redirect()->route('member.listings.index'))
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.index');
-Route::get('/member/businesses', [App\Http\Controllers\Member\BusinessModuleController::class, 'index'])
+Route::get('/member/listings', [App\Http\Controllers\Member\BusinessModuleController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.index');
-Route::get('/member/businesses/{business}/modules', [BusinessModulesController::class, 'show'])
+    ->name('member.listings.index');
+Route::get('/member/listings/{listing}/modules', [BusinessModulesController::class, 'show'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.modules');
-Route::get('/member/businesses/create', [App\Http\Controllers\Member\BusinessController::class, 'create'])
+    ->name('member.listings.modules');
+Route::get('/member/listings/create', [App\Http\Controllers\Member\BusinessController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.create');
-Route::post('/member/businesses', [App\Http\Controllers\Member\BusinessController::class, 'store'])
+    ->name('member.listings.create');
+Route::post('/member/listings', [App\Http\Controllers\Member\BusinessController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.store');
-Route::get('/member/businesses/{business}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'edit'])
+    ->name('member.listings.store');
+Route::get('/member/listings/{listing}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.edit');
-Route::put('/member/businesses/{business}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'update'])
+Route::put('/member/listings/{listing}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.update');
-Route::get('/member/businesses/{business}/edit', [App\Http\Controllers\Member\BusinessController::class, 'edit'])
+Route::get('/member/listings/{listing}/edit', [App\Http\Controllers\Member\BusinessController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.edit');
-Route::put('/member/businesses/{business}', [App\Http\Controllers\Member\BusinessController::class, 'update'])
+    ->name('member.listings.edit');
+Route::put('/member/listings/{listing}', [App\Http\Controllers\Member\BusinessController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.update');
+    ->name('member.listings.update');
 
-Route::get('/member/businesses/{business}/locations', [LocationController::class, 'index'])
+Route::get('/member/listings/{listing}/locations', [LocationController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.index');
-Route::get('/member/businesses/{business}/locations/create', [LocationController::class, 'create'])
+    ->name('member.listings.locations.index');
+Route::get('/member/listings/{listing}/locations/create', [LocationController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.create');
-Route::post('/member/businesses/{business}/locations', [LocationController::class, 'store'])
+    ->name('member.listings.locations.create');
+Route::post('/member/listings/{listing}/locations', [LocationController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.store');
-Route::get('/member/businesses/{business}/locations/{location}/edit', [LocationController::class, 'edit'])
+    ->name('member.listings.locations.store');
+Route::get('/member/listings/{listing}/locations/{location}/edit', [LocationController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.edit');
-Route::put('/member/businesses/{business}/locations/{location}', [LocationController::class, 'update'])
+    ->name('member.listings.locations.edit');
+Route::put('/member/listings/{listing}/locations/{location}', [LocationController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.update');
-Route::delete('/member/businesses/{business}/locations/{location}', [LocationController::class, 'destroy'])
+    ->name('member.listings.locations.update');
+Route::delete('/member/listings/{listing}/locations/{location}', [LocationController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.destroy');
-Route::post('/member/businesses/{business}/locations/bulk-delete', [LocationController::class, 'bulkDelete'])
+    ->name('member.listings.locations.destroy');
+Route::post('/member/listings/{listing}/locations/bulk-delete', [LocationController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.locations.bulk-delete');
+    ->name('member.listings.locations.bulk-delete');
 
-Route::get('/member/businesses/{business}/services', [ServiceController::class, 'index'])
+Route::get('/member/listings/{listing}/services', [ServiceController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.index');
-Route::get('/member/businesses/{business}/services/create', [ServiceController::class, 'create'])
+    ->name('member.listings.services.index');
+Route::get('/member/listings/{listing}/services/create', [ServiceController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.create');
-Route::post('/member/businesses/{business}/services', [ServiceController::class, 'store'])
+    ->name('member.listings.services.create');
+Route::post('/member/listings/{listing}/services', [ServiceController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.store');
-Route::get('/member/businesses/{business}/services/{service}/edit', [ServiceController::class, 'edit'])
+    ->name('member.listings.services.store');
+Route::get('/member/listings/{listing}/services/{service}/edit', [ServiceController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.edit');
-Route::put('/member/businesses/{business}/services/{service}', [ServiceController::class, 'update'])
+    ->name('member.listings.services.edit');
+Route::put('/member/listings/{listing}/services/{service}', [ServiceController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.update');
-Route::delete('/member/businesses/{business}/services/{service}', [ServiceController::class, 'destroy'])
+    ->name('member.listings.services.update');
+Route::delete('/member/listings/{listing}/services/{service}', [ServiceController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.destroy');
-Route::post('/member/businesses/{business}/services/{service}/clone', [ServiceController::class, 'clone'])
+    ->name('member.listings.services.destroy');
+Route::post('/member/listings/{listing}/services/{service}/clone', [ServiceController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.clone');
-Route::post('/member/businesses/{business}/services/reorder', [ServiceController::class, 'reorder'])
+    ->name('member.listings.services.clone');
+Route::post('/member/listings/{listing}/services/reorder', [ServiceController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.reorder');
-Route::post('/member/businesses/{business}/services/bulk-delete', [ServiceController::class, 'bulkDelete'])
+    ->name('member.listings.services.reorder');
+Route::post('/member/listings/{listing}/services/bulk-delete', [ServiceController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.bulk-delete');
-Route::post('/member/businesses/{business}/services/{service}/images', [ServiceImageController::class, 'store'])
+    ->name('member.listings.services.bulk-delete');
+Route::post('/member/listings/{listing}/services/{service}/images', [ServiceImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.images.store');
-Route::delete('/member/businesses/{business}/services/{service}/images/{image}', [ServiceImageController::class, 'destroy'])
+    ->name('member.listings.services.images.store');
+Route::delete('/member/listings/{listing}/services/{service}/images/{image}', [ServiceImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.services.images.destroy');
-Route::post('/member/businesses/{business}/properties/{property}/images', [PropertyImageController::class, 'store'])
+    ->name('member.listings.services.images.destroy');
+Route::post('/member/listings/{listing}/properties/{property}/images', [PropertyImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.properties.images.store');
-Route::delete('/member/businesses/{business}/properties/{property}/images/{image}', [PropertyImageController::class, 'destroy'])
+    ->name('member.listings.properties.images.store');
+Route::delete('/member/listings/{listing}/properties/{property}/images/{image}', [PropertyImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.properties.images.destroy');
+    ->name('member.listings.properties.images.destroy');
 
-Route::get('/member/businesses/{business}/team-members', [TeamMemberController::class, 'index'])
+Route::get('/member/listings/{listing}/team-members', [TeamMemberController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.index');
-Route::get('/member/businesses/{business}/team-members/create', [TeamMemberController::class, 'create'])
+    ->name('member.listings.team-members.index');
+Route::get('/member/listings/{listing}/team-members/create', [TeamMemberController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.create');
-Route::post('/member/businesses/{business}/team-members', [TeamMemberController::class, 'store'])
+    ->name('member.listings.team-members.create');
+Route::post('/member/listings/{listing}/team-members', [TeamMemberController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.store');
-Route::get('/member/businesses/{business}/team-members/{member}/edit', [TeamMemberController::class, 'edit'])
+    ->name('member.listings.team-members.store');
+Route::get('/member/listings/{listing}/team-members/{member}/edit', [TeamMemberController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.edit');
-Route::post('/member/businesses/{business}/team-members/{member}', [TeamMemberController::class, 'update'])
+    ->name('member.listings.team-members.edit');
+Route::post('/member/listings/{listing}/team-members/{member}', [TeamMemberController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.update');
-Route::delete('/member/businesses/{business}/team-members/{member}', [TeamMemberController::class, 'destroy'])
+    ->name('member.listings.team-members.update');
+Route::delete('/member/listings/{listing}/team-members/{member}', [TeamMemberController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.destroy');
-Route::post('/member/businesses/{business}/team-members/reorder', [TeamMemberController::class, 'reorder'])
+    ->name('member.listings.team-members.destroy');
+Route::post('/member/listings/{listing}/team-members/reorder', [TeamMemberController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.reorder');
-Route::post('/member/businesses/{business}/team-members/bulk-delete', [TeamMemberController::class, 'bulkDelete'])
+    ->name('member.listings.team-members.reorder');
+Route::post('/member/listings/{listing}/team-members/bulk-delete', [TeamMemberController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-members.bulk-delete');
+    ->name('member.listings.team-members.bulk-delete');
 
-Route::get('/member/businesses/{business}/team-member-positions', [TeamMemberPositionController::class, 'index'])
+Route::get('/member/listings/{listing}/team-member-positions', [TeamMemberPositionController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.index');
-Route::get('/member/businesses/{business}/team-member-positions/create', [TeamMemberPositionController::class, 'create'])
+    ->name('member.listings.team-member-positions.index');
+Route::get('/member/listings/{listing}/team-member-positions/create', [TeamMemberPositionController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.create');
-Route::post('/member/businesses/{business}/team-member-positions', [TeamMemberPositionController::class, 'store'])
+    ->name('member.listings.team-member-positions.create');
+Route::post('/member/listings/{listing}/team-member-positions', [TeamMemberPositionController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.store');
-Route::get('/member/businesses/{business}/team-member-positions/{position}/edit', [TeamMemberPositionController::class, 'edit'])
+    ->name('member.listings.team-member-positions.store');
+Route::get('/member/listings/{listing}/team-member-positions/{position}/edit', [TeamMemberPositionController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.edit');
-Route::put('/member/businesses/{business}/team-member-positions/{position}', [TeamMemberPositionController::class, 'update'])
+    ->name('member.listings.team-member-positions.edit');
+Route::put('/member/listings/{listing}/team-member-positions/{position}', [TeamMemberPositionController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.update');
-Route::delete('/member/businesses/{business}/team-member-positions/{position}', [TeamMemberPositionController::class, 'destroy'])
+    ->name('member.listings.team-member-positions.update');
+Route::delete('/member/listings/{listing}/team-member-positions/{position}', [TeamMemberPositionController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.team-member-positions.destroy');
+    ->name('member.listings.team-member-positions.destroy');
 
-Route::get('/member/businesses/{business}/packages', [PackageController::class, 'index'])
+Route::get('/member/listings/{listing}/packages', [PackageController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.index');
-Route::get('/member/businesses/{business}/packages/create', [PackageController::class, 'create'])
+    ->name('member.listings.packages.index');
+Route::get('/member/listings/{listing}/packages/create', [PackageController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.create');
-Route::post('/member/businesses/{business}/packages', [PackageController::class, 'store'])
+    ->name('member.listings.packages.create');
+Route::post('/member/listings/{listing}/packages', [PackageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.store');
-Route::post('/member/businesses/{business}/packages/reorder', [PackageController::class, 'reorder'])
+    ->name('member.listings.packages.store');
+Route::post('/member/listings/{listing}/packages/reorder', [PackageController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.reorder');
-Route::post('/member/businesses/{business}/packages/bulk-delete', [PackageController::class, 'bulkDelete'])
+    ->name('member.listings.packages.reorder');
+Route::post('/member/listings/{listing}/packages/bulk-delete', [PackageController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.bulk-delete');
-Route::get('/member/businesses/{business}/packages/{package}/edit', [PackageController::class, 'edit'])
+    ->name('member.listings.packages.bulk-delete');
+Route::get('/member/listings/{listing}/packages/{package}/edit', [PackageController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.edit');
-Route::post('/member/businesses/{business}/packages/{package}', [PackageController::class, 'update'])
+    ->name('member.listings.packages.edit');
+Route::post('/member/listings/{listing}/packages/{package}', [PackageController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.update');
-Route::delete('/member/businesses/{business}/packages/{package}', [PackageController::class, 'destroy'])
+    ->name('member.listings.packages.update');
+Route::delete('/member/listings/{listing}/packages/{package}', [PackageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.destroy');
-Route::post('/member/businesses/{business}/packages/{package}/clone', [PackageController::class, 'clone'])
+    ->name('member.listings.packages.destroy');
+Route::post('/member/listings/{listing}/packages/{package}/clone', [PackageController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.packages.clone');
+    ->name('member.listings.packages.clone');
 
-Route::get('/member/businesses/{business}/faqs', [FaqController::class, 'index'])
+Route::get('/member/listings/{listing}/faqs', [FaqController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.index');
-Route::get('/member/businesses/{business}/faqs/create', [FaqController::class, 'create'])
+    ->name('member.listings.faqs.index');
+Route::get('/member/listings/{listing}/faqs/create', [FaqController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.create');
-Route::post('/member/businesses/{business}/faqs', [FaqController::class, 'store'])
+    ->name('member.listings.faqs.create');
+Route::post('/member/listings/{listing}/faqs', [FaqController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.store');
-Route::get('/member/businesses/{business}/faqs/{faq}/edit', [FaqController::class, 'edit'])
+    ->name('member.listings.faqs.store');
+Route::get('/member/listings/{listing}/faqs/{faq}/edit', [FaqController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.edit');
-Route::put('/member/businesses/{business}/faqs/{faq}', [FaqController::class, 'update'])
+    ->name('member.listings.faqs.edit');
+Route::put('/member/listings/{listing}/faqs/{faq}', [FaqController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.update');
-Route::delete('/member/businesses/{business}/faqs/{faq}', [FaqController::class, 'destroy'])
+    ->name('member.listings.faqs.update');
+Route::delete('/member/listings/{listing}/faqs/{faq}', [FaqController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.destroy');
-Route::post('/member/businesses/{business}/faqs/reorder', [FaqController::class, 'reorder'])
+    ->name('member.listings.faqs.destroy');
+Route::post('/member/listings/{listing}/faqs/reorder', [FaqController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.reorder');
-Route::post('/member/businesses/{business}/faqs/bulk-delete', [FaqController::class, 'bulkDelete'])
+    ->name('member.listings.faqs.reorder');
+Route::post('/member/listings/{listing}/faqs/bulk-delete', [FaqController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.bulk-delete');
-Route::post('/member/businesses/{business}/faqs/{faq}/clone', [FaqController::class, 'clone'])
+    ->name('member.listings.faqs.bulk-delete');
+Route::post('/member/listings/{listing}/faqs/{faq}/clone', [FaqController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faqs.clone');
+    ->name('member.listings.faqs.clone');
 
-Route::get('/member/businesses/{business}/faq-categories', [FaqCategoryController::class, 'index'])
+Route::get('/member/listings/{listing}/faq-categories', [FaqCategoryController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faq-categories.index');
-Route::post('/member/businesses/{business}/faq-categories', [FaqCategoryController::class, 'store'])
+    ->name('member.listings.faq-categories.index');
+Route::post('/member/listings/{listing}/faq-categories', [FaqCategoryController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faq-categories.store');
-Route::put('/member/businesses/{business}/faq-categories/{category}', [FaqCategoryController::class, 'update'])
+    ->name('member.listings.faq-categories.store');
+Route::put('/member/listings/{listing}/faq-categories/{category}', [FaqCategoryController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faq-categories.update');
-Route::delete('/member/businesses/{business}/faq-categories/{category}', [FaqCategoryController::class, 'destroy'])
+    ->name('member.listings.faq-categories.update');
+Route::delete('/member/listings/{listing}/faq-categories/{category}', [FaqCategoryController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.faq-categories.destroy');
+    ->name('member.listings.faq-categories.destroy');
 
-Route::get('/member/businesses/{business}/minisite', [MinisiteController::class, 'index'])
+Route::get('/member/listings/{listing}/minisite', [MinisiteController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.index');
-Route::post('/member/businesses/{business}/minisite', [MinisiteController::class, 'store'])
+    ->name('member.listings.minisite.index');
+Route::post('/member/listings/{listing}/minisite', [MinisiteController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.store');
-Route::put('/member/businesses/{business}/minisite', [MinisiteController::class, 'update'])
+    ->name('member.listings.minisite.store');
+Route::put('/member/listings/{listing}/minisite', [MinisiteController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.update');
+    ->name('member.listings.minisite.update');
 
-Route::get('/member/businesses/{business}/minisite/sections', [MinisiteSectionController::class, 'index'])
+Route::get('/member/listings/{listing}/minisite/sections', [MinisiteSectionController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.index');
-Route::get('/member/businesses/{business}/minisite/sections/create', [MinisiteSectionController::class, 'create'])
+    ->name('member.listings.minisite.sections.index');
+Route::get('/member/listings/{listing}/minisite/sections/create', [MinisiteSectionController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.create');
-Route::post('/member/businesses/{business}/minisite/sections', [MinisiteSectionController::class, 'store'])
+    ->name('member.listings.minisite.sections.create');
+Route::post('/member/listings/{listing}/minisite/sections', [MinisiteSectionController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.store');
-Route::get('/member/businesses/{business}/minisite/sections/{section}/edit', [MinisiteSectionController::class, 'edit'])
+    ->name('member.listings.minisite.sections.store');
+Route::get('/member/listings/{listing}/minisite/sections/{section}/edit', [MinisiteSectionController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.edit');
-Route::put('/member/businesses/{business}/minisite/sections/{section}', [MinisiteSectionController::class, 'update'])
+    ->name('member.listings.minisite.sections.edit');
+Route::put('/member/listings/{listing}/minisite/sections/{section}', [MinisiteSectionController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.update');
-Route::delete('/member/businesses/{business}/minisite/sections/{section}', [MinisiteSectionController::class, 'destroy'])
+    ->name('member.listings.minisite.sections.update');
+Route::delete('/member/listings/{listing}/minisite/sections/{section}', [MinisiteSectionController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.destroy');
-Route::post('/member/businesses/{business}/minisite/sections/reorder', [MinisiteSectionController::class, 'reorder'])
+    ->name('member.listings.minisite.sections.destroy');
+Route::post('/member/listings/{listing}/minisite/sections/reorder', [MinisiteSectionController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.minisite.sections.reorder');
+    ->name('member.listings.minisite.sections.reorder');
 
-Route::get('/member/businesses/{business}/seo', [SeoController::class, 'index'])
+Route::get('/member/listings/{listing}/seo', [SeoController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.seo.index');
-Route::post('/member/businesses/{business}/seo', [SeoController::class, 'update'])
+    ->name('member.listings.seo.index');
+Route::post('/member/listings/{listing}/seo', [SeoController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.seo.update');
+    ->name('member.listings.seo.update');
 
-Route::get('/member/businesses/{business}/branding', [BrandingController::class, 'index'])
+Route::get('/member/listings/{listing}/branding', [BrandingController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.branding.index');
-Route::post('/member/businesses/{business}/branding', [BrandingController::class, 'update'])
+    ->name('member.listings.branding.index');
+Route::post('/member/listings/{listing}/branding', [BrandingController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.branding.update');
+    ->name('member.listings.branding.update');
 
-Route::get('/member/businesses/{business}/hero', [HeroController::class, 'index'])
+Route::get('/member/listings/{listing}/hero', [HeroController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.hero.index');
-Route::post('/member/businesses/{business}/hero', [HeroController::class, 'update'])
+    ->name('member.listings.hero.index');
+Route::post('/member/listings/{listing}/hero', [HeroController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.hero.update');
+    ->name('member.listings.hero.update');
 
-Route::get('/member/businesses/{business}/about', [AboutController::class, 'index'])
+Route::get('/member/listings/{listing}/about', [AboutController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.about.index');
-Route::post('/member/businesses/{business}/about', [AboutController::class, 'update'])
+    ->name('member.listings.about.index');
+Route::post('/member/listings/{listing}/about', [AboutController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.about.update');
+    ->name('member.listings.about.update');
 
-Route::get('/member/businesses/{business}/social-networks', [SocialNetworkController::class, 'index'])
+Route::get('/member/listings/{listing}/social-networks', [SocialNetworkController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.social-networks.index');
-Route::post('/member/businesses/{business}/social-networks', [SocialNetworkController::class, 'store'])
+    ->name('member.listings.social-networks.index');
+Route::post('/member/listings/{listing}/social-networks', [SocialNetworkController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.social-networks.store');
-Route::post('/member/businesses/{business}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'update'])
+    ->name('member.listings.social-networks.store');
+Route::post('/member/listings/{listing}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.social-networks.update');
-Route::delete('/member/businesses/{business}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'destroy'])
+    ->name('member.listings.social-networks.update');
+Route::delete('/member/listings/{listing}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.social-networks.destroy');
-Route::post('/member/businesses/{business}/social-networks/reorder', [SocialNetworkController::class, 'reorder'])
+    ->name('member.listings.social-networks.destroy');
+Route::post('/member/listings/{listing}/social-networks/reorder', [SocialNetworkController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.social-networks.reorder');
+    ->name('member.listings.social-networks.reorder');
 
-Route::get('/member/businesses/{business}/tasks', [TaskController::class, 'index'])
+Route::get('/member/listings/{listing}/tasks', [TaskController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.tasks.index');
-Route::post('/member/businesses/{business}/tasks', [TaskController::class, 'store'])
+    ->name('member.listings.tasks.index');
+Route::post('/member/listings/{listing}/tasks', [TaskController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.tasks.store');
-Route::put('/member/businesses/{business}/tasks/{task}', [TaskController::class, 'update'])
+    ->name('member.listings.tasks.store');
+Route::put('/member/listings/{listing}/tasks/{task}', [TaskController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.tasks.update');
-Route::delete('/member/businesses/{business}/tasks/{task}', [TaskController::class, 'destroy'])
+    ->name('member.listings.tasks.update');
+Route::delete('/member/listings/{listing}/tasks/{task}', [TaskController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.tasks.destroy');
-Route::post('/member/businesses/{business}/tasks/reorder', [TaskController::class, 'reorder'])
+    ->name('member.listings.tasks.destroy');
+Route::post('/member/listings/{listing}/tasks/reorder', [TaskController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.tasks.reorder');
+    ->name('member.listings.tasks.reorder');
 
-Route::get('/member/businesses/{business}/clients', [ClientController::class, 'index'])
+Route::get('/member/listings/{listing}/clients', [ClientController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.index');
-Route::get('/member/businesses/{business}/clients/create', [ClientController::class, 'create'])
+    ->name('member.listings.clients.index');
+Route::get('/member/listings/{listing}/clients/create', [ClientController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.create');
-Route::post('/member/businesses/{business}/clients', [ClientController::class, 'store'])
+    ->name('member.listings.clients.create');
+Route::post('/member/listings/{listing}/clients', [ClientController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.store');
-Route::get('/member/businesses/{business}/clients/{client}/edit', [ClientController::class, 'edit'])
+    ->name('member.listings.clients.store');
+Route::get('/member/listings/{listing}/clients/{client}/edit', [ClientController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.edit');
-Route::put('/member/businesses/{business}/clients/{client}', [ClientController::class, 'update'])
+    ->name('member.listings.clients.edit');
+Route::put('/member/listings/{listing}/clients/{client}', [ClientController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.update');
-Route::delete('/member/businesses/{business}/clients/{client}', [ClientController::class, 'destroy'])
+    ->name('member.listings.clients.update');
+Route::delete('/member/listings/{listing}/clients/{client}', [ClientController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.destroy');
-Route::post('/member/businesses/{business}/clients/bulk-delete', [ClientController::class, 'bulkDelete'])
+    ->name('member.listings.clients.destroy');
+Route::post('/member/listings/{listing}/clients/bulk-delete', [ClientController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.bulk-delete');
-Route::post('/member/businesses/{business}/clients/{client}/clone', [ClientController::class, 'clone'])
+    ->name('member.listings.clients.bulk-delete');
+Route::post('/member/listings/{listing}/clients/{client}/clone', [ClientController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.clients.clone');
+    ->name('member.listings.clients.clone');
 
-Route::get('/member/businesses/{business}/galleries', [GalleryGroupController::class, 'index'])
+Route::get('/member/listings/{listing}/galleries', [GalleryGroupController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.index');
-Route::get('/member/businesses/{business}/galleries/create', [GalleryGroupController::class, 'create'])
+    ->name('member.listings.galleries.index');
+Route::get('/member/listings/{listing}/galleries/create', [GalleryGroupController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.create');
-Route::post('/member/businesses/{business}/galleries', [GalleryGroupController::class, 'store'])
+    ->name('member.listings.galleries.create');
+Route::post('/member/listings/{listing}/galleries', [GalleryGroupController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.store');
-Route::get('/member/businesses/{business}/galleries/{gallery}/edit', [GalleryGroupController::class, 'edit'])
+    ->name('member.listings.galleries.store');
+Route::get('/member/listings/{listing}/galleries/{gallery}/edit', [GalleryGroupController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.edit');
-Route::put('/member/businesses/{business}/galleries/{gallery}', [GalleryGroupController::class, 'update'])
+    ->name('member.listings.galleries.edit');
+Route::put('/member/listings/{listing}/galleries/{gallery}', [GalleryGroupController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.update');
-Route::delete('/member/businesses/{business}/galleries/{gallery}', [GalleryGroupController::class, 'destroy'])
+    ->name('member.listings.galleries.update');
+Route::delete('/member/listings/{listing}/galleries/{gallery}', [GalleryGroupController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.destroy');
-Route::post('/member/businesses/{business}/galleries/{gallery}/set-primary', [GalleryGroupController::class, 'setPrimary'])
+    ->name('member.listings.galleries.destroy');
+Route::post('/member/listings/{listing}/galleries/{gallery}/set-primary', [GalleryGroupController::class, 'setPrimary'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.galleries.set-primary');
+    ->name('member.listings.galleries.set-primary');
 
-Route::get('/member/businesses/{business}/gallery', [GalleryGroupController::class, 'index'])
+Route::get('/member/listings/{listing}/gallery', [GalleryGroupController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.index.legacy');
-Route::get('/member/businesses/{business}/gallery/{gallery}', [GalleryController::class, 'show'])
+    ->name('member.listings.gallery.index.legacy');
+Route::get('/member/listings/{listing}/gallery/{gallery}', [GalleryController::class, 'show'])
     ->where('gallery', '[0-9]+')
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.show.legacy');
-Route::get('/member/businesses/{business}/gallery', [GalleryGroupController::class, 'index'])
+    ->name('member.listings.gallery.show.legacy');
+Route::get('/member/listings/{listing}/gallery', [GalleryGroupController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.index.legacy');
-Route::get('/member/businesses/{business}/gallery/{gallery}', [GalleryController::class, 'show'])
+    ->name('member.listings.gallery.index.legacy');
+Route::get('/member/listings/{listing}/gallery/{gallery}', [GalleryController::class, 'show'])
     ->where('gallery', '[0-9]+')
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.show.legacy');
-Route::post('/member/businesses/{business}/gallery', [GalleryController::class, 'store'])
+    ->name('member.listings.gallery.show.legacy');
+Route::post('/member/listings/{listing}/gallery', [GalleryController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.store');
-Route::put('/member/businesses/{business}/gallery/{image}', [GalleryController::class, 'update'])
+    ->name('member.listings.gallery.store');
+Route::put('/member/listings/{listing}/gallery/{image}', [GalleryController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.update');
-Route::delete('/member/businesses/{business}/gallery/{image}', [GalleryController::class, 'destroy'])
+    ->name('member.listings.gallery.update');
+Route::delete('/member/listings/{listing}/gallery/{image}', [GalleryController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.destroy');
-Route::post('/member/businesses/{business}/gallery/reorder', [GalleryController::class, 'reorder'])
+    ->name('member.listings.gallery.destroy');
+Route::post('/member/listings/{listing}/gallery/reorder', [GalleryController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.reorder');
-Route::post('/member/businesses/{business}/gallery/bulk-delete', [GalleryController::class, 'bulkDelete'])
+    ->name('member.listings.gallery.reorder');
+Route::post('/member/listings/{listing}/gallery/bulk-delete', [GalleryController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.gallery.bulk-delete');
+    ->name('member.listings.gallery.bulk-delete');
 
-Route::get('/member/businesses/{business}/products', [ProductController::class, 'index'])
+Route::get('/member/listings/{listing}/products', [ProductController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.index');
-Route::get('/member/businesses/{business}/products/create', [ProductController::class, 'create'])
+    ->name('member.listings.products.index');
+Route::get('/member/listings/{listing}/products/create', [ProductController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.create');
-Route::post('/member/businesses/{business}/products', [ProductController::class, 'store'])
+    ->name('member.listings.products.create');
+Route::post('/member/listings/{listing}/products', [ProductController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.store');
-Route::get('/member/businesses/{business}/products/{product}/edit', [ProductController::class, 'edit'])
+    ->name('member.listings.products.store');
+Route::get('/member/listings/{listing}/products/{product}/edit', [ProductController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.edit');
-Route::put('/member/businesses/{business}/products/{product}', [ProductController::class, 'update'])
+    ->name('member.listings.products.edit');
+Route::put('/member/listings/{listing}/products/{product}', [ProductController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.update');
-Route::delete('/member/businesses/{business}/products/{product}', [ProductController::class, 'destroy'])
+    ->name('member.listings.products.update');
+Route::delete('/member/listings/{listing}/products/{product}', [ProductController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.destroy');
-Route::post('/member/businesses/{business}/products/{product}/clone', [ProductController::class, 'clone'])
+    ->name('member.listings.products.destroy');
+Route::post('/member/listings/{listing}/products/{product}/clone', [ProductController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.clone');
-Route::post('/member/businesses/{business}/products/reorder', [ProductController::class, 'reorder'])
+    ->name('member.listings.products.clone');
+Route::post('/member/listings/{listing}/products/reorder', [ProductController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.reorder');
-Route::post('/member/businesses/{business}/products/bulk-delete', [ProductController::class, 'bulkDelete'])
+    ->name('member.listings.products.reorder');
+Route::post('/member/listings/{listing}/products/bulk-delete', [ProductController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.bulk-delete');
-Route::post('/member/businesses/{business}/products/{product}/images', [ProductImageController::class, 'store'])
+    ->name('member.listings.products.bulk-delete');
+Route::post('/member/listings/{listing}/products/{product}/images', [ProductImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.images.store');
-Route::delete('/member/businesses/{business}/products/{product}/images/{image}', [ProductImageController::class, 'destroy'])
+    ->name('member.listings.products.images.store');
+Route::delete('/member/listings/{listing}/products/{product}/images/{image}', [ProductImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.products.images.destroy');
+    ->name('member.listings.products.images.destroy');
 
-Route::get('/member/businesses/{business}/appointments', [AppointmentController::class, 'index'])
+Route::get('/member/listings/{listing}/appointments', [AppointmentController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.index');
-Route::get('/member/businesses/{business}/appointments/create', [AppointmentController::class, 'create'])
+    ->name('member.listings.appointments.index');
+Route::get('/member/listings/{listing}/appointments/create', [AppointmentController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.create');
-Route::post('/member/businesses/{business}/appointments', [AppointmentController::class, 'store'])
+    ->name('member.listings.appointments.create');
+Route::post('/member/listings/{listing}/appointments', [AppointmentController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.store');
+    ->name('member.listings.appointments.store');
 
-Route::get('/member/businesses/{business}/appointments/availability', [AvailabilityController::class, 'index'])
+Route::get('/member/listings/{listing}/appointments/availability', [AvailabilityController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.availability');
-Route::put('/member/businesses/{business}/appointments/availability/weekly', [AvailabilityController::class, 'updateWeekly'])
+    ->name('member.listings.appointments.availability');
+Route::put('/member/listings/{listing}/appointments/availability/weekly', [AvailabilityController::class, 'updateWeekly'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.availability.weekly');
-Route::post('/member/businesses/{business}/appointments/availability/exceptions', [AvailabilityController::class, 'storeException'])
+    ->name('member.listings.appointments.availability.weekly');
+Route::post('/member/listings/{listing}/appointments/availability/exceptions', [AvailabilityController::class, 'storeException'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.availability.exceptions.store');
-Route::delete('/member/businesses/{business}/appointments/availability/exceptions/{exception}', [AvailabilityController::class, 'destroyException'])
+    ->name('member.listings.appointments.availability.exceptions.store');
+Route::delete('/member/listings/{listing}/appointments/availability/exceptions/{exception}', [AvailabilityController::class, 'destroyException'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.availability.exceptions.destroy');
+    ->name('member.listings.appointments.availability.exceptions.destroy');
 
-Route::get('/member/businesses/{business}/appointments/{appointment}', [AppointmentController::class, 'show'])
+Route::get('/member/listings/{listing}/appointments/{appointment}', [AppointmentController::class, 'show'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.show');
-Route::get('/member/businesses/{business}/appointments/{appointment}/edit', [AppointmentController::class, 'edit'])
+    ->name('member.listings.appointments.show');
+Route::get('/member/listings/{listing}/appointments/{appointment}/edit', [AppointmentController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.edit');
-Route::put('/member/businesses/{business}/appointments/{appointment}', [AppointmentController::class, 'update'])
+    ->name('member.listings.appointments.edit');
+Route::put('/member/listings/{listing}/appointments/{appointment}', [AppointmentController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.update');
-Route::delete('/member/businesses/{business}/appointments/{appointment}', [AppointmentController::class, 'destroy'])
+    ->name('member.listings.appointments.update');
+Route::delete('/member/listings/{listing}/appointments/{appointment}', [AppointmentController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.destroy');
-Route::post('/member/businesses/{business}/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])
+    ->name('member.listings.appointments.destroy');
+Route::post('/member/listings/{listing}/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.cancel');
-Route::put('/member/businesses/{business}/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])
+    ->name('member.listings.appointments.cancel');
+Route::put('/member/listings/{listing}/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.reschedule');
-Route::post('/member/businesses/{business}/appointments/bulk-delete', [AppointmentController::class, 'bulkDelete'])
+    ->name('member.listings.appointments.reschedule');
+Route::post('/member/listings/{listing}/appointments/bulk-delete', [AppointmentController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.appointments.bulk-delete');
+    ->name('member.listings.appointments.bulk-delete');
 
-Route::get('/member/businesses/{business}/slots', [SlotController::class, 'index'])
+Route::get('/member/listings/{listing}/slots', [SlotController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.slots.index');
-Route::post('/member/businesses/{business}/slots', [SlotController::class, 'store'])
+    ->name('member.listings.slots.index');
+Route::post('/member/listings/{listing}/slots', [SlotController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.slots.store');
-Route::put('/member/businesses/{business}/slots/{slot}', [SlotController::class, 'update'])
+    ->name('member.listings.slots.store');
+Route::put('/member/listings/{listing}/slots/{slot}', [SlotController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.slots.update');
-Route::delete('/member/businesses/{business}/slots/{slot}', [SlotController::class, 'destroy'])
+    ->name('member.listings.slots.update');
+Route::delete('/member/listings/{listing}/slots/{slot}', [SlotController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.slots.destroy');
+    ->name('member.listings.slots.destroy');
 
-Route::get('/member/businesses/{business}/leads', [LeadController::class, 'index'])
+Route::get('/member/listings/{listing}/leads', [LeadController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.index');
-Route::get('/member/businesses/{business}/leads/create', [LeadController::class, 'create'])
+    ->name('member.listings.leads.index');
+Route::get('/member/listings/{listing}/leads/create', [LeadController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.create');
-Route::post('/member/businesses/{business}/leads', [LeadController::class, 'store'])
+    ->name('member.listings.leads.create');
+Route::post('/member/listings/{listing}/leads', [LeadController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.store');
-Route::get('/member/businesses/{business}/leads/export', [LeadController::class, 'export'])
+    ->name('member.listings.leads.store');
+Route::get('/member/listings/{listing}/leads/export', [LeadController::class, 'export'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.export');
-Route::get('/member/businesses/{business}/leads/{lead}', [LeadController::class, 'show'])
+    ->name('member.listings.leads.export');
+Route::get('/member/listings/{listing}/leads/{lead}', [LeadController::class, 'show'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.show');
-Route::get('/member/businesses/{business}/leads/{lead}/edit', [LeadController::class, 'edit'])
+    ->name('member.listings.leads.show');
+Route::get('/member/listings/{listing}/leads/{lead}/edit', [LeadController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.edit');
-Route::put('/member/businesses/{business}/leads/{lead}', [LeadController::class, 'update'])
+    ->name('member.listings.leads.edit');
+Route::put('/member/listings/{listing}/leads/{lead}', [LeadController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.update');
-Route::delete('/member/businesses/{business}/leads/{lead}', [LeadController::class, 'destroy'])
+    ->name('member.listings.leads.update');
+Route::delete('/member/listings/{listing}/leads/{lead}', [LeadController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.destroy');
-Route::post('/member/businesses/{business}/leads/bulk-delete', [LeadController::class, 'bulkDelete'])
+    ->name('member.listings.leads.destroy');
+Route::post('/member/listings/{listing}/leads/bulk-delete', [LeadController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.leads.bulk-delete');
+    ->name('member.listings.leads.bulk-delete');
 
-Route::get('/member/businesses/{business}/contact-forms', [ContactFormController::class, 'index'])
+Route::get('/member/listings/{listing}/contact-forms', [ContactFormController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.index');
-Route::get('/member/businesses/{business}/contact-forms/create', [ContactFormController::class, 'create'])
+Route::get('/member/listings/{listing}/contact-forms/create', [ContactFormController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.create');
-Route::post('/member/businesses/{business}/contact-forms', [ContactFormController::class, 'store'])
+Route::post('/member/listings/{listing}/contact-forms', [ContactFormController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.store');
-Route::get('/member/businesses/{business}/contact-forms/{form}/edit', [ContactFormController::class, 'edit'])
+Route::get('/member/listings/{listing}/contact-forms/{form}/edit', [ContactFormController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.edit');
-Route::put('/member/businesses/{business}/contact-forms/{form}', [ContactFormController::class, 'update'])
+Route::put('/member/listings/{listing}/contact-forms/{form}', [ContactFormController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.update');
-Route::delete('/member/businesses/{business}/contact-forms/{form}', [ContactFormController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/contact-forms/{form}', [ContactFormController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.destroy');
-Route::post('/member/businesses/{business}/contact-forms/{form}/fields', [ContactFormController::class, 'storeField'])
+Route::post('/member/listings/{listing}/contact-forms/{form}/fields', [ContactFormController::class, 'storeField'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.fields.store');
-Route::put('/member/businesses/{business}/contact-forms/{form}/fields/{field}', [ContactFormController::class, 'updateField'])
+Route::put('/member/listings/{listing}/contact-forms/{form}/fields/{field}', [ContactFormController::class, 'updateField'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.fields.update');
-Route::delete('/member/businesses/{business}/contact-forms/{form}/fields/{field}', [ContactFormController::class, 'destroyField'])
+Route::delete('/member/listings/{listing}/contact-forms/{form}/fields/{field}', [ContactFormController::class, 'destroyField'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.fields.destroy');
-Route::post('/member/businesses/{business}/contact-forms/{form}/reorder', [ContactFormController::class, 'reorder'])
+Route::post('/member/listings/{listing}/contact-forms/{form}/reorder', [ContactFormController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.reorder');
-Route::get('/member/businesses/{business}/contact-forms/{form}/submissions', [ContactFormController::class, 'submissions'])
+Route::get('/member/listings/{listing}/contact-forms/{form}/submissions', [ContactFormController::class, 'submissions'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.submissions');
-Route::get('/member/businesses/{business}/contact-forms/export', [ContactFormController::class, 'export'])
+Route::get('/member/listings/{listing}/contact-forms/export', [ContactFormController::class, 'export'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.export');
-Route::get('/member/businesses/{business}/contact-forms/{form}/preview', [ContactFormController::class, 'preview'])
+Route::get('/member/listings/{listing}/contact-forms/{form}/preview', [ContactFormController::class, 'preview'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.contact-forms.preview');
 
-Route::get('/member/businesses/{business}/reviews', [ReviewController::class, 'index'])
+Route::get('/member/listings/{listing}/reviews', [ReviewController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.index');
-Route::get('/member/businesses/{business}/reviews/create', [ReviewController::class, 'create'])
+    ->name('member.listings.reviews.index');
+Route::get('/member/listings/{listing}/reviews/create', [ReviewController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.create');
-Route::post('/member/businesses/{business}/reviews', [ReviewController::class, 'store'])
+    ->name('member.listings.reviews.create');
+Route::post('/member/listings/{listing}/reviews', [ReviewController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.store');
-Route::post('/member/businesses/{business}/reviews/reorder', [ReviewController::class, 'reorder'])
+    ->name('member.listings.reviews.store');
+Route::post('/member/listings/{listing}/reviews/reorder', [ReviewController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.reorder');
-Route::post('/member/businesses/{business}/reviews/bulk-delete', [ReviewController::class, 'bulkDelete'])
+    ->name('member.listings.reviews.reorder');
+Route::post('/member/listings/{listing}/reviews/bulk-delete', [ReviewController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.bulk-delete');
-Route::post('/member/businesses/{business}/reviews/{review}/clone', [ReviewController::class, 'clone'])
+    ->name('member.listings.reviews.bulk-delete');
+Route::post('/member/listings/{listing}/reviews/{review}/clone', [ReviewController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.clone');
-Route::get('/member/businesses/{business}/reviews/{review}/edit', [ReviewController::class, 'edit'])
+    ->name('member.listings.reviews.clone');
+Route::get('/member/listings/{listing}/reviews/{review}/edit', [ReviewController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.edit');
-Route::put('/member/businesses/{business}/reviews/{review}', [ReviewController::class, 'update'])
+    ->name('member.listings.reviews.edit');
+Route::put('/member/listings/{listing}/reviews/{review}', [ReviewController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.update');
-Route::delete('/member/businesses/{business}/reviews/{review}', [ReviewController::class, 'destroy'])
+    ->name('member.listings.reviews.update');
+Route::delete('/member/listings/{listing}/reviews/{review}', [ReviewController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.reviews.destroy');
+    ->name('member.listings.reviews.destroy');
 
-Route::get('/member/businesses/{business}/promotions', [PromotionController::class, 'index'])
+Route::get('/member/listings/{listing}/promotions', [PromotionController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.index');
-Route::get('/member/businesses/{business}/promotions/create', [PromotionController::class, 'create'])
+    ->name('member.listings.promotions.index');
+Route::get('/member/listings/{listing}/promotions/create', [PromotionController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.create');
-Route::post('/member/businesses/{business}/promotions', [PromotionController::class, 'store'])
+    ->name('member.listings.promotions.create');
+Route::post('/member/listings/{listing}/promotions', [PromotionController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.store');
-Route::get('/member/businesses/{business}/promotions/{promotion}/edit', [PromotionController::class, 'edit'])
+    ->name('member.listings.promotions.store');
+Route::get('/member/listings/{listing}/promotions/{promotion}/edit', [PromotionController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.edit');
-Route::put('/member/businesses/{business}/promotions/{promotion}', [PromotionController::class, 'update'])
+    ->name('member.listings.promotions.edit');
+Route::put('/member/listings/{listing}/promotions/{promotion}', [PromotionController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.update');
-Route::delete('/member/businesses/{business}/promotions/{promotion}', [PromotionController::class, 'destroy'])
+    ->name('member.listings.promotions.update');
+Route::delete('/member/listings/{listing}/promotions/{promotion}', [PromotionController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.destroy');
-Route::post('/member/businesses/{business}/promotions/reorder', [PromotionController::class, 'reorder'])
+    ->name('member.listings.promotions.destroy');
+Route::post('/member/listings/{listing}/promotions/reorder', [PromotionController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.reorder');
-Route::post('/member/businesses/{business}/promotions/bulk-delete', [PromotionController::class, 'bulkDelete'])
+    ->name('member.listings.promotions.reorder');
+Route::post('/member/listings/{listing}/promotions/bulk-delete', [PromotionController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.bulk-delete');
-Route::post('/member/businesses/{business}/promotions/{promotion}/clone', [PromotionController::class, 'clone'])
+    ->name('member.listings.promotions.bulk-delete');
+Route::post('/member/listings/{listing}/promotions/{promotion}/clone', [PromotionController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.clone');
-Route::post('/member/businesses/{business}/promotions/{promotion}/regenerate-qr', [PromotionController::class, 'regenerateQrCode'])
+    ->name('member.listings.promotions.clone');
+Route::post('/member/listings/{listing}/promotions/{promotion}/regenerate-qr', [PromotionController::class, 'regenerateQrCode'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.promotions.regenerate-qr');
+    ->name('member.listings.promotions.regenerate-qr');
 
-Route::get('/member/businesses/{business}/features', [FeatureController::class, 'index'])
+Route::get('/member/listings/{listing}/features', [FeatureController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.index');
-Route::post('/member/businesses/{business}/features', [FeatureController::class, 'store'])
+    ->name('member.listings.features.index');
+Route::post('/member/listings/{listing}/features', [FeatureController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.store');
-Route::post('/member/businesses/{business}/features/import', [FeatureController::class, 'importBulk'])
+    ->name('member.listings.features.store');
+Route::post('/member/listings/{listing}/features/import', [FeatureController::class, 'importBulk'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.import-bulk');
-Route::post('/member/businesses/{business}/features/import/{feature}', [FeatureController::class, 'import'])
+    ->name('member.listings.features.import-bulk');
+Route::post('/member/listings/{listing}/features/import/{feature}', [FeatureController::class, 'import'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.import');
-Route::put('/member/businesses/{business}/features/{feature}', [FeatureController::class, 'update'])
+    ->name('member.listings.features.import');
+Route::put('/member/listings/{listing}/features/{feature}', [FeatureController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.update');
-Route::delete('/member/businesses/{business}/features/{feature}', [FeatureController::class, 'destroy'])
+    ->name('member.listings.features.update');
+Route::delete('/member/listings/{listing}/features/{feature}', [FeatureController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.destroy');
-Route::put('/member/businesses/{business}/feature-assignments', [FeatureController::class, 'updateAssignment'])
+    ->name('member.listings.features.destroy');
+Route::put('/member/listings/{listing}/feature-assignments', [FeatureController::class, 'updateAssignment'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.feature-assignments.update');
-Route::delete('/member/businesses/{business}/feature-assignments/{assignment}', [FeatureController::class, 'removeAssignment'])
+    ->name('member.listings.feature-assignments.update');
+Route::delete('/member/listings/{listing}/feature-assignments/{assignment}', [FeatureController::class, 'removeAssignment'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.feature-assignments.remove');
-Route::post('/member/businesses/{business}/features/reorder', [FeatureController::class, 'reorder'])
+    ->name('member.listings.feature-assignments.remove');
+Route::post('/member/listings/{listing}/features/reorder', [FeatureController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.businesses.features.reorder');
+    ->name('member.listings.features.reorder');
 
-Route::get('/member/businesses/{business}/menu-categories', [MemberMenuCategoryController::class, 'index'])
+Route::get('/member/listings/{listing}/menu-categories', [MemberMenuCategoryController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.categories.index');
-Route::post('/member/businesses/{business}/menu-categories', [MemberMenuCategoryController::class, 'store'])
+Route::post('/member/listings/{listing}/menu-categories', [MemberMenuCategoryController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.categories.store');
-Route::put('/member/businesses/{business}/menu-categories/{category}', [MemberMenuCategoryController::class, 'update'])
+Route::put('/member/listings/{listing}/menu-categories/{category}', [MemberMenuCategoryController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.categories.update');
-Route::delete('/member/businesses/{business}/menu-categories/{category}', [MemberMenuCategoryController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/menu-categories/{category}', [MemberMenuCategoryController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.categories.destroy');
 
-Route::get('/member/businesses/{business}/product-categories', [MemberProductCategoryController::class, 'index'])
+Route::get('/member/listings/{listing}/product-categories', [MemberProductCategoryController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.product.categories.index');
-Route::post('/member/businesses/{business}/product-categories', [MemberProductCategoryController::class, 'store'])
+Route::post('/member/listings/{listing}/product-categories', [MemberProductCategoryController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.product.categories.store');
-Route::put('/member/businesses/{business}/product-categories/{category}', [MemberProductCategoryController::class, 'update'])
+Route::put('/member/listings/{listing}/product-categories/{category}', [MemberProductCategoryController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.product.categories.update');
-Route::delete('/member/businesses/{business}/product-categories/{category}', [MemberProductCategoryController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/product-categories/{category}', [MemberProductCategoryController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.product.categories.destroy');
 
-Route::get('/member/businesses/{business}/menu-products', [MemberMenuProductController::class, 'index'])
+Route::get('/member/listings/{listing}/menu-products', [MemberMenuProductController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.index');
-Route::get('/member/businesses/{business}/menu-products/create', [MemberMenuProductController::class, 'create'])
+Route::get('/member/listings/{listing}/menu-products/create', [MemberMenuProductController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.create');
-Route::post('/member/businesses/{business}/menu-products', [MemberMenuProductController::class, 'store'])
+Route::post('/member/listings/{listing}/menu-products', [MemberMenuProductController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.store');
-Route::post('/member/businesses/{business}/menu-products/reorder', [MemberMenuProductController::class, 'reorder'])
+Route::post('/member/listings/{listing}/menu-products/reorder', [MemberMenuProductController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.reorder');
-Route::post('/member/businesses/{business}/menu-products/bulk-delete', [MemberMenuProductController::class, 'bulkDelete'])
+Route::post('/member/listings/{listing}/menu-products/bulk-delete', [MemberMenuProductController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.bulk-delete');
-Route::get('/member/businesses/{business}/menu-products/{product}/edit', [MemberMenuProductController::class, 'edit'])
+Route::get('/member/listings/{listing}/menu-products/{product}/edit', [MemberMenuProductController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.edit');
-Route::put('/member/businesses/{business}/menu-products/{product}', [MemberMenuProductController::class, 'update'])
+Route::put('/member/listings/{listing}/menu-products/{product}', [MemberMenuProductController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.update');
-Route::delete('/member/businesses/{business}/menu-products/{product}', [MemberMenuProductController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/menu-products/{product}', [MemberMenuProductController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.destroy');
-Route::post('/member/businesses/{business}/menu-products/{product}/clone', [MemberMenuProductController::class, 'clone'])
+Route::post('/member/listings/{listing}/menu-products/{product}/clone', [MemberMenuProductController::class, 'clone'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.clone');
-Route::post('/member/businesses/{business}/menu-products/{product}/variants', [MemberMenuProductVariantController::class, 'store'])
+Route::post('/member/listings/{listing}/menu-products/{product}/variants', [MemberMenuProductVariantController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.variants.store');
-Route::put('/member/businesses/{business}/menu-products/{product}/variants/{variant}', [MemberMenuProductVariantController::class, 'update'])
+Route::put('/member/listings/{listing}/menu-products/{product}/variants/{variant}', [MemberMenuProductVariantController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.variants.update');
-Route::delete('/member/businesses/{business}/menu-products/{product}/variants/{variant}', [MemberMenuProductVariantController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/menu-products/{product}/variants/{variant}', [MemberMenuProductVariantController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.variants.destroy');
-Route::post('/member/businesses/{business}/menu-products/{product}/images', [MemberMenuProductImageController::class, 'store'])
+Route::post('/member/listings/{listing}/menu-products/{product}/images', [MemberMenuProductImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.images.store');
-Route::put('/member/businesses/{business}/menu-products/{product}/images/{image}', [MemberMenuProductImageController::class, 'update'])
+Route::put('/member/listings/{listing}/menu-products/{product}/images/{image}', [MemberMenuProductImageController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.images.update');
-Route::delete('/member/businesses/{business}/menu-products/{product}/images/{image}', [MemberMenuProductImageController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/menu-products/{product}/images/{image}', [MemberMenuProductImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.menu.products.images.destroy');
 
-Route::get('/member/businesses/{business}/minisite-theme', [MinisiteThemeController::class, 'index'])
+Route::get('/member/listings/{listing}/minisite-theme', [MinisiteThemeController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.minisite-theme.index');
-Route::put('/member/businesses/{business}/minisite-theme/{theme}', [MinisiteThemeController::class, 'update'])
+Route::put('/member/listings/{listing}/minisite-theme/{theme}', [MinisiteThemeController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business.minisite-theme.update');
 
@@ -1187,171 +1189,171 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
 
     Route::get('/business-modules', [BusinessModuleController::class, 'index'])
         ->name('admin.business-modules.index');
-    Route::get('/businesses/{business}/modules', [BusinessModuleController::class, 'edit'])
+    Route::get('/listings/{listing}/modules', [BusinessModuleController::class, 'edit'])
         ->name('admin.business-modules.edit');
-    Route::put('/businesses/{business}/modules', [BusinessModuleController::class, 'update'])
+    Route::put('/listings/{listing}/modules', [BusinessModuleController::class, 'update'])
         ->name('admin.business-modules.update');
 
-    Route::get('/businesses', [BusinessController::class, 'index'])
-        ->name('admin.businesses.index');
-    Route::get('/businesses/create', [BusinessController::class, 'create'])
-        ->name('admin.businesses.create');
-    Route::post('/businesses', [BusinessController::class, 'store'])
-        ->name('admin.businesses.store');
-    Route::get('/businesses/{business}/edit', [BusinessController::class, 'edit'])
-        ->name('admin.businesses.edit');
-    Route::put('/businesses/{business}', [BusinessController::class, 'update'])
-        ->name('admin.businesses.update');
-    Route::delete('/businesses/{business}', [BusinessController::class, 'destroy'])
-        ->name('admin.businesses.destroy');
+    Route::get('/listings', [ListingController::class, 'index'])
+        ->name('admin.listings.index');
+    Route::get('/listings/create', [ListingController::class, 'create'])
+        ->name('admin.listings.create');
+    Route::post('/listings', [ListingController::class, 'store'])
+        ->name('admin.listings.store');
+    Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])
+        ->name('admin.listings.edit');
+    Route::put('/listings/{listing}', [ListingController::class, 'update'])
+        ->name('admin.listings.update');
+    Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])
+        ->name('admin.listings.destroy');
 
-    Route::get('/businesses/{business}/hero', [BusinessHeroController::class, 'index'])
+    Route::get('/listings/{listing}/hero', [BusinessHeroController::class, 'index'])
         ->name('admin.business.hero.index');
-    Route::post('/businesses/{business}/hero', [BusinessHeroController::class, 'update'])
+    Route::post('/listings/{listing}/hero', [BusinessHeroController::class, 'update'])
         ->name('admin.business.hero.update');
 
-    Route::get('/businesses/{business}/social-networks', [BusinessSocialNetworkController::class, 'index'])
+    Route::get('/listings/{listing}/social-networks', [BusinessSocialNetworkController::class, 'index'])
         ->name('admin.business.social-networks.index');
-    Route::post('/businesses/{business}/social-networks', [BusinessSocialNetworkController::class, 'store'])
+    Route::post('/listings/{listing}/social-networks', [BusinessSocialNetworkController::class, 'store'])
         ->name('admin.business.social-networks.store');
-    Route::post('/businesses/{business}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'update'])
+    Route::post('/listings/{listing}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'update'])
         ->name('admin.business.social-networks.update');
-    Route::delete('/businesses/{business}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'destroy'])
+    Route::delete('/listings/{listing}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'destroy'])
         ->name('admin.business.social-networks.destroy');
 
-    Route::get('/businesses/{business}/locations', [BusinessContentController::class, 'locationsIndex'])
+    Route::get('/listings/{listing}/locations', [BusinessContentController::class, 'locationsIndex'])
         ->name('admin.business.locations.index');
-    Route::get('/businesses/{business}/locations/create', [BusinessContentController::class, 'locationsCreate'])
+    Route::get('/listings/{listing}/locations/create', [BusinessContentController::class, 'locationsCreate'])
         ->name('admin.business.locations.create');
-    Route::post('/businesses/{business}/locations', [BusinessContentController::class, 'locationsStore'])
+    Route::post('/listings/{listing}/locations', [BusinessContentController::class, 'locationsStore'])
         ->name('admin.business.locations.store');
-    Route::get('/businesses/{business}/locations/{location}/edit', [BusinessContentController::class, 'locationsEdit'])
+    Route::get('/listings/{listing}/locations/{location}/edit', [BusinessContentController::class, 'locationsEdit'])
         ->name('admin.business.locations.edit');
-    Route::put('/businesses/{business}/locations/{location}', [BusinessContentController::class, 'locationsUpdate'])
+    Route::put('/listings/{listing}/locations/{location}', [BusinessContentController::class, 'locationsUpdate'])
         ->name('admin.business.locations.update');
-    Route::delete('/businesses/{business}/locations/{location}', [BusinessContentController::class, 'locationsDestroy'])
+    Route::delete('/listings/{listing}/locations/{location}', [BusinessContentController::class, 'locationsDestroy'])
         ->name('admin.business.locations.destroy');
 
-    Route::get('/businesses/{business}/services', [BusinessContentController::class, 'servicesIndex'])
+    Route::get('/listings/{listing}/services', [BusinessContentController::class, 'servicesIndex'])
         ->name('admin.business.services.index');
-    Route::get('/businesses/{business}/services/create', [BusinessContentController::class, 'servicesCreate'])
+    Route::get('/listings/{listing}/services/create', [BusinessContentController::class, 'servicesCreate'])
         ->name('admin.business.services.create');
-    Route::post('/businesses/{business}/services', [BusinessContentController::class, 'servicesStore'])
+    Route::post('/listings/{listing}/services', [BusinessContentController::class, 'servicesStore'])
         ->name('admin.business.services.store');
-    Route::get('/businesses/{business}/services/{service}/edit', [BusinessContentController::class, 'servicesEdit'])
+    Route::get('/listings/{listing}/services/{service}/edit', [BusinessContentController::class, 'servicesEdit'])
         ->name('admin.business.services.edit');
-    Route::put('/businesses/{business}/services/{service}', [BusinessContentController::class, 'servicesUpdate'])
+    Route::put('/listings/{listing}/services/{service}', [BusinessContentController::class, 'servicesUpdate'])
         ->name('admin.business.services.update');
-    Route::delete('/businesses/{business}/services/{service}', [BusinessContentController::class, 'servicesDestroy'])
+    Route::delete('/listings/{listing}/services/{service}', [BusinessContentController::class, 'servicesDestroy'])
         ->name('admin.business.services.destroy');
 
-    Route::get('/businesses/{business}/faqs', [BusinessContentController::class, 'faqsIndex'])
+    Route::get('/listings/{listing}/faqs', [BusinessContentController::class, 'faqsIndex'])
         ->name('admin.business.faqs.index');
-    Route::get('/businesses/{business}/faqs/create', [BusinessContentController::class, 'faqsCreate'])
+    Route::get('/listings/{listing}/faqs/create', [BusinessContentController::class, 'faqsCreate'])
         ->name('admin.business.faqs.create');
-    Route::post('/businesses/{business}/faqs', [BusinessContentController::class, 'faqsStore'])
+    Route::post('/listings/{listing}/faqs', [BusinessContentController::class, 'faqsStore'])
         ->name('admin.business.faqs.store');
-    Route::get('/businesses/{business}/faqs/{faq}/edit', [BusinessContentController::class, 'faqsEdit'])
+    Route::get('/listings/{listing}/faqs/{faq}/edit', [BusinessContentController::class, 'faqsEdit'])
         ->name('admin.business.faqs.edit');
-    Route::put('/businesses/{business}/faqs/{faq}', [BusinessContentController::class, 'faqsUpdate'])
+    Route::put('/listings/{listing}/faqs/{faq}', [BusinessContentController::class, 'faqsUpdate'])
         ->name('admin.business.faqs.update');
-    Route::delete('/businesses/{business}/faqs/{faq}', [BusinessContentController::class, 'faqsDestroy'])
+    Route::delete('/listings/{listing}/faqs/{faq}', [BusinessContentController::class, 'faqsDestroy'])
         ->name('admin.business.faqs.destroy');
 
-    Route::get('/businesses/{business}/faq-categories', [BusinessContentController::class, 'faqCategoriesIndex'])
+    Route::get('/listings/{listing}/faq-categories', [BusinessContentController::class, 'faqCategoriesIndex'])
         ->name('admin.business.faq-categories.index');
-    Route::post('/businesses/{business}/faq-categories', [BusinessContentController::class, 'faqCategoriesStore'])
+    Route::post('/listings/{listing}/faq-categories', [BusinessContentController::class, 'faqCategoriesStore'])
         ->name('admin.business.faq-categories.store');
-    Route::put('/businesses/{business}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesUpdate'])
+    Route::put('/listings/{listing}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesUpdate'])
         ->name('admin.business.faq-categories.update');
-    Route::delete('/businesses/{business}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesDestroy'])
+    Route::delete('/listings/{listing}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesDestroy'])
         ->name('admin.business.faq-categories.destroy');
 
-    Route::get('/businesses/{business}/products', [BusinessContentController::class, 'productsIndex'])
+    Route::get('/listings/{listing}/products', [BusinessContentController::class, 'productsIndex'])
         ->name('admin.business.products.index');
-    Route::get('/businesses/{business}/products/create', [BusinessContentController::class, 'productsCreate'])
+    Route::get('/listings/{listing}/products/create', [BusinessContentController::class, 'productsCreate'])
         ->name('admin.business.products.create');
-    Route::post('/businesses/{business}/products', [BusinessContentController::class, 'productsStore'])
+    Route::post('/listings/{listing}/products', [BusinessContentController::class, 'productsStore'])
         ->name('admin.business.products.store');
-    Route::get('/businesses/{business}/products/{product}/edit', [BusinessContentController::class, 'productsEdit'])
+    Route::get('/listings/{listing}/products/{product}/edit', [BusinessContentController::class, 'productsEdit'])
         ->name('admin.business.products.edit');
-    Route::put('/businesses/{business}/products/{product}', [BusinessContentController::class, 'productsUpdate'])
+    Route::put('/listings/{listing}/products/{product}', [BusinessContentController::class, 'productsUpdate'])
         ->name('admin.business.products.update');
-    Route::delete('/businesses/{business}/products/{product}', [BusinessContentController::class, 'productsDestroy'])
+    Route::delete('/listings/{listing}/products/{product}', [BusinessContentController::class, 'productsDestroy'])
         ->name('admin.business.products.destroy');
 
-    Route::get('/businesses/{business}/galleries', [BusinessContentController::class, 'galleriesIndex'])
+    Route::get('/listings/{listing}/galleries', [BusinessContentController::class, 'galleriesIndex'])
         ->name('admin.business.galleries.index');
-    Route::get('/businesses/{business}/galleries/create', [BusinessContentController::class, 'galleriesCreate'])
+    Route::get('/listings/{listing}/galleries/create', [BusinessContentController::class, 'galleriesCreate'])
         ->name('admin.business.galleries.create');
-    Route::post('/businesses/{business}/galleries', [BusinessContentController::class, 'galleriesStore'])
+    Route::post('/listings/{listing}/galleries', [BusinessContentController::class, 'galleriesStore'])
         ->name('admin.business.galleries.store');
-    Route::get('/businesses/{business}/galleries/{gallery}/edit', [BusinessContentController::class, 'galleriesEdit'])
+    Route::get('/listings/{listing}/galleries/{gallery}/edit', [BusinessContentController::class, 'galleriesEdit'])
         ->name('admin.business.galleries.edit');
-    Route::put('/businesses/{business}/galleries/{gallery}', [BusinessContentController::class, 'galleriesUpdate'])
+    Route::put('/listings/{listing}/galleries/{gallery}', [BusinessContentController::class, 'galleriesUpdate'])
         ->name('admin.business.galleries.update');
-    Route::delete('/businesses/{business}/galleries/{gallery}', [BusinessContentController::class, 'galleriesDestroy'])
+    Route::delete('/listings/{listing}/galleries/{gallery}', [BusinessContentController::class, 'galleriesDestroy'])
         ->name('admin.business.galleries.destroy');
-    Route::post('/businesses/{business}/galleries/{gallery}/set-primary', [BusinessContentController::class, 'galleriesSetPrimary'])
+    Route::post('/listings/{listing}/galleries/{gallery}/set-primary', [BusinessContentController::class, 'galleriesSetPrimary'])
         ->name('admin.business.galleries.set-primary');
 
-    Route::get('/businesses/{business}/gallery', [BusinessContentController::class, 'galleryIndex'])
+    Route::get('/listings/{listing}/gallery', [BusinessContentController::class, 'galleryIndex'])
         ->name('admin.business.gallery.index');
-    Route::get('/businesses/{business}/gallery/{gallery}', [BusinessContentController::class, 'galleryIndex'])
+    Route::get('/listings/{listing}/gallery/{gallery}', [BusinessContentController::class, 'galleryIndex'])
         ->where('gallery', '[0-9]+')
         ->name('admin.business.gallery.show');
-    Route::post('/businesses/{business}/gallery', [BusinessContentController::class, 'galleryStore'])
+    Route::post('/listings/{listing}/gallery', [BusinessContentController::class, 'galleryStore'])
         ->name('admin.business.gallery.store');
-    Route::put('/businesses/{business}/gallery/{image}', [BusinessContentController::class, 'galleryUpdate'])
+    Route::put('/listings/{listing}/gallery/{image}', [BusinessContentController::class, 'galleryUpdate'])
         ->name('admin.business.gallery.update');
-    Route::delete('/businesses/{business}/gallery/{image}', [BusinessContentController::class, 'galleryDestroy'])
+    Route::delete('/listings/{listing}/gallery/{image}', [BusinessContentController::class, 'galleryDestroy'])
         ->name('admin.business.gallery.destroy');
 
-    Route::get('/businesses/{business}/appointments', [BusinessContentController::class, 'appointmentsIndex'])
+    Route::get('/listings/{listing}/appointments', [BusinessContentController::class, 'appointmentsIndex'])
         ->name('admin.business.appointments.index');
-    Route::get('/businesses/{business}/appointments/create', [BusinessContentController::class, 'appointmentsCreate'])
+    Route::get('/listings/{listing}/appointments/create', [BusinessContentController::class, 'appointmentsCreate'])
         ->name('admin.business.appointments.create');
-    Route::post('/businesses/{business}/appointments', [BusinessContentController::class, 'appointmentsStore'])
+    Route::post('/listings/{listing}/appointments', [BusinessContentController::class, 'appointmentsStore'])
         ->name('admin.business.appointments.store');
-    Route::get('/businesses/{business}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsShow'])
+    Route::get('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsShow'])
         ->name('admin.business.appointments.show');
-    Route::get('/businesses/{business}/appointments/{appointment}/edit', [BusinessContentController::class, 'appointmentsEdit'])
+    Route::get('/listings/{listing}/appointments/{appointment}/edit', [BusinessContentController::class, 'appointmentsEdit'])
         ->name('admin.business.appointments.edit');
-    Route::put('/businesses/{business}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsUpdate'])
+    Route::put('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsUpdate'])
         ->name('admin.business.appointments.update');
-    Route::delete('/businesses/{business}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsDestroy'])
+    Route::delete('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsDestroy'])
         ->name('admin.business.appointments.destroy');
-    Route::post('/businesses/{business}/appointments/{appointment}/cancel', [BusinessContentController::class, 'appointmentsCancel'])
+    Route::post('/listings/{listing}/appointments/{appointment}/cancel', [BusinessContentController::class, 'appointmentsCancel'])
         ->name('admin.business.appointments.cancel');
 
-    Route::get('/businesses/{business}/slots', [AdminSlotController::class, 'index'])
+    Route::get('/listings/{listing}/slots', [AdminSlotController::class, 'index'])
         ->name('admin.business.slots.index');
-    Route::post('/businesses/{business}/slots', [AdminSlotController::class, 'store'])
+    Route::post('/listings/{listing}/slots', [AdminSlotController::class, 'store'])
         ->name('admin.business.slots.store');
-    Route::put('/businesses/{business}/slots/{slot}', [AdminSlotController::class, 'update'])
+    Route::put('/listings/{listing}/slots/{slot}', [AdminSlotController::class, 'update'])
         ->name('admin.business.slots.update');
-    Route::delete('/businesses/{business}/slots/{slot}', [AdminSlotController::class, 'destroy'])
+    Route::delete('/listings/{listing}/slots/{slot}', [AdminSlotController::class, 'destroy'])
         ->name('admin.business.slots.destroy');
 
-    Route::get('/businesses/{business}/leads', [BusinessLeadsController::class, 'index'])
+    Route::get('/listings/{listing}/leads', [BusinessLeadsController::class, 'index'])
         ->name('admin.business.leads.index');
-    Route::get('/businesses/{business}/leads/create', [BusinessLeadsController::class, 'create'])
+    Route::get('/listings/{listing}/leads/create', [BusinessLeadsController::class, 'create'])
         ->name('admin.business.leads.create');
-    Route::post('/businesses/{business}/leads', [BusinessLeadsController::class, 'store'])
+    Route::post('/listings/{listing}/leads', [BusinessLeadsController::class, 'store'])
         ->name('admin.business.leads.store');
-    Route::get('/businesses/{business}/leads/{lead}', [BusinessLeadsController::class, 'show'])
+    Route::get('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'show'])
         ->name('admin.business.leads.show');
-    Route::get('/businesses/{business}/leads/{lead}/edit', [BusinessLeadsController::class, 'edit'])
+    Route::get('/listings/{listing}/leads/{lead}/edit', [BusinessLeadsController::class, 'edit'])
         ->name('admin.business.leads.edit');
-    Route::put('/businesses/{business}/leads/{lead}', [BusinessLeadsController::class, 'update'])
+    Route::put('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'update'])
         ->name('admin.business.leads.update');
-    Route::delete('/businesses/{business}/leads/{lead}', [BusinessLeadsController::class, 'destroy'])
+    Route::delete('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'destroy'])
         ->name('admin.business.leads.destroy');
 
-    Route::get('/businesses/{business}/contact-form/submissions', [BusinessContactFormController::class, 'submissions'])
+    Route::get('/listings/{listing}/contact-form/submissions', [BusinessContactFormController::class, 'submissions'])
         ->name('admin.business.contact-form.submissions');
 
-    Route::get('/businesses/{business}/ai-chatbot', [BusinessAiChatbotController::class, 'index'])
+    Route::get('/listings/{listing}/ai-chatbot', [BusinessAiChatbotController::class, 'index'])
         ->name('admin.business.ai-chatbot.index');
 
     Route::get('/modules/ai_chatbot/settings', [AiChatbotSettingsController::class, 'show'])
@@ -1401,60 +1403,60 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         return redirect()->route('admin.modules.ai-chatbot.personalities.create');
     });
 
-    Route::get('/businesses/{business}/reviews', [BusinessReviewController::class, 'index'])
+    Route::get('/listings/{listing}/reviews', [BusinessReviewController::class, 'index'])
         ->name('admin.business.reviews.index');
-    Route::get('/businesses/{business}/reviews/create', [BusinessReviewController::class, 'create'])
+    Route::get('/listings/{listing}/reviews/create', [BusinessReviewController::class, 'create'])
         ->name('admin.business.reviews.create');
-    Route::post('/businesses/{business}/reviews', [BusinessReviewController::class, 'store'])
+    Route::post('/listings/{listing}/reviews', [BusinessReviewController::class, 'store'])
         ->name('admin.business.reviews.store');
-    Route::get('/businesses/{business}/reviews/{review}/edit', [BusinessReviewController::class, 'edit'])
+    Route::get('/listings/{listing}/reviews/{review}/edit', [BusinessReviewController::class, 'edit'])
         ->name('admin.business.reviews.edit');
-    Route::put('/businesses/{business}/reviews/{review}', [BusinessReviewController::class, 'update'])
+    Route::put('/listings/{listing}/reviews/{review}', [BusinessReviewController::class, 'update'])
         ->name('admin.business.reviews.update');
-    Route::delete('/businesses/{business}/reviews/{review}', [BusinessReviewController::class, 'destroy'])
+    Route::delete('/listings/{listing}/reviews/{review}', [BusinessReviewController::class, 'destroy'])
         ->name('admin.business.reviews.destroy');
 
-    Route::get('/businesses/{business}/promotions', [BusinessPromotionController::class, 'index'])
+    Route::get('/listings/{listing}/promotions', [BusinessPromotionController::class, 'index'])
         ->name('admin.business.promotions.index');
-    Route::get('/businesses/{business}/promotions/create', [BusinessPromotionController::class, 'create'])
+    Route::get('/listings/{listing}/promotions/create', [BusinessPromotionController::class, 'create'])
         ->name('admin.business.promotions.create');
-    Route::post('/businesses/{business}/promotions', [BusinessPromotionController::class, 'store'])
+    Route::post('/listings/{listing}/promotions', [BusinessPromotionController::class, 'store'])
         ->name('admin.business.promotions.store');
-    Route::get('/businesses/{business}/promotions/{promotion}/edit', [BusinessPromotionController::class, 'edit'])
+    Route::get('/listings/{listing}/promotions/{promotion}/edit', [BusinessPromotionController::class, 'edit'])
         ->name('admin.business.promotions.edit');
-    Route::put('/businesses/{business}/promotions/{promotion}', [BusinessPromotionController::class, 'update'])
+    Route::put('/listings/{listing}/promotions/{promotion}', [BusinessPromotionController::class, 'update'])
         ->name('admin.business.promotions.update');
-    Route::delete('/businesses/{business}/promotions/{promotion}', [BusinessPromotionController::class, 'destroy'])
+    Route::delete('/listings/{listing}/promotions/{promotion}', [BusinessPromotionController::class, 'destroy'])
         ->name('admin.business.promotions.destroy');
 
-    Route::get('/businesses/{business}/menu-categories', [MenuCategoryController::class, 'index'])
+    Route::get('/listings/{listing}/menu-categories', [MenuCategoryController::class, 'index'])
         ->name('admin.menu.categories.index');
-    Route::post('/businesses/{business}/menu-categories', [MenuCategoryController::class, 'store'])
+    Route::post('/listings/{listing}/menu-categories', [MenuCategoryController::class, 'store'])
         ->name('admin.menu.categories.store');
-    Route::put('/businesses/{business}/menu-categories/{category}', [MenuCategoryController::class, 'update'])
+    Route::put('/listings/{listing}/menu-categories/{category}', [MenuCategoryController::class, 'update'])
         ->name('admin.menu.categories.update');
-    Route::delete('/businesses/{business}/menu-categories/{category}', [MenuCategoryController::class, 'destroy'])
+    Route::delete('/listings/{listing}/menu-categories/{category}', [MenuCategoryController::class, 'destroy'])
         ->name('admin.menu.categories.destroy');
 
-    Route::get('/businesses/{business}/menu-products', [MenuProductController::class, 'index'])
+    Route::get('/listings/{listing}/menu-products', [MenuProductController::class, 'index'])
         ->name('admin.menu.products.index');
-    Route::post('/businesses/{business}/menu-products', [MenuProductController::class, 'store'])
+    Route::post('/listings/{listing}/menu-products', [MenuProductController::class, 'store'])
         ->name('admin.menu.products.store');
-    Route::put('/businesses/{business}/menu-products/{product}', [MenuProductController::class, 'update'])
+    Route::put('/listings/{listing}/menu-products/{product}', [MenuProductController::class, 'update'])
         ->name('admin.menu.products.update');
-    Route::delete('/businesses/{business}/menu-products/{product}', [MenuProductController::class, 'destroy'])
+    Route::delete('/listings/{listing}/menu-products/{product}', [MenuProductController::class, 'destroy'])
         ->name('admin.menu.products.destroy');
-    Route::post('/businesses/{business}/menu-products/{product}/variants', [MenuProductVariantController::class, 'store'])
+    Route::post('/listings/{listing}/menu-products/{product}/variants', [MenuProductVariantController::class, 'store'])
         ->name('admin.menu.products.variants.store');
-    Route::put('/businesses/{business}/menu-products/{product}/variants/{variant}', [MenuProductVariantController::class, 'update'])
+    Route::put('/listings/{listing}/menu-products/{product}/variants/{variant}', [MenuProductVariantController::class, 'update'])
         ->name('admin.menu.products.variants.update');
-    Route::delete('/businesses/{business}/menu-products/{product}/variants/{variant}', [MenuProductVariantController::class, 'destroy'])
+    Route::delete('/listings/{listing}/menu-products/{product}/variants/{variant}', [MenuProductVariantController::class, 'destroy'])
         ->name('admin.menu.products.variants.destroy');
-    Route::post('/businesses/{business}/menu-products/{product}/images', [MenuProductImageController::class, 'store'])
+    Route::post('/listings/{listing}/menu-products/{product}/images', [MenuProductImageController::class, 'store'])
         ->name('admin.menu.products.images.store');
-    Route::put('/businesses/{business}/menu-products/{product}/images/{image}', [MenuProductImageController::class, 'update'])
+    Route::put('/listings/{listing}/menu-products/{product}/images/{image}', [MenuProductImageController::class, 'update'])
         ->name('admin.menu.products.images.update');
-    Route::delete('/businesses/{business}/menu-products/{product}/images/{image}', [MenuProductImageController::class, 'destroy'])
+    Route::delete('/listings/{listing}/menu-products/{product}/images/{image}', [MenuProductImageController::class, 'destroy'])
         ->name('admin.menu.products.images.destroy');
 
     Route::get('/settings', [SettingController::class, 'index'])
@@ -1503,6 +1505,19 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::delete('/users/{user}/force', [UserController::class, 'forceDestroy'])
         ->middleware('permission_or_user:users.force_delete,1')
         ->name('admin.users.force-destroy');
+
+    Route::get('/users/{user}/subscriptions', [UserSubscriptionController::class, 'index'])
+        ->middleware('permission_or_user:users.view,1')
+        ->name('admin.users.subscriptions.index');
+    Route::post('/users/{user}/subscriptions', [UserSubscriptionController::class, 'store'])
+        ->middleware('permission_or_user:users.edit,1')
+        ->name('admin.users.subscriptions.store');
+    Route::put('/users/{user}/subscriptions', [UserSubscriptionController::class, 'update'])
+        ->middleware('permission_or_user:users.edit,1')
+        ->name('admin.users.subscriptions.update');
+    Route::delete('/users/{user}/subscriptions', [UserSubscriptionController::class, 'destroy'])
+        ->middleware('permission_or_user:users.edit,1')
+        ->name('admin.users.subscriptions.destroy');
 
     Route::get('/invitations', [InvitationController::class, 'index'])
         ->middleware(['permission_or_user:invitations.view,1', 'module:invitations'])
@@ -1693,6 +1708,10 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->middleware(['permission_or_user:plans.delete,1', 'module:billing'])
         ->name('admin.plans.destroy');
 
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])
+        ->middleware(['permission_or_user:subscriptions.view,1', 'module:billing'])
+        ->name('admin.subscriptions.index');
+
     Route::get('/business-module-definitions', [BusinessModuleDefinitionController::class, 'index'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.index');
@@ -1712,9 +1731,9 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.destroy');
 
-    Route::get('/businesses/{business}/minisite', [AdminMinisiteController::class, 'index'])
+    Route::get('/listings/{listing}/minisite', [AdminMinisiteController::class, 'index'])
         ->name('admin.business.minisite.index');
-    Route::post('/businesses/{business}/minisite', [AdminMinisiteController::class, 'update'])
+    Route::post('/listings/{listing}/minisite', [AdminMinisiteController::class, 'update'])
         ->name('admin.business.minisite.update');
 
     Route::get('/industries', [IndustryController::class, 'index'])
@@ -1857,25 +1876,6 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->name('admin.modules.index');
     Route::put('/modules/{module}', [SystemModuleController::class, 'update'])
         ->name('admin.modules.update');
-
-    Route::get('/minisite-themes', [MinisiteThemeController::class, 'index'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.index');
-    Route::get('/minisite-themes/create', [MinisiteThemeController::class, 'create'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.create');
-    Route::get('/minisite-themes/{theme}/edit', [MinisiteThemeController::class, 'edit'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.edit');
-    Route::post('/minisite-themes', [MinisiteThemeController::class, 'store'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.store');
-    Route::put('/minisite-themes/{theme}', [MinisiteThemeController::class, 'update'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.update');
-    Route::delete('/minisite-themes/{theme}', [MinisiteThemeController::class, 'destroy'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.minisite-themes.destroy');
 
 });
 

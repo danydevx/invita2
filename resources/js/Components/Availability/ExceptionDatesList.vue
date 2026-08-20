@@ -105,7 +105,7 @@ const deleteException = (exception) => {
   deletingId.value = exception.id
 
   router.delete(
-    `/member/businesses/${props.businessId}/appointments/availability/exceptions/${exception.id}`,
+    `/member/listings/${props.businessId}/appointments/availability/exceptions/${exception.id}`,
     {
       preserveScroll: true,
       onSuccess: () => {

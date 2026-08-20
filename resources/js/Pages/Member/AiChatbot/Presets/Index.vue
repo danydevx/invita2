@@ -6,10 +6,10 @@
       :breadcrumbs="breadcrumbs"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business.id}/ai-chatbot`" class="btn btn-outline-secondary me-2">
+        <Link :href="`/member/listings/${business.id}/ai-chatbot`" class="btn btn-outline-secondary me-2">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
-        <Link :href="`/member/businesses/${business.id}/ai-chatbot/presets/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business.id}/ai-chatbot/presets/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Preset
         </Link>
       </template>
@@ -91,7 +91,7 @@
               <tr v-if="businessPresets.length === 0">
                 <td colspan="5" class="text-center text-muted py-4">
                   No tienes presets creados.
-                  <Link :href="`/member/businesses/${business.id}/ai-chatbot/presets/create`" class="text-primary">
+                  <Link :href="`/member/listings/${business.id}/ai-chatbot/presets/create`" class="text-primary">
                     Crear el primero
                   </Link>
                 </td>
@@ -115,7 +115,7 @@
                 <td class="text-end">
                   <div class="btn-group btn-group-sm">
                     <Link
-                      :href="`/member/businesses/${business.id}/ai-chatbot/presets/${preset.id}/edit`"
+                      :href="`/member/listings/${business.id}/ai-chatbot/presets/${preset.id}/edit`"
                       class="btn btn-outline-primary"
                     >
                       <i class="bi bi-pencil"></i>
@@ -158,14 +158,14 @@ const businessPresets = page.props.businessPresets || []
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: business?.name || 'Negocio', href: `/member/businesses/${business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/businesses/${business?.id}/ai-chatbot` },
+  { label: business?.name || 'Negocio', href: `/member/listings/${business?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${business?.id}/ai-chatbot` },
   { label: 'Presets', active: true },
 ])
 
 const duplicatePreset = (preset) => {
   if (confirm(`¿Duplicar el preset "${preset.name}"?`)) {
-    router.post(`/member/businesses/${business.id}/ai-chatbot/presets/${preset.id}/duplicate`, {}, {
+    router.post(`/member/listings/${business.id}/ai-chatbot/presets/${preset.id}/duplicate`, {}, {
       preserveScroll: true,
     })
   }
@@ -173,7 +173,7 @@ const duplicatePreset = (preset) => {
 
 const deletePreset = (preset) => {
   if (confirm(`¿Eliminar el preset "${preset.name}"?`)) {
-    router.delete(`/member/businesses/${business.id}/ai-chatbot/presets/${preset.id}`, {
+    router.delete(`/member/listings/${business.id}/ai-chatbot/presets/${preset.id}`, {
       preserveScroll: true,
     })
   }

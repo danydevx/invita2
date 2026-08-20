@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\About\Models\BusinessAbout;
 use Modules\SocialMedia\Models\BusinessSocialNetwork;
 use Modules\Features\Models\BusinessFeature;
@@ -14,7 +14,7 @@ class LavanderiaManolosExtraSeeder extends Seeder
 {
     public function run(): void
     {
-        $business = Business::where('slug', 'lavanderia-manolos')->first();
+        $business = Listing::where('slug', 'lavanderia-manolos')->first();
         if (!$business) {
             $this->command->error('Business lavanderia-manolos not found.');
             return;
@@ -29,18 +29,18 @@ class LavanderiaManolosExtraSeeder extends Seeder
         $this->command->info("===========================================");
         $this->command->info("LAVANDERIA MANOLOS - EXTRA DATA CARGADO");
         $this->command->info("===========================================");
-        $this->command->info("About: " . BusinessAbout::where('business_id', $business->id)->count());
-        $this->command->info("Redes: " . BusinessSocialNetwork::where('business_id', $business->id)->count());
-        $this->command->info("Features: " . BusinessFeature::where('business_id', $business->id)->count());
-        $this->command->info("Promos: " . BusinessPromotion::where('business_id', $business->id)->count());
-        $this->command->info("Reviews: " . BusinessReview::where('business_id', $business->id)->count());
+        $this->command->info("About: " . BusinessAbout::where('listing_id', $business->id)->count());
+        $this->command->info("Redes: " . BusinessSocialNetwork::where('listing_id', $business->id)->count());
+        $this->command->info("Features: " . BusinessFeature::where('listing_id', $business->id)->count());
+        $this->command->info("Promos: " . BusinessPromotion::where('listing_id', $business->id)->count());
+        $this->command->info("Reviews: " . BusinessReview::where('listing_id', $business->id)->count());
         $this->command->info("===========================================");
     }
 
     private function about(Business $business): void
     {
         BusinessAbout::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'title' => 'Lavanderia Manolos',
                 'subtitle' => 'Mas de 20 anos cuidando tu ropa',
@@ -64,7 +64,7 @@ class LavanderiaManolosExtraSeeder extends Seeder
 
         foreach ($networks as $n) {
             BusinessSocialNetwork::updateOrCreate(
-                ['business_id' => $business->id, 'platform' => $n['platform']],
+                ['listing_id' => $business->id, 'platform' => $n['platform']],
                 [
                     'url' => $n['url'],
                     'username' => $n['username'],
@@ -81,11 +81,11 @@ class LavanderiaManolosExtraSeeder extends Seeder
 
     private function features(Business $business): void
     {
-        $featureIds = \DB::connection()->getPdo()->query("SELECT id FROM features WHERE category_id = 9 AND business_id IS NULL LIMIT 8")->fetchAll(\PDO::FETCH_COLUMN);
+        $featureIds = \DB::connection()->getPdo()->query("SELECT id FROM features WHERE category_id = 9 AND listing_id IS NULL LIMIT 8")->fetchAll(\PDO::FETCH_COLUMN);
 
         foreach ($featureIds as $i => $featureId) {
             BusinessFeature::updateOrCreate(
-                ['business_id' => $business->id, 'feature_id' => $featureId],
+                ['listing_id' => $business->id, 'feature_id' => $featureId],
                 [
                     'is_active' => true,
                     'sort_order' => $i + 1,
@@ -156,7 +156,7 @@ class LavanderiaManolosExtraSeeder extends Seeder
 
         foreach ($promos as $p) {
             BusinessPromotion::updateOrCreate(
-                ['business_id' => $business->id, 'slug' => $p['slug']],
+                ['listing_id' => $business->id, 'slug' => $p['slug']],
                 [
                     'name' => $p['name'],
                     'business_location_id' => null,
@@ -188,7 +188,7 @@ class LavanderiaManolosExtraSeeder extends Seeder
 
         foreach ($reviews as $r) {
             BusinessReview::updateOrCreate(
-                ['business_id' => $business->id, 'client_name' => $r['name']],
+                ['listing_id' => $business->id, 'client_name' => $r['name']],
                 [
                     'business_location_id' => null,
                     'company' => $r['company'],

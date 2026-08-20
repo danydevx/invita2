@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\TeamMembers\Models\BusinessTeamMember;
 use Modules\TeamMembers\Models\TeamMemberPosition;
 use Illuminate\Support\Facades\Storage;
 
 class TeamMemberController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessTeamMember::class, $business]);
 
@@ -46,7 +46,7 @@ class TeamMemberController extends Controller
 
         $members = $query->paginate($perPage);
 
-        $positions = TeamMemberPosition::where('business_id', $business->id)
+        $positions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -91,11 +91,11 @@ class TeamMemberController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessTeamMember::class, $business]);
 
-        $positions = TeamMemberPosition::where('business_id', $business->id)
+        $positions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -109,7 +109,7 @@ class TeamMemberController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessTeamMember::class, $business]);
 
@@ -133,7 +133,7 @@ class TeamMemberController extends Controller
             'sort_order' => 'orden',
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('team-members/' . $business->id, ['disk' => 'public']);
@@ -141,7 +141,7 @@ class TeamMemberController extends Controller
         }
 
         if (!isset($data['sort_order'])) {
-            $data['sort_order'] = BusinessTeamMember::where('business_id', $business->id)->max('sort_order') + 1;
+            $data['sort_order'] = BusinessTeamMember::where('listing_id', $business->id)->max('sort_order') + 1;
         }
 
         $member = BusinessTeamMember::create($data);
@@ -157,13 +157,13 @@ class TeamMemberController extends Controller
             ->with('success', 'Miembro del equipo creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessTeamMember $member)
+    public function edit(Request $request, Listing $business, BusinessTeamMember $member)
     {
         $this->authorize('update', [BusinessTeamMember::class, $member]);
 
-        abort_unless($member->business_id === $business->id, 404);
+        abort_unless($member->listing_id === $business->id, 404);
 
-        $positions = TeamMemberPosition::where('business_id', $business->id)
+        $positions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -188,11 +188,11 @@ class TeamMemberController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessTeamMember $member, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessTeamMember $member, ActivityService $activity)
     {
         $this->authorize('update', [BusinessTeamMember::class, $member]);
 
-        abort_unless($member->business_id === $business->id, 404);
+        abort_unless($member->listing_id === $business->id, 404);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -238,11 +238,11 @@ class TeamMemberController extends Controller
             ->with('success', 'Miembro del equipo actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessTeamMember $member, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessTeamMember $member, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessTeamMember::class, $member]);
 
-        abort_unless($member->business_id === $business->id, 404);
+        abort_unless($member->listing_id === $business->id, 404);
 
         if ($member->image) {
             $oldPath = str_replace(url('/') . '/storage/', '', $member->image);
@@ -261,16 +261,16 @@ class TeamMemberController extends Controller
             ->with('success', 'Miembro del equipo eliminado correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [BusinessTeamMember::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_team_members', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_team_members', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $members = BusinessTeamMember::where('business_id', $business->id)
+        $members = BusinessTeamMember::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->get();
 
@@ -281,14 +281,14 @@ class TeamMemberController extends Controller
             }
         }
 
-        $count = BusinessTeamMember::where('business_id', $business->id)
+        $count = BusinessTeamMember::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
         return redirect()->back()->with('success', $count . ' miembro(s) eliminado(s).');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -300,7 +300,7 @@ class TeamMemberController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_team_members', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_team_members', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -312,7 +312,7 @@ class TeamMemberController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 BusinessTeamMember::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });

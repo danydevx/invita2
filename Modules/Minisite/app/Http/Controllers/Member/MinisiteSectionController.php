@@ -5,7 +5,7 @@ namespace Modules\Minisite\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Gallery\Models\BusinessGallery;
 use Modules\Minisite\Models\BusinessMinisiteSection;
 use Modules\Minisite\Models\BusinessMinisiteSetting;
@@ -17,7 +17,7 @@ class MinisiteSectionController extends Controller
     {
         $this->authorize('manageSections', $business);
 
-        $sections = BusinessMinisiteSection::where('business_id', $business->id)
+        $sections = BusinessMinisiteSection::where('listing_id', $business->id)
             ->orderBy('sort_order')
             ->get()
             ->map(function ($section) use ($business) {
@@ -71,7 +71,7 @@ class MinisiteSectionController extends Controller
                 return $sectionData;
             });
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)->first();
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)->first();
 
         if ($setting) {
             $heroSection = [
@@ -111,7 +111,7 @@ class MinisiteSectionController extends Controller
 
         $socialNetworks = [];
         if (class_exists('\Modules\SocialMedia\Models\BusinessSocialNetwork')) {
-            $socialNetworks = \Modules\SocialMedia\Models\BusinessSocialNetwork::where('business_id', $business->id)
+            $socialNetworks = \Modules\SocialMedia\Models\BusinessSocialNetwork::where('listing_id', $business->id)
                 ->where('is_active', true)
                 ->where('show_on_footer', true)
                 ->orderBy('sort_order')
@@ -158,12 +158,12 @@ class MinisiteSectionController extends Controller
     {
         $this->authorize('manageSections', $business);
 
-        $galleries = BusinessGallery::where('business_id', $business->id)
+        $galleries = BusinessGallery::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $forms = BusinessContactForm::where('business_id', $business->id)
+        $forms = BusinessContactForm::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -196,16 +196,16 @@ class MinisiteSectionController extends Controller
             'is_active' => ['boolean'],
         ]);
 
-        $typeCount = BusinessMinisiteSection::where('business_id', $business->id)
+        $typeCount = BusinessMinisiteSection::where('listing_id', $business->id)
             ->where('section_type', $data['section_type'])
             ->count();
 
         $sectionKey = $data['section_type'] . '_' . ($typeCount + 1);
 
-        $maxOrder = BusinessMinisiteSection::where('business_id', $business->id)->max('sort_order') ?? 0;
+        $maxOrder = BusinessMinisiteSection::where('listing_id', $business->id)->max('sort_order') ?? 0;
 
         $section = BusinessMinisiteSection::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'section_type' => $data['section_type'],
             'section_key' => $sectionKey,
             'title' => $data['title'] ?? null,
@@ -225,14 +225,14 @@ class MinisiteSectionController extends Controller
     {
         $this->authorize('manageSection', $section);
 
-        abort_unless($section->business_id === $business->id, 403);
+        abort_unless($section->listing_id === $business->id, 403);
 
-        $galleries = BusinessGallery::where('business_id', $business->id)
+        $galleries = BusinessGallery::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $forms = BusinessContactForm::where('business_id', $business->id)
+        $forms = BusinessContactForm::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -264,7 +264,7 @@ class MinisiteSectionController extends Controller
     {
         $this->authorize('manageSection', $section);
 
-        abort_unless($section->business_id === $business->id, 403);
+        abort_unless($section->listing_id === $business->id, 403);
 
         $data = $request->validate([
             'title' => ['nullable', 'string', 'max:150'],
@@ -287,7 +287,7 @@ class MinisiteSectionController extends Controller
     {
         $this->authorize('manageSection', $section);
 
-        abort_unless($section->business_id === $business->id, 403);
+        abort_unless($section->listing_id === $business->id, 403);
 
         $section->delete();
 
@@ -305,7 +305,7 @@ class MinisiteSectionController extends Controller
 
         foreach ($data['ids'] as $index => $id) {
             BusinessMinisiteSection::where('id', $id)
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->update(['sort_order' => $index + 1]);
         }
 

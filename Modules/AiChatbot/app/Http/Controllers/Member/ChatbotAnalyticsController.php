@@ -11,7 +11,7 @@ use Modules\AiChatbot\Models\AiConversation;
 
 class ChatbotAnalyticsController extends Controller
 {
-    public function index(Request $request, \Modules\Businesses\Models\Business $business)
+    public function index(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -21,7 +21,7 @@ class ChatbotAnalyticsController extends Controller
         $dailyStats = ChatbotAnalytics::getStats($business->id, $period);
         $topQuestions = ChatbotTopQuestion::getTopQuestions($business->id, 10);
 
-        $geoStats = AiConversation::where('business_id', $business->id)
+        $geoStats = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('country, COUNT(*) as count')
             ->groupBy('country')
@@ -29,14 +29,14 @@ class ChatbotAnalyticsController extends Controller
             ->limit(10)
             ->get();
 
-        $deviceStats = AiConversation::where('business_id', $business->id)
+        $deviceStats = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('device_type, COUNT(*) as count')
             ->groupBy('device_type')
             ->orderBy('count', 'desc')
             ->get();
 
-        $dailyConversations = AiConversation::where('business_id', $business->id)
+        $dailyConversations = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('DATE(started_at) as date, COUNT(*) as count')
             ->groupBy('date')
@@ -58,7 +58,7 @@ class ChatbotAnalyticsController extends Controller
         ]);
     }
 
-    public function indexJson(Request $request, \Modules\Businesses\Models\Business $business)
+    public function indexJson(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -68,7 +68,7 @@ class ChatbotAnalyticsController extends Controller
         $dailyStats = ChatbotAnalytics::getStats($business->id, $period);
         $topQuestions = ChatbotTopQuestion::getTopQuestions($business->id, 10);
 
-        $geoStats = AiConversation::where('business_id', $business->id)
+        $geoStats = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('country, COUNT(*) as count')
             ->groupBy('country')
@@ -76,14 +76,14 @@ class ChatbotAnalyticsController extends Controller
             ->limit(10)
             ->get();
 
-        $deviceStats = AiConversation::where('business_id', $business->id)
+        $deviceStats = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('device_type, COUNT(*) as count')
             ->groupBy('device_type')
             ->orderBy('count', 'desc')
             ->get();
 
-        $dailyConversations = AiConversation::where('business_id', $business->id)
+        $dailyConversations = AiConversation::where('listing_id', $business->id)
             ->where('started_at', '>=', now()->subDays(30))
             ->selectRaw('DATE(started_at) as date, COUNT(*) as count')
             ->groupBy('date')

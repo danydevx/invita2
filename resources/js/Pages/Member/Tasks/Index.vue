@@ -240,7 +240,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Tareas', active: true },
       ]
     }
@@ -313,7 +313,7 @@ const submitTask = () => {
   sending.value = true
 
   if (editingTask.value) {
-    router.put(`/member/businesses/${business.value.id}/tasks/${editingTask.value.id}`, form, {
+    router.put(`/member/listings/${business.value.id}/tasks/${editingTask.value.id}`, form, {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -325,7 +325,7 @@ const submitTask = () => {
       },
     })
   } else {
-    router.post(`/member/businesses/${business.value.id}/tasks`, form, {
+    router.post(`/member/listings/${business.value.id}/tasks`, form, {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -341,7 +341,7 @@ const submitTask = () => {
 
 const deleteTask = (task) => {
   if (confirm(`Eliminar la tarea "${task.title}"?`)) {
-    router.delete(`/member/businesses/${business.value.id}/tasks/${task.id}`, {
+    router.delete(`/member/listings/${business.value.id}/tasks/${task.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         refreshTasks()
@@ -351,7 +351,7 @@ const deleteTask = (task) => {
 }
 
 const refreshTasks = () => {
-  router.get(`/member/businesses/${business.value.id}/tasks`, {}, {
+  router.get(`/member/listings/${business.value.id}/tasks`, {}, {
     preserveState: true,
     onSuccess: (page) => {
       columns.todo = [...(page.props.tasks?.todo || [])]
@@ -374,7 +374,7 @@ const onDragEnd = () => {
     items.push({ id: task.id, status: 'done', sort_order: index })
   })
 
-  router.post(`/member/businesses/${business.value.id}/tasks/reorder`, {
+  router.post(`/member/listings/${business.value.id}/tasks/reorder`, {
     items,
   }, {
     preserveScroll: true,

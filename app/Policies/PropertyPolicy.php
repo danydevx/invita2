@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\Properties\Models\Property;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class PropertyPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -26,7 +26,7 @@ class PropertyPolicy
         return $user->id === $property->business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -53,7 +53,7 @@ class PropertyPolicy
         return $user->id === $property->business->user_id;
     }
 
-    public function deleteAny(User $user, Business $business): bool
+    public function deleteAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

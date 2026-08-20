@@ -264,7 +264,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Hero', active: true },
       ]
     }
@@ -388,7 +388,7 @@ const submit = () => {
     return fd
   })
 
-  form.post(`/member/businesses/${props.business.id}/hero`, {
+  form.post(`/member/listings/${props.business.id}/hero`, {
     forceFormData: true,
     onFinish: () => {
       sending.value = false

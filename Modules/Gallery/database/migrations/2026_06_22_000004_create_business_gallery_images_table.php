@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_gallery_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_location_id')->nullable()->constrained()->nullOnDelete();
             $table->string('path');
             $table->string('filename');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index('business_id');
+            $table->index('listing_id');
             $table->index('business_location_id');
         });
     }

@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::table('business_features', function (Blueprint $table) {
             $table->unsignedInteger('sort_order')->default(0)->after('is_active');
-            $table->index(['business_id', 'sort_order']);
+            $table->index(['listing_id', 'sort_order']);
         });
     }
 
     public function down(): void
     {
         Schema::table('business_features', function (Blueprint $table) {
-            $table->dropIndex(['business_id', 'sort_order']);
+            $table->dropIndex(['listing_id', 'sort_order']);
             $table->dropColumn('sort_order');
         });
     }

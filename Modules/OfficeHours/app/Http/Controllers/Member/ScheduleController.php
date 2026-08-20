@@ -5,7 +5,7 @@ namespace Modules\OfficeHours\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\OfficeHours\Models\BusinessSchedule;
 
@@ -17,7 +17,7 @@ class ScheduleController extends Controller
 
         $this->authorize('viewAny', [BusinessSchedule::class, $business]);
 
-        $businessesData = Business::where('user_id', $user->id)
+        $businessesData = Listing::where('user_id', $user->id)
             ->with(['locations.schedules' => function ($query) {
                 $query->where('is_active', true);
             }])
@@ -116,7 +116,7 @@ class ScheduleController extends Controller
 
         $schedule = $location->schedules()->create([
             ...$data,
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
         ]);
 
         return redirect()->route('member.businesses.locations.schedules.index', [$business->id, $location->id])
@@ -183,7 +183,7 @@ class ScheduleController extends Controller
         $this->authorize('create', [BusinessSchedule::class, $business]);
 
         $newSchedule = $location->schedules()->create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'name' => 'Copia de ' . $schedule->name,
             'days_of_week' => $schedule->days_of_week,
             'opening_time' => $schedule->opening_time,

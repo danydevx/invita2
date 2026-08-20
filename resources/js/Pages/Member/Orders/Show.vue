@@ -5,7 +5,7 @@
     <PageHeader
       title="Detalle del Pedido"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/orders`"
+      :backHref="`/member/listings/${business?.id}/orders`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show">
@@ -168,15 +168,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Pedidos', href: `/member/businesses/${biz.id}/orders` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Pedidos', href: `/member/listings/${biz.id}/orders` },
         { label: order.value?.order_number || 'Detalle', active: true },
       ]
     }
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Pedidos', href: `/member/businesses/${business.value?.id}/orders` },
+    { label: 'Pedidos', href: `/member/listings/${business.value?.id}/orders` },
     { label: order.value?.order_number || 'Detalle', active: true },
   ]
 })
@@ -213,7 +213,7 @@ const updateStatus = () => {
 
   updating.value = true
 
-  router.post(`/member/businesses/${business.value.id}/orders/${order.value.id}/status`, {
+  router.post(`/member/listings/${business.value.id}/orders/${order.value.id}/status`, {
     status: currentStatus.value,
   }, {
     preserveScroll: true,

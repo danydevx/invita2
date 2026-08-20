@@ -11,13 +11,13 @@ return new class extends Migration
 
         foreach ($businesses as $business) {
             $primaryId = DB::table('business_galleries')
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->where('is_primary', true)
                 ->value('id');
 
             if (! $primaryId) {
                 $primaryId = DB::table('business_galleries')->insertGetId([
-                    'business_id' => $business->id,
+                    'listing_id' => $business->id,
                     'name' => 'Galería principal',
                     'description' => 'Galería principal de '.$business->name,
                     'is_primary' => true,
@@ -29,7 +29,7 @@ return new class extends Migration
             }
 
             DB::table('business_gallery_images')
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->whereNull('business_gallery_id')
                 ->update(['business_gallery_id' => $primaryId]);
         }

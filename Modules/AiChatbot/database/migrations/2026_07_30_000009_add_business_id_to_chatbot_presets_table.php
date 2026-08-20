@@ -9,16 +9,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('chatbot_presets', function (Blueprint $table) {
-            $table->foreignId('business_id')->nullable()->after('is_system')->constrained('businesses')->nullOnDelete();
-            $table->index(['business_id', 'is_active']);
+            $table->foreignId('listing_id')->nullable()->after('is_system')->constrained('businesses')->nullOnDelete();
+            $table->index(['listing_id', 'is_active']);
         });
     }
 
     public function down(): void
     {
         Schema::table('chatbot_presets', function (Blueprint $table) {
-            $table->dropForeign(['business_id']);
-            $table->dropColumn('business_id');
+            $table->dropForeign(['listing_id']);
+            $table->dropColumn('listing_id');
         });
     }
 };

@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use App\Models\MinisiteTheme;
 use Illuminate\Support\Facades\Auth;
 
 class MinisiteThemeController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -34,7 +34,7 @@ class MinisiteThemeController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, MinisiteTheme $theme)
+    public function update(Request $request, Listing $business, MinisiteTheme $theme)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);

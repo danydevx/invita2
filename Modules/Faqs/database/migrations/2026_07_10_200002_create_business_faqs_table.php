@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_faqs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->nullable()
                 ->constrained('business_faq_categories')
                 ->nullOnDelete();
@@ -21,10 +21,10 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index('business_id');
+            $table->index('listing_id');
             $table->index('category_id');
-            $table->index(['business_id', 'is_active']);
-            $table->index(['business_id', 'sort_order']);
+            $table->index(['listing_id', 'is_active']);
+            $table->index(['listing_id', 'sort_order']);
         });
     }
 

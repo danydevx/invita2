@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('ai_conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->string('session_id', 100);
             $table->string('ip_address', 45)->nullable();
             $table->string('user_agent')->nullable();
@@ -19,8 +19,8 @@ return new class extends Migration
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
 
-            $table->index(['business_id', 'session_id']);
-            $table->index(['business_id', 'started_at']);
+            $table->index(['listing_id', 'session_id']);
+            $table->index(['listing_id', 'started_at']);
         });
     }
 

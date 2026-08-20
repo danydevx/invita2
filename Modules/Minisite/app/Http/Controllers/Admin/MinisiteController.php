@@ -10,8 +10,8 @@ class MinisiteController extends Controller
 {
     public function index(Request $request, $business)
     {
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)->firstOrCreate([
-            'business_id' => $business->id,
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)->firstOrCreate([
+            'listing_id' => $business->id,
         ]);
 
         return inertia('Admin/Minisite/Index', [
@@ -22,8 +22,8 @@ class MinisiteController extends Controller
 
     public function update(Request $request, $business)
     {
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)->firstOrCreate([
-            'business_id' => $business->id,
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)->firstOrCreate([
+            'listing_id' => $business->id,
         ]);
 
         $validated = $request->validate([

@@ -8,7 +8,7 @@
       backHref="/member/dashboard"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/packages/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/packages/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Paquete
         </Link>
       </template>
@@ -16,12 +16,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/packages`"
+      :endpoint="`/member/listings/${business?.id}/packages`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/packages/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/packages/reorder`"
       search-placeholder="Buscar paquetes..."
       empty-title="No hay paquetes"
       empty-text="Comienza creando tu primer paquete."
@@ -31,7 +31,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/packages/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/packages/bulk-delete`"
           item-name="paquetes"
           @deleted="onBulkDeleted"
         />
@@ -84,7 +84,7 @@
           <button class="btn btn-sm btn-outline-secondary" @click="clonePackage(row)" title="Clonar">
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/businesses/${business?.id}/packages/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/packages/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deletePackage(row)">
@@ -118,7 +118,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
         { label: 'Paquetes', active: true },
       ]
     }
@@ -164,7 +164,7 @@ const deletePackage = (pkg) => {
     return
   }
 
-  router.delete(`/member/businesses/${business.value.id}/packages/${pkg.id}`, {
+  router.delete(`/member/listings/${business.value.id}/packages/${pkg.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {
@@ -178,7 +178,7 @@ const clonePackage = (pkg) => {
   if (!confirm(`¿Clonar el paquete "${pkg.title}"?`)) {
     return
   }
-  router.post(`/member/businesses/${business.value.id}/packages/${pkg.id}/clone`, {}, {
+  router.post(`/member/listings/${business.value.id}/packages/${pkg.id}/clone`, {}, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

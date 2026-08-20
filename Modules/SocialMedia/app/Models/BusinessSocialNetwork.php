@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessSocialNetwork extends Model
 {
-    protected $table = 'business_social_networks';
+    protected $table = 'listing_social_networks';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'platform',
         'url',
         'username',
@@ -105,7 +105,7 @@ class BusinessSocialNetwork extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function getIconAttribute(): string

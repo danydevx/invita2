@@ -7,7 +7,7 @@
         <h1 class="h4 mb-1">Mis Negocios</h1>
         <p class="text-muted mb-0">Gestiona tus negocios y su contenido.</p>
       </div>
-      <Link v-if="canCreate" href="/member/businesses/create" class="btn btn-primary">
+      <Link v-if="canCreate" href="/member/listings/create" class="btn btn-primary">
         <i class="bi bi-plus-lg me-1"></i>Crear negocio
       </Link>
     </div>
@@ -48,10 +48,10 @@
             </div>
 
             <div class="d-flex gap-2">
-              <Link :href="`/member/businesses/${business.id}/edit`" class="btn btn-outline-primary btn-sm flex-grow-1">
+              <Link :href="`/member/listings/${business.id}/edit`" class="btn btn-outline-primary btn-sm flex-grow-1">
                 <i class="bi bi-pencil me-1"></i>Editar
               </Link>
-              <Link :href="`/member/businesses/${business.id}/modules`" class="btn btn-outline-secondary btn-sm flex-grow-1">
+              <Link :href="`/member/listings/${business.id}/modules`" class="btn btn-outline-secondary btn-sm flex-grow-1">
                 <i class="bi bi-gear me-1"></i>Modulos
               </Link>
             </div>
@@ -65,7 +65,7 @@
         <i class="bi bi-building display-1 text-muted"></i>
         <h3 class="h5 mt-3">No tienes negocios registrados</h3>
         <p class="text-muted">Crea tu primer negocio para empezar a gestionar tu contenido.</p>
-        <Link v-if="canCreate" href="/member/businesses/create" class="btn btn-primary">
+        <Link v-if="canCreate" href="/member/listings/create" class="btn btn-primary">
           <i class="bi bi-plus-lg me-1"></i>Crear mi primer negocio
         </Link>
         <div v-else class="text-warning">

@@ -7,7 +7,7 @@
       :breadcrumbs="breadcrumbs"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/fidelity-cards/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/fidelity-cards/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva
         </Link>
       </template>
@@ -15,13 +15,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/businesses/${business?.id}/fidelity-cards`"
+        :href="`/member/listings/${business?.id}/fidelity-cards`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-credit-card me-1"></i>Tarjetas
       </Link>
       <Link
-        :href="`/member/businesses/${business?.id}/fidelity-cards/scan-view`"
+        :href="`/member/listings/${business?.id}/fidelity-cards/scan-view`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-qr-code-scan me-1"></i>Escanear
@@ -47,7 +47,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/fidelity-cards`"
+      :endpoint="`/member/listings/${business?.id}/fidelity-cards`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
@@ -60,7 +60,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/fidelity-cards/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/fidelity-cards/bulk-delete`"
           item-name="tarjetas"
           @deleted="onBulkDeleted"
         />
@@ -108,10 +108,10 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/businesses/${business?.id}/fidelity-cards/${row.id}`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/fidelity-cards/${row.id}`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye"></i>
           </Link>
-          <Link :href="`/member/businesses/${business?.id}/fidelity-cards/${row.id}/edit`" class="btn btn-sm btn-outline-secondary">
+          <Link :href="`/member/listings/${business?.id}/fidelity-cards/${row.id}/edit`" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteCard(row)">
@@ -156,7 +156,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
         { label: 'Fidelidad', active: true },
       ]
     }
@@ -202,7 +202,7 @@ const filterCards = () => {
   if (selectedFilter.value !== 'all') {
     params.filter = selectedFilter.value
   }
-  router.get(`/member/businesses/${business.value.id}/fidelity-cards`, params, {
+  router.get(`/member/listings/${business.value.id}/fidelity-cards`, params, {
     preserveScroll: true,
   })
 }
@@ -211,7 +211,7 @@ const deleteCard = (card) => {
   if (!confirm(`¿Estás seguro de eliminar la tarjeta de "${card.client_name}"?`)) {
     return
   }
-  router.delete(`/member/businesses/${business.value.id}/fidelity-cards/${card.id}`, {
+  router.delete(`/member/listings/${business.value.id}/fidelity-cards/${card.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

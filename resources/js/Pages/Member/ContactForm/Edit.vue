@@ -5,11 +5,11 @@
     <PageHeader
       title="Constructor de Formulario"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${business?.id}/contact-forms`"
     >
       <template #actions>
         <Link
-          :href="`/member/businesses/${business?.id}/contact-forms/${form?.id}/preview`"
+          :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/preview`"
           class="btn btn-outline-secondary"
           target="_blank"
         >
@@ -208,8 +208,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Formularios', href: `/member/businesses/${biz.id}/contact-forms` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Formularios', href: `/member/listings/${biz.id}/contact-forms` },
         { label: 'Editar Formulario', active: true },
       ]
     }
@@ -227,7 +227,7 @@ const copyShortcode = () => {
 }
 
 const toggleActive = () => {
-  router.put(`/member/businesses/${business.value.id}/contact-forms/${props.form.id}`, {
+  router.put(`/member/listings/${business.value.id}/contact-forms/${props.form.id}`, {
     is_active: isActive.value,
   }, {
     preserveScroll: true,
@@ -247,7 +247,7 @@ const closeFieldModal = () => {
 const saveField = (fieldData) => {
   if (editingField.value?.id) {
     router.put(
-      `/member/businesses/${business.value.id}/contact-forms/${props.form.id}/fields/${editingField.value.id}`,
+      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields/${editingField.value.id}`,
       fieldData,
       {
         onSuccess: () => closeFieldModal(),
@@ -255,7 +255,7 @@ const saveField = (fieldData) => {
     )
   } else {
     router.post(
-      `/member/businesses/${business.value.id}/contact-forms/${props.form.id}/fields`,
+      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields`,
       fieldData,
       {
         onSuccess: () => closeFieldModal(),
@@ -267,7 +267,7 @@ const saveField = (fieldData) => {
 const deleteField = (field) => {
   if (confirm(`¿Eliminar el campo "${field.field_config?.label || field.label}"?`)) {
     router.delete(
-      `/member/businesses/${business.value.id}/contact-forms/${props.form.id}/fields/${field.id}`,
+      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields/${field.id}`,
       {
         preserveScroll: true,
       }
@@ -282,7 +282,7 @@ const onDragEnd = () => {
   }))
 
   router.post(
-    `/member/businesses/${business.value.id}/contact-forms/${props.form.id}/reorder`,
+    `/member/listings/${business.value.id}/contact-forms/${props.form.id}/reorder`,
     { fields: orders },
     { preserveScroll: true }
   )

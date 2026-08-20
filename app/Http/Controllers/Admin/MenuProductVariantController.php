@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 use Modules\RestaurantMenu\Entities\MenuProductVariant;
 
 class MenuProductVariantController extends Controller
 {
-    public function store(Request $request, Business $business, MenuProduct $product)
+    public function store(Request $request, Listing $business, MenuProduct $product)
     {
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -27,9 +27,9 @@ class MenuProductVariantController extends Controller
         return redirect()->back()->with('success', 'Variante creada exitosamente.');
     }
 
-    public function update(Request $request, Business $business, MenuProduct $product, MenuProductVariant $variant)
+    public function update(Request $request, Listing $business, MenuProduct $product, MenuProductVariant $variant)
     {
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
         abort_unless($variant->product_id === $product->id, 403);
 
         $validated = $request->validate([
@@ -45,9 +45,9 @@ class MenuProductVariantController extends Controller
         return redirect()->back()->with('success', 'Variante actualizada exitosamente.');
     }
 
-    public function destroy(Business $business, MenuProduct $product, MenuProductVariant $variant)
+    public function destroy(Listing $business, MenuProduct $product, MenuProductVariant $variant)
     {
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
         abort_unless($variant->product_id === $product->id, 403);
 
         $variant->delete();

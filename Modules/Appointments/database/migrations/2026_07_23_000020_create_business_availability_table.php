@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_availability', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('day_of_week');
             $table->boolean('is_available')->default(false);
             $table->time('start_time')->nullable();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('slots_per_slot')->default(1);
             $table->timestamps();
 
-            $table->unique(['business_id', 'day_of_week'], 'availability_business_day_unique');
+            $table->unique(['listing_id', 'day_of_week'], 'availability_business_day_unique');
         });
     }
 

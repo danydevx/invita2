@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\Seo\Models\BusinessSeoSetting;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessSeoSettingPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -17,7 +17,7 @@ class BusinessSeoSettingPolicy
         return $user->id === $business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -35,7 +35,7 @@ class BusinessSeoSettingPolicy
         return $user->id === $seoSetting->business->user_id;
     }
 
-    public function updateForBusiness(User $user, Business $business): bool
+    public function updateForBusiness(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

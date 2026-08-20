@@ -7,12 +7,12 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Clients\Models\BusinessClient;
 
 class ClientController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessClient::class, $business]);
 
@@ -74,7 +74,7 @@ class ClientController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessClient::class, $business]);
 
@@ -86,7 +86,7 @@ class ClientController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessClient::class, $business]);
 
@@ -125,9 +125,9 @@ class ClientController extends Controller
             ->with('success', 'Cliente creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessClient $client)
+    public function edit(Request $request, Listing $business, BusinessClient $client)
     {
-        abort_unless($client->business_id === $business->id, 404);
+        abort_unless($client->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessClient::class, $client]);
 
         return Inertia::render('Member/Clients/Edit', [
@@ -157,9 +157,9 @@ class ClientController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessClient $client, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
     {
-        abort_unless($client->business_id === $business->id, 404);
+        abort_unless($client->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessClient::class, $client]);
 
         $data = $request->validate([
@@ -197,9 +197,9 @@ class ClientController extends Controller
             ->with('success', 'Cliente actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessClient $client, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
     {
-        abort_unless($client->business_id === $business->id, 404);
+        abort_unless($client->listing_id === $business->id, 404);
         $this->authorize('delete', [BusinessClient::class, $client]);
 
         $activity->log('client_deleted', [
@@ -214,7 +214,7 @@ class ClientController extends Controller
             ->with('success', 'Cliente eliminado correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [BusinessClient::class, $business]);
 
@@ -222,11 +222,11 @@ class ClientController extends Controller
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => [
                 'integer',
-                Rule::exists('business_clients', 'id')->where('business_id', $business->id),
+                Rule::exists('business_clients', 'id')->where('listing_id', $business->id),
             ],
         ]);
 
-        $count = BusinessClient::where('business_id', $business->id)
+        $count = BusinessClient::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->delete();
 
@@ -237,9 +237,9 @@ class ClientController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-    public function clone(Request $request, Business $business, BusinessClient $client, ActivityService $activity)
+    public function clone(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
     {
-        abort_unless($client->business_id === $business->id, 404);
+        abort_unless($client->listing_id === $business->id, 404);
         $this->authorize('create', [BusinessClient::class, $business]);
 
         $clonedClient = $business->clients()->create([

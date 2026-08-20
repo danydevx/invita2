@@ -403,8 +403,8 @@ const submit = () => {
   errors.value = {}
 
   const url = mode.value === 'create'
-    ? `/member/businesses/${props.businessId}/appointments`
-    : `/member/businesses/${props.businessId}/appointments/${appointmentId}`
+    ? `/member/listings/${props.businessId}/appointments`
+    : `/member/listings/${props.businessId}/appointments/${appointmentId}`
 
   const method = mode.value === 'create' ? 'post' : 'put'
 

@@ -10,7 +10,7 @@ class AiEmbedding extends Model
     protected $table = 'ai_embeddings';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'source_type',
         'source_id',
         'chunk_text',
@@ -23,7 +23,7 @@ class AiEmbedding extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function getEmbeddingArray(): array

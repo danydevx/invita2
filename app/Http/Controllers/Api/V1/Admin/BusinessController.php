@@ -8,7 +8,7 @@ use App\Http\Resources\Api\V1\BusinessResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Gallery\Models\BusinessGalleryImage;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\Faqs\Models\BusinessFaq;
@@ -30,7 +30,7 @@ class BusinessController extends Controller
     {
         $perPage = min((int) $request->get('per_page', 20), 100);
 
-        $businesses = Business::with([
+        $businesses = Listing::with([
             'user:id,name,email',
             'subscriptions.plan:id,name',
             'modules.moduleDefinition',
@@ -49,7 +49,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function show(Business $business): JsonResponse
+    public function show(Listing $business): JsonResponse
     {
         $business->load([
             'user:id,name,email,is_active,created_at',
@@ -62,7 +62,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function stats(Business $business): JsonResponse
+    public function stats(Listing $business): JsonResponse
     {
         $stats = [
             'locations' => $business->locations()->count(),
@@ -79,7 +79,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    private function getModuleStatus(Business $business, string $moduleKey): array
+    private function getModuleStatus(Listing $business, string $moduleKey): array
     {
         $module = $business->modules()->where('module_key', $moduleKey)->first();
 
@@ -90,7 +90,7 @@ class BusinessController extends Controller
         return ['enabled' => (bool) $module->is_enabled, 'message' => null];
     }
 
-    public function locations(Business $business): JsonResponse
+    public function locations(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'locations');
 
@@ -98,7 +98,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $locations = BusinessLocation::where('business_id', $business->id)
+        $locations = BusinessLocation::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'address', 'city', 'state', 'country', 'phone', 'email', 'coordinates', 'is_primary', 'is_active', 'created_at']);
 
@@ -112,7 +112,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function gallery(Business $business): JsonResponse
+    public function gallery(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'gallery');
 
@@ -120,7 +120,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $images = BusinessGalleryImage::where('business_id', $business->id)
+        $images = BusinessGalleryImage::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'title', 'description', 'image_path', 'is_active', 'created_at']);
 
@@ -134,7 +134,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function faqs(Business $business): JsonResponse
+    public function faqs(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'faqs');
 
@@ -142,7 +142,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $faqs = BusinessFaq::where('business_id', $business->id)
+        $faqs = BusinessFaq::where('listing_id', $business->id)
             ->with('category:id,name')
             ->orderBy('order', 'asc')
             ->get(['id', 'category_id', 'question', 'answer', 'is_active', 'order']);
@@ -157,7 +157,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function seo(Business $business): JsonResponse
+    public function seo(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'seo');
 
@@ -165,7 +165,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $seo = BusinessSeoSetting::where('business_id', $business->id)->first([
+        $seo = BusinessSeoSetting::where('listing_id', $business->id)->first([
             'id',
             'seo_title',
             'seo_description',
@@ -189,7 +189,7 @@ class BusinessController extends Controller
         return response()->json(['data' => $seo]);
     }
 
-    public function branding(Business $business): JsonResponse
+    public function branding(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'branding');
 
@@ -197,7 +197,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $branding = BusinessBrandingSetting::where('business_id', $business->id)->first([
+        $branding = BusinessBrandingSetting::where('listing_id', $business->id)->first([
             'id',
             'colors',
             'fonts',
@@ -213,7 +213,7 @@ class BusinessController extends Controller
         return response()->json(['data' => $branding]);
     }
 
-    public function hero(Business $business): JsonResponse
+    public function hero(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'hero');
 
@@ -221,7 +221,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $hero = BusinessHero::where('business_id', $business->id)->first([
+        $hero = BusinessHero::where('listing_id', $business->id)->first([
             'id',
             'title',
             'subtitle',
@@ -242,7 +242,7 @@ class BusinessController extends Controller
         return response()->json(['data' => $hero]);
     }
 
-    public function about(Business $business): JsonResponse
+    public function about(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'about');
 
@@ -250,7 +250,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $about = BusinessAbout::where('business_id', $business->id)->first([
+        $about = BusinessAbout::where('listing_id', $business->id)->first([
             'id',
             'title',
             'description',
@@ -268,7 +268,7 @@ class BusinessController extends Controller
         return response()->json(['data' => $about]);
     }
 
-    public function services(Business $business): JsonResponse
+    public function services(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'services');
 
@@ -276,7 +276,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $services = BusinessService::where('business_id', $business->id)
+        $services = BusinessService::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'description', 'price', 'duration', 'is_active']);
 
@@ -290,7 +290,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function products(Business $business): JsonResponse
+    public function products(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'products');
 
@@ -298,7 +298,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $products = BusinessProduct::where('business_id', $business->id)
+        $products = BusinessProduct::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'description', 'price', 'compare_at_price', 'sku', 'stock_quantity', 'is_active']);
 
@@ -312,7 +312,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function reviews(Business $business): JsonResponse
+    public function reviews(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'reviews');
 
@@ -320,7 +320,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $reviews = BusinessReview::where('business_id', $business->id)
+        $reviews = BusinessReview::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'reviewer_name', 'rating', 'comment', 'is_approved', 'created_at']);
 
@@ -337,7 +337,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function leads(Business $business): JsonResponse
+    public function leads(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'leads');
 
@@ -345,7 +345,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $leads = BusinessLead::where('business_id', $business->id)
+        $leads = BusinessLead::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'email', 'phone', 'status', 'notes', 'created_at']);
 
@@ -362,7 +362,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function appointments(Business $business): JsonResponse
+    public function appointments(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'appointments');
 
@@ -372,7 +372,7 @@ class BusinessController extends Controller
 
         $perPage = min((int) request()->get('per_page', 20), 100);
 
-        $appointments = BusinessAppointment::where('business_id', $business->id)
+        $appointments = BusinessAppointment::where('listing_id', $business->id)
             ->with(['location:id,name', 'service:id,name'])
             ->orderBy('appointment_date', 'desc')
             ->orderBy('start_time', 'desc')
@@ -389,7 +389,7 @@ class BusinessController extends Controller
                 'per_page' => $appointments->perPage(),
                 'total' => $appointments->total(),
                 'last_page' => $appointments->lastPage(),
-                'by_status' => BusinessAppointment::where('business_id', $business->id)
+                'by_status' => BusinessAppointment::where('listing_id', $business->id)
                     ->groupBy('status')
                     ->selectRaw('status, count(*) as count')
                     ->pluck('count', 'status'),
@@ -397,7 +397,7 @@ class BusinessController extends Controller
         ]);
     }
 
-    public function appointmentSlots(Business $business): JsonResponse
+    public function appointmentSlots(Listing $business): JsonResponse
     {
         $status = $this->getModuleStatus($business, 'appointments');
 
@@ -405,7 +405,7 @@ class BusinessController extends Controller
             return response()->json(['data' => null, 'message' => 'Modulo no habilitado en el plan'], 200);
         }
 
-        $slots = BusinessAppointmentSlot::where('business_id', $business->id)
+        $slots = BusinessAppointmentSlot::where('listing_id', $business->id)
             ->with(['service:id,name', 'location:id,name'])
             ->orderBy('day_of_week')
             ->orderBy('start_time')

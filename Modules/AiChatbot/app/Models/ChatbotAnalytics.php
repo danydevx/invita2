@@ -10,7 +10,7 @@ class ChatbotAnalytics extends Model
     protected $table = 'chatbot_analytics';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'date',
         'conversations_count',
         'messages_count',
@@ -32,7 +32,7 @@ class ChatbotAnalytics extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public static function incrementStats(int $businessId, int $messages = 1, int $tokens = 0, bool $isError = false, int $latencyMs = 0): void
@@ -40,7 +40,7 @@ class ChatbotAnalytics extends Model
         $today = now()->toDateString();
 
         $analytics = self::firstOrCreate(
-            ['business_id' => $businessId, 'date' => $today],
+            ['listing_id' => $businessId, 'date' => $today],
             ['conversations_count' => 0, 'messages_count' => 0, 'tokens_used' => 0, 'total_latency_ms' => 0, 'estimated_cost' => 0, 'errors_count' => 0]
         );
 
@@ -66,7 +66,7 @@ class ChatbotAnalytics extends Model
         $today = now()->toDateString();
 
         $analytics = self::firstOrCreate(
-            ['business_id' => $businessId, 'date' => $today],
+            ['listing_id' => $businessId, 'date' => $today],
             ['conversations_count' => 0, 'messages_count' => 0, 'tokens_used' => 0, 'errors_count' => 0]
         );
 
@@ -84,7 +84,7 @@ class ChatbotAnalytics extends Model
             default => now()->subDays(30),
         };
 
-        return self::where('business_id', $businessId)
+        return self::where('listing_id', $businessId)
             ->where('date', '>=', $from->toDateString())
             ->orderBy('date')
             ->get()
@@ -101,7 +101,7 @@ class ChatbotAnalytics extends Model
             default => now()->subDays(30),
         };
 
-        $result = self::where('business_id', $businessId)
+        $result = self::where('listing_id', $businessId)
             ->where('date', '>=', $from->toDateString())
             ->selectRaw('SUM(conversations_count) as total_conversations, SUM(messages_count) as total_messages, SUM(tokens_used) as total_tokens, SUM(total_latency_ms) as total_latency_ms, SUM(estimated_cost) as total_cost, SUM(errors_count) as total_errors')
             ->first();

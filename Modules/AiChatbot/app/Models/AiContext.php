@@ -10,7 +10,7 @@ class AiContext extends Model
     protected $table = 'ai_contexts';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'title',
         'content',
         'content_for_editing',
@@ -23,6 +23,6 @@ class AiContext extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 }

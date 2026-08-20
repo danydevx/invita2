@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BusinessClient extends Model
 {
+
+    protected $table = 'listing_clients';
+
     use SoftDeletes;
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'contact_person',
         'company_name',
         'whatsapp',
@@ -36,6 +39,6 @@ class BusinessClient extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 }

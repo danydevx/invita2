@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Gallery\Models\BusinessGallery;
 use Modules\Gallery\Models\BusinessGalleryImage;
 
@@ -21,7 +21,7 @@ class GalleryController extends Controller
 
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-    public function index(Request $request, Business $business, ?BusinessGallery $gallery = null)
+    public function index(Request $request, Listing $business, ?BusinessGallery $gallery = null)
     {
         $this->authorize('viewAny', [BusinessGalleryImage::class, $business]);
 
@@ -29,7 +29,7 @@ class GalleryController extends Controller
             $gallery = BusinessGallery::primaryFor($business->id);
         }
 
-        if (! $gallery || $gallery->business_id !== $business->id) {
+        if (! $gallery || $gallery->listing_id !== $business->id) {
             return Inertia::render('Member/Galleries/Show', [
                 'business' => [
                     'id' => $business->id,
@@ -48,15 +48,15 @@ class GalleryController extends Controller
         return $this->renderGallery($request, $business, $gallery);
     }
 
-    public function show(Request $request, Business $business, BusinessGallery $gallery)
+    public function show(Request $request, Listing $business, BusinessGallery $gallery)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
         $this->authorize('viewAny', [BusinessGalleryImage::class, $business]);
 
         return $this->renderGallery($request, $business, $gallery);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessGalleryImage::class, $business]);
 
@@ -66,13 +66,13 @@ class GalleryController extends Controller
             'file' => ['required_without:files', 'file', 'max:'.self::MAX_FILE_SIZE_KB, 'mimetypes:'.implode(',', self::ALLOWED_MIME_TYPES)],
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('business_id', $business->id),
+                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
             'business_location_id' => [
                 'nullable',
-                Rule::exists('business_locations', 'id')->where('business_id', $business->id),
+                Rule::exists('business_locations', 'id')->where('listing_id', $business->id),
             ],
         ], [
             'files.max' => 'Solo puedes subir hasta 10 imágenes por vez.',
@@ -98,7 +98,7 @@ class GalleryController extends Controller
                     $storedPaths[] = $path;
 
                     $image = $business->galleryImages()->create([
-                        'business_id' => $business->id,
+                        'listing_id' => $business->id,
                         'business_gallery_id' => $data['business_gallery_id'],
                         'path' => Storage::disk($disk)->url($path),
                         'filename' => basename($path),
@@ -136,15 +136,15 @@ class GalleryController extends Controller
         );
     }
 
-    public function update(Request $request, Business $business, BusinessGalleryImage $image, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessGalleryImage $image, ActivityService $activity)
     {
-        abort_unless($image->business_id === $business->id, 404);
+        abort_unless($image->listing_id === $business->id, 404);
         $this->authorize('update', [BusinessGalleryImage::class, $image]);
 
         $data = $request->validate([
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('business_id', $business->id),
+                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -152,7 +152,7 @@ class GalleryController extends Controller
             'is_active' => ['boolean'],
             'business_location_id' => [
                 'nullable',
-                Rule::exists('business_locations', 'id')->where('business_id', $business->id),
+                Rule::exists('business_locations', 'id')->where('listing_id', $business->id),
             ],
         ]);
 
@@ -168,9 +168,9 @@ class GalleryController extends Controller
         return redirect()->back()->with('success', 'Imagen actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessGalleryImage $image, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessGalleryImage $image, ActivityService $activity)
     {
-        abort_unless($image->business_id === $business->id, 404);
+        abort_unless($image->listing_id === $business->id, 404);
         $this->authorize('delete', [BusinessGalleryImage::class, $image]);
 
         if ($image->path) {
@@ -189,7 +189,7 @@ class GalleryController extends Controller
         return redirect()->back()->with('success', 'Imagen eliminada correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [BusinessGalleryImage::class, $business]);
 
@@ -197,11 +197,11 @@ class GalleryController extends Controller
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => [
                 'integer',
-                Rule::exists('business_gallery_images', 'id')->where('business_id', $business->id),
+                Rule::exists('business_gallery_images', 'id')->where('listing_id', $business->id),
             ],
         ]);
 
-        $images = BusinessGalleryImage::where('business_id', $business->id)
+        $images = BusinessGalleryImage::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->get();
 
@@ -216,7 +216,7 @@ class GalleryController extends Controller
         return redirect()->back()->with('success', count($images).' imagen(es) eliminada(s).');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -229,7 +229,7 @@ class GalleryController extends Controller
             'ids' => ['required', 'array'],
             'ids.*' => [
                 'integer',
-                Rule::exists('business_gallery_images', 'id')->where('business_id', $business->id),
+                Rule::exists('business_gallery_images', 'id')->where('listing_id', $business->id),
             ],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
@@ -242,7 +242,7 @@ class GalleryController extends Controller
         DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\Gallery\Models\BusinessGalleryImage::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });
@@ -250,7 +250,7 @@ class GalleryController extends Controller
         return back(303);
     }
 
-    private function renderGallery(Request $request, Business $business, BusinessGallery $gallery): \Inertia\Response
+    private function renderGallery(Request $request, Listing $business, BusinessGallery $gallery): \Inertia\Response
     {
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -323,7 +323,7 @@ class GalleryController extends Controller
         ]);
     }
 
-    private function galleryOptions(Business $business)
+    private function galleryOptions(Listing $business)
     {
         return $business->galleries()
             ->orderByDesc('is_primary')

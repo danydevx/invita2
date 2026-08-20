@@ -23,15 +23,15 @@ class PlanBusinessModuleSeeder extends Seeder
         $plansData = [
             'free' => [
                 'name' => 'Plan Free',
-                'modules' => ['locations', 'contact_form', 'gallery', 'about', 'socialmedia'],
+                'modules' => ['locations', 'contact_form', 'gallery', 'about', 'socialmedia', 'guests', 'checkin'],
             ],
             'business' => [
                 'name' => 'Plan Negocio',
-                'modules' => ['locations', 'contact_form', 'gallery', 'leads', 'services', 'appointments', 'products', 'reviews', 'promotions', 'restaurant_menu', 'about', 'socialmedia', 'features', 'properties', 'team_members', 'packages'],
+                'modules' => ['locations', 'contact_form', 'gallery', 'leads', 'services', 'appointments', 'products', 'reviews', 'promotions', 'restaurant_menu', 'about', 'socialmedia', 'features', 'properties', 'team_members', 'packages', 'guests', 'checkin'],
             ],
             'ai' => [
                 'name' => 'Plan IA',
-                'modules' => ['locations', 'contact_form', 'gallery', 'leads', 'services', 'appointments', 'products', 'ai_chatbot', 'reviews', 'promotions', 'restaurant_menu', 'about', 'socialmedia', 'features', 'properties', 'team_members', 'packages'],
+                'modules' => ['locations', 'contact_form', 'gallery', 'leads', 'services', 'appointments', 'products', 'ai_chatbot', 'reviews', 'promotions', 'restaurant_menu', 'about', 'socialmedia', 'features', 'properties', 'team_members', 'packages', 'guests', 'checkin'],
             ],
         ];
 
@@ -47,11 +47,10 @@ class PlanBusinessModuleSeeder extends Seeder
                 PlanBusinessModule::updateOrCreate(
                     [
                         'plan_id' => $plan->id,
-                        'module_definition_id' => $definitionId,
+                        'module_key' => $key,
                     ],
                     [
                         'is_enabled' => $isEnabled,
-                        'module_key' => $key,
                     ]
                 );
             }

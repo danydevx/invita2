@@ -654,7 +654,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Branding', active: true },
       ]
     }
@@ -809,7 +809,7 @@ const submit = () => {
   data.append('section_style', form.section_style || '')
   data.append('hero_style', form.hero_style || '')
 
-  router.post(`/member/businesses/${business.value.id}/branding`, data, {
+  router.post(`/member/listings/${business.value.id}/branding`, data, {
     onSuccess: () => {
       sending.value = false
       toast.success('Configuración de marca guardada correctamente')

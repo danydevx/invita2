@@ -322,7 +322,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Caracteristicas', active: true },
       ]
     }
@@ -363,7 +363,7 @@ const visiblePages = computed(() => {
 
 const goToPage = (page) => {
   if (page < 1 || page > props.businessFeaturesPaginated.last_page) return
-  router.get(`/member/businesses/${business.value.id}/features?page=${page}`, {
+  router.get(`/member/listings/${business.value.id}/features?page=${page}`, {
     preserveScroll: true,
     preserveState: true,
   })
@@ -381,7 +381,7 @@ const initSortable = () => {
     onEnd: (evt) => {
       isDragging.value = false
       const orderedIds = Array.from(featuresGrid.value.querySelectorAll('[data-id]')).map(el => parseInt(el.dataset.id))
-      router.post(`/member/businesses/${business.value.id}/features/reorder`, {
+      router.post(`/member/listings/${business.value.id}/features/reorder`, {
         order: orderedIds,
       }, {
         preserveScroll: true,
@@ -497,7 +497,7 @@ const openEditModal = (bf) => {
 
 const submitCreate = () => {
   createSending.value = true
-  router.post(`/member/businesses/${business.value.id}/features`, createForm.value, {
+  router.post(`/member/listings/${business.value.id}/features`, createForm.value, {
     onFinish: () => {
       createSending.value = false
       createModal.hide()
@@ -507,7 +507,7 @@ const submitCreate = () => {
 
 const submitEdit = () => {
   editSending.value = true
-  router.put(`/member/businesses/${business.value.id}/features/${editForm.value.id}`, {
+  router.put(`/member/listings/${business.value.id}/features/${editForm.value.id}`, {
     title: editForm.value.title,
     description: editForm.value.description,
     icon: editForm.value.icon,
@@ -524,7 +524,7 @@ const submitEdit = () => {
 const submitImport = () => {
   if (importForm.value.feature_ids.length === 0) return
   importSending.value = true
-  router.post(`/member/businesses/${business.value.id}/features/import`, {
+  router.post(`/member/listings/${business.value.id}/features/import`, {
     feature_ids: importForm.value.feature_ids,
   }, {
     onFinish: () => {
@@ -536,14 +536,14 @@ const submitImport = () => {
 }
 
 const removeAssignment = (bf) => {
-  router.delete(`/member/businesses/${business.value.id}/feature-assignments/${bf.id}`, {
+  router.delete(`/member/listings/${business.value.id}/feature-assignments/${bf.id}`, {
     preserveScroll: true,
   })
 }
 
 const deleteFeature = (bf) => {
   if (!confirm('Estas seguro de eliminar esta caracteristica?')) return
-  router.delete(`/member/businesses/${business.value.id}/features/${bf.id}`, {
+  router.delete(`/member/listings/${business.value.id}/features/${bf.id}`, {
     preserveScroll: true,
   })
 }

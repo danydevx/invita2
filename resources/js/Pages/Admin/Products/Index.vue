@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Productos del Menú</h1>
@@ -15,7 +15,7 @@
       <div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><Link :href="`/admin/businesses/${business.id}/menu-categories`">Categorías</Link></li>
+            <li class="breadcrumb-item"><Link :href="`/admin/listings/${business.id}/menu-categories`">Categorías</Link></li>
             <li v-if="selectedCategoryName" class="breadcrumb-item active">{{ selectedCategoryName }}</li>
           </ol>
         </nav>
@@ -219,7 +219,7 @@ const form = ref({
 })
 
 const filterProducts = () => {
-  let url = `/admin/businesses/${props.business.id}/menu-products`
+  let url = `/admin/listings/${props.business.id}/menu-products`
   if (filterCategory.value) {
     if (filterCategory.value === 'uncategorized') {
       url += '?uncategorized=1'
@@ -253,7 +253,7 @@ const editProduct = (product) => {
 
 const deleteProduct = (product) => {
   if (!confirm(`¿Eliminar el producto "${product.title}"?`)) return
-  router.delete(`/admin/businesses/${props.business.id}/menu-products/${product.id}`)
+  router.delete(`/admin/listings/${props.business.id}/menu-products/${product.id}`)
 }
 
 const closeModal = () => {
@@ -290,7 +290,7 @@ const submitForm = () => {
 
   if (editingProduct.value) {
     router.put(
-      `/admin/businesses/${props.business.id}/menu-products/${editingProduct.value.id}`,
+      `/admin/listings/${props.business.id}/menu-products/${editingProduct.value.id}`,
       form.value,
       {
         onFinish: () => {
@@ -301,7 +301,7 @@ const submitForm = () => {
     )
   } else {
     router.post(
-      `/admin/businesses/${props.business.id}/menu-products`,
+      `/admin/listings/${props.business.id}/menu-products`,
       form.value,
       {
         onFinish: () => {

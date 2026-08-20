@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Wizard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Business;
 use Illuminate\Http\Request;
-use Modules\Businesses\Enums\BusinessType;
+use Modules\Listings\Enums\ListingType;
+use Modules\Listings\Models\Listing;
 
 class BusinessController extends Controller
 {
@@ -13,11 +13,11 @@ class BusinessController extends Controller
     {
         $user = $request->user();
 
-        if ($user->businesses()->exists()) {
+        if ($user->listings()->exists()) {
             return redirect()->route('member.dashboard');
         }
 
-        $businessTypes = BusinessType::cases();
+        $businessTypes = ListingType::cases();
         $userEmail = $user->email;
         $userName = $user->name;
 
@@ -33,7 +33,7 @@ class BusinessController extends Controller
     {
         $user = $request->user();
 
-        if ($user->businesses()->exists()) {
+        if ($user->listings()->exists()) {
             return redirect()->route('member.dashboard');
         }
 
@@ -44,14 +44,14 @@ class BusinessController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
         ]);
 
-        $validTypes = array_column(BusinessType::cases(), 'value');
+        $validTypes = array_column(ListingType::cases(), 'value');
         if (!in_array($data['business_type'], $validTypes)) {
             return back()->withErrors([
                 'business_type' => 'El tipo de negocio no es válido.',
             ]);
         }
 
-        $business = Business::create([
+        $listing = Listing::create([
             'user_id' => $user->id,
             'name' => trim($data['business_name']),
             'business_type' => $data['business_type'],

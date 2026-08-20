@@ -12,7 +12,7 @@ use App\Services\Properties\PropertyLimitService;
 use App\Services\Properties\PropertyService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Properties\Models\Property;
 use Modules\Properties\Models\PropertyType;
 
@@ -369,7 +369,7 @@ class PropertyController extends Controller
 
         foreach ($ids as $id) {
             Property::where('id', $id)
-                ->where('business_id', $business->id)
+                ->where('listing_id', $business->id)
                 ->update(['sort_order' => $start++]);
         }
 
@@ -390,7 +390,7 @@ class PropertyController extends Controller
             'ids.*' => ['integer'],
         ]);
 
-        $properties = Property::where('business_id', $business->id)
+        $properties = Property::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->get();
 

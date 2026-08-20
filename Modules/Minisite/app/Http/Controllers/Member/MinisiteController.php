@@ -5,7 +5,7 @@ namespace Modules\Minisite\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Minisite\Models\BusinessMinisiteSetting;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +15,7 @@ class MinisiteController extends Controller
     {
         $this->authorize('viewAny', [BusinessMinisiteSetting::class, $business]);
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)->first();
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)->first();
 
         return Inertia::render('Member/Minisite/Index', [
             'business' => [
@@ -58,10 +58,10 @@ class MinisiteController extends Controller
             $data['hero_background_image'] = Storage::disk('public')->url($path);
         }
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $setting = BusinessMinisiteSetting::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             $data
         );
 
@@ -75,10 +75,10 @@ class MinisiteController extends Controller
             abort(403);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)->first();
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)->first();
 
         if (!$setting) {
-            $setting = new BusinessMinisiteSetting(['business_id' => $business->id]);
+            $setting = new BusinessMinisiteSetting(['listing_id' => $business->id]);
         }
 
         $data = $request->validate([

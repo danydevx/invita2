@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('chatbot_analytics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->unsignedInteger('conversations_count')->default(0);
             $table->unsignedInteger('messages_count')->default(0);
@@ -18,20 +18,20 @@ return new class extends Migration
             $table->unsignedInteger('errors_count')->default(0);
             $table->timestamps();
 
-            $table->unique(['business_id', 'date']);
-            $table->index(['business_id', 'date']);
+            $table->unique(['listing_id', 'date']);
+            $table->index(['listing_id', 'date']);
         });
 
         Schema::create('chatbot_top_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('question', 500);
             $table->string('question_hash', 64);
             $table->unsignedInteger('times_asked')->default(1);
             $table->date('last_asked_at');
             $table->timestamps();
 
-            $table->index(['business_id', 'times_asked']);
+            $table->index(['listing_id', 'times_asked']);
         });
     }
 

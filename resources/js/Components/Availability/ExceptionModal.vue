@@ -183,7 +183,7 @@ const submit = () => {
   serverError.value = ''
 
   router.post(
-    `/member/businesses/${props.businessId}/appointments/availability/exceptions`,
+    `/member/listings/${props.businessId}/appointments/availability/exceptions`,
     { ...form },
     {
       preserveScroll: true,

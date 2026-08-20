@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\SendVerificationEmailJob;
 use App\Models\Invitation;
-use Modules\Businesses\Models\Business;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Services\ActivityService;
@@ -15,8 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Modules\Businesses\Enums\BusinessType;
 use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
@@ -27,54 +23,14 @@ class RegisterController extends Controller
             return redirect('/login')->with('error', 'El registro esta deshabilitado.');
         }
 
-        $wizardData = $request->session()->get('wizard_business_data');
-
-        if (!$wizardData) {
-            $businessTypes = BusinessType::cases();
-            return view('wizard.business', [
-                'title' => 'Configura tu negocio',
-                'businessTypes' => $businessTypes,
-                'userEmail' => '',
-                'userName' => '',
-                'isRegistrationStep' => true,
-            ]);
-        }
-
         return view('auth.register', [
             'title' => 'Registro',
             'prefill' => [
-                'email' => (string) $request->query('email', $wizardData['email'] ?? ''),
+                'email' => (string) $request->query('email', ''),
                 'invite' => (string) $request->query('invite', ''),
             ],
             'formStartedAt' => now()->timestamp,
-            'wizardData' => $wizardData,
         ]);
-    }
-
-    public function storeWizard(Request $request)
-    {
-        $data = $request->validate([
-            'business_name' => ['required', 'string', 'max:150'],
-            'business_type' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:150'],
-            'phone' => ['nullable', 'string', 'max:50'],
-        ]);
-
-        $validTypes = array_column(BusinessType::cases(), 'value');
-        if (!in_array($data['business_type'], $validTypes)) {
-            return back()->withErrors([
-                'business_type' => 'El tipo de negocio no es válido.',
-            ]);
-        }
-
-        $request->session()->put('wizard_business_data', [
-            'business_name' => trim($data['business_name']),
-            'business_type' => $data['business_type'],
-            'email' => strtolower(trim($data['email'])),
-            'phone' => $data['phone'] ?? null,
-        ]);
-
-        return redirect()->route('register')->with('success', 'Datos del negocio guardados. Completa tu cuenta.');
     }
 
     public function register(Request $request, ActivityService $activity)
@@ -118,13 +74,12 @@ class RegisterController extends Controller
             ]);
         }
 
-        $wizardData = $request->session()->get('wizard_business_data');
-
         $user = User::create([
             'name' => trim($data['name']),
             'email' => strtolower(trim($data['email'])),
             'password' => Hash::make($data['password']),
-            'is_active' => false,
+            'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         UserProfile::create([
@@ -141,27 +96,11 @@ class RegisterController extends Controller
         ]);
 
         $role = Role::query()
-            ->where('id', 10)
-            ->orWhere('name', 'guest')
+            ->where('name', 'member')
             ->first();
 
         if ($role) {
             $user->syncRoles([$role]);
-        }
-
-        if ($wizardData) {
-            Business::create([
-                'user_id' => $user->id,
-                'name' => $wizardData['business_name'],
-                'slug' => Str::slug($wizardData['business_name'], '-') . '-' . Str::random(6),
-                'business_type' => $wizardData['business_type'],
-                'email' => $wizardData['email'],
-                'phone' => $wizardData['phone'],
-                'is_active' => true,
-                'is_published' => false,
-            ]);
-
-            $request->session()->forget('wizard_business_data');
         }
 
         if (! empty($data['invite'])) {
@@ -195,15 +134,9 @@ class RegisterController extends Controller
             }
         }
 
-        SendVerificationEmailJob::dispatch($user->id);
-
         Auth::login($user);
 
-        $message = $wizardData
-            ? 'Registro exitoso. Revisa tu correo para verificar tu cuenta.'
-            : 'Registro exitoso. Revisa tu correo para verificar tu cuenta.';
-
-        return redirect('/email/verify')->with('success', $message);
+        return redirect('/member/dashboard')->with('success', 'Registro exitoso. Bienvenido!');
     }
 
     private function allowRegistration(): bool

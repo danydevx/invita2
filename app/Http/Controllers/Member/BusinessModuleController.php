@@ -7,7 +7,7 @@ use App\Models\PlanBusinessModule;
 use App\Services\PlanLimits;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessModuleController extends Controller
 {
@@ -15,7 +15,7 @@ class BusinessModuleController extends Controller
     {
         $user = $request->user();
 
-        $businesses = Business::where('user_id', $user->id)
+        $businesses = Listing::where('user_id', $user->id)
             ->with(['modules.moduleDefinition' => fn ($q) => $q->where('is_active', true)])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -44,7 +44,7 @@ class BusinessModuleController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Business $business)
+    public function edit(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -79,7 +79,7 @@ class BusinessModuleController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business)
+    public function update(Request $request, Listing $business)
     {
         $user = $request->user();
 

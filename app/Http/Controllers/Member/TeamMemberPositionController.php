@@ -6,16 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\TeamMembers\Models\TeamMemberPosition;
 
 class TeamMemberPositionController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
 
-        $positions = TeamMemberPosition::where('business_id', $business->id)
+        $positions = TeamMemberPosition::where('listing_id', $business->id)
             ->with('parent:id,name')
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -47,11 +47,11 @@ class TeamMemberPositionController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
 
-        $parentPositions = TeamMemberPosition::where('business_id', $business->id)
+        $parentPositions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'parent_id']);
@@ -65,7 +65,7 @@ class TeamMemberPositionController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
 
@@ -83,11 +83,11 @@ class TeamMemberPositionController extends Controller
             'sort_order' => 'orden',
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = TeamMemberPosition::generateUniqueSlug($business->id, $data['name']);
 
         if (!isset($data['sort_order'])) {
-            $data['sort_order'] = TeamMemberPosition::where('business_id', $business->id)->max('sort_order') + 1;
+            $data['sort_order'] = TeamMemberPosition::where('listing_id', $business->id)->max('sort_order') + 1;
         }
 
         $position = TeamMemberPosition::create($data);
@@ -103,13 +103,13 @@ class TeamMemberPositionController extends Controller
             ->with('success', 'Puesto creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, TeamMemberPosition $position)
+    public function edit(Request $request, Listing $business, TeamMemberPosition $position)
     {
         $this->authorize('update', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
 
-        abort_unless($position->business_id === $business->id, 404);
+        abort_unless($position->listing_id === $business->id, 404);
 
-        $parentPositions = TeamMemberPosition::where('business_id', $business->id)
+        $parentPositions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
             ->where('id', '!=', $position->id)
             ->orderBy('name')
@@ -133,11 +133,11 @@ class TeamMemberPositionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, TeamMemberPosition $position, ActivityService $activity)
+    public function update(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
         $this->authorize('update', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
 
-        abort_unless($position->business_id === $business->id, 404);
+        abort_unless($position->listing_id === $business->id, 404);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -170,11 +170,11 @@ class TeamMemberPositionController extends Controller
             ->with('success', 'Puesto actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, TeamMemberPosition $position, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
         $this->authorize('delete', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
 
-        abort_unless($position->business_id === $business->id, 404);
+        abort_unless($position->listing_id === $business->id, 404);
 
         if ($position->teamMembers()->exists()) {
             return redirect()->back()->with('error', 'No se puede eliminar un puesto que tiene miembros asignados.');

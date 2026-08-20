@@ -5,7 +5,7 @@
     <PageHeader
       title="Nueva Resena"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/reviews`"
+      :backHref="`/member/listings/${business.id}/reviews`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -79,7 +79,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/member/businesses/${business.id}/reviews`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${business.id}/reviews`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -123,8 +123,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Resenas', href: `/member/businesses/${biz.id}/reviews` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Resenas', href: `/member/listings/${biz.id}/reviews` },
         { label: 'Nueva Resena', active: true },
       ]
     }
@@ -186,7 +186,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.post(`/member/businesses/${business.value.id}/reviews`, form, {
+  router.post(`/member/listings/${business.value.id}/reviews`, form, {
     preserveScroll: true,
     onError: (errs) => {
       errors.client_name = errs.client_name || ''

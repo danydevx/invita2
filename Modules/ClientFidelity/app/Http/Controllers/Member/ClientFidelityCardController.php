@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\ClientFidelity\Http\Requests\CreateClientFidelityCardRequest;
 use Modules\ClientFidelity\Http\Requests\UpdateClientFidelityCardRequest;
 use Modules\ClientFidelity\Models\ClientFidelityCard;
@@ -30,7 +30,7 @@ class ClientFidelityCardController extends Controller
         }
         $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
 
-        $query = ClientFidelityCard::where('business_id', $business->id)
+        $query = ClientFidelityCard::where('listing_id', $business->id)
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $q->where('client_name', 'like', "%{$search}%")
@@ -106,7 +106,7 @@ class ClientFidelityCardController extends Controller
         $validated = $request->validated();
 
         $card = ClientFidelityCard::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'client_name' => $validated['client_name'],
             'client_email' => $validated['client_email'] ?? null,
             'client_phone' => $validated['client_phone'] ?? null,
@@ -124,7 +124,7 @@ class ClientFidelityCardController extends Controller
     public function show(Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         $card->load('business');
 
@@ -137,7 +137,7 @@ class ClientFidelityCardController extends Controller
     public function edit(Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         return Inertia::render('Member/ClientFidelity/Edit', [
             'business' => $business,
@@ -148,7 +148,7 @@ class ClientFidelityCardController extends Controller
     public function update(UpdateClientFidelityCardRequest $request, Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         $validated = $request->validated();
 
@@ -171,7 +171,7 @@ class ClientFidelityCardController extends Controller
     public function destroy(Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         $card->delete();
 
@@ -182,7 +182,7 @@ class ClientFidelityCardController extends Controller
     public function scan(Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         if ($card->current_visits <= 0) {
             return redirect()->back()->with('error', 'Esta tarjeta ya esta completada.');
@@ -203,7 +203,7 @@ class ClientFidelityCardController extends Controller
     public function reset(Business $business, ClientFidelityCard $card)
     {
         abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->business_id === $business->id, 403);
+        abort_unless($card->listing_id === $business->id, 403);
 
         $card->reset();
 
@@ -219,7 +219,7 @@ class ClientFidelityCardController extends Controller
             'ids.*' => 'exists:client_fidelity_cards,id',
         ]);
 
-        ClientFidelityCard::where('business_id', $business->id)
+        ClientFidelityCard::where('listing_id', $business->id)
             ->whereIn('id', $validated['ids'])
             ->delete();
 
@@ -235,7 +235,7 @@ class ClientFidelityCardController extends Controller
         ]);
 
         $card = ClientFidelityCard::where('public_code', strtoupper($request->public_code))
-            ->where('business_id', $business->id)
+            ->where('listing_id', $business->id)
             ->first();
 
         if (!$card) {

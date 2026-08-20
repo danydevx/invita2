@@ -3,12 +3,12 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\TeamMembers\Models\BusinessTeamMember;
 
 class BusinessTeamMemberPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -17,7 +17,7 @@ class BusinessTeamMemberPolicy
         return $user->id === $business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -44,7 +44,7 @@ class BusinessTeamMemberPolicy
         return $user->id === $member->business->user_id;
     }
 
-    public function deleteAny(User $user, Business $business): bool
+    public function deleteAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

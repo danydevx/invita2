@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessTask extends Model
 {
+
+    protected $table = 'listing_tasks';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'title',
         'description',
         'status',
@@ -23,6 +26,6 @@ class BusinessTask extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 }

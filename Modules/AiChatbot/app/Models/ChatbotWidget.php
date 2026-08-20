@@ -12,7 +12,7 @@ class ChatbotWidget extends Model
     protected $table = 'chatbot_widgets';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'public_key',
         'allowed_domain',
         'is_enabled',
@@ -25,7 +25,7 @@ class ChatbotWidget extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function analytics(): HasMany
@@ -67,7 +67,7 @@ class ChatbotWidget extends Model
     public static function generateForBusiness($business): self
     {
         return self::firstOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             [
                 'public_key' => (string) Str::uuid(),
                 'is_enabled' => false,
@@ -78,6 +78,6 @@ class ChatbotWidget extends Model
 
     public function getAiSetting()
     {
-        return BusinessAiSetting::where('business_id', $this->business_id)->first();
+        return BusinessAiSetting::where('listing_id', $this->listing_id)->first();
     }
 }

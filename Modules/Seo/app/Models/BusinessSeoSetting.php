@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessSeoSetting extends Model
 {
+
+    protected $table = 'listing_seo_settings';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'seo_title',
         'seo_description',
         'focus_keyword',
@@ -38,6 +41,6 @@ class BusinessSeoSetting extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 }

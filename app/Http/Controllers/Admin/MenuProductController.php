@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuCategory;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 use Modules\RestaurantMenu\Entities\MenuProductVariant;
@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Auth;
 
 class MenuProductController extends Controller
 {
-    public function index(Request $request, Business $business, ?MenuCategory $category = null)
+    public function index(Request $request, Listing $business, ?MenuCategory $category = null)
     {
-        $query = MenuProduct::where('business_id', $business->id)->with('category', 'variants', 'images');
+        $query = MenuProduct::where('listing_id', $business->id)->with('category', 'variants', 'images');
 
         if ($category) {
-            abort_unless($category->business_id === $business->id, 403);
+            abort_unless($category->listing_id === $business->id, 403);
             $query->where('category_id', $category->id);
         } elseif ($request->boolean('uncategorized')) {
             $query->whereNull('category_id');
@@ -25,7 +25,7 @@ class MenuProductController extends Controller
 
         $products = $query->orderBy('sort_order')->paginate(20);
 
-        $categories = MenuCategory::where('business_id', $business->id)
+        $categories = MenuCategory::where('listing_id', $business->id)
             ->where('active', true)
             ->orderBy('sort_order')
             ->get()
@@ -44,7 +44,7 @@ class MenuProductController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Listing $business)
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:menu_categories,id',
@@ -59,9 +59,9 @@ class MenuProductController extends Controller
         ]);
 
         $category = MenuCategory::find($validated['category_id']);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
-        $validated['business_id'] = $business->id;
+        $validated['listing_id'] = $business->id;
         $validated['slug'] = MenuProduct::generateUniqueSlug($business->id, $validated['title']);
 
         $product = MenuProduct::create($validated);
@@ -69,9 +69,9 @@ class MenuProductController extends Controller
         return redirect()->back()->with('success', 'Producto creado exitosamente.');
     }
 
-    public function update(Request $request, Business $business, MenuProduct $product)
+    public function update(Request $request, Listing $business, MenuProduct $product)
     {
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'category_id' => 'required|exists:menu_categories,id',
@@ -86,16 +86,16 @@ class MenuProductController extends Controller
         ]);
 
         $category = MenuCategory::find($validated['category_id']);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         $product->update($validated);
 
         return redirect()->back()->with('success', 'Producto actualizado exitosamente.');
     }
 
-    public function destroy(Business $business, MenuProduct $product)
+    public function destroy(Listing $business, MenuProduct $product)
     {
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $product->variants()->delete();
         $product->images()->delete();

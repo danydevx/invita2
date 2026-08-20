@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Promotions\Models\BusinessPromotion;
 
 class BusinessPromotionController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $promotions = $business->promotions()
             ->with('location')
@@ -29,7 +29,7 @@ class BusinessPromotionController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -43,7 +43,7 @@ class BusinessPromotionController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -59,7 +59,7 @@ class BusinessPromotionController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
         $promotion = $business->promotions()->create($data);
@@ -75,7 +75,7 @@ class BusinessPromotionController extends Controller
             ->with('success', 'Promocion creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessPromotion $promotion)
+    public function edit(Request $request, Listing $business, BusinessPromotion $promotion)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -104,7 +104,7 @@ class BusinessPromotionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -133,7 +133,7 @@ class BusinessPromotionController extends Controller
             ->with('success', 'Promocion actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
     {
         $activity->log('admin_promotion_deleted', [
             'actor' => $request->user(),

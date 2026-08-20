@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Promocion"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/promotions`"
+      :backHref="`/member/listings/${business.id}/promotions`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -150,7 +150,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/member/businesses/${business.id}/promotions`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${business.id}/promotions`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
               <button
@@ -197,8 +197,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Promociones', href: `/member/businesses/${biz.id}/promotions` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Promociones', href: `/member/listings/${biz.id}/promotions` },
         { label: 'Editar Promocion', active: true },
       ]
     }
@@ -304,7 +304,7 @@ const submit = () => {
     formData.append('remove_image', '1')
   }
 
-  router.post(`/member/businesses/${business.value.id}/promotions/${promotion.value.id}`, formData, {
+  router.post(`/member/listings/${business.value.id}/promotions/${promotion.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false
@@ -327,7 +327,7 @@ const submit = () => {
 const regenerateQr = () => {
   if (!confirm('Regenerar el codigo QR?')) return
   regenerating.value = true
-  router.post(`/member/businesses/${business.value.id}/promotions/${promotion.value.id}/regenerate-qr`, {
+  router.post(`/member/listings/${business.value.id}/promotions/${promotion.value.id}/regenerate-qr`, {
     onSuccess: () => {
       regenerating.value = false
       console.log('QR regenerated, reloading...')
@@ -343,9 +343,9 @@ const regenerateQr = () => {
 
 const deletePromotion = () => {
   if (!confirm(`Eliminar la promocion "${promotion.value.name}"?`)) return
-  router.delete(`/member/businesses/${business.value.id}/promotions/${promotion.value.id}`, {
+  router.delete(`/member/listings/${business.value.id}/promotions/${promotion.value.id}`, {
     onSuccess: () => {
-      window.location.href = `/member/businesses/${business.value.id}/promotions`
+      window.location.href = `/member/listings/${business.value.id}/promotions`
     },
   })
 }

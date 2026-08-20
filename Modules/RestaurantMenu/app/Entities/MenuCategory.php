@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class MenuCategory extends Model
 {
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'parent_id',
         'title',
         'description',
@@ -29,13 +29,13 @@ class MenuCategory extends Model
 
         static::creating(function ($category) {
             if (empty($category->slug)) {
-                $category->slug = static::generateUniqueSlug($category->business_id, $category->title, $category->id);
+                $category->slug = static::generateUniqueSlug($category->listing_id, $category->title, $category->id);
             }
         });
 
         static::updating(function ($category) {
             if ($category->isDirty('title') && !$category->isDirty('slug')) {
-                $category->slug = static::generateUniqueSlug($category->business_id, $category->title, $category->id);
+                $category->slug = static::generateUniqueSlug($category->listing_id, $category->title, $category->id);
             }
         });
     }
@@ -46,7 +46,7 @@ class MenuCategory extends Model
         $originalSlug = $slug;
         $count = 1;
 
-        $query = static::where('business_id', $businessId)->where('slug', $slug);
+        $query = static::where('listing_id', $businessId)->where('slug', $slug);
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
@@ -54,7 +54,7 @@ class MenuCategory extends Model
         while ($query->exists()) {
             $slug = $originalSlug . '-' . $count;
             $count++;
-            $query = static::where('business_id', $businessId)->where('slug', $slug);
+            $query = static::where('listing_id', $businessId)->where('slug', $slug);
             if ($excludeId) {
                 $query->where('id', '!=', $excludeId);
             }
@@ -65,7 +65,7 @@ class MenuCategory extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function parent(): BelongsTo

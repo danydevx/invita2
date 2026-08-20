@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessGalleryImage extends Model
 {
+
+    protected $table = 'listing_gallery_images';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_gallery_id',
         'business_location_id',
         'path',
@@ -31,7 +34,7 @@ class BusinessGalleryImage extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function gallery(): BelongsTo

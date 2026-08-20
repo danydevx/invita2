@@ -7,7 +7,7 @@ use App\Services\AvailabilityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Gallery\Models\BusinessGallery;
 use Modules\Leads\Models\BusinessLead;
 use Modules\Locations\Models\BusinessLocation;
@@ -33,7 +33,7 @@ class BusinessController extends Controller
 
     public function show(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -133,7 +133,7 @@ class BusinessController extends Controller
         $menuCategories = [];
         $menuProducts = [];
         if (in_array('restaurant_menu', $modules)) {
-            $menuCategories = \Modules\RestaurantMenu\Entities\MenuCategory::where('business_id', $business->id)
+            $menuCategories = \Modules\RestaurantMenu\Entities\MenuCategory::where('listing_id', $business->id)
                 ->whereNull('parent_id')
                 ->where('active', true)
                 ->with(['images', 'children.images', 'children' => function ($q) {
@@ -297,7 +297,7 @@ class BusinessController extends Controller
 
     public function services(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -343,7 +343,7 @@ class BusinessController extends Controller
 
     public function gallery(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -388,7 +388,7 @@ class BusinessController extends Controller
 
     public function products(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -433,7 +433,7 @@ class BusinessController extends Controller
 
     public function book(string $slug, Request $request, AvailabilityService $availability)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -499,7 +499,7 @@ class BusinessController extends Controller
 
     public function storeBooking(string $slug, Request $request, AvailabilityService $availability)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -542,7 +542,7 @@ class BusinessController extends Controller
         $endTime = date('H:i', strtotime($data['start_time'].' + '.$service->duration_minutes.' minutes'));
 
         $appointment = BusinessAppointment::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_location_id' => $location->id,
             'business_service_id' => $service->id,
             'customer_name' => $data['customer_name'],
@@ -560,7 +560,7 @@ class BusinessController extends Controller
 
     public function bookingSuccess(string $slug, Request $request)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
@@ -593,7 +593,7 @@ class BusinessController extends Controller
 
     public function contact(string $slug, Request $request)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -624,7 +624,7 @@ class BusinessController extends Controller
 
     public function storeContact(string $slug, Request $request)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -642,7 +642,7 @@ class BusinessController extends Controller
         ]);
 
         $lead = BusinessLead::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
@@ -656,7 +656,7 @@ class BusinessController extends Controller
 
     public function formByShortcode(string $slug, string $shortcode, Request $request)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -720,7 +720,7 @@ class BusinessController extends Controller
 
     public function storeFormByShortcode(string $slug, string $shortcode, Request $request)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -785,7 +785,7 @@ class BusinessController extends Controller
         }
 
         $lead = BusinessLead::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_contact_form_id' => $form->id,
             'name' => $data['name'],
             'email' => $data['email'],
@@ -802,7 +802,7 @@ class BusinessController extends Controller
 
     public function locations(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -844,7 +844,7 @@ class BusinessController extends Controller
 
     public function packages(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->where('is_published', true)
             ->firstOrFail();
@@ -854,7 +854,7 @@ class BusinessController extends Controller
             abort(404);
         }
 
-        $packages = BusinessPackage::where('business_id', $business->id)
+        $packages = BusinessPackage::where('listing_id', $business->id)
             ->where('is_active', true)
             ->with('features')
             ->orderBy('sort_order')

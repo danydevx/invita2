@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuCategory;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 use Modules\RestaurantMenu\Entities\MenuProductVariant;
@@ -12,7 +12,7 @@ class LavanderiaManolosMenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $business = Business::where('slug', 'lavanderia-manolos')->first();
+        $business = Listing::where('slug', 'lavanderia-manolos')->first();
         if (!$business) {
             $this->command->error('Business lavanderia-manolos not found.');
             return;
@@ -28,7 +28,7 @@ class LavanderiaManolosMenuSeeder extends Seeder
 
         foreach ($categories as $cat) {
             $category = MenuCategory::updateOrCreate(
-                ['business_id' => $business->id, 'slug' => $cat['slug']],
+                ['listing_id' => $business->id, 'slug' => $cat['slug']],
                 [
                     'title' => $cat['name'],
                     'description' => $cat['description'],
@@ -40,7 +40,7 @@ class LavanderiaManolosMenuSeeder extends Seeder
             $products = $this->productsForCategory($cat['slug'], $business->id, $category->id);
             foreach ($products as $i => $prod) {
                 $product = MenuProduct::updateOrCreate(
-                    ['business_id' => $business->id, 'slug' => $prod['slug']],
+                    ['listing_id' => $business->id, 'slug' => $prod['slug']],
                     [
                         'category_id' => $category->id,
                         'title' => $prod['name'],
@@ -72,9 +72,9 @@ class LavanderiaManolosMenuSeeder extends Seeder
         $this->command->info("===========================================");
         $this->command->info("LAVANDERIA MANOLOS - MENU CARGADO");
         $this->command->info("===========================================");
-        $this->command->info("Categorias: " . MenuCategory::where('business_id', $business->id)->count());
-        $this->command->info("Productos: " . MenuProduct::where('business_id', $business->id)->count());
-        $this->command->info("Variantes: " . MenuProductVariant::whereIn('product_id', MenuProduct::where('business_id', $business->id)->pluck('id'))->count());
+        $this->command->info("Categorias: " . MenuCategory::where('listing_id', $business->id)->count());
+        $this->command->info("Productos: " . MenuProduct::where('listing_id', $business->id)->count());
+        $this->command->info("Variantes: " . MenuProductVariant::whereIn('product_id', MenuProduct::where('listing_id', $business->id)->pluck('id'))->count());
         $this->command->info("===========================================");
     }
 

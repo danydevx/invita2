@@ -6,7 +6,7 @@
       :breadcrumbs="breadcrumbs"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business.id}/ai-chatbot/presets`" class="btn btn-outline-secondary">
+        <Link :href="`/member/listings/${business.id}/ai-chatbot/presets`" class="btn btn-outline-secondary">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
       </template>
@@ -197,9 +197,9 @@ const contexts = page.props.contexts || []
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: business?.name || 'Negocio', href: `/member/businesses/${business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/businesses/${business?.id}/ai-chatbot` },
-  { label: 'Presets', href: `/member/businesses/${business?.id}/ai-chatbot/presets` },
+  { label: business?.name || 'Negocio', href: `/member/listings/${business?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${business?.id}/ai-chatbot` },
+  { label: 'Presets', href: `/member/listings/${business?.id}/ai-chatbot/presets` },
   { label: preset.value?.name || 'Editar Preset', active: true },
 ])
 
@@ -284,7 +284,7 @@ const submit = () => {
     initial_suggestions: form.initial_suggestions.filter(s => s.trim() !== ''),
   }
 
-  router.put(`/member/businesses/${business.id}/ai-chatbot/presets/${preset.value.id}`, data, {
+  router.put(`/member/listings/${business.id}/ai-chatbot/presets/${preset.value.id}`, data, {
     onFinish: () => {
       saving.value = false
     },

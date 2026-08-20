@@ -7,13 +7,13 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\Products\Models\BusinessProduct;
 
 class ProductController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessProduct::class, $business]);
 
@@ -89,7 +89,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessProduct::class, $business]);
 
@@ -106,7 +106,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessProduct::class, $business]);
 
@@ -116,7 +116,7 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:150',
-                Rule::unique('business_products')->where('business_id', $business->id),
+                Rule::unique('business_products')->where('listing_id', $business->id),
             ],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
@@ -134,7 +134,7 @@ class ProductController extends Controller
             'category_id' => ['nullable', 'exists:business_product_categories,id'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['slug']);
 
         if ($request->hasFile('image')) {
@@ -155,7 +155,7 @@ class ProductController extends Controller
             ->with('success', 'Producto creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessProduct $product)
+    public function edit(Request $request, Listing $business, BusinessProduct $product)
     {
         $this->authorize('update', [BusinessProduct::class, $product]);
 
@@ -199,7 +199,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessProduct $product, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
     {
         $this->authorize('update', [BusinessProduct::class, $product]);
 
@@ -211,7 +211,7 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:150',
-                Rule::unique('business_products')->where('business_id', $business->id)->ignore($product->id),
+                Rule::unique('business_products')->where('listing_id', $business->id)->ignore($product->id),
             ],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
@@ -252,7 +252,7 @@ class ProductController extends Controller
             ->with('success', 'Producto actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessProduct $product, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessProduct::class, $product]);
 
@@ -268,7 +268,7 @@ class ProductController extends Controller
             ->with('success', 'Producto eliminado correctamente.');
     }
 
-    public function clone(Request $request, Business $business, BusinessProduct $product)
+    public function clone(Request $request, Listing $business, BusinessProduct $product)
     {
         $this->authorize('create', [BusinessProduct::class, $business]);
 
@@ -281,7 +281,7 @@ class ProductController extends Controller
             ->with('success', 'Producto clonado correctamente.');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -292,7 +292,7 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -304,7 +304,7 @@ class ProductController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\Products\Models\BusinessProduct::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });
@@ -312,7 +312,7 @@ class ProductController extends Controller
         return back(303);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -323,12 +323,12 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('listing_id', $business->id)],
         ]);
 
         $count = count($data['ids']);
 
-        \Modules\Products\Models\BusinessProduct::where('business_id', $business->id)
+        \Modules\Products\Models\BusinessProduct::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->delete();
 

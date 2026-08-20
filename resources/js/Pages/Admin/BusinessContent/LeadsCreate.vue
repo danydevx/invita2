@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/businesses/${business.id}/leads`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${business.id}/leads`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Nuevo Lead</h1>
@@ -86,7 +86,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Crear Lead' }}
               </button>
-              <Link :href="`/admin/businesses/${business.id}/leads`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/admin/listings/${business.id}/leads`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -120,7 +120,7 @@ const form = reactive({
 
 const submit = () => {
   sending.value = true
-  router.post(`/admin/businesses/${business.value.id}/leads`, form, {
+  router.post(`/admin/listings/${business.value.id}/leads`, form, {
     preserveScroll: true,
     onFinish: () => {
       sending.value = false

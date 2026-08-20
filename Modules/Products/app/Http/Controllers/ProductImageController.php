@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Products\Models\BusinessProduct;
 use Modules\Products\Models\BusinessProductImage;
 
@@ -16,7 +16,7 @@ class ProductImageController extends Controller
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
 
         $files = $request->file('images');
         if (!$files) {
@@ -68,7 +68,7 @@ class ProductImageController extends Controller
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
-        abort_unless($product->business_id === $business->id, 403);
+        abort_unless($product->listing_id === $business->id, 403);
         abort_unless($image->business_product_id === $product->id, 403);
 
         if ($image->path) {

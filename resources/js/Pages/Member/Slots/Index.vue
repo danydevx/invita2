@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/slots`"
+      :endpoint="`/member/listings/${business?.id}/slots`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar turnos..."
@@ -318,7 +318,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Horarios', active: true },
       ]
     }
@@ -439,7 +439,7 @@ const createSlot = () => {
   } else {
     delete data.day_of_week
   }
-  router.post(`/member/businesses/${business.value.id}/slots`, data, {
+  router.post(`/member/listings/${business.value.id}/slots`, data, {
     onFinish: () => {
       creating.value = false
       closeCreateModal()
@@ -459,7 +459,7 @@ const updateSlot = () => {
     delete data.day_of_week
   }
   delete data.id
-  router.put(`/member/businesses/${business.value.id}/slots/${editingSlot.value.id}`, data, {
+  router.put(`/member/listings/${business.value.id}/slots/${editingSlot.value.id}`, data, {
     onFinish: () => {
       saving.value = false
       closeEditModal()
@@ -471,7 +471,7 @@ const updateSlot = () => {
 }
 
 const toggleSlot = (slot) => {
-  router.put(`/member/businesses/${business.value.id}/slots/${slot.id}`, {
+  router.put(`/member/listings/${business.value.id}/slots/${slot.id}`, {
     is_available: !slot.is_available,
   }, {
     preserveScroll: true,
@@ -485,7 +485,7 @@ const toggleSlot = (slot) => {
 
 const deleteSlot = (slot) => {
   if (confirm('Eliminar este turno?')) {
-    router.delete(`/member/businesses/${business.value.id}/slots/${slot.id}`, {
+    router.delete(`/member/listings/${business.value.id}/slots/${slot.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

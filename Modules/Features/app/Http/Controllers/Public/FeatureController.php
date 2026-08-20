@@ -4,7 +4,7 @@ namespace Modules\Features\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Features\Models\BusinessFeature;
 
 class FeatureController extends Controller
@@ -16,7 +16,7 @@ class FeatureController extends Controller
         }
 
         $features = BusinessFeature::with(['feature', 'location'])
-            ->where('business_id', $business->id)
+            ->where('listing_id', $business->id)
             ->where('is_active', true)
             ->get()
             ->sortBy(function ($bf) {
@@ -36,7 +36,7 @@ class FeatureController extends Controller
             });
 
         return response()->json([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_name' => $business->name,
             'features' => $features,
         ]);

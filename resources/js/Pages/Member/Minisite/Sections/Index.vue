@@ -5,13 +5,13 @@
     <PageHeader
       title="Secciones del Minisite"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/minisite`"
+      :backHref="`/member/listings/${business?.id}/minisite`"
     >
       <template #actions>
         <!-- <a v-if="business?.slug" :href="`/b/${business.slug}`" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
           <i class="bi bi-display me-1"></i>Ver Desktop
         </a> -->
-        <Link :href="`/member/businesses/${business?.id}/minisite/sections/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/minisite/sections/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva Sección
         </Link>
       </template>
@@ -30,7 +30,7 @@
               <i class="bi bi-layout-text-sidebar display-1"></i>
               <h5 class="mt-3">No hay secciones</h5>
               <p>Crea tu primera sección para empezar a construir tu minisite.</p>
-              <Link :href="`/member/businesses/${business?.id}/minisite/sections/create`" class="btn btn-primary">
+              <Link :href="`/member/listings/${business?.id}/minisite/sections/create`" class="btn btn-primary">
                 <i class="bi bi-plus-lg me-1"></i>Crear Sección
               </Link>
             </div>
@@ -54,8 +54,8 @@
                 <div class="minisite-sections__actions">
                   <Link
                     :href="section.id === 'hero' || section.id === 'footer'
-                      ? `/member/businesses/${business?.id}/minisite`
-                      : `/member/businesses/${business?.id}/minisite/sections/${section.id}/edit`"
+                      ? `/member/listings/${business?.id}/minisite`
+                      : `/member/listings/${business?.id}/minisite/sections/${section.id}/edit`"
                     class="btn btn-sm btn-outline-primary"
                   >
                     <i class="bi bi-pencil"></i>
@@ -130,22 +130,22 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Minisite', href: `/member/businesses/${biz.id}/minisite` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Minisite', href: `/member/listings/${biz.id}/minisite` },
         { label: 'Secciones', active: true },
       ]
     }
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Minisite', href: `/member/businesses/${business.value?.id}/minisite` },
+    { label: 'Minisite', href: `/member/listings/${business.value?.id}/minisite` },
     { label: 'Secciones', active: true },
   ]
 })
 
 const deleteSection = (section) => {
   if (confirm(`¿Eliminar la sección "${section.title || section.section_key}"?`)) {
-    router.delete(`/member/businesses/${business.value.id}/minisite/sections/${section.id}`, {
+    router.delete(`/member/listings/${business.value.id}/minisite/sections/${section.id}`, {
       preserveScroll: true,
     })
   }
@@ -173,7 +173,7 @@ const initSortable = () => {
 
       if (ids.length > 0) {
         router.post(
-          `/member/businesses/${business.value.id}/minisite/sections/reorder`,
+          `/member/listings/${business.value.id}/minisite/sections/reorder`,
           { ids },
           {
             preserveScroll: true,

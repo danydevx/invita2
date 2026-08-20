@@ -26,7 +26,7 @@ class ChatbotPreset extends Model
         'context_ids',
         'is_active',
         'is_system',
-        'business_id',
+        'listing_id',
         'created_by',
     ];
 
@@ -45,7 +45,7 @@ class ChatbotPreset extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class, 'business_id');
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
     }
 
     public function copiedFrom(): BelongsTo
@@ -55,19 +55,19 @@ class ChatbotPreset extends Model
 
     public function scopeGlobal(Builder $query): Builder
     {
-        return $query->whereNull('business_id');
+        return $query->whereNull('listing_id');
     }
 
     public function scopeForBusiness(Builder $query, int $businessId): Builder
     {
-        return $query->where('business_id', $businessId);
+        return $query->where('listing_id', $businessId);
     }
 
     public function scopeForBusinessWithGlobal(Builder $query, int $businessId): Builder
     {
         return $query->where(function ($q) use ($businessId) {
-            $q->whereNull('business_id')
-              ->orWhere('business_id', $businessId);
+            $q->whereNull('listing_id')
+              ->orWhere('listing_id', $businessId);
         });
     }
 

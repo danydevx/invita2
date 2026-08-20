@@ -17,10 +17,10 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <a :href="`/member/businesses/${business?.id}/leads/export`" class="btn btn-success btn-sm">
+        <a :href="`/member/listings/${business?.id}/leads/export`" class="btn btn-success btn-sm">
           <i class="bi bi-download me-1"></i>Exportar
         </a>
-        <Link :href="`/member/businesses/${business?.id}/leads/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/leads/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nuevo Contacto
         </Link>
@@ -29,7 +29,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/leads`"
+      :endpoint="`/member/listings/${business?.id}/leads`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar contactos..."
@@ -72,10 +72,10 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/businesses/${business?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye"></i>
           </Link>
-          <Link :href="`/member/businesses/${business?.id}/leads/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/leads/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteLead(row)">
@@ -88,7 +88,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/leads/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/leads/bulk-delete`"
           item-name="contactos"
           @deleted="onBulkDeleted"
         />
@@ -119,7 +119,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Leads', active: true },
       ]
     }
@@ -182,7 +182,7 @@ const statusClass = (status) => {
 const deleteLead = (lead) => {
   if (confirm('¿Estás seguro de eliminar este contacto?')) {
     deleting.value = lead.id
-    router.delete(`/member/businesses/${business.value.id}/leads/${lead.id}`, {
+    router.delete(`/member/listings/${business.value.id}/leads/${lead.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -200,7 +200,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} contacto${count > 1 ? 's' : ''} seleccionado${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/leads/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/leads/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

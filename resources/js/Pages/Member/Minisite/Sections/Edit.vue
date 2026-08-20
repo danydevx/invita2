@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Sección"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/minisite/sections`"
+      :backHref="`/member/listings/${business?.id}/minisite/sections`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -649,17 +649,17 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Minisite', href: `/member/businesses/${biz.id}/minisite` },
-        { label: 'Secciones', href: `/member/businesses/${biz.id}/minisite/sections` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Minisite', href: `/member/listings/${biz.id}/minisite` },
+        { label: 'Secciones', href: `/member/listings/${biz.id}/minisite/sections` },
         { label: 'Editar', active: true },
       ]
     }
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Minisite', href: `/member/businesses/${business.value?.id}/minisite` },
-    { label: 'Secciones', href: `/member/businesses/${business.value?.id}/minisite/sections` },
+    { label: 'Minisite', href: `/member/listings/${business.value?.id}/minisite` },
+    { label: 'Secciones', href: `/member/listings/${business.value?.id}/minisite/sections` },
     { label: 'Editar', active: true },
   ]
 })
@@ -725,7 +725,7 @@ const updateSection = () => {
   sending.value = true
 
   if (section.value.section_type === 'hero') {
-    router.put(`/member/businesses/${business.value.id}/minisite`, {
+    router.put(`/member/listings/${business.value.id}/minisite`, {
       hero_title: form.hero_title || '',
       hero_subtitle: form.hero_subtitle || '',
       hero_layout: form.hero_layout || 'left',
@@ -735,7 +735,7 @@ const updateSection = () => {
       },
     })
   } else if (section.value.section_type === 'footer') {
-    router.put(`/member/businesses/${business.value.id}/minisite`, {
+    router.put(`/member/listings/${business.value.id}/minisite`, {
       footer_text: form.footer_text || '',
       footer_show_social: form.footer_show_social ? 1 : 0,
     }, {
@@ -744,7 +744,7 @@ const updateSection = () => {
       },
     })
   } else {
-    router.put(`/member/businesses/${business.value.id}/minisite/sections/${section.value.id}`, {
+    router.put(`/member/listings/${business.value.id}/minisite/sections/${section.value.id}`, {
       title: form.title || null,
       subtitle: form.subtitle || null,
       description: form.description || null,

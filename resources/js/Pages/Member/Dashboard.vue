@@ -66,10 +66,10 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 const page = usePage()
 const userName = computed(() => page.props.auth?.user?.name || 'Usuario')
 const stats = computed(() => page.props.stats || {})
-const businesses = computed(() => page.props.businesses || [])
+const listings = computed(() => page.props.listings || [])
 
 const hasPendingBusiness = computed(() => {
-  return businesses.value.some(biz => !biz.is_published)
+  return listings.value.some(biz => !biz.is_published)
 })
 
 const emailVerified = computed(() => page.props.auth?.user?.email_verified_at !== null)

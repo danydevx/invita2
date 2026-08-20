@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Galeria</h1>
@@ -304,7 +304,7 @@ const uploadImage = () => {
     formData.append('business_location_id', uploadForm.business_location_id)
   }
 
-  router.post(`/admin/businesses/${business.value.id}/gallery`, formData, {
+  router.post(`/admin/listings/${business.value.id}/gallery`, formData, {
     preserveScroll: true,
     onFinish: () => {
       uploading.value = false
@@ -322,7 +322,7 @@ const uploadImage = () => {
 const saveEdit = () => {
   saving.value = true
 
-  router.put(`/admin/businesses/${business.value.id}/gallery/${editForm.id}`, {
+  router.put(`/admin/listings/${business.value.id}/gallery/${editForm.id}`, {
     title: editForm.title,
     description: editForm.description,
     business_location_id: editForm.business_location_id,
@@ -339,7 +339,7 @@ const saveEdit = () => {
 
 const deleteImage = (img) => {
   if (confirm('Estas seguro de eliminar esta imagen?')) {
-    router.delete(`/admin/businesses/${business.value.id}/gallery/${img.id}`, {
+    router.delete(`/admin/listings/${business.value.id}/gallery/${img.id}`, {
       preserveScroll: true,
     })
   }

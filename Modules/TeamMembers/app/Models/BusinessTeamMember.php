@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessTeamMember extends Model
 {
-    protected $table = 'business_team_members';
+    protected $table = 'listing_team_members';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'position_id',
         'name',
         'email',
@@ -28,7 +28,7 @@ class BusinessTeamMember extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
     }
 
     public function position(): BelongsTo

@@ -269,7 +269,7 @@ const submit = () => {
   formData.background_color = cleanColor(form.background_color)
   formData.background_gradient_start = cleanColor(form.background_gradient_start)
   formData.background_gradient_end = cleanColor(form.background_gradient_end)
-  form.post(`/admin/businesses/${props.business.id}/hero`, {
+  form.post(`/admin/listings/${props.business.id}/hero`, {
     data: formData,
     forceFormData: true,
     onFinish: () => {

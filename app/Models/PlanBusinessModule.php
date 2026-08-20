@@ -10,9 +10,10 @@ class PlanBusinessModule extends Model
 {
     use HasFactory;
 
+    protected $table = 'plan_listing_modules';
+
     protected $fillable = [
         'plan_id',
-        'module_definition_id',
         'module_key',
         'is_enabled',
     ];
@@ -28,6 +29,6 @@ class PlanBusinessModule extends Model
 
     public function moduleDefinition(): BelongsTo
     {
-        return $this->belongsTo(BusinessModuleDefinition::class, 'module_definition_id');
+        return $this->belongsTo(BusinessModuleDefinition::class, 'module_key', 'key');
     }
 }

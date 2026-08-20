@@ -17,7 +17,7 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/businesses/${business?.id}/reviews/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/reviews/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Resena
         </Link>
@@ -26,11 +26,11 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/reviews`"
+      :endpoint="`/member/listings/${business?.id}/reviews`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/reviews/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/reviews/reorder`"
       search-placeholder="Buscar resenas..."
       empty-title="No hay resenas"
       empty-text="Comienza creando tu primera resena."
@@ -80,7 +80,7 @@
           >
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/businesses/${business?.id}/reviews/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/reviews/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button
@@ -96,7 +96,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/reviews/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/reviews/bulk-delete`"
           item-name="resenas"
           @deleted="onBulkDeleted"
         />
@@ -127,7 +127,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Resenas', active: true },
       ]
     }
@@ -172,7 +172,7 @@ const onBulkDeleted = () => {
 const deleteReview = (review) => {
   if (!confirm(`Eliminar la resena de "${review.client_name}"?`)) return
   deleting.value = review.id
-  router.delete(`/member/businesses/${business.value.id}/reviews/${review.id}`, {
+  router.delete(`/member/listings/${business.value.id}/reviews/${review.id}`, {
     preserveScroll: true,
     onFinish: () => {
       deleting.value = null
@@ -186,7 +186,7 @@ const deleteReview = (review) => {
 const cloneReview = (review) => {
   if (!confirm(`Clonar la resena de "${review.client_name}"?`)) return
   cloning.value = review.id
-  router.post(`/member/businesses/${business.value.id}/reviews/${review.id}/clone`, {}, {
+  router.post(`/member/listings/${business.value.id}/reviews/${review.id}/clone`, {}, {
     preserveScroll: true,
     onFinish: () => {
       cloning.value = null
@@ -200,7 +200,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} resena${count > 1 ? 's' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/reviews/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/reviews/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

@@ -16,6 +16,6 @@ import { Head, router } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 
 onMounted(() => {
-  router.replace('/member/businesses')
+  router.replace('/member/listings')
 })
 </script>

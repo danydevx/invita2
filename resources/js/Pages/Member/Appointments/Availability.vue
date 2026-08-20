@@ -5,10 +5,10 @@
     <PageHeader
       title="Disponibilidad de Citas"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/appointments`"
+      :backHref="`/member/listings/${business?.id}/appointments`"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/appointments`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/appointments`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left me-1"></i>
           Volver a Citas
         </Link>
@@ -141,8 +141,8 @@ const exceptionModalRef = ref(null)
 const breadcrumbs = computed(() => {
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: business.value?.name || '', href: `/member/businesses/${business.value?.id}/edit` },
-    { label: 'Citas', href: `/member/businesses/${business.value?.id}/appointments` },
+    { label: business.value?.name || '', href: `/member/listings/${business.value?.id}/edit` },
+    { label: 'Citas', href: `/member/listings/${business.value?.id}/appointments` },
     { label: 'Disponibilidad', active: true },
   ]
 })

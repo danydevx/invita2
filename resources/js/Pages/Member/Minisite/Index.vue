@@ -5,10 +5,10 @@
     <PageHeader
       title="Configuración del Minisite"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/minisite/sections`"
+      :backHref="`/member/listings/${business?.id}/minisite/sections`"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/minisite/sections`" class="btn btn-outline-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/minisite/sections`" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-layout-text-sidebar me-1"></i>Secciones
         </Link>
       </template>
@@ -153,7 +153,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/minisite/sections` },
+        { label: biz.name, href: `/member/listings/${biz.id}/minisite/sections` },
         { label: 'Configuración', active: true },
       ]
     }
@@ -213,7 +213,7 @@ const saveSettings = () => {
     formData.append('hero_background_image', form.hero_background_image)
   }
 
-  router.post(`/member/businesses/${business.value.id}/minisite`, formData, {
+  router.post(`/member/listings/${business.value.id}/minisite`, formData, {
     forceFormData: true,
     onFinish: () => {
       sending.value = false

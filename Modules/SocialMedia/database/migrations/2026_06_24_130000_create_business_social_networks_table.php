@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_social_networks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->enum('platform', [
                 'facebook',
                 'instagram',
@@ -37,8 +37,8 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['business_id', 'platform']);
-            $table->index('business_id');
+            $table->unique(['listing_id', 'platform']);
+            $table->index('listing_id');
         });
     }
 

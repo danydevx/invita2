@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusinessGallery extends Model
 {
+
+    protected $table = 'listing_galleries';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'name',
         'description',
         'is_primary',
@@ -35,7 +38,7 @@ class BusinessGallery extends Model
 
         static::creating(function (self $gallery) {
             if (! $gallery->is_primary) {
-                $existingPrimary = static::where('business_id', $gallery->business_id)
+                $existingPrimary = static::where('listing_id', $gallery->listing_id)
                     ->where('is_primary', true)
                     ->exists();
 
@@ -63,11 +66,11 @@ class BusinessGallery extends Model
             }
 
             if ($shouldPromote) {
-                static::promoteNextActive($gallery->business_id, $gallery->id);
+                static::promoteNextActive($gallery->listing_id, $gallery->id);
             }
 
             if ($gallery->is_primary === true && ! $gallery->getOriginal('is_primary')) {
-                static::where('business_id', $gallery->business_id)
+                static::where('listing_id', $gallery->listing_id)
                     ->where('id', '!=', $gallery->id)
                     ->update(['is_primary' => false]);
             }
@@ -75,14 +78,14 @@ class BusinessGallery extends Model
 
         static::deleted(function (self $gallery) {
             if ($gallery->is_primary) {
-                static::promoteNextActive($gallery->business_id, null);
+                static::promoteNextActive($gallery->listing_id, null);
             }
         });
     }
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function images(): HasMany
@@ -102,7 +105,7 @@ class BusinessGallery extends Model
 
     public static function promoteNextActive(int $businessId, ?int $excludeId): void
     {
-        $next = static::where('business_id', $businessId)
+        $next = static::where('listing_id', $businessId)
             ->where('is_active', true)
             ->where('id', '!=', $excludeId ?? 0)
             ->orderBy('sort_order')
@@ -110,14 +113,14 @@ class BusinessGallery extends Model
             ->first();
 
         if ($next) {
-            static::where('business_id', $businessId)->update(['is_primary' => false]);
+            static::where('listing_id', $businessId)->update(['is_primary' => false]);
             $next->update(['is_primary' => true]);
         }
     }
 
     public static function primaryFor(int $businessId): ?self
     {
-        return static::where('business_id', $businessId)
+        return static::where('listing_id', $businessId)
             ->where('is_active', true)
             ->where('is_primary', true)
             ->first();

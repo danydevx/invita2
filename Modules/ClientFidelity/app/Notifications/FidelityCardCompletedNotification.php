@@ -38,7 +38,7 @@ class FidelityCardCompletedNotification extends Notification implements ShouldQu
         return [
             'type' => 'fidelity_card_completed',
             'card_id' => $this->card->id,
-            'business_id' => $this->business->id,
+            'listing_id' => $this->business->id,
             'client_name' => $this->card->client_name,
             'message' => "El cliente {$this->card->client_name} ha completado su tarjeta de fidelidad.",
         ];
@@ -48,7 +48,7 @@ class FidelityCardCompletedNotification extends Notification implements ShouldQu
     {
         return [
             'card_id' => $this->card->id,
-            'business_id' => $this->business->id,
+            'listing_id' => $this->business->id,
             'client_name' => $this->card->client_name,
             'max_visits' => $this->card->max_visits,
             'description' => $this->card->description,

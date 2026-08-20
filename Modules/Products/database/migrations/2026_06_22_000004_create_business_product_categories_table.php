@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_product_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('business_product_categories')->onDelete('set null');
             $table->string('name');
             $table->text('description')->nullable();
@@ -20,9 +20,9 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['business_id', 'slug']);
-            $table->index(['business_id', 'parent_id']);
-            $table->index(['business_id', 'is_active']);
+            $table->unique(['listing_id', 'slug']);
+            $table->index(['listing_id', 'parent_id']);
+            $table->index(['listing_id', 'is_active']);
         });
     }
 

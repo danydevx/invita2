@@ -28,7 +28,7 @@ return new class extends Migration
             if (! $columnExists) {
                 $table->foreignId('business_gallery_id')
                     ->nullable()
-                    ->after('business_id');
+                    ->after('listing_id');
             }
 
             if (! $foreignExists) {
@@ -39,7 +39,7 @@ return new class extends Migration
 
             if (! $indexExists) {
                 $table->index(
-                    ['business_id', 'business_gallery_id', 'sort_order'],
+                    ['listing_id', 'business_gallery_id', 'sort_order'],
                     'bgi_business_gallery_sort_idx'
                 );
             }

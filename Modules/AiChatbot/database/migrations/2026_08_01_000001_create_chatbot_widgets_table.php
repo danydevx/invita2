@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('chatbot_widgets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->unique()->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->unique()->constrained()->onDelete('cascade');
             $table->uuid('public_key')->unique();
             $table->string('allowed_domain', 255)->nullable();
             $table->boolean('is_enabled')->default(false);

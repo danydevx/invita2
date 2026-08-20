@@ -26,7 +26,7 @@
         </div>
 
         <Link
-          :href="`/member/businesses/${business?.id}/appointments/availability`"
+          :href="`/member/listings/${business?.id}/appointments/availability`"
           class="btn btn-outline-primary btn-sm"
           title="Configurar disponibilidad"
         >
@@ -43,7 +43,7 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/businesses/${business?.id}/appointments/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/appointments/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Cita
         </Link>
@@ -65,7 +65,7 @@
     <div :class="{ 'd-none': viewMode !== 'list' }">
       <BaseDataTable
         ref="dataTableRef"
-        :endpoint="`/member/businesses/${business?.id}/appointments`"
+        :endpoint="`/member/listings/${business?.id}/appointments`"
         :columns="columns"
         :initial-data="dataTable"
         search-placeholder="Buscar citas..."
@@ -109,7 +109,7 @@
 
         <template #cell-actions="{ row }">
           <div class="actions">
-            <Link :href="`/member/businesses/${business?.id}/appointments/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+            <Link :href="`/member/listings/${business?.id}/appointments/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
               <i class="bi bi-pencil"></i>
             </Link>
             <button
@@ -132,7 +132,7 @@
           <BulkSelect
             v-model:selectedIds="selectedIds"
             :current-page-ids="currentPageIds"
-            :delete-endpoint="`/member/businesses/${business?.id}/appointments/bulk-delete`"
+            :delete-endpoint="`/member/listings/${business?.id}/appointments/bulk-delete`"
             item-name="citas"
             @deleted="onBulkDeleted"
           />
@@ -187,7 +187,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Citas', active: true },
       ]
     }
@@ -251,7 +251,7 @@ const statusClass = (status) => {
 
 const cancelAppointment = (apt) => {
   if (confirm('Estas seguro de cancelar esta cita?')) {
-    router.post(`/member/businesses/${business.value.id}/appointments/${apt.id}/cancel`, {}, {
+    router.post(`/member/listings/${business.value.id}/appointments/${apt.id}/cancel`, {}, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {
@@ -265,7 +265,7 @@ const cancelAppointment = (apt) => {
 const deleteAppointment = (apt) => {
   if (confirm('Estas seguro de eliminar esta cita? Esta accion no se puede deshacer.')) {
     deleting.value = apt.id
-    router.delete(`/member/businesses/${business.value.id}/appointments/${apt.id}`, {
+    router.delete(`/member/listings/${business.value.id}/appointments/${apt.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -283,7 +283,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} cita${count > 1 ? 's' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/appointments/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/appointments/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,
@@ -301,7 +301,7 @@ const deleteSelected = () => {
 }
 
 const handleReschedule = ({ appointment, newDate, newTime }) => {
-  router.put(`/member/businesses/${business.value.id}/appointments/${appointment.id}/reschedule`, {
+  router.put(`/member/listings/${business.value.id}/appointments/${appointment.id}/reschedule`, {
     appointment_date: newDate,
     start_time: newTime,
   }, {
@@ -327,7 +327,7 @@ const handleCreate = ({ date, time }) => {
 }
 
 const handleEdit = (appointment) => {
-  window.location.href = `/member/businesses/${business.value.id}/appointments/${appointment.id}/edit`
+  window.location.href = `/member/listings/${business.value.id}/appointments/${appointment.id}/edit`
 }
 
 const handleModalSaved = () => {

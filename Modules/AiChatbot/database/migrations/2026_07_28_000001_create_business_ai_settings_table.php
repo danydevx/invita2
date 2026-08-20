@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_ai_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->foreignId('listing_id')->constrained()->onDelete('cascade');
             $table->enum('provider', ['openai', 'minimax'])->default('openai');
             $table->text('api_key');
             $table->string('model', 100)->default('gpt-4o-mini');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_enabled')->default(false);
             $table->timestamps();
 
-            $table->unique('business_id');
+            $table->unique('listing_id');
         });
     }
 

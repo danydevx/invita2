@@ -5,10 +5,10 @@
     <PageHeader
       title="Puestos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/team-members`"
+      :backHref="`/member/listings/${business?.id}/team-members`"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/team-member-positions/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/team-member-positions/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Puesto
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/businesses/${business?.id}/team-members`"
+        :href="`/member/listings/${business?.id}/team-members`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-people me-1"></i>Miembros
       </Link>
       <Link
-        :href="`/member/businesses/${business?.id}/team-member-positions`"
+        :href="`/member/listings/${business?.id}/team-member-positions`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Puestos
@@ -58,7 +58,7 @@
               </span>
             </div>
             <div class="d-flex gap-2">
-              <Link :href="`/member/businesses/${business?.id}/team-member-positions/${position.id}/edit`" class="btn btn-outline-primary btn-sm">
+              <Link :href="`/member/listings/${business?.id}/team-member-positions/${position.id}/edit`" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-pencil"></i>
               </Link>
               <button 
@@ -96,15 +96,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
-        { label: 'Equipo', href: `/member/businesses/${biz.id}/team-members` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
+        { label: 'Equipo', href: `/member/listings/${biz.id}/team-members` },
         { label: 'Puestos', active: true },
       ]
     }
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Equipo', href: `/member/businesses/${business.value?.id}/team-members` },
+    { label: 'Equipo', href: `/member/listings/${business.value?.id}/team-members` },
     { label: 'Puestos', active: true },
   ]
 })
@@ -114,7 +114,7 @@ const deletePosition = (position) => {
     return
   }
 
-  router.delete(`/member/businesses/${business.value.id}/team-member-positions/${position.id}`, {
+  router.delete(`/member/listings/${business.value.id}/team-member-positions/${position.id}`, {
     preserveScroll: true,
   })
 }

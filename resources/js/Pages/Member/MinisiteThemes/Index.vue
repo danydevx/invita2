@@ -103,7 +103,7 @@ const selectTheme = (theme) => {
   selecting.value = true
 
   router.put(
-    `/member/businesses/${props.business.id}/minisite-theme/${theme.id}`,
+    `/member/listings/${props.business.id}/minisite-theme/${theme.id}`,
     {},
     {
       onFinish: () => {

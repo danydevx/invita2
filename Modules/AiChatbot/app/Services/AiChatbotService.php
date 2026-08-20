@@ -91,7 +91,7 @@ class AiChatbotService
             $response = $this->callOpenAI($messages);
         } catch (\Exception $e) {
             Log::error('AI Chat error', [
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'error' => $e->getMessage(),
             ]);
             return [
@@ -117,8 +117,8 @@ class AiChatbotService
 
         $conversation->incrementMessagesCount();
 
-        ChatbotAnalytics::incrementStats($this->settings->business_id, 2, $response['tokens'] ?? 0);
-        ChatbotTopQuestion::trackQuestion($this->settings->business_id, $userMessage);
+        ChatbotAnalytics::incrementStats($this->settings->listing_id, 2, $response['tokens'] ?? 0);
+        ChatbotTopQuestion::trackQuestion($this->settings->listing_id, $userMessage);
 
         $sources = [];
         if (!empty($contextChunks) && ($this->settings->show_citations ?? true)) {
@@ -146,7 +146,7 @@ class AiChatbotService
     {
         $startOfMonth = Carbon::now()->startOfMonth();
 
-        $conversationsThisMonth = AiConversation::where('business_id', $this->settings->business_id)
+        $conversationsThisMonth = AiConversation::where('listing_id', $this->settings->listing_id)
             ->where('started_at', '>=', $startOfMonth)
             ->count();
 
@@ -180,7 +180,7 @@ class AiChatbotService
 
     private function getOrCreateConversation(string $sessionId, ?string $ipAddress, ?string $userAgent, ?string $deviceType = null): AiConversation
     {
-        $conversation = AiConversation::where('business_id', $this->settings->business_id)
+        $conversation = AiConversation::where('listing_id', $this->settings->listing_id)
             ->where('session_id', $sessionId)
             ->first();
 
@@ -192,7 +192,7 @@ class AiChatbotService
             }
 
             $conversation = AiConversation::create([
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'session_id' => $sessionId,
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
@@ -205,7 +205,7 @@ class AiChatbotService
                 'last_activity_at' => now(),
             ]);
 
-            ChatbotAnalytics::incrementConversations($this->settings->business_id);
+            ChatbotAnalytics::incrementConversations($this->settings->listing_id);
         }
 
         return $conversation;
@@ -417,7 +417,7 @@ class AiChatbotService
 
             try {
                 Log::info('AI Chat Request', [
-                    'business_id' => $this->settings->business_id,
+                    'listing_id' => $this->settings->listing_id,
                     'model' => $this->settings->model,
                     'api_key_prefix' => $this->settings->api_key ? substr($this->settings->api_key, 0, 10) . '...' : 'EMPTY',
                     'message_count' => count($messages),
@@ -480,7 +480,7 @@ class AiChatbotService
                 }
             } catch (\Exception $e) {
                 Log::error('AI Stream error', [
-                    'business_id' => $this->settings->business_id,
+                    'listing_id' => $this->settings->listing_id,
                     'error' => $e->getMessage(),
                 ]);
                 echo "data: " . json_encode(['type' => 'error', 'error' => $e->getMessage()]) . "\n\n";
@@ -496,8 +496,8 @@ class AiChatbotService
             $conversation->incrementMessagesCount();
 
             $latencyMs = (int) ((microtime(true) - $startTime) * 1000);
-            ChatbotAnalytics::incrementStats($this->settings->business_id, 2, $totalTokens, false, $latencyMs);
-            ChatbotTopQuestion::trackQuestion($this->settings->business_id, $userMessage);
+            ChatbotAnalytics::incrementStats($this->settings->listing_id, 2, $totalTokens, false, $latencyMs);
+            ChatbotTopQuestion::trackQuestion($this->settings->listing_id, $userMessage);
 
             $sources = [];
             if (!empty($contextChunks) && ($this->settings->show_citations ?? true)) {

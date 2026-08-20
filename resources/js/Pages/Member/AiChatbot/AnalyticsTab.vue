@@ -213,8 +213,8 @@ const props = defineProps({
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: props.business?.name || 'Negocio', href: `/member/businesses/${props.business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/businesses/${props.business?.id}/ai-chatbot` },
+  { label: props.business?.name || 'Negocio', href: `/member/listings/${props.business?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${props.business?.id}/ai-chatbot` },
   { label: 'Estadísticas', active: true },
 ])
 

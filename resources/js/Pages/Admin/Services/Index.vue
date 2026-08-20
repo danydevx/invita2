@@ -200,14 +200,14 @@ const openEditModal = (service) => {
 const submitService = () => {
   sending = true
   if (editingService.value) {
-    form.post(`/admin/businesses/${props.business.id}/services/${editingService.value.id}`, {
+    form.post(`/admin/listings/${props.business.id}/services/${editingService.value.id}`, {
       onFinish: () => {
         sending = false
         serviceModal.hide()
       },
     })
   } else {
-    form.post(`/admin/businesses/${props.business.id}/services`, {
+    form.post(`/admin/listings/${props.business.id}/services`, {
       onFinish: () => {
         sending = false
         serviceModal.hide()
@@ -218,7 +218,7 @@ const submitService = () => {
 
 const deleteService = (service) => {
   if (confirm('¿Estás seguro de eliminar este servicio?')) {
-    router.delete(`/admin/businesses/${props.business.id}/services/${service.id}`, {
+    router.delete(`/admin/listings/${props.business.id}/services/${service.id}`, {
       preserveScroll: true,
     })
   }

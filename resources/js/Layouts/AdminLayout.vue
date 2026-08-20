@@ -34,10 +34,9 @@
                 Negocios
               </a>
               <ul class="dropdown-menu">
-                <li><Link href="/admin/businesses" class="dropdown-item" prefetch="hover">Negocios</Link></li>
+                <li><Link href="/admin/listings" class="dropdown-item" prefetch="hover">Negocios</Link></li>
                 <li><Link href="/admin/business-modules" class="dropdown-item" prefetch="hover">Modulos de Negocio</Link></li>
                 <li><Link href="/admin/industries" class="dropdown-item" prefetch="hover">Industrias</Link></li>
-                <li><Link href="/admin/minisite-themes" class="dropdown-item" prefetch="hover">Themes de Minisite</Link></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -61,6 +60,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li v-if="canViewPlans"><Link href="/admin/plans" class="dropdown-item" prefetch="hover">Planes</Link></li>
+                <li v-if="canViewSubscriptions"><Link href="/admin/subscriptions" class="dropdown-item" prefetch="hover">Suscripciones</Link></li>
                 <li v-if="canViewCoupons"><Link href="/admin/coupons" class="dropdown-item" prefetch="hover">Cupones</Link></li>
                 <li v-if="canViewPayments"><Link href="/admin/payments" class="dropdown-item" prefetch="hover">Pagos</Link></li>
                 <li v-if="canViewInvoices"><Link href="/admin/invoices" class="dropdown-item" prefetch="hover">Comprobantes</Link></li>
@@ -167,6 +167,8 @@ const canViewActivity = computed(() => permissions.value.includes('activity.view
 const canViewPayments = computed(() => permissions.value.includes('payments.view') || userId.value === 1)
 const canViewCoupons = computed(() => permissions.value.includes('coupons.view') || userId.value === 1)
 const canViewInvoices = computed(() => permissions.value.includes('invoices.view') || userId.value === 1)
+
+const canViewSubscriptions = computed(() => permissions.value.includes('subscriptions.view') || userId.value === 1)
 const canViewInvitations = computed(() => permissions.value.includes('invitations.view') || userId.value === 1)
 const canViewSupport = computed(() => permissions.value.includes('support.view') || userId.value === 1)
 const canViewHelp = computed(() => permissions.value.includes('help.view') || userId.value === 1)
@@ -188,7 +190,7 @@ const isSuperAdmin = computed(() => roles.value.includes('superadmin') || userId
 
 const showBillingMenu = computed(() =>
   modules.value.billing !== false &&
-  (canViewPlans.value || canViewCoupons.value || canViewPayments.value || canViewInvoices.value)
+  (canViewPlans.value || canViewSubscriptions.value || canViewCoupons.value || canViewPayments.value || canViewInvoices.value)
 )
 const showSupportMenu = computed(() => modules.value.support !== false && (canViewSupport.value || canViewHelp.value))
 const showDataMenu = computed(() => modules.value.exports !== false && (canViewReports.value || canViewExports.value))

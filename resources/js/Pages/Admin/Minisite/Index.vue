@@ -80,7 +80,7 @@ let sending = false
 
 const submit = () => {
   sending = true
-  form.post(`/admin/businesses/${props.business.id}/minisite`, {
+  form.post(`/admin/listings/${props.business.id}/minisite`, {
     onFinish: () => {
       sending = false
     },

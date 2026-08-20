@@ -17,7 +17,7 @@ export function useMemberBreadcrumbs() {
       if (module) {
         return { business, module }
       }
-      const editUrl = `/member/businesses/${business.id}/edit`
+      const editUrl = `/member/listings/${business.id}/edit`
       if (url === editUrl) {
         return { business, module: { title: 'Editar', url: editUrl } }
       }
@@ -38,7 +38,7 @@ export function useMemberBreadcrumbs() {
       if (business) {
         result.push({
           label: business.name,
-          href: `/member/businesses/${business.id}/edit`
+          href: `/member/listings/${business.id}/edit`
         })
 
         const moduleInfo = getModuleByUrl(path)
@@ -53,7 +53,7 @@ export function useMemberBreadcrumbs() {
         if (moduleInfo && moduleInfo.module) {
           result.push({
             label: moduleInfo.business.name,
-            href: `/member/businesses/${moduleInfo.business.id}/edit`
+            href: `/member/listings/${moduleInfo.business.id}/edit`
           })
           result.push({ label: moduleInfo.module.title, active: true })
         }
@@ -65,7 +65,7 @@ export function useMemberBreadcrumbs() {
       if (moduleInfo) {
         result.push({
           label: moduleInfo.business.name,
-          href: `/member/businesses/${moduleInfo.business.id}/edit`
+          href: `/member/listings/${moduleInfo.business.id}/edit`
         })
         result.push({ label: moduleInfo.module.title, active: true })
       }

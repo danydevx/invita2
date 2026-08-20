@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Illuminate\Console\Command;
 
 class SyncBusinessModules extends Command
@@ -14,7 +14,7 @@ class SyncBusinessModules extends Command
     public function handle(): int
     {
         if ($businessId = $this->option('business')) {
-            $business = Business::find($businessId);
+            $business = Listing::find($businessId);
             if (!$business) {
                 $this->error("Business #{$businessId} not found.");
                 return Command::FAILURE;
@@ -25,7 +25,7 @@ class SyncBusinessModules extends Command
             return Command::SUCCESS;
         }
 
-        $businesses = Business::with('user')->get();
+        $businesses = Listing::with('user')->get();
         $count = 0;
 
         foreach ($businesses as $business) {
@@ -37,7 +37,7 @@ class SyncBusinessModules extends Command
         return Command::SUCCESS;
     }
 
-    private function printModules(Business $business): void
+    private function printModules(Listing $business): void
     {
         foreach ($business->modules as $module) {
             $status = $module->is_enabled ? 'ON' : 'OFF';

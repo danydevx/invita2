@@ -116,7 +116,7 @@ const saving = ref(false)
 const save = () => {
   saving.value = true
   router.put(
-    `/member/businesses/${props.businessId}/appointments/availability/weekly`,
+    `/member/listings/${props.businessId}/appointments/availability/weekly`,
     { schedule: localSchedule.value },
     {
       preserveScroll: true,

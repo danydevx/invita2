@@ -4,11 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 use Modules\About\Models\BusinessAbout;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessAboutPolicy
 {
-    public function viewAny(User $user, Business $business): bool
+    public function viewAny(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -17,7 +17,7 @@ class BusinessAboutPolicy
         return $user->id === $business->user_id;
     }
 
-    public function create(User $user, Business $business): bool
+    public function create(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -26,7 +26,7 @@ class BusinessAboutPolicy
         return $user->id === $business->user_id;
     }
 
-    public function update(User $user, BusinessAbout $about = null, Business $business = null): bool
+    public function update(User $user, BusinessAbout $about = null, Listing $business = null): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

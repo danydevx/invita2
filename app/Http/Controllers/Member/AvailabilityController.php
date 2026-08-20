@@ -7,13 +7,13 @@ use App\Services\ActivityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Appointments\Models\BusinessAvailability;
 use Modules\Appointments\Models\BusinessAvailabilityException;
 
 class AvailabilityController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessAvailability::class, $business]);
 
@@ -73,7 +73,7 @@ class AvailabilityController extends Controller
         ]);
     }
 
-    public function updateWeekly(Request $request, Business $business, ActivityService $activity)
+    public function updateWeekly(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('update', [BusinessAvailability::class, $business]);
 
@@ -104,7 +104,7 @@ class AvailabilityController extends Controller
 
             BusinessAvailability::updateOrCreate(
                 [
-                    'business_id' => $business->id,
+                    'listing_id' => $business->id,
                     'day_of_week' => $day['day_of_week'],
                 ],
                 [
@@ -127,7 +127,7 @@ class AvailabilityController extends Controller
         return back()->with('success', 'Disponibilidad semanal actualizada correctamente.');
     }
 
-    public function storeException(Request $request, Business $business, ActivityService $activity)
+    public function storeException(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('update', [BusinessAvailability::class, $business]);
 
@@ -156,7 +156,7 @@ class AvailabilityController extends Controller
 
         $exception = BusinessAvailabilityException::updateOrCreate(
             [
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'exception_date' => $data['exception_date'],
             ],
             [
@@ -178,11 +178,11 @@ class AvailabilityController extends Controller
         return back()->with('success', 'Excepción guardada correctamente.');
     }
 
-    public function destroyException(Request $request, Business $business, BusinessAvailabilityException $exception, ActivityService $activity)
+    public function destroyException(Request $request, Listing $business, BusinessAvailabilityException $exception, ActivityService $activity)
     {
         $this->authorize('update', [BusinessAvailability::class, $business]);
 
-        if ($exception->business_id !== $business->id) {
+        if ($exception->listing_id !== $business->id) {
             abort(404);
         }
 

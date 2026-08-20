@@ -8,16 +8,16 @@ class AboutObserver
 {
     public function created($model): void
     {
-        event(new BusinessContentChanged($model->business_id, 'about', $model->id, 'created'));
+        event(new BusinessContentChanged($model->listing_id, 'about', $model->id, 'created'));
     }
 
     public function updated($model): void
     {
-        event(new BusinessContentChanged($model->business_id, 'about', $model->id, 'updated'));
+        event(new BusinessContentChanged($model->listing_id, 'about', $model->id, 'updated'));
     }
 
     public function deleted($model): void
     {
-        event(new BusinessContentChanged($model->business_id, 'about', $model->id, 'deleted'));
+        event(new BusinessContentChanged($model->listing_id, 'about', $model->id, 'deleted'));
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Modules\Appointments\Enums\AppointmentStatus;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Faqs\Models\BusinessFaq;
 use Modules\Faqs\Models\BusinessFaqCategory;
 use Modules\Gallery\Models\BusinessGallery;
@@ -26,7 +26,7 @@ class BusinessContentController extends Controller
 
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-    public function locationsIndex(Request $request, Business $business)
+    public function locationsIndex(Request $request, Listing $business)
     {
         $locations = $business->locations()
             ->orderBy('is_primary', 'desc')
@@ -43,7 +43,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function locationsCreate(Request $request, Business $business)
+    public function locationsCreate(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/LocationsCreate', [
             'business' => [
@@ -53,7 +53,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function locationsStore(Request $request, Business $business, ActivityService $activity)
+    public function locationsStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -85,7 +85,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Ubicacion creada correctamente.');
     }
 
-    public function locationsEdit(Request $request, Business $business, BusinessLocation $location)
+    public function locationsEdit(Request $request, Listing $business, BusinessLocation $location)
     {
         return Inertia::render('Admin/BusinessContent/LocationsEdit', [
             'business' => [
@@ -112,7 +112,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function locationsUpdate(Request $request, Business $business, BusinessLocation $location, ActivityService $activity)
+    public function locationsUpdate(Request $request, Listing $business, BusinessLocation $location, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -144,7 +144,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Ubicacion actualizada correctamente.');
     }
 
-    public function locationsDestroy(Request $request, Business $business, BusinessLocation $location, ActivityService $activity)
+    public function locationsDestroy(Request $request, Listing $business, BusinessLocation $location, ActivityService $activity)
     {
         $activity->log('admin_location_deleted', [
             'actor' => $request->user(),
@@ -158,7 +158,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Ubicacion eliminada correctamente.');
     }
 
-    public function servicesIndex(Request $request, Business $business)
+    public function servicesIndex(Request $request, Listing $business)
     {
         $services = $business->services()
             ->with('location')
@@ -176,7 +176,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function servicesCreate(Request $request, Business $business)
+    public function servicesCreate(Request $request, Listing $business)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -189,7 +189,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function servicesStore(Request $request, Business $business, ActivityService $activity)
+    public function servicesStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -206,7 +206,7 @@ class BusinessContentController extends Controller
             'business_location_id' => ['nullable', 'exists:business_locations,id'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
         $service = $business->services()->create($data);
@@ -222,7 +222,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Servicio creado correctamente.');
     }
 
-    public function servicesEdit(Request $request, Business $business, BusinessService $service)
+    public function servicesEdit(Request $request, Listing $business, BusinessService $service)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -251,7 +251,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function servicesUpdate(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function servicesUpdate(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -281,7 +281,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Servicio actualizado correctamente.');
     }
 
-    public function servicesDestroy(Request $request, Business $business, BusinessService $service, ActivityService $activity)
+    public function servicesDestroy(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
     {
         $activity->log('admin_service_deleted', [
             'actor' => $request->user(),
@@ -295,7 +295,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Servicio eliminado correctamente.');
     }
 
-    public function faqsIndex(Request $request, Business $business)
+    public function faqsIndex(Request $request, Listing $business)
     {
         $faqs = $business->faqs()
             ->with('category')
@@ -313,9 +313,9 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function faqsCreate(Request $request, Business $business)
+    public function faqsCreate(Request $request, Listing $business)
     {
-        $categories = BusinessFaqCategory::where('business_id', $business->id)
+        $categories = BusinessFaqCategory::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -329,7 +329,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function faqsStore(Request $request, Business $business, ActivityService $activity)
+    public function faqsStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'question' => ['required', 'string', 'max:255'],
@@ -339,7 +339,7 @@ class BusinessContentController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $faq = BusinessFaq::create($data);
 
@@ -354,9 +354,9 @@ class BusinessContentController extends Controller
             ->with('success', 'Pregunta frecuente creada correctamente.');
     }
 
-    public function faqsEdit(Request $request, Business $business, BusinessFaq $faq)
+    public function faqsEdit(Request $request, Listing $business, BusinessFaq $faq)
     {
-        $categories = BusinessFaqCategory::where('business_id', $business->id)
+        $categories = BusinessFaqCategory::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -378,7 +378,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function faqsUpdate(Request $request, Business $business, BusinessFaq $faq, ActivityService $activity)
+    public function faqsUpdate(Request $request, Listing $business, BusinessFaq $faq, ActivityService $activity)
     {
         $data = $request->validate([
             'question' => ['required', 'string', 'max:255'],
@@ -401,7 +401,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Pregunta frecuente actualizada correctamente.');
     }
 
-    public function faqsDestroy(Request $request, Business $business, BusinessFaq $faq, ActivityService $activity)
+    public function faqsDestroy(Request $request, Listing $business, BusinessFaq $faq, ActivityService $activity)
     {
         $activity->log('admin_faq_deleted', [
             'actor' => $request->user(),
@@ -415,9 +415,9 @@ class BusinessContentController extends Controller
             ->with('success', 'Pregunta frecuente eliminada correctamente.');
     }
 
-    public function faqCategoriesIndex(Request $request, Business $business)
+    public function faqCategoriesIndex(Request $request, Listing $business)
     {
-        $categories = BusinessFaqCategory::where('business_id', $business->id)
+        $categories = BusinessFaqCategory::where('listing_id', $business->id)
             ->with('faqs')
             ->orderBy('sort_order')
             ->get();
@@ -432,7 +432,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function faqCategoriesStore(Request $request, Business $business)
+    public function faqCategoriesStore(Request $request, Listing $business)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -441,7 +441,7 @@ class BusinessContentController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = BusinessFaqCategory::generateUniqueSlug($business->id, $data['name']);
 
         BusinessFaqCategory::create($data);
@@ -450,7 +450,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Categoria creada correctamente.');
     }
 
-    public function faqCategoriesUpdate(Request $request, Business $business, BusinessFaqCategory $category)
+    public function faqCategoriesUpdate(Request $request, Listing $business, BusinessFaqCategory $category)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -465,7 +465,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Categoria actualizada correctamente.');
     }
 
-    public function faqCategoriesDestroy(Request $request, Business $business, BusinessFaqCategory $category)
+    public function faqCategoriesDestroy(Request $request, Listing $business, BusinessFaqCategory $category)
     {
         $category->faqs()->update(['category_id' => null]);
 
@@ -475,7 +475,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Categoria eliminada. Las preguntas fueron desvinculadas.');
     }
 
-    public function productsIndex(Request $request, Business $business)
+    public function productsIndex(Request $request, Listing $business)
     {
         $products = $business->products()
             ->with('location')
@@ -493,7 +493,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function productsCreate(Request $request, Business $business)
+    public function productsCreate(Request $request, Listing $business)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -506,7 +506,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function productsStore(Request $request, Business $business, ActivityService $activity)
+    public function productsStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -523,7 +523,7 @@ class BusinessContentController extends Controller
             'business_location_id' => ['nullable', 'exists:business_locations,id'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 
         $product = $business->products()->create($data);
@@ -539,7 +539,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Producto creado correctamente.');
     }
 
-    public function productsEdit(Request $request, Business $business, BusinessProduct $product)
+    public function productsEdit(Request $request, Listing $business, BusinessProduct $product)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -568,7 +568,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function productsUpdate(Request $request, Business $business, BusinessProduct $product, ActivityService $activity)
+    public function productsUpdate(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -598,7 +598,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Producto actualizado correctamente.');
     }
 
-    public function productsDestroy(Request $request, Business $business, BusinessProduct $product, ActivityService $activity)
+    public function productsDestroy(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
     {
         $activity->log('admin_product_deleted', [
             'actor' => $request->user(),
@@ -612,7 +612,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Producto eliminado correctamente.');
     }
 
-    public function galleryIndex(Request $request, Business $business, ?BusinessGallery $gallery = null)
+    public function galleryIndex(Request $request, Listing $business, ?BusinessGallery $gallery = null)
     {
         $galleries = $business->galleries()
             ->orderByDesc('is_primary')
@@ -624,7 +624,7 @@ class BusinessContentController extends Controller
             $gallery = BusinessGallery::primaryFor($business->id);
         }
 
-        if (! $gallery || $gallery->business_id !== $business->id) {
+        if (! $gallery || $gallery->listing_id !== $business->id) {
             $gallery = $galleries->firstWhere('is_primary', true) ? BusinessGallery::find($galleries->firstWhere('is_primary', true)['id']) : null;
         }
 
@@ -655,13 +655,13 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function galleryStore(Request $request, Business $business, ActivityService $activity)
+    public function galleryStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'file' => ['required', 'file', 'max:'.self::MAX_FILE_SIZE_KB, 'mimetypes:'.implode(',', self::ALLOWED_MIME_TYPES)],
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('business_id', $business->id),
+                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -676,7 +676,7 @@ class BusinessContentController extends Controller
         $path = $file->store('gallery/'.$business->id, ['disk' => $disk]);
 
         $image = $business->galleryImages()->create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_gallery_id' => $data['business_gallery_id'],
             'path' => Storage::disk($disk)->url($path),
             'filename' => basename($path),
@@ -701,12 +701,12 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.gallery.index', $business->id)->with('success', 'Imagen subida correctamente.');
     }
 
-    public function galleryUpdate(Request $request, Business $business, BusinessGalleryImage $image, ActivityService $activity)
+    public function galleryUpdate(Request $request, Listing $business, BusinessGalleryImage $image, ActivityService $activity)
     {
         $data = $request->validate([
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('business_id', $business->id),
+                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -727,7 +727,7 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.gallery.index', $business->id)->with('success', 'Imagen actualizada correctamente.');
     }
 
-    public function galleryDestroy(Request $request, Business $business, BusinessGalleryImage $image, ActivityService $activity)
+    public function galleryDestroy(Request $request, Listing $business, BusinessGalleryImage $image, ActivityService $activity)
     {
         if ($image->path) {
             $path = str_replace(url('/').'/storage/', '', $image->path);
@@ -745,7 +745,7 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.gallery.index', $business->id)->with('success', 'Imagen eliminada correctamente.');
     }
 
-    public function galleriesIndex(Request $request, Business $business)
+    public function galleriesIndex(Request $request, Listing $business)
     {
         $galleries = $business->galleries()
             ->withCount('images')
@@ -773,7 +773,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function galleriesCreate(Request $request, Business $business)
+    public function galleriesCreate(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/GalleriesCreate', [
             'business' => [
@@ -783,7 +783,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function galleriesStore(Request $request, Business $business, ActivityService $activity)
+    public function galleriesStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -795,7 +795,7 @@ class BusinessContentController extends Controller
 
         $gallery = DB::transaction(function () use ($business, $data) {
             if (! empty($data['is_primary'])) {
-                BusinessGallery::where('business_id', $business->id)->update(['is_primary' => false]);
+                BusinessGallery::where('listing_id', $business->id)->update(['is_primary' => false]);
             }
 
             return $business->galleries()->create([
@@ -817,9 +817,9 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.galleries.index', $business->id)->with('success', 'Galería creada correctamente.');
     }
 
-    public function galleriesEdit(Request $request, Business $business, BusinessGallery $gallery)
+    public function galleriesEdit(Request $request, Listing $business, BusinessGallery $gallery)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
 
         return Inertia::render('Admin/BusinessContent/GalleriesEdit', [
             'business' => [
@@ -837,9 +837,9 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function galleriesUpdate(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function galleriesUpdate(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -851,7 +851,7 @@ class BusinessContentController extends Controller
 
         DB::transaction(function () use ($business, $gallery, $data) {
             if (! empty($data['is_primary'])) {
-                BusinessGallery::where('business_id', $business->id)
+                BusinessGallery::where('listing_id', $business->id)
                     ->where('id', '!=', $gallery->id)
                     ->update(['is_primary' => false]);
             }
@@ -875,9 +875,9 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.galleries.index', $business->id)->with('success', 'Galería actualizada correctamente.');
     }
 
-    public function galleriesDestroy(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function galleriesDestroy(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
 
         $activity->log('gallery_deleted', [
             'actor' => $request->user(),
@@ -890,12 +890,12 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.galleries.index', $business->id)->with('success', 'Galería eliminada correctamente.');
     }
 
-    public function galleriesSetPrimary(Request $request, Business $business, BusinessGallery $gallery, ActivityService $activity)
+    public function galleriesSetPrimary(Request $request, Listing $business, BusinessGallery $gallery, ActivityService $activity)
     {
-        abort_unless($gallery->business_id === $business->id, 404);
+        abort_unless($gallery->listing_id === $business->id, 404);
 
         DB::transaction(function () use ($business, $gallery) {
-            BusinessGallery::where('business_id', $business->id)
+            BusinessGallery::where('listing_id', $business->id)
                 ->where('id', '!=', $gallery->id)
                 ->update(['is_primary' => false]);
 
@@ -915,7 +915,7 @@ class BusinessContentController extends Controller
         return redirect()->route('admin.business.galleries.index', $business->id)->with('success', 'Galería marcada como principal.');
     }
 
-    public function appointmentsIndex(Request $request, Business $business)
+    public function appointmentsIndex(Request $request, Listing $business)
     {
         $appointments = $business->appointments()
             ->with(['location', 'service'])
@@ -933,7 +933,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function appointmentsCreate(Request $request, Business $business)
+    public function appointmentsCreate(Request $request, Listing $business)
     {
         $services = $business->services()
             ->where('is_active', true)
@@ -956,7 +956,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function appointmentsStore(Request $request, Business $business, ActivityService $activity)
+    public function appointmentsStore(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
@@ -973,7 +973,7 @@ class BusinessContentController extends Controller
         $endTime = date('H:i', strtotime($data['start_time'].' + '.$service->duration_minutes.' minutes'));
 
         $appointment = $business->appointments()->create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_location_id' => $data['business_location_id'],
             'business_service_id' => $data['business_service_id'],
             'customer_name' => $data['customer_name'],
@@ -997,7 +997,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Cita creada correctamente.');
     }
 
-    public function appointmentsShow(Request $request, Business $business, BusinessAppointment $appointment)
+    public function appointmentsShow(Request $request, Listing $business, BusinessAppointment $appointment)
     {
         $appointment->load(['location', 'service']);
 
@@ -1030,7 +1030,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function appointmentsEdit(Request $request, Business $business, BusinessAppointment $appointment)
+    public function appointmentsEdit(Request $request, Listing $business, BusinessAppointment $appointment)
     {
         $appointment->load(['location', 'service']);
 
@@ -1068,7 +1068,7 @@ class BusinessContentController extends Controller
         ]);
     }
 
-    public function appointmentsUpdate(Request $request, Business $business, BusinessAppointment $appointment, ActivityService $activity)
+    public function appointmentsUpdate(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity)
     {
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
@@ -1110,7 +1110,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Cita actualizada correctamente.');
     }
 
-    public function appointmentsDestroy(Request $request, Business $business, BusinessAppointment $appointment, ActivityService $activity)
+    public function appointmentsDestroy(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity)
     {
         $activity->log('appointment_deleted', [
             'actor' => $request->user(),
@@ -1124,7 +1124,7 @@ class BusinessContentController extends Controller
             ->with('success', 'Cita eliminada correctamente.');
     }
 
-    public function appointmentsCancel(Request $request, Business $business, BusinessAppointment $appointment, ActivityService $activity)
+    public function appointmentsCancel(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity)
     {
         $appointment->update([
             'status' => AppointmentStatus::CANCELLED,

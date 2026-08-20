@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Products\Models\BusinessProductCategory;
 use Illuminate\Support\Facades\Auth;
 
 class ProductCategoryController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -19,7 +19,7 @@ class ProductCategoryController extends Controller
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
 
-        $query = BusinessProductCategory::where('business_id', $business->id)
+        $query = BusinessProductCategory::where('listing_id', $business->id)
             ->with('parent')
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
@@ -53,7 +53,7 @@ class ProductCategoryController extends Controller
             'to' => $categories->lastItem(),
         ];
 
-        $allCategories = BusinessProductCategory::where('business_id', $business->id)
+        $allCategories = BusinessProductCategory::where('listing_id', $business->id)
             ->whereNull('parent_id')
             ->with('children')
             ->orderBy('name')
@@ -69,7 +69,7 @@ class ProductCategoryController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -83,7 +83,7 @@ class ProductCategoryController extends Controller
             'sort_order' => 'integer',
         ]);
 
-        $validated['business_id'] = $business->id;
+        $validated['listing_id'] = $business->id;
         $validated['slug'] = BusinessProductCategory::generateUniqueSlug($business->id, $validated['name']);
 
         BusinessProductCategory::create($validated);
@@ -91,11 +91,11 @@ class ProductCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoria creada exitosamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessProductCategory $category)
+    public function update(Request $request, Listing $business, BusinessProductCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -119,11 +119,11 @@ class ProductCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoria actualizada exitosamente.');
     }
 
-    public function destroy(Business $business, BusinessProductCategory $category)
+    public function destroy(Listing $business, BusinessProductCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         if ($category->children()->count() > 0) {
             return redirect()->back()->with('error', 'No se puede eliminar una categoria con subcategorias.');

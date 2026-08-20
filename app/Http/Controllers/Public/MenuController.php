@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\RestaurantMenu\Entities\MenuCategory;
 use Modules\RestaurantMenu\Entities\MenuProduct;
 
@@ -12,9 +12,9 @@ class MenuController extends Controller
 {
     public function show(Request $request, string $businessSlug)
     {
-        $business = Business::where('slug', $businessSlug)->firstOrFail();
+        $business = Listing::where('slug', $businessSlug)->firstOrFail();
 
-        $categories = MenuCategory::where('business_id', $business->id)
+        $categories = MenuCategory::where('listing_id', $business->id)
             ->whereNull('parent_id')
             ->where('active', true)
             ->with(['children' => function ($query) {
@@ -25,20 +25,20 @@ class MenuController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $uncategorizedProducts = MenuProduct::where('business_id', $business->id)
+        $uncategorizedProducts = MenuProduct::where('listing_id', $business->id)
             ->whereNull('category_id')
             ->where('active', true)
             ->with('variants', 'images')
             ->orderBy('sort_order')
             ->get();
 
-        $allProducts = MenuProduct::where('business_id', $business->id)
+        $allProducts = MenuProduct::where('listing_id', $business->id)
             ->where('active', true)
             ->with('category', 'variants', 'images')
             ->orderBy('sort_order')
             ->get();
 
-        $featuredProducts = MenuProduct::where('business_id', $business->id)
+        $featuredProducts = MenuProduct::where('listing_id', $business->id)
             ->where('featured', true)
             ->where('active', true)
             ->with('category', 'variants', 'images')
@@ -48,7 +48,7 @@ class MenuController extends Controller
         $search = $request->get('search');
 
         if ($search) {
-            $products = MenuProduct::where('business_id', $business->id)
+            $products = MenuProduct::where('listing_id', $business->id)
                 ->where('active', true)
                 ->where(function ($query) use ($search) {
                     $query->where('title', 'like', "%{$search}%")

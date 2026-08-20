@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Appointments\Models\BusinessAppointmentSlot;
 use Modules\Services\Models\BusinessService;
 use Modules\Locations\Models\BusinessLocation;
 
 class SlotController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [\Modules\Appointments\Models\BusinessAppointmentSlot::class, $business]);
 
@@ -90,7 +90,7 @@ class SlotController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [\Modules\Appointments\Models\BusinessAppointmentSlot::class, $business]);
 
@@ -104,7 +104,7 @@ class SlotController extends Controller
             'slots_available' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
         $data['is_available'] = true;
 
         $slot = $business->appointmentSlots()->create($data);
@@ -119,7 +119,7 @@ class SlotController extends Controller
         return redirect()->back()->with('success', 'Slot creado correctamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessAppointmentSlot $slot, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessAppointmentSlot $slot, ActivityService $activity)
     {
         $this->authorize('update', $slot);
 
@@ -150,7 +150,7 @@ class SlotController extends Controller
         return redirect()->back()->with('success', 'Slot actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessAppointmentSlot $slot, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessAppointmentSlot $slot, ActivityService $activity)
     {
         $this->authorize('delete', $slot);
 

@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/businesses/${business.id}/appointments`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${business.id}/appointments`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Editar Cita</h1>
@@ -131,7 +131,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
               </button>
-              <Link :href="`/admin/businesses/${business.id}/appointments`" class="btn btn-outline-secondary">
+              <Link :href="`/admin/listings/${business.id}/appointments`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -170,7 +170,7 @@ const form = reactive({
 
 const submit = () => {
   sending.value = true
-  router.put(`/admin/businesses/${business.value.id}/appointments/${appointment.value.id}`, form, {
+  router.put(`/admin/listings/${business.value.id}/appointments/${appointment.value.id}`, form, {
     preserveScroll: true,
     onFinish: () => {
       sending.value = false

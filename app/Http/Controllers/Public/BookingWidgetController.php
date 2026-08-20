@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Appointments\Enums\AppointmentStatus;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Locations\Models\BusinessLocation;
 use Modules\Packages\Models\BusinessPackage;
 use Modules\Services\Models\BusinessService;
@@ -22,7 +22,7 @@ class BookingWidgetController extends Controller
 
     public function activeBusinesses(Request $request): JsonResponse
     {
-        $businesses = Business::query()
+        $businesses = Listing::query()
             ->where('is_active', true)
             ->where('is_published', true)
             ->whereHas('modules', function ($query) {
@@ -39,7 +39,7 @@ class BookingWidgetController extends Controller
         ]);
     }
 
-    public function services(Business $businessSlug, Request $request): JsonResponse
+    public function services(Listing $businessSlug, Request $request): JsonResponse
     {
         $services = $businessSlug->services()
             ->where('is_active', true)
@@ -59,9 +59,9 @@ class BookingWidgetController extends Controller
         ]);
     }
 
-    public function packages(Business $businessSlug): JsonResponse
+    public function packages(Listing $businessSlug): JsonResponse
     {
-        $packages = BusinessPackage::where('business_id', $businessSlug->id)
+        $packages = BusinessPackage::where('listing_id', $businessSlug->id)
             ->where('is_active', true)
             ->with('features')
             ->orderBy('name')
@@ -81,7 +81,7 @@ class BookingWidgetController extends Controller
         ]);
     }
 
-    public function slots(Business $businessSlug, Request $request): JsonResponse
+    public function slots(Listing $businessSlug, Request $request): JsonResponse
     {
         $validated = $request->validate([
             'date' => ['required', 'date', 'after_or_equal:today'],
@@ -92,7 +92,7 @@ class BookingWidgetController extends Controller
         $duration = 30;
 
         if (!empty($validated['service_id'])) {
-            $service = BusinessService::where('business_id', $businessSlug->id)
+            $service = BusinessService::where('listing_id', $businessSlug->id)
                 ->where('id', $validated['service_id'])
                 ->where('is_active', true)
                 ->where('allows_online_booking', true)
@@ -122,7 +122,7 @@ class BookingWidgetController extends Controller
         ]);
     }
 
-    public function store(Business $businessSlug, BookAppointmentRequest $request): JsonResponse
+    public function store(Listing $businessSlug, BookAppointmentRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -130,7 +130,7 @@ class BookingWidgetController extends Controller
         $serviceDuration = 30;
 
         if (!empty($data['service_id'])) {
-            $service = BusinessService::where('business_id', $businessSlug->id)
+            $service = BusinessService::where('listing_id', $businessSlug->id)
                 ->where('id', $data['service_id'])
                 ->where('is_active', true)
                 ->where('allows_online_booking', true)
@@ -145,7 +145,7 @@ class BookingWidgetController extends Controller
         }
 
         if (!empty($data['location_id'])) {
-            $location = BusinessLocation::where('business_id', $businessSlug->id)
+            $location = BusinessLocation::where('listing_id', $businessSlug->id)
                 ->where('id', $data['location_id'])
                 ->where('is_active', true)
                 ->first();
@@ -174,7 +174,7 @@ class BookingWidgetController extends Controller
         $endTime = date('H:i', strtotime($data['start_time'] . ' + ' . $serviceDuration . ' minutes'));
 
         $appointment = BusinessAppointment::create([
-            'business_id' => $businessSlug->id,
+            'listing_id' => $businessSlug->id,
             'business_service_id' => $service?->id,
             'business_location_id' => $data['location_id'] ?? null,
             'customer_name' => $data['customer_name'],

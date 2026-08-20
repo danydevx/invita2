@@ -67,7 +67,7 @@ class MinisiteThemeController extends Controller
 
     public function destroy(MinisiteTheme $theme)
     {
-        if ($theme->businesses()->count() > 0) {
+        if ($theme->listings()->count() > 0) {
             return redirect()->back()->with('error', 'No se puede eliminar un theme que está en uso.');
         }
 

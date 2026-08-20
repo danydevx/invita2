@@ -32,7 +32,7 @@
                   <span class="text-muted small ms-1">/ {{ business.modules?.length || 0 }} total</span>
                 </td>
                 <td class="text-end">
-                  <Link :href="`/admin/businesses/${business.id}/modules`" class="btn btn-sm btn-outline-primary">
+                  <Link :href="`/admin/listings/${business.id}/modules`" class="btn btn-sm btn-outline-primary">
                     Gestionar modulos
                   </Link>
                 </td>

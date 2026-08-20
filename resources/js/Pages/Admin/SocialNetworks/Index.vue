@@ -228,14 +228,14 @@ const openEditModal = (network) => {
 const submitNetwork = () => {
   sending = true
   if (editingNetwork.value) {
-    form.post(`/admin/businesses/${props.business.id}/social-networks/${editingNetwork.value.id}`, {
+    form.post(`/admin/listings/${props.business.id}/social-networks/${editingNetwork.value.id}`, {
       onFinish: () => {
         sending = false
         networkModal.hide()
       },
     })
   } else {
-    form.post(`/admin/businesses/${props.business.id}/social-networks`, {
+    form.post(`/admin/listings/${props.business.id}/social-networks`, {
       onFinish: () => {
         sending = false
         networkModal.hide()
@@ -246,7 +246,7 @@ const submitNetwork = () => {
 
 const deleteNetwork = (network) => {
   if (confirm('¿Estás seguro de eliminar esta red social?')) {
-    router.delete(`/admin/businesses/${props.business.id}/social-networks/${network.id}`, {
+    router.delete(`/admin/listings/${props.business.id}/social-networks/${network.id}`, {
       preserveScroll: true,
     })
   }

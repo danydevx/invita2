@@ -108,7 +108,7 @@ const form = reactive({
 })
 
 const toggleModule = (module) => {
-  router.put(`/admin/businesses/${business.value.id}/modules`, {
+  router.put(`/admin/listings/${business.value.id}/modules`, {
     modules: [{
       id: module.id,
       is_enabled: !module.is_enabled,

@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\SocialMedia\Models\BusinessSocialNetwork;
 
 class SocialNetworkController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessSocialNetwork::class, $business]);
 
@@ -71,7 +71,7 @@ class SocialNetworkController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessSocialNetwork::class, $business]);
 
@@ -86,7 +86,7 @@ class SocialNetworkController extends Controller
             'sort_order' => ['integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $socialNetwork = BusinessSocialNetwork::create($data);
 
@@ -100,7 +100,7 @@ class SocialNetworkController extends Controller
         return redirect()->back()->with('success', 'Red social creada correctamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
     {
         $this->authorize('update', $socialNetwork);
 
@@ -126,7 +126,7 @@ class SocialNetworkController extends Controller
         return redirect()->back()->with('success', 'Red social actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
     {
         $this->authorize('delete', $socialNetwork);
 
@@ -142,7 +142,7 @@ class SocialNetworkController extends Controller
         return redirect()->back()->with('success', 'Red social eliminada correctamente.');
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
 
@@ -153,7 +153,7 @@ class SocialNetworkController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_social_networks', 'id')->where('business_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_social_networks', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -165,7 +165,7 @@ class SocialNetworkController extends Controller
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
                 \Modules\SocialNetworks\Models\BusinessSocialNetwork::where('id', $id)
-                    ->where('business_id', $business->id)
+                    ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
         });

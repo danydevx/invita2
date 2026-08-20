@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\ContactForm\Models\BusinessContactForm;
 use Modules\ContactForm\Models\BusinessContactFormField;
 use Modules\Leads\Models\BusinessLead;
 
 class ContactFormController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
@@ -43,7 +43,7 @@ class ContactFormController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
@@ -62,7 +62,7 @@ class ContactFormController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
@@ -92,11 +92,11 @@ class ContactFormController extends Controller
             ->with('success', 'Formulario creado correctamente.');
     }
 
-    public function edit(Request $request, Business $business, BusinessContactForm $form)
+    public function edit(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -133,11 +133,11 @@ class ContactFormController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessContactForm $form)
+    public function update(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -159,11 +159,11 @@ class ContactFormController extends Controller
         return redirect()->back()->with('success', 'Formulario actualizado.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessContactForm $form)
+    public function destroy(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -174,11 +174,11 @@ class ContactFormController extends Controller
             ->with('success', 'Formulario eliminado.');
     }
 
-    public function preview(Request $request, Business $business, BusinessContactForm $form)
+    public function preview(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -208,11 +208,11 @@ class ContactFormController extends Controller
         ]);
     }
 
-    public function storeField(Request $request, Business $business, BusinessContactForm $form)
+    public function storeField(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -250,7 +250,7 @@ class ContactFormController extends Controller
         $maxOrder = $form->fields()->max('order') ?? 0;
 
         $field = $form->fields()->create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'business_contact_form_id' => $form->id,
             'field_type' => $fieldType,
             'field_name' => $fieldName,
@@ -268,11 +268,11 @@ class ContactFormController extends Controller
         return redirect()->back()->with('success', 'Campo agregado.');
     }
 
-    public function updateField(Request $request, Business $business, BusinessContactForm $form, BusinessContactFormField $field)
+    public function updateField(Request $request, Listing $business, BusinessContactForm $form, BusinessContactFormField $field)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id || $field->business_contact_form_id !== $form->id) {
+        if ($form->listing_id !== $business->id || $field->business_contact_form_id !== $form->id) {
             abort(403);
         }
 
@@ -318,11 +318,11 @@ class ContactFormController extends Controller
         return redirect()->back()->with('success', 'Campo actualizado.');
     }
 
-    public function destroyField(Request $request, Business $business, BusinessContactForm $form, BusinessContactFormField $field)
+    public function destroyField(Request $request, Listing $business, BusinessContactForm $form, BusinessContactFormField $field)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id || $field->business_contact_form_id !== $form->id) {
+        if ($form->listing_id !== $business->id || $field->business_contact_form_id !== $form->id) {
             abort(403);
         }
 
@@ -331,11 +331,11 @@ class ContactFormController extends Controller
         return redirect()->back()->with('success', 'Campo eliminado.');
     }
 
-    public function submissions(Request $request, Business $business, BusinessContactForm $form)
+    public function submissions(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -403,11 +403,11 @@ class ContactFormController extends Controller
         ]);
     }
 
-    public function export(Request $request, Business $business, BusinessContactForm $form)
+    public function export(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 
@@ -446,11 +446,11 @@ class ContactFormController extends Controller
         return response($content, 200, $headers);
     }
 
-    public function reorder(Request $request, Business $business, BusinessContactForm $form)
+    public function reorder(Request $request, Listing $business, BusinessContactForm $form)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
-        if ($form->business_id !== $business->id) {
+        if ($form->listing_id !== $business->id) {
             abort(403);
         }
 

@@ -31,7 +31,7 @@ class UpdatePropertyRequest extends FormRequest
                 'required',
                 'string',
                 'max:180',
-                Rule::unique('properties')->where('business_id', $business?->id)->ignore($property?->id),
+                Rule::unique('properties')->where('listing_id', $business?->id)->ignore($property?->id),
             ],
             'description' => ['nullable', 'string', 'max:5000'],
             'operation_type' => [

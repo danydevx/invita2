@@ -5,7 +5,7 @@
     <PageHeader
       title="Nueva Cita"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/appointments`"
+      :backHref="`/member/listings/${business.id}/appointments`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -107,7 +107,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Crear Cita' }}
               </button>
-              <Link :href="`/member/businesses/${business.id}/appointments`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${business.id}/appointments`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -209,8 +209,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Citas', href: `/member/businesses/${biz.id}/appointments` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Citas', href: `/member/listings/${biz.id}/appointments` },
         { label: 'Nueva Cita', active: true },
       ]
     }
@@ -254,7 +254,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.post(`/member/businesses/${business.value.id}/appointments`, form, {
+  router.post(`/member/listings/${business.value.id}/appointments`, form, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

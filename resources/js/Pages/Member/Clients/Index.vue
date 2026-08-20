@@ -5,7 +5,7 @@
     <PageHeader
       title="Clientes"
       :breadcrumbs="breadcrumbs"
-      :backHref="'/member/businesses'"
+      :backHref="'/member/listings'"
     >
       <template #actions>
         <button
@@ -17,7 +17,7 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/businesses/${business?.id}/clients/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/clients/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nuevo Cliente
         </Link>
@@ -26,7 +26,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/clients`"
+      :endpoint="`/member/listings/${business?.id}/clients`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar clientes..."
@@ -60,7 +60,7 @@
           <button class="btn btn-sm btn-outline-secondary" @click="cloneClient(row)" title="Clonar">
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/businesses/${business?.id}/clients/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/clients/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button
@@ -76,7 +76,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/clients/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/clients/bulk-delete`"
           item-name="clientes"
           @deleted="onBulkDeleted"
         />
@@ -116,14 +116,14 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/businesses' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: 'Mis Negocios', href: '/member/listings' },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Clientes', active: true },
       ]
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/businesses' },
+    { label: 'Mis Negocios', href: '/member/listings' },
     { label: 'Clientes', active: true },
   ]
 })
@@ -150,7 +150,7 @@ const onBulkDeleted = () => {
 const deleteClient = (row) => {
   if (confirm(`Estas seguro de eliminar a ${row.customer_name}? Esta accion no se puede deshacer.`)) {
     deleting.value = row.id
-    router.delete(`/member/businesses/${business.value.id}/clients/${row.id}`, {
+    router.delete(`/member/listings/${business.value.id}/clients/${row.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -166,7 +166,7 @@ const cloneClient = (row) => {
   if (!confirm(`¿Clonar "${row.customer_name}"?`)) {
     return
   }
-  router.post(`/member/businesses/${business.value.id}/clients/${row.id}/clone`, {}, {
+  router.post(`/member/listings/${business.value.id}/clients/${row.id}/clone`, {}, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {
@@ -181,7 +181,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} cliente${count > 1 ? 's' : ''} seleccionado${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/businesses/${business.value.id}/clients/bulk-delete`, {
+    router.post(`/member/listings/${business.value.id}/clients/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Turnos</h1>
@@ -365,7 +365,7 @@ const createSlot = () => {
   } else {
     delete data.day_of_week
   }
-  router.post(`/admin/businesses/${business.value.id}/slots`, data, {
+  router.post(`/admin/listings/${business.value.id}/slots`, data, {
     onFinish: () => {
       creating.value = false
       closeCreateModal()
@@ -382,7 +382,7 @@ const updateSlot = () => {
     delete data.day_of_week
   }
   delete data.id
-  router.put(`/admin/businesses/${business.value.id}/slots/${editingSlot.value.id}`, data, {
+  router.put(`/admin/listings/${business.value.id}/slots/${editingSlot.value.id}`, data, {
     onFinish: () => {
       saving.value = false
       closeEditModal()
@@ -391,7 +391,7 @@ const updateSlot = () => {
 }
 
 const toggleSlot = (slot) => {
-  router.put(`/admin/businesses/${business.value.id}/slots/${slot.id}`, {
+  router.put(`/admin/listings/${business.value.id}/slots/${slot.id}`, {
     is_available: !slot.is_available,
   }, { preserveScroll: true })
 }
@@ -399,7 +399,7 @@ const toggleSlot = (slot) => {
 const deleteSlot = (slot) => {
   if (confirm('Eliminar este turno?')) {
     deleting.value = slot.id
-    router.delete(`/admin/businesses/${business.value.id}/slots/${slot.id}`, {
+    router.delete(`/admin/listings/${business.value.id}/slots/${slot.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null

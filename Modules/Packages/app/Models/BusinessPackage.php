@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusinessPackage extends Model
 {
-    protected $table = 'business_packages';
+    protected $table = 'listing_packages';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'title',
         'short_description',
         'long_description',
@@ -33,7 +33,7 @@ class BusinessPackage extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function features(): HasMany

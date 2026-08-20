@@ -8,7 +8,7 @@ use App\Http\Resources\Api\V1\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class UserController extends Controller
 {
@@ -42,7 +42,7 @@ class UserController extends Controller
 
     public function businesses(User $user): JsonResponse
     {
-        $businesses = Business::where('user_id', $user->id)
+        $businesses = Listing::where('user_id', $user->id)
             ->with(['subscriptions.plan:id,name'])
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'slug', 'is_active', 'created_at']);

@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\SocialMedia\Models\BusinessSocialNetwork;
 
 class BusinessSocialNetworkController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $socialNetworks = $business->socialNetworks()->orderBy('sort_order')->get();
 
@@ -25,7 +25,7 @@ class BusinessSocialNetworkController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'platform' => ['required', 'string'],
@@ -38,7 +38,7 @@ class BusinessSocialNetworkController extends Controller
             'sort_order' => ['integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $socialNetwork = BusinessSocialNetwork::create($data);
 
@@ -52,7 +52,7 @@ class BusinessSocialNetworkController extends Controller
         return redirect()->back()->with('success', 'Red social creada correctamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
     {
         $data = $request->validate([
             'url' => ['required', 'string', 'max:500', 'url'],
@@ -76,7 +76,7 @@ class BusinessSocialNetworkController extends Controller
         return redirect()->back()->with('success', 'Red social actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessSocialNetwork $socialNetwork, ActivityService $activity)
     {
         $socialNetwork->delete();
 

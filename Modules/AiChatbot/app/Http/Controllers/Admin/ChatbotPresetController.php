@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Modules\AiChatbot\Models\ChatbotPreset;
 use Modules\AiChatbot\Models\ChatbotPersonality;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Inertia\Inertia;
 
 class ChatbotPresetController extends Controller
@@ -33,7 +33,7 @@ class ChatbotPresetController extends Controller
 
         $presets = $query->paginate(20)->withQueryString();
 
-        $businessTypes = Business::select('business_type')
+        $businessTypes = Listing::select('business_type')
             ->distinct()
             ->orderBy('business_type')
             ->pluck('business_type');
@@ -47,7 +47,7 @@ class ChatbotPresetController extends Controller
 
     public function create()
     {
-        $businessTypes = Business::select('business_type')
+        $businessTypes = Listing::select('business_type')
             ->distinct()
             ->orderBy('business_type')
             ->pluck('business_type');
@@ -90,7 +90,7 @@ class ChatbotPresetController extends Controller
 
     public function edit(ChatbotPreset $preset)
     {
-        $businessTypes = Business::select('business_type')
+        $businessTypes = Listing::select('business_type')
             ->distinct()
             ->orderBy('business_type')
             ->pluck('business_type');

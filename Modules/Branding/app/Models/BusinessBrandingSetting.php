@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessBrandingSetting extends Model
 {
+
+    protected $table = 'listing_branding_settings';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'colors',
         'fonts',
         'custom_font_url',
@@ -40,7 +43,7 @@ class BusinessBrandingSetting extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public static function getDefaultColors(): array

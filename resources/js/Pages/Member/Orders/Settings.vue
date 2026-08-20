@@ -5,7 +5,7 @@
     <PageHeader
       title="Configuración de Pedidos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/orders`"
+      :backHref="`/member/listings/${business?.id}/orders`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show">
@@ -133,7 +133,7 @@
                 <button type="submit" class="btn btn-primary" :disabled="saving">
                   {{ saving ? 'Guardando...' : 'Guardar configuración' }}
                 </button>
-                <Link :href="`/member/businesses/${business?.id}/orders`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${business?.id}/orders`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -178,15 +178,15 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Pedidos', href: `/member/businesses/${biz.id}/orders` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Pedidos', href: `/member/listings/${biz.id}/orders` },
         { label: 'Configuración', active: true },
       ]
     }
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Pedidos', href: `/member/businesses/${business.value?.id}/orders` },
+    { label: 'Pedidos', href: `/member/listings/${business.value?.id}/orders` },
     { label: 'Configuración', active: true },
   ]
 })
@@ -194,7 +194,7 @@ const breadcrumbs = computed(() => {
 const submit = () => {
   saving.value = true
 
-  router.post(`/member/businesses/${business.value.id}/orders/settings`, form, {
+  router.post(`/member/listings/${business.value.id}/orders/settings`, form, {
     preserveScroll: true,
     onFinish: () => {
       saving.value = false

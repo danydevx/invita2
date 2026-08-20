@@ -116,7 +116,7 @@ class WidgetChatService
                 }
             } catch (\Exception $e) {
                 Log::error('Widget AI Stream error', [
-                    'business_id' => $this->settings->business_id,
+                    'listing_id' => $this->settings->listing_id,
                     'error' => $e->getMessage(),
                 ]);
                 echo "data: " . json_encode(['type' => 'error', 'error' => $e->getMessage()]) . "\n\n";
@@ -179,13 +179,13 @@ class WidgetChatService
 
     private function getOrCreateConversation(string $sessionId, ?string $ipAddress, ?string $userAgent): AiConversation
     {
-        $conversation = AiConversation::where('business_id', $this->settings->business_id)
+        $conversation = AiConversation::where('listing_id', $this->settings->listing_id)
             ->where('session_id', $sessionId)
             ->first();
 
         if (!$conversation) {
             $conversation = AiConversation::create([
-                'business_id' => $this->settings->business_id,
+                'listing_id' => $this->settings->listing_id,
                 'session_id' => $sessionId,
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,

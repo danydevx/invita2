@@ -15,15 +15,15 @@ use Modules\AiChatbot\Services\UrlContentExtractor;
 
 class AiChatbotController extends Controller
 {
-    public function index(Request $request, \Modules\Businesses\Models\Business $business)
+    public function index(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         $presets = ChatbotPreset::getActivePresets($business->id);
 
-        $contexts = AiContext::where('business_id', $business->id)
+        $contexts = AiContext::where('listing_id', $business->id)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'title', 'content', 'is_active', 'created_at']);
 
@@ -31,18 +31,18 @@ class AiChatbotController extends Controller
         if ($settings && $settings->is_enabled) {
             $vectorStore = new \Modules\AiChatbot\Services\VectorStoreService($settings);
             $counts = [
-                'product' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'product')->count(),
-                'service' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'service')->count(),
-                'promotion' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'promotion')->count(),
-                'faq' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'faq')->count(),
-                'location' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'location')->count(),
-                'about' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'about')->count(),
-                'custom' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'custom')->count(),
-                'restaurant_category' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'restaurant_category')->count(),
-                'restaurant_product' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'restaurant_product')->count(),
-                'social_network' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'social_network')->count(),
-                'appointment' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'appointment')->count(),
-                'appointment_exception' => \Modules\AiChatbot\Models\AiEmbedding::where('business_id', $business->id)->where('source_type', 'appointment_exception')->count(),
+                'product' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'product')->count(),
+                'service' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'service')->count(),
+                'promotion' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'promotion')->count(),
+                'faq' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'faq')->count(),
+                'location' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'location')->count(),
+                'about' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'about')->count(),
+                'custom' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'custom')->count(),
+                'restaurant_category' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_category')->count(),
+                'restaurant_product' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_product')->count(),
+                'social_network' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'social_network')->count(),
+                'appointment' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment')->count(),
+                'appointment_exception' => \Modules\AiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment_exception')->count(),
             ];
             $embeddingCounts = $counts;
         }
@@ -97,7 +97,7 @@ class AiChatbotController extends Controller
         ]);
     }
 
-    public function saveSettings(Request $request, \Modules\Businesses\Models\Business $business)
+    public function saveSettings(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -184,14 +184,14 @@ class AiChatbotController extends Controller
         }
 
         $settings = BusinessAiSetting::updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             $updateData
         );
 
         return redirect()->back()->with('success', 'Configuración guardada correctamente.');
     }
 
-    public function storeContext(Request $request, \Modules\Businesses\Models\Business $business)
+    public function storeContext(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -203,7 +203,7 @@ class AiChatbotController extends Controller
         ]);
 
         $context = AiContext::create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'title' => $data['title'],
             'content' => $data['content'],
             'content_for_editing' => $data['content_for_editing'] ?? null,
@@ -213,11 +213,11 @@ class AiChatbotController extends Controller
         return redirect()->back()->with('success', 'Contexto creado correctamente.');
     }
 
-    public function updateContext(Request $request, \Modules\Businesses\Models\Business $business, $contextId)
+    public function updateContext(Request $request, \Modules\Listings\Models\Listing $business, $contextId)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $context = AiContext::where('business_id', $business->id)->findOrFail($contextId);
+        $context = AiContext::where('listing_id', $business->id)->findOrFail($contextId);
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -236,22 +236,22 @@ class AiChatbotController extends Controller
         return redirect()->back()->with('success', 'Contexto actualizado correctamente.');
     }
 
-    public function destroyContext(Request $request, \Modules\Businesses\Models\Business $business, $contextId)
+    public function destroyContext(Request $request, \Modules\Listings\Models\Listing $business, $contextId)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $context = AiContext::where('business_id', $business->id)->findOrFail($contextId);
+        $context = AiContext::where('listing_id', $business->id)->findOrFail($contextId);
 
         $context->delete();
 
         return redirect()->back()->with('success', 'Contexto eliminado correctamente.');
     }
 
-    public function reindex(Request $request, \Modules\Businesses\Models\Business $business)
+    public function reindex(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
 
         if (!$settings) {
             return redirect()->back()->with('error', 'Primero configura los ajustes del chatbot.');
@@ -280,7 +280,7 @@ class AiChatbotController extends Controller
         }
     }
 
-    public function extractUrl(Request $request, \Modules\Businesses\Models\Business $business)
+    public function extractUrl(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -288,7 +288,7 @@ class AiChatbotController extends Controller
             'url' => 'required|url|max:2048',
         ]);
 
-        $settings = BusinessAiSetting::where('business_id', $business->id)->first();
+        $settings = BusinessAiSetting::where('listing_id', $business->id)->first();
         $maxChars = $settings->url_import_max_chars ?? 5000;
 
         $extractor = new UrlContentExtractor();
@@ -297,11 +297,11 @@ class AiChatbotController extends Controller
         return redirect()->back()->with('extractResult', $result);
     }
 
-    public function widgetSettings(Request $request, \Modules\Businesses\Models\Business $business)
+    public function widgetSettings(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('business_id', $business->id)->first();
+        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('listing_id', $business->id)->first();
 
         if (!$widget) {
             $widget = \Modules\AiChatbot\Models\ChatbotWidget::generateForBusiness($business);
@@ -329,7 +329,7 @@ class AiChatbotController extends Controller
         ]);
     }
 
-    public function saveWidgetSettings(Request $request, \Modules\Businesses\Models\Business $business)
+    public function saveWidgetSettings(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
@@ -341,7 +341,7 @@ class AiChatbotController extends Controller
             'intent_cta' => 'nullable|array',
         ]);
 
-        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('business_id', $business->id)->first();
+        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('listing_id', $business->id)->first();
 
         if (!$widget) {
             $widget = \Modules\AiChatbot\Models\ChatbotWidget::generateForBusiness($business);
@@ -353,9 +353,9 @@ class AiChatbotController extends Controller
         ]);
 
         if (isset($validated['intent_cta'])) {
-            $aiSettings = \Modules\AiChatbot\Models\BusinessAiSetting::where('business_id', $business->id)->first();
+            $aiSettings = \Modules\AiChatbot\Models\BusinessAiSetting::where('listing_id', $business->id)->first();
             if (!$aiSettings) {
-                $aiSettings = new \Modules\AiChatbot\Models\BusinessAiSetting(['business_id' => $business->id]);
+                $aiSettings = new \Modules\AiChatbot\Models\BusinessAiSetting(['listing_id' => $business->id]);
             }
             $aiSettings->intent_cta = $validated['intent_cta'];
             $aiSettings->cta_enabled = !empty(array_filter($validated['intent_cta'], fn($i) => $i['enabled'] ?? false));
@@ -365,11 +365,11 @@ class AiChatbotController extends Controller
         return redirect()->back()->with('success', 'Configuración del widget guardada.');
     }
 
-    public function regenerateWidgetKey(Request $request, \Modules\Businesses\Models\Business $business)
+    public function regenerateWidgetKey(Request $request, \Modules\Listings\Models\Listing $business)
     {
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
-        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('business_id', $business->id)->first();
+        $widget = \Modules\AiChatbot\Models\ChatbotWidget::where('listing_id', $business->id)->first();
 
         if (!$widget) {
             $widget = \Modules\AiChatbot\Models\ChatbotWidget::generateForBusiness($business);

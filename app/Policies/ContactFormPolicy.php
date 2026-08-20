@@ -3,11 +3,11 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class ContactFormPolicy
 {
-    public function submit(User $user, Business $business): bool
+    public function submit(User $user, Listing $business): bool
     {
         if ($business->is_published && $business->is_active) {
             return true;

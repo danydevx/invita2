@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Faqs\Models\BusinessFaqCategory;
 use Illuminate\Support\Facades\Auth;
 
 class FaqCategoryController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -19,7 +19,7 @@ class FaqCategoryController extends Controller
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
 
-        $query = BusinessFaqCategory::where('business_id', $business->id)
+        $query = BusinessFaqCategory::where('listing_id', $business->id)
             ->with('faqs')
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
@@ -50,7 +50,7 @@ class FaqCategoryController extends Controller
             'to' => $categories->lastItem(),
         ];
 
-        $allCategories = BusinessFaqCategory::where('business_id', $business->id)
+        $allCategories = BusinessFaqCategory::where('listing_id', $business->id)
             ->orderBy('name')
             ->get();
 
@@ -64,7 +64,7 @@ class FaqCategoryController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Listing $business)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -76,7 +76,7 @@ class FaqCategoryController extends Controller
             'sort_order' => 'integer',
         ]);
 
-        $validated['business_id'] = $business->id;
+        $validated['listing_id'] = $business->id;
         $validated['slug'] = BusinessFaqCategory::generateUniqueSlug($business->id, $validated['name']);
 
         BusinessFaqCategory::create($validated);
@@ -84,11 +84,11 @@ class FaqCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoría creada exitosamente.');
     }
 
-    public function update(Request $request, Business $business, BusinessFaqCategory $category)
+    public function update(Request $request, Listing $business, BusinessFaqCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -102,11 +102,11 @@ class FaqCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoría actualizada exitosamente.');
     }
 
-    public function destroy(Business $business, BusinessFaqCategory $category)
+    public function destroy(Listing $business, BusinessFaqCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
-        abort_unless($category->business_id === $business->id, 403);
+        abort_unless($category->listing_id === $business->id, 403);
 
         $category->faqs()->update(['category_id' => null]);
 

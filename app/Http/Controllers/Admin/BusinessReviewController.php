@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Reviews\Models\BusinessReview;
 
 class BusinessReviewController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $reviews = $business->reviews()
             ->with('location')
@@ -28,7 +28,7 @@ class BusinessReviewController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/ReviewsCreate', [
             'business' => [
@@ -38,7 +38,7 @@ class BusinessReviewController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $data = $request->validate([
             'client_name' => ['required', 'string', 'max:150'],
@@ -51,7 +51,7 @@ class BusinessReviewController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $data['business_id'] = $business->id;
+        $data['listing_id'] = $business->id;
 
         $review = $business->reviews()->create($data);
 
@@ -66,7 +66,7 @@ class BusinessReviewController extends Controller
             ->with('success', 'Review created successfully.');
     }
 
-    public function edit(Request $request, Business $business, BusinessReview $review)
+    public function edit(Request $request, Listing $business, BusinessReview $review)
     {
         return Inertia::render('Admin/BusinessContent/ReviewsEdit', [
             'business' => [
@@ -87,7 +87,7 @@ class BusinessReviewController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessReview $review, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
     {
         $data = $request->validate([
             'client_name' => ['required', 'string', 'max:150'],
@@ -113,7 +113,7 @@ class BusinessReviewController extends Controller
             ->with('success', 'Review updated successfully.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessReview $review, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
     {
         $activity->log('admin_review_deleted', [
             'actor' => $request->user(),

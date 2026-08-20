@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('property_type_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('slug');
@@ -27,14 +27,14 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('business_id');
+            $table->index('listing_id');
             $table->index('property_type_id');
             $table->index('operation_type');
             $table->index('status');
             $table->index('price');
             $table->index('is_public');
-            $table->index(['business_id', 'status']);
-            $table->unique(['business_id', 'slug']);
+            $table->index(['listing_id', 'status']);
+            $table->unique(['listing_id', 'slug']);
         });
     }
 

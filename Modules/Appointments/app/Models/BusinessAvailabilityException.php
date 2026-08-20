@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessAvailabilityException extends Model
 {
-    protected $table = 'business_availability_exceptions';
+    protected $table = 'listing_availability_exceptions';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'exception_date',
         'is_available',
         'start_time',
@@ -29,6 +29,6 @@ class BusinessAvailabilityException extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 }

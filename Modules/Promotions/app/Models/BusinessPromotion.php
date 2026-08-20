@@ -11,8 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 class BusinessPromotion extends Model
 {
+
+    protected $table = 'listing_promotions';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_location_id',
         'name',
         'slug',
@@ -54,7 +57,7 @@ class BusinessPromotion extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function location(): BelongsTo
@@ -136,14 +139,14 @@ class BusinessPromotion extends Model
         }
 
         try {
-            $slug = $this->business->slug ?? 'business-' . $this->business_id;
+            $slug = $this->business->slug ?? 'listing-' . $this->listing_id;
             $verifyUrl = url('/b/' . $slug . '/verify/' . $this->id . '/' . $this->coupon_code);
 
             $qrCode = new QrCode($verifyUrl);
             $writer = new PngWriter();
             $result = $writer->write($qrCode);
 
-            $directory = 'promotions/' . $this->business_id;
+            $directory = 'promotions/' . $this->listing_id;
             if (!Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }

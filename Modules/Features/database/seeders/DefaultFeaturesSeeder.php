@@ -144,7 +144,7 @@ class DefaultFeaturesSeeder extends Seeder
                         'title' => $featureData['title'],
                     ],
                     [
-                        'business_id' => null,
+                        'listing_id' => null,
                         'source_feature_id' => null,
                         'description' => $featureData['description'],
                         'icon' => $featureData['icon'],

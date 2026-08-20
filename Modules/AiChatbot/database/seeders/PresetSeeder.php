@@ -42,7 +42,7 @@ class PresetSeeder extends Seeder
                 ]),
                 'is_active' => true,
                 'is_system' => true,
-                'business_id' => null,
+                'listing_id' => null,
                 'context_ids' => [],
             ],
             [
@@ -77,7 +77,7 @@ class PresetSeeder extends Seeder
                 ]),
                 'is_active' => true,
                 'is_system' => true,
-                'business_id' => null,
+                'listing_id' => null,
                 'context_ids' => [],
             ],
             [
@@ -112,7 +112,7 @@ class PresetSeeder extends Seeder
                 ]),
                 'is_active' => true,
                 'is_system' => true,
-                'business_id' => null,
+                'listing_id' => null,
                 'context_ids' => [],
             ],
             [
@@ -147,7 +147,7 @@ class PresetSeeder extends Seeder
                 ]),
                 'is_active' => true,
                 'is_system' => true,
-                'business_id' => null,
+                'listing_id' => null,
             ],
             [
                 'name' => 'Consultor de Salud',
@@ -186,7 +186,7 @@ class PresetSeeder extends Seeder
         ];
 
         foreach ($presets as $preset) {
-            if (!ChatbotPreset::where('slug', $preset['slug'])->whereNull('business_id')->exists()) {
+            if (!ChatbotPreset::where('slug', $preset['slug'])->whereNull('listing_id')->exists()) {
                 ChatbotPreset::create($preset);
             }
         }

@@ -4,17 +4,17 @@ namespace Modules\Hero\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Hero\Models\BusinessHero;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class HeroSeeder extends Seeder
 {
     public function run(): void
     {
-        $businesses = Business::where('is_active', true)->get();
+        $businesses = Listing::where('is_active', true)->get();
 
         foreach ($businesses as $business) {
             BusinessHero::updateOrCreate(
-                ['business_id' => $business->id],
+                ['listing_id' => $business->id],
                 [
                     'title' => $business->name,
                     'subtitle' => $business->description,

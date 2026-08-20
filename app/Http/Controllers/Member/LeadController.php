@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Leads\Models\BusinessLead;
 use Modules\Leads\Enums\LeadStatus;
 use Modules\Leads\Enums\LeadSource;
@@ -14,7 +14,7 @@ use Modules\Locations\Models\BusinessLocation;
 
 class LeadController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
@@ -79,7 +79,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $business)
     {
         $this->authorize('create', [BusinessLead::class, $business]);
 
@@ -97,7 +97,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function store(Request $request, Business $business, ActivityService $activity)
+    public function store(Request $request, Listing $business, ActivityService $activity)
     {
         $this->authorize('create', [BusinessLead::class, $business]);
 
@@ -111,7 +111,7 @@ class LeadController extends Controller
         ]);
 
         $lead = $business->leads()->create([
-            'business_id' => $business->id,
+            'listing_id' => $business->id,
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
@@ -132,7 +132,7 @@ class LeadController extends Controller
             ->with('success', 'Contacto creado correctamente.');
     }
 
-    public function show(Request $request, Business $business, BusinessLead $lead)
+    public function show(Request $request, Listing $business, BusinessLead $lead)
     {
         $this->authorize('view', [BusinessLead::class, $lead]);
 
@@ -163,7 +163,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Business $business, BusinessLead $lead)
+    public function edit(Request $request, Listing $business, BusinessLead $lead)
     {
         $this->authorize('update', [BusinessLead::class, $lead]);
 
@@ -193,7 +193,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business, BusinessLead $lead, ActivityService $activity)
+    public function update(Request $request, Listing $business, BusinessLead $lead, ActivityService $activity)
     {
         $this->authorize('update', [BusinessLead::class, $lead]);
 
@@ -228,7 +228,7 @@ class LeadController extends Controller
             ->with('success', 'Contacto actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, BusinessLead $lead, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, BusinessLead $lead, ActivityService $activity)
     {
         $this->authorize('delete', [BusinessLead::class, $lead]);
 
@@ -244,7 +244,7 @@ class LeadController extends Controller
             ->with('success', 'Contacto eliminado correctamente.');
     }
 
-    public function export(Request $request, Business $business)
+    public function export(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessLead::class, $business]);
 
@@ -283,7 +283,7 @@ class LeadController extends Controller
         return response($content, 200, $headers);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $business)
     {
         $this->authorize('deleteAny', [BusinessLead::class, $business]);
 

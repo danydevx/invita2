@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessAppointmentSlot extends Model
 {
+
+    protected $table = 'listing_appointment_slots';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_service_id',
         'business_location_id',
         'day_of_week',
@@ -28,7 +31,7 @@ class BusinessAppointmentSlot extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function service(): BelongsTo

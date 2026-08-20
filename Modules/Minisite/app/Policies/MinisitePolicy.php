@@ -3,7 +3,7 @@
 namespace Modules\Minisite\Policies;
 
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Minisite\Models\BusinessMinisiteSection;
 use Modules\Minisite\Models\BusinessMinisiteSetting;
 

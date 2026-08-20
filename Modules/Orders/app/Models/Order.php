@@ -7,14 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Orders\Enums\OrderStatus;
 use Modules\Orders\Enums\OrderType;
 
 class Order extends Model
 {
+
+    protected $table = 'orders';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'order_number',
         'customer_name',
         'customer_email',
@@ -43,7 +46,7 @@ class Order extends Model
 
         static::creating(function ($order) {
             if (empty($order->order_number)) {
-                $order->order_number = static::generateOrderNumber($order->business_id);
+                $order->order_number = static::generateOrderNumber($order->listing_id);
             }
         });
     }
@@ -53,7 +56,7 @@ class Order extends Model
         $year = date('Y');
         $prefix = "ORD-{$year}-";
 
-        $lastOrder = static::where('business_id', $businessId)
+        $lastOrder = static::where('listing_id', $businessId)
             ->whereYear('created_at', $year)
             ->orderBy('id', 'desc')
             ->first();
@@ -68,7 +71,7 @@ class Order extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function items(): HasMany

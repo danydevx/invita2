@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessReview extends Model
 {
+
+    protected $table = 'listing_reviews';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'business_location_id',
         'client_name',
         'company',
@@ -27,7 +30,7 @@ class BusinessReview extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function location(): BelongsTo

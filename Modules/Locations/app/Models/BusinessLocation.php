@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusinessLocation extends Model
 {
+
+    protected $table = 'listing_locations';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'name',
         'address_line_1',
         'address_line_2',
@@ -38,7 +41,7 @@ class BusinessLocation extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function galleryImages(): HasMany

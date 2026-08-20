@@ -4,14 +4,14 @@ namespace Modules\About\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessAbout extends Model
 {
-    protected $table = 'business_abouts';
+    protected $table = 'listing_abouts';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'title',
         'subtitle',
         'description',
@@ -28,6 +28,6 @@ class BusinessAbout extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 }

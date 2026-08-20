@@ -270,7 +270,7 @@ const startUpload = () => {
   })
   formData.append('business_gallery_id', props.galleryId)
 
-  router.post(`/member/businesses/${props.businessId}/gallery`, formData, {
+  router.post(`/member/listings/${props.businessId}/gallery`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       const uploadedCount = files.value.length

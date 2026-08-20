@@ -50,7 +50,7 @@ class BusinessModuleDefinitionController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'key' => ['required', 'string', 'max:100', 'unique:business_module_definitions,key'],
+            'key' => ['required', 'string', 'max:100', 'unique:listing_module_definitions,key'],
             'name' => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string', 'max:500'],
             'icon' => ['nullable', 'string', 'max:100'],
@@ -114,7 +114,7 @@ class BusinessModuleDefinitionController extends Controller
     public function update(Request $request, BusinessModuleDefinition $definition)
     {
         $data = $request->validate([
-            'key' => ['required', 'string', 'max:100', 'unique:business_module_definitions,key,'.$definition->id],
+            'key' => ['required', 'string', 'max:100', 'unique:listing_module_definitions,key,'.$definition->id],
             'name' => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string', 'max:500'],
             'icon' => ['nullable', 'string', 'max:100'],

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_contact_forms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('shortcode')->unique();
@@ -20,8 +20,8 @@ return new class extends Migration
             $table->boolean('show_email')->default(true);
             $table->timestamps();
 
-            $table->index('business_id');
-            $table->unique(['business_id', 'shortcode']);
+            $table->index('listing_id');
+            $table->unique(['listing_id', 'shortcode']);
         });
     }
 

@@ -10,7 +10,7 @@
       <template #actions>
         <Link
           v-if="canCreateMore"
-          :href="`/member/businesses/${business?.id}/contact-forms/create`"
+          :href="`/member/listings/${business?.id}/contact-forms/create`"
           class="btn btn-primary"
         >
           <i class="bi bi-plus me-1"></i>Nuevo Formulario
@@ -34,7 +34,7 @@
           <p class="text-muted small">Crea tu primer formulario de contacto para empezar a recibir mensajes.</p>
           <Link
             v-if="canCreateMore"
-            :href="`/member/businesses/${business?.id}/contact-forms/create`"
+            :href="`/member/listings/${business?.id}/contact-forms/create`"
             class="btn btn-primary"
           >
             <i class="bi bi-plus me-1"></i>Crear Primer Formulario
@@ -74,13 +74,13 @@
                 <td class="text-end">
                   <div class="btn-group">
                     <Link
-                      :href="`/member/businesses/${business?.id}/contact-forms/${form.id}/edit`"
+                      :href="`/member/listings/${business?.id}/contact-forms/${form.id}/edit`"
                       class="btn btn-sm btn-outline-primary"
                     >
                       <i class="bi bi-pencil"></i>
                     </Link>
                     <Link
-                      :href="`/member/businesses/${business?.id}/contact-forms/${form.id}/submissions`"
+                      :href="`/member/listings/${business?.id}/contact-forms/${form.id}/submissions`"
                       class="btn btn-sm btn-outline-secondary"
                     >
                       <i class="bi bi-envelope"></i>
@@ -143,7 +143,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Formularios', active: true },
       ]
     }
@@ -165,7 +165,7 @@ const copyShortcode = (shortcode) => {
 
 const deleteForm = (form) => {
   if (confirm(`¿Eliminar el formulario "${form.name}"? Esta accion no se puede deshacer.`)) {
-    router.delete(`/member/businesses/${business.value.id}/contact-forms/${form.id}`, {
+    router.delete(`/member/listings/${business.value.id}/contact-forms/${form.id}`, {
       preserveScroll: true,
     })
   }

@@ -61,7 +61,7 @@ class FeatureCategoryController extends Controller
     {
         $this->authorize('delete', $category);
 
-        if ($category->features()->whereNotNull('business_id')->exists()) {
+        if ($category->features()->whereNotNull('listing_id')->exists()) {
             return redirect()->back()->with('error', 'No se puede eliminar una categoria con features asignados a negocios.');
         }
 

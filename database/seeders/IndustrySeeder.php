@@ -49,6 +49,48 @@ class IndustrySeeder extends Seeder
                 'description' => 'Negocios de lavandería y tintorería',
                 'module_keys' => ['gallery', 'services', 'appointments', 'about', 'locations', 'contact_form', 'socialmedia', 'leads', 'team_members', 'packages', 'client_fidelity'],
             ],
+            [
+                'name' => 'Boda',
+                'slug' => 'wedding',
+                'icon' => 'bi bi-heart-fill',
+                'description' => 'Invitaciones digitales para bodas',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about'],
+            ],
+            [
+                'name' => 'Cumpleaños',
+                'slug' => 'birthday',
+                'icon' => 'bi bi-balloon',
+                'description' => 'Invitaciones digitales para cumpleaños',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about'],
+            ],
+            [
+                'name' => 'XV Años',
+                'slug' => 'xv-anos',
+                'icon' => 'bi bi-stars',
+                'description' => 'Invitaciones digitales para fiestas de XV años',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about'],
+            ],
+            [
+                'name' => 'Baby Shower',
+                'slug' => 'baby-shower',
+                'icon' => 'bi bi-baby',
+                'description' => 'Invitaciones digitales para baby showers',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about'],
+            ],
+            [
+                'name' => 'Corporativo',
+                'slug' => 'corporate',
+                'icon' => 'bi bi-briefcase',
+                'description' => 'Invitaciones digitales para eventos corporativos',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about', 'socialmedia'],
+            ],
+            [
+                'name' => 'Graduación',
+                'slug' => 'graduation',
+                'icon' => 'bi bi-mortarboard',
+                'description' => 'Invitaciones digitales para graduaciones',
+                'module_keys' => ['gallery', 'locations', 'guests', 'checkin', 'about'],
+            ],
         ];
 
         foreach ($industries as $industryData) {

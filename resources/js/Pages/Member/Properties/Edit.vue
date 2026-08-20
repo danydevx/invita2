@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Propiedad"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/properties`"
+      :backHref="`/member/listings/${business?.id}/properties`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -109,7 +109,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/businesses/${business?.id}/properties`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business?.id}/properties`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -200,12 +200,12 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find(b => b.id === businessId)
     const pt = propertyType.value
     const typeLabel = pt ? `${pt.name} (${pt.slug})` : 'Tipo'
-    const typeHref = pt ? `/member/businesses/${businessId}/properties?property_type_id=${pt.id}` : null
+    const typeHref = pt ? `/member/listings/${businessId}/properties?property_type_id=${pt.id}` : null
     if (biz) {
       const items = [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Propiedades', href: `/member/businesses/${biz.id}/properties` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Propiedades', href: `/member/listings/${biz.id}/properties` },
       ]
       if (typeHref) items.push({ label: typeLabel, href: typeHref })
       items.push({ label: 'Editar Propiedad', active: true })
@@ -385,7 +385,7 @@ const submit = () => {
     formData.append('main_image', mainImageFile.value)
   }
 
-  router.post(`/member/businesses/${business.value.id}/properties/${property.value.id}`, formData, {
+  router.post(`/member/listings/${business.value.id}/properties/${property.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

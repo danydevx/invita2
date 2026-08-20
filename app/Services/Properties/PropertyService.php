@@ -74,7 +74,7 @@ class PropertyService
     {
         return DB::transaction(function () use ($business, $data) {
             $propertyData = $this->extractMainFields($data);
-            $propertyData['business_id'] = $business->id;
+            $propertyData['listing_id'] = $business->id;
             $propertyData['slug'] = $this->generateUniqueSlug($business, $data['title'] ?? '');
             $propertyData['property_code'] = $this->generateUniquePropertyCode();
 

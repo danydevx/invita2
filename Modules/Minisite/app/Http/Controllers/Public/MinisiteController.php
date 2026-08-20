@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Properties\PropertyFormSchemaService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Minisite\Models\BusinessMinisiteSection;
 use Modules\Packages\Models\BusinessPackage;
 use Modules\Minisite\Models\BusinessMinisiteSetting;
@@ -16,7 +16,7 @@ class MinisiteController extends Controller
 {
     public function show(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -24,7 +24,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -32,7 +32,7 @@ class MinisiteController extends Controller
             abort(404, 'Minisite no configurado');
         }
 
-        $sections = BusinessMinisiteSection::where('business_id', $business->id)
+        $sections = BusinessMinisiteSection::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get()
@@ -111,7 +111,7 @@ class MinisiteController extends Controller
 
         $orderSettings = null;
         if (class_exists('\Modules\Orders\Models\OrderSetting')) {
-            $orderSettings = \Modules\Orders\Models\OrderSetting::where('business_id', $business->id)->first();
+            $orderSettings = \Modules\Orders\Models\OrderSetting::where('listing_id', $business->id)->first();
         }
 
         return Inertia::render($this->resolveThemeView('Show', $setting->theme_key), [
@@ -148,7 +148,7 @@ class MinisiteController extends Controller
 
     public function products(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -156,7 +156,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -183,7 +183,7 @@ class MinisiteController extends Controller
         $orderSettings = null;
         $businessLocations = [];
         if (class_exists('\Modules\Orders\Models\OrderSetting')) {
-            $orderSettings = \Modules\Orders\Models\OrderSetting::where('business_id', $business->id)->first();
+            $orderSettings = \Modules\Orders\Models\OrderSetting::where('listing_id', $business->id)->first();
         }
         if (class_exists('\Modules\Locations\Models\BusinessLocation')) {
             $businessLocations = $business->locations()
@@ -235,7 +235,7 @@ class MinisiteController extends Controller
 
     public function menu(string $slug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -243,7 +243,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -263,7 +263,7 @@ class MinisiteController extends Controller
         $orderSettings = null;
         $businessLocations = [];
         if (class_exists('\Modules\Orders\Models\OrderSetting')) {
-            $orderSettings = \Modules\Orders\Models\OrderSetting::where('business_id', $business->id)->first();
+            $orderSettings = \Modules\Orders\Models\OrderSetting::where('listing_id', $business->id)->first();
         }
         if (class_exists('\Modules\Locations\Models\BusinessLocation')) {
             $businessLocations = $business->locations()
@@ -312,7 +312,7 @@ class MinisiteController extends Controller
 
     public function productDetail(string $slug, string $productSlug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -320,7 +320,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -392,7 +392,7 @@ class MinisiteController extends Controller
 
         $orderSettings = null;
         if (class_exists('\Modules\Orders\Models\OrderSetting')) {
-            $orderSettings = \Modules\Orders\Models\OrderSetting::where('business_id', $business->id)->first();
+            $orderSettings = \Modules\Orders\Models\OrderSetting::where('listing_id', $business->id)->first();
         }
 
         return Inertia::render($this->resolveThemeView('ProductDetail', $setting->theme_key), [
@@ -416,7 +416,7 @@ class MinisiteController extends Controller
             ],
             'product' => [
                 'id' => $product->id,
-                'business_id' => $business->id,
+                'listing_id' => $business->id,
                 'name' => $product->name,
                 'slug' => $product->slug,
                 'description' => $product->description,
@@ -439,7 +439,7 @@ class MinisiteController extends Controller
 
     public function serviceDetail(string $slug, string $serviceSlug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -447,7 +447,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -549,7 +549,7 @@ class MinisiteController extends Controller
 
     public function promotionDetail(string $slug, string $promotionSlug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -557,7 +557,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -694,7 +694,7 @@ class MinisiteController extends Controller
 
     public function propertyDetail(string $slug, string $propertySlug)
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -702,7 +702,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -710,7 +710,7 @@ class MinisiteController extends Controller
             abort(404, 'Minisite no configurado');
         }
 
-        $property = \Modules\Properties\Models\Property::where('business_id', $business->id)
+        $property = \Modules\Properties\Models\Property::where('listing_id', $business->id)
             ->where('slug', $propertySlug)
             ->with(['images', 'propertyType', 'amenities.amenity', 'values.propertyField'])
             ->first();
@@ -904,7 +904,7 @@ class MinisiteController extends Controller
 
     private function renderPage(string $slug, string $sectionType, string $pageTitle, callable $dataLoader): \Inertia\Response
     {
-        $business = Business::where('slug', $slug)
+        $business = Listing::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -912,7 +912,7 @@ class MinisiteController extends Controller
             abort(404);
         }
 
-        $setting = BusinessMinisiteSetting::where('business_id', $business->id)
+        $setting = BusinessMinisiteSetting::where('listing_id', $business->id)
             ->where('is_active', true)
             ->first();
 
@@ -1001,10 +1001,10 @@ class MinisiteController extends Controller
         if ($business->contactForms()->where('is_active', true)->exists()) {
             $sections[] = 'contact_form';
         }
-        if (\Modules\RestaurantMenu\Entities\MenuCategory::where('business_id', $business->id)->where('active', true)->has('activeProducts')->exists()) {
+        if (\Modules\RestaurantMenu\Entities\MenuCategory::where('listing_id', $business->id)->where('active', true)->has('activeProducts')->exists()) {
             $sections[] = 'restaurant_menu';
         }
-        if (\Modules\Properties\Models\Property::where('business_id', $business->id)->exists()) {
+        if (\Modules\Properties\Models\Property::where('listing_id', $business->id)->exists()) {
             $sections[] = 'properties';
         }
 
@@ -1234,7 +1234,7 @@ class MinisiteController extends Controller
 
     private function getRestaurantMenuData(Business $business, array $config): array
     {
-        $query = \Modules\RestaurantMenu\Entities\MenuCategory::where('business_id', $business->id)
+        $query = \Modules\RestaurantMenu\Entities\MenuCategory::where('listing_id', $business->id)
             ->where('active', true)
             ->whereNull('parent_id')
             ->with(['children' => function ($q) {
@@ -1502,7 +1502,7 @@ class MinisiteController extends Controller
     {
         // TEMP: Show all properties regardless of status for testing
         // TODO: Change back to only published and public properties for production
-        $query = \Modules\Properties\Models\Property::where('business_id', $business->id)
+        $query = \Modules\Properties\Models\Property::where('listing_id', $business->id)
             ->orderBy('is_featured', 'desc')
             ->orderBy('created_at', 'desc');
 
@@ -1569,8 +1569,8 @@ class MinisiteController extends Controller
 
     private function getPropertyTypes(Business $business): array
     {
-        return \Modules\Properties\Models\PropertyType::where('business_id', $business->id)
-            ->orWhereNull('business_id')
+        return \Modules\Properties\Models\PropertyType::where('listing_id', $business->id)
+            ->orWhereNull('listing_id')
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'key', 'name'])
@@ -1594,7 +1594,7 @@ class MinisiteController extends Controller
 
     private function getAiChatbotSettings($business): ?array
     {
-        $aiSetting = \Modules\AiChatbot\Models\BusinessAiSetting::where('business_id', $business->id)
+        $aiSetting = \Modules\AiChatbot\Models\BusinessAiSetting::where('listing_id', $business->id)
             ->where('is_enabled', true)
             ->first();
 

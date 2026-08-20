@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/faqs/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/faqs/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva Pregunta
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/businesses/${business?.id}/faqs`"
+        :href="`/member/listings/${business?.id}/faqs`"
         class="btn btn-outline-secondary btn-sm"
       >
         Todas
       </Link>
       <Link
-        :href="`/member/businesses/${business?.id}/faq-categories`"
+        :href="`/member/listings/${business?.id}/faq-categories`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Categorías
@@ -49,12 +49,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/faqs`"
+      :endpoint="`/member/listings/${business?.id}/faqs`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/faqs/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/faqs/reorder`"
       search-placeholder="Buscar preguntas..."
       empty-title="No hay preguntas frecuentes"
       empty-text="Comienza creando tu primera pregunta frecuente."
@@ -64,7 +64,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/faqs/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/faqs/bulk-delete`"
           item-name="preguntas"
           @deleted="onBulkDeleted"
         />
@@ -115,7 +115,7 @@
           <button class="btn btn-sm btn-outline-secondary" @click="cloneFaq(row)" title="Clonar">
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/businesses/${business?.id}/faqs/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/faqs/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteFaq(row)">
@@ -161,7 +161,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Preguntas Frecuentes', active: true },
       ]
     }
@@ -207,7 +207,7 @@ const filterByCategory = () => {
   if (selectedCategory.value) {
     params.category = selectedCategory.value
   }
-  router.get(`/member/businesses/${business.value.id}/faqs`, params, {
+  router.get(`/member/listings/${business.value.id}/faqs`, params, {
     preserveScroll: true,
   })
 }
@@ -217,7 +217,7 @@ const deleteFaq = (faq) => {
     return
   }
 
-  router.delete(`/member/businesses/${business.value.id}/faqs/${faq.id}`, {
+  router.delete(`/member/listings/${business.value.id}/faqs/${faq.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {
@@ -232,7 +232,7 @@ const cloneFaq = (faq) => {
     return
   }
 
-  router.post(`/member/businesses/${business.value.id}/faqs/${faq.id}/clone`, {}, {
+  router.post(`/member/listings/${business.value.id}/faqs/${faq.id}/clone`, {}, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

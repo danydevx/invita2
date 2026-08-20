@@ -17,7 +17,7 @@ class FeatureController extends Controller
         $this->authorize('viewAnyAdmin', Feature::class);
 
         $query = Feature::with('category')
-            ->whereNull('business_id')
+            ->whereNull('listing_id')
             ->whereNull('source_feature_id');
 
         if ($request->has('category_id') && $request->category_id) {

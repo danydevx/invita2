@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Detalle de Cita'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business.id}/appointments`"
+      :backHref="`/member/listings/${business.id}/appointments`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -109,7 +109,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Detalle de Cita', active: true },
       ]
     }
@@ -141,7 +141,7 @@ const statusClass = (status) => {
 }
 
 const updateStatus = (status) => {
-  router.put(`/member/businesses/${business.value.id}/appointments/${appointment.value.id}`, {
+  router.put(`/member/listings/${business.value.id}/appointments/${appointment.value.id}`, {
     status,
   }, { preserveScroll: true })
 }

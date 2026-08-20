@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusinessAvailability extends Model
 {
-    protected $table = 'business_availability';
+    protected $table = 'listing_availability';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'day_of_week',
         'is_available',
         'start_time',
@@ -51,12 +51,12 @@ class BusinessAvailability extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function exceptions(): HasMany
     {
-        return $this->hasMany(BusinessAvailabilityException::class, 'business_id', 'business_id');
+        return $this->hasMany(BusinessAvailabilityException::class, 'listing_id', 'listing_id');
     }
 
     public static function dayName(int $dayOfWeek): string

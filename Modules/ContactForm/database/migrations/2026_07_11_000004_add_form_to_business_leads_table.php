@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('business_leads', function (Blueprint $table) {
             $table->foreignId('business_contact_form_id')
                 ->nullable()
-                ->after('business_id')
+                ->after('listing_id')
                 ->constrained('business_contact_forms')
                 ->nullOnDelete();
 

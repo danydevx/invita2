@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class Property extends Model
 {
+
+    protected $table = 'properties';
+
     use HasFactory, SoftDeletes;
 
     protected $table = 'properties';
@@ -64,7 +67,7 @@ class Property extends Model
     ];
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'property_type_id',
         'title',
         'slug',
@@ -107,7 +110,7 @@ class Property extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Listing::class);
     }
 
     public function propertyType(): BelongsTo

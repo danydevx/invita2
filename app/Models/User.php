@@ -113,14 +113,14 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasOne(Subscription::class)->latestOfMany();
     }
 
-    public function businesses()
+    public function listings()
     {
-        return $this->hasMany(\Modules\Businesses\Models\Business::class);
+        return $this->hasMany(\Modules\Listings\Models\Listing::class);
     }
 
-    public function primaryBusiness()
+    public function primaryListing()
     {
-        return $this->hasOne(\Modules\Businesses\Models\Business::class)->latestOfMany();
+        return $this->hasOne(\Modules\Listings\Models\Listing::class)->latestOfMany();
     }
 
     public function forceDeleteWithRelations(): void
@@ -156,8 +156,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
             $file->delete();
         }
 
-        foreach ($this->businesses as $business) {
-            $business->forceDeleteWithRelations();
+        foreach ($this->listings as $listing) {
+            $listing->forceDeleteWithRelations();
         }
 
         $this->roles()->detach();

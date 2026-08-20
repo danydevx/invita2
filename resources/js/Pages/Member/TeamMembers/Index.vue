@@ -8,7 +8,7 @@
       backHref="/member/dashboard"
     >
       <template #actions>
-        <Link :href="`/member/businesses/${business?.id}/team-members/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${business?.id}/team-members/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Miembro
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/businesses/${business?.id}/team-members`"
+        :href="`/member/listings/${business?.id}/team-members`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-people me-1"></i>Miembros
       </Link>
       <Link
-        :href="`/member/businesses/${business?.id}/team-member-positions`"
+        :href="`/member/listings/${business?.id}/team-member-positions`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Puestos
@@ -49,12 +49,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/team-members`"
+      :endpoint="`/member/listings/${business?.id}/team-members`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/team-members/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/team-members/reorder`"
       search-placeholder="Buscar miembros..."
       empty-title="No hay miembros del equipo"
       empty-text="Comienza invitando a tu primer miembro del equipo."
@@ -64,7 +64,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/businesses/${business?.id}/team-members/bulk-delete`"
+          :delete-endpoint="`/member/listings/${business?.id}/team-members/bulk-delete`"
           item-name="miembros"
           @deleted="onBulkDeleted"
         />
@@ -113,7 +113,7 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/businesses/${business?.id}/team-members/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/team-members/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteMember(row)">
@@ -159,7 +159,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Dashboard', href: '/member/dashboard' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/modules` },
+        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
         { label: 'Mi Equipo', active: true },
       ]
     }
@@ -205,7 +205,7 @@ const filterByPosition = () => {
   if (selectedPosition.value) {
     params.position = selectedPosition.value
   }
-  router.get(`/member/businesses/${business.value.id}/team-members`, params, {
+  router.get(`/member/listings/${business.value.id}/team-members`, params, {
     preserveScroll: true,
   })
 }
@@ -215,7 +215,7 @@ const deleteMember = (member) => {
     return
   }
 
-  router.delete(`/member/businesses/${business.value.id}/team-members/${member.id}`, {
+  router.delete(`/member/listings/${business.value.id}/team-members/${member.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

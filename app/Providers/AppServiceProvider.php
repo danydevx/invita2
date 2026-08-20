@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Minisite\Models\BusinessMinisiteSection;
 use Modules\Minisite\Models\BusinessMinisiteSetting;
 use Modules\Minisite\Policies\MinisitePolicy;
@@ -73,14 +73,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Route model binding for Business model (in Modules)
-        $this->app->router->bind('business', function ($value) {
-            return Business::findOrFail($value);
+        // Route model binding for Listing model
+        $this->app->router->bind('listing', function ($value) {
+            return Listing::findOrFail($value);
         });
 
-        // Route model binding for Business by slug (for public booking widget)
-        $this->app->router->bind('businessSlug', function ($value) {
-            return Business::where('slug', $value)->firstOrFail();
+        // Route model binding for Listing by slug (for public booking widget)
+        $this->app->router->bind('listingSlug', function ($value) {
+            return Listing::where('slug', $value)->firstOrFail();
         });
 
         // Route model binding for BusinessLocation
@@ -129,7 +129,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(MediaFile::class, MediaFilePolicy::class);
         Gate::policy(Payment::class, PaymentPolicy::class);
         Gate::policy(Subscription::class, SubscriptionPolicy::class);
-        Gate::policy(Business::class, BusinessPolicy::class);
+        Gate::policy(Listing::class, BusinessPolicy::class);
         Gate::policy(\Modules\BusinessModules\Models\BusinessModule::class, BusinessModulePolicy::class);
         Gate::policy(\Modules\Locations\Models\BusinessLocation::class, BusinessLocationPolicy::class);
         Gate::policy(\Modules\Gallery\Models\BusinessGalleryImage::class, BusinessGalleryImagePolicy::class);
@@ -154,7 +154,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\Modules\Tasks\Models\BusinessTask::class, \App\Policies\BusinessTaskPolicy::class);
         Gate::policy(BusinessMinisiteSetting::class, MinisitePolicy::class);
         Gate::policy(BusinessMinisiteSection::class, MinisitePolicy::class);
-        Gate::policy(Business::class, MinisitePolicy::class);
+        Gate::policy(Listing::class, MinisitePolicy::class);
         Gate::policy(\Modules\Properties\Models\Property::class, \App\Policies\PropertyPolicy::class);
         Gate::policy(\Modules\Properties\Models\PropertyType::class, \App\Policies\PropertyTypePolicy::class);
         Gate::policy(BusinessSchedule::class, BusinessSchedulePolicy::class);

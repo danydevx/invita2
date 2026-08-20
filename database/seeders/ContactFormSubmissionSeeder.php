@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Leads\Models\BusinessLead;
 use Modules\Leads\Enums\LeadStatus;
 use Modules\Leads\Enums\LeadSource;
@@ -13,7 +13,7 @@ class ContactFormSubmissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $business = Business::find(2);
+        $business = Listing::find(2);
 
         if (!$business) {
             $this->command->error('Business with ID 2 (Lavanderia Manolos) not found.');
@@ -95,7 +95,7 @@ class ContactFormSubmissionSeeder extends Seeder
 
             BusinessLead::updateOrCreate(
                 [
-                    'business_id' => $business->id,
+                    'listing_id' => $business->id,
                     'email' => $emails[$i],
                 ],
                 [

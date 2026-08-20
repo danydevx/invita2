@@ -173,18 +173,6 @@ class UserController extends Controller
     {
         $user->load('profile');
 
-        $plans = Plan::query()
-            ->where('is_active', true)
-            ->orderByRaw('sort_order is null, sort_order asc')
-            ->orderBy('id')
-            ->get(['id', 'name'])
-            ->map(fn ($plan) => [
-                'id' => $plan->id,
-                'label' => $plan->name,
-            ]);
-
-        $subscription = $user->currentSubscription;
-
         $roles = Role::query()
             ->where('blocked', false)
             ->where('name', '!=', 'guest')
@@ -206,16 +194,6 @@ class UserController extends Controller
             ],
             'roles' => $roles,
             'userRoles' => $user->roles()->pluck('id')->all(),
-            'plans' => $plans,
-            'subscription' => $subscription ? [
-                'plan_id' => $subscription->plan_id,
-                'status' => $subscription->status,
-                'starts_at' => $subscription->starts_at?->toDateString(),
-                'ends_at' => $subscription->ends_at?->toDateString(),
-                'trial_ends_at' => $subscription->trial_ends_at?->toDateString(),
-                'price' => $subscription->price,
-                'billing_period' => $subscription->billing_period,
-            ] : null,
         ]);
     }
 
@@ -240,13 +218,6 @@ class UserController extends Controller
                     ->where('blocked', false)
                     ->where('name', '!=', 'guest')),
             ],
-            'subscription.plan_id' => ['nullable', 'integer', Rule::exists('plans', 'id')],
-            'subscription.status' => ['nullable', 'string', Rule::in(['pending', 'trial', 'active', 'expired', 'canceled'])],
-            'subscription.starts_at' => ['nullable', 'date'],
-            'subscription.ends_at' => ['nullable', 'date', 'after_or_equal:subscription.starts_at'],
-            'subscription.trial_ends_at' => ['nullable', 'date'],
-            'subscription.price' => ['nullable', 'numeric', 'min:0'],
-            'subscription.billing_period' => ['nullable', 'string', 'max:50'],
         ], [
             'password.regex' => 'Minimo 8 caracteres, con letras y numeros.',
         ]);
@@ -288,54 +259,6 @@ class UserController extends Controller
                 ],
                 'request' => $request,
             ]);
-        }
-
-        $subscriptionData = $data['subscription'] ?? null;
-        if ($subscriptionData && ! empty($subscriptionData['plan_id'])) {
-            if (empty($subscriptionData['status'])) {
-                return back()->withErrors([
-                    'subscription.status' => 'El estado es requerido cuando se asigna un plan.',
-                ]);
-            }
-
-            $existing = $user->currentSubscription;
-            $payload = [
-                'plan_id' => $subscriptionData['plan_id'],
-                'status' => $subscriptionData['status'],
-                'starts_at' => $subscriptionData['starts_at'] ?? null,
-                'ends_at' => $subscriptionData['ends_at'] ?? null,
-                'trial_ends_at' => $subscriptionData['trial_ends_at'] ?? null,
-                'price' => $subscriptionData['price'] ?? null,
-                'billing_period' => $subscriptionData['billing_period'] ?? null,
-            ];
-
-            if ($existing) {
-                $existing->update($payload);
-            } else {
-                $user->subscriptions()->create($payload);
-            }
-
-            $activity->log('subscription_updated', [
-                'user' => $user,
-                'actor' => $request->user(),
-                'subject' => $user->currentSubscription,
-                'description' => 'Suscripcion actualizada por admin',
-                'request' => $request,
-            ]);
-
-            $webhooks->dispatchUserEvent($user, 'subscription.updated', [
-                'subscription_id' => $user->currentSubscription?->id,
-                'status' => $user->currentSubscription?->status,
-                'plan_id' => $user->currentSubscription?->plan_id,
-            ]);
-
-            $notifications->create(
-                $user,
-                'billing',
-                'Suscripcion actualizada',
-                'Tu suscripcion fue actualizada por un administrador.',
-                '/member'
-            );
         }
 
         $webhooks->dispatchUserEvent($user, 'user.updated', [

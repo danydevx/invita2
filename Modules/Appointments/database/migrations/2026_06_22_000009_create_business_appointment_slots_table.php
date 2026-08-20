@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_appointment_slots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_service_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_location_id')->nullable()->constrained()->nullOnDelete();
             $table->tinyInteger('day_of_week')->nullable();
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->unsignedInteger('slots_available')->default(1);
             $table->timestamps();
 
-            $table->index(['business_id', 'business_service_id', 'day_of_week'], 'slots_business_service_day_idx');
-            $table->index(['business_id', 'specific_date'], 'slots_business_date_idx');
+            $table->index(['listing_id', 'business_service_id', 'day_of_week'], 'slots_business_service_day_idx');
+            $table->index(['listing_id', 'specific_date'], 'slots_business_date_idx');
         });
     }
 

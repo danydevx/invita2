@@ -1,0 +1,9 @@
+{
+    "name": "Checkin",
+    "alias": "checkin",
+    "description": "Registro de asistencia para eventos",
+    "keywords": [],
+    "priority": 0,
+    "providers": [],
+    "files": []
+}

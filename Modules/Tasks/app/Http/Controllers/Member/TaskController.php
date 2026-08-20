@@ -5,7 +5,7 @@ namespace Modules\Tasks\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Tasks\Models\BusinessTask;
 
 class TaskController extends Controller
@@ -126,7 +126,7 @@ class TaskController extends Controller
 
         $data = $request->validate([
             'items' => ['required', 'array'],
-            'items.*.id' => ['integer', \Illuminate\Validation\Rule::exists('business_tasks', 'id')->where('business_id', $business->id)],
+            'items.*.id' => ['integer', \Illuminate\Validation\Rule::exists('business_tasks', 'id')->where('listing_id', $business->id)],
             'items.*.status' => ['required', 'in:todo,in_progress,done'],
             'items.*.sort_order' => ['required', 'integer', 'min:0'],
         ]);

@@ -5,7 +5,7 @@
     <PageHeader
       title="Nuevo Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/products`"
+      :backHref="`/member/listings/${business?.id}/products`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -175,7 +175,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Producto' }}
             </button>
-            <Link :href="`/member/businesses/${business?.id}/products`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${business?.id}/products`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -271,8 +271,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Productos', href: `/member/businesses/${biz.id}/products` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Productos', href: `/member/listings/${biz.id}/products` },
         { label: 'Nuevo Producto', active: true },
       ]
     }
@@ -328,7 +328,7 @@ const submit = () => {
   if (productImages.value instanceof File) {
     formData.append('image', productImages.value)
   }
-  router.post(`/member/businesses/${business.value.id}/products`, formData, {
+  router.post(`/member/listings/${business.value.id}/products`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

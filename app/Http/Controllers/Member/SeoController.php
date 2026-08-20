@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Seo\Models\BusinessSeoSetting;
 use Illuminate\Support\Facades\Storage;
 
 class SeoController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $business)
     {
         $this->authorize('viewAny', [BusinessSeoSetting::class, $business]);
 
@@ -42,7 +42,7 @@ class SeoController extends Controller
         ]);
     }
 
-    public function update(Request $request, Business $business)
+    public function update(Request $request, Listing $business)
     {
         $this->authorize('updateForBusiness', [BusinessSeoSetting::class, $business]);
 
@@ -77,7 +77,7 @@ class SeoController extends Controller
         }
 
         $business->seoSetting()->updateOrCreate(
-            ['business_id' => $business->id],
+            ['listing_id' => $business->id],
             $validated
         );
 

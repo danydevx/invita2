@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('order_number')->unique();
             $table->string('customer_name');
             $table->string('customer_email')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->index('business_id');
+            $table->index('listing_id');
             $table->index('status');
             $table->index('created_at');
         });

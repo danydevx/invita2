@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\Leads\Models\BusinessLead;
 use Modules\Promotions\Models\BusinessPromotion;
 use Modules\Reviews\Models\BusinessReview;
@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        $businesses = $user->businesses()
+        $listings = $user->listings()
             ->select('id', 'name', 'description')
             ->orderBy('name')
             ->get()
@@ -27,8 +27,8 @@ class DashboardController extends Controller
                 'description' => $biz->description,
             ]);
 
-        $businessIds = $businesses->pluck('id');
-        $businessCount = $businessIds->count();
+        $businessIds = $listings->pluck('id');
+        $businessCount = $listings->count();
 
         if ($businessCount === 0) {
             $counts = [
@@ -39,17 +39,17 @@ class DashboardController extends Controller
             ];
         } else {
             $counts = [
-                'leads' => BusinessLead::whereIn('business_id', $businessIds)->count(),
-                'appointments' => BusinessAppointment::whereIn('business_id', $businessIds)->count(),
-                'promotions' => BusinessPromotion::whereIn('business_id', $businessIds)->count(),
-                'reviews' => BusinessReview::whereIn('business_id', $businessIds)->count(),
+                'leads' => BusinessLead::whereIn('listing_id', $businessIds)->count(),
+                'appointments' => BusinessAppointment::whereIn('listing_id', $businessIds)->count(),
+                'promotions' => BusinessPromotion::whereIn('listing_id', $businessIds)->count(),
+                'reviews' => BusinessReview::whereIn('listing_id', $businessIds)->count(),
             ];
         }
 
         return Inertia::render('Member/Dashboard', [
             'businessCount' => $businessCount,
             'stats' => $counts,
-            'businesses' => $businesses,
+            'listings' => $listings,
         ]);
     }
 }

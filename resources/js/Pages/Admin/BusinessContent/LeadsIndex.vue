@@ -4,13 +4,13 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/admin/businesses" class="text-decoration-none text-muted small">
+        <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ business.name }} - Leads</h1>
       </div>
       <div>
-        <Link :href="`/admin/businesses/${business.id}/leads/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/admin/listings/${business.id}/leads/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nuevo Lead
         </Link>
@@ -53,10 +53,10 @@
                 <td>{{ formatDate(lead.created_at) }}</td>
                 <td class="text-end">
                   <div class="d-flex gap-1 justify-content-end">
-                    <Link :href="`/admin/businesses/${business.id}/leads/${lead.id}`" class="btn btn-sm btn-outline-primary">
+                    <Link :href="`/admin/listings/${business.id}/leads/${lead.id}`" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-eye"></i>
                     </Link>
-                    <Link :href="`/admin/businesses/${business.id}/leads/${lead.id}/edit`" class="btn btn-sm btn-outline-primary">
+                    <Link :href="`/admin/listings/${business.id}/leads/${lead.id}/edit`" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-pencil"></i>
                     </Link>
                     <button
@@ -108,7 +108,7 @@ const formatDate = (date) => {
 
 const deleteLead = (lead) => {
   if (confirm('¿Estás seguro de eliminar este lead?')) {
-    router.delete(`/admin/businesses/${business.value.id}/leads/${lead.id}`, {
+    router.delete(`/admin/listings/${business.value.id}/leads/${lead.id}`, {
       preserveScroll: true,
     })
   }

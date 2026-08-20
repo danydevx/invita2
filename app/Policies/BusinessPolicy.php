@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 
 class BusinessPolicy
 {
@@ -15,7 +15,7 @@ class BusinessPolicy
         return $user->hasRole('member');
     }
 
-    public function view(User $user, Business $business): bool
+    public function view(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -33,7 +33,7 @@ class BusinessPolicy
         return $user->hasRole('member');
     }
 
-    public function update(User $user, Business $business): bool
+    public function update(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -42,7 +42,7 @@ class BusinessPolicy
         return $user->id === $business->user_id;
     }
 
-    public function delete(User $user, Business $business): bool
+    public function delete(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
@@ -51,7 +51,7 @@ class BusinessPolicy
         return $user->id === $business->user_id;
     }
 
-    public function manageModules(User $user, Business $business): bool
+    public function manageModules(User $user, Listing $business): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;

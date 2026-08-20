@@ -9,8 +9,11 @@ use Illuminate\Support\Str;
 
 class BusinessFaqCategory extends Model
 {
+
+    protected $table = 'listing_faq_categories';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'name',
         'slug',
         'description',
@@ -29,13 +32,13 @@ class BusinessFaqCategory extends Model
 
         static::creating(function ($category) {
             if (empty($category->slug)) {
-                $category->slug = static::generateUniqueSlug($category->business_id, $category->name, $category->id);
+                $category->slug = static::generateUniqueSlug($category->listing_id, $category->name, $category->id);
             }
         });
 
         static::updating(function ($category) {
             if ($category->isDirty('name') && !$category->isDirty('slug')) {
-                $category->slug = static::generateUniqueSlug($category->business_id, $category->name, $category->id);
+                $category->slug = static::generateUniqueSlug($category->listing_id, $category->name, $category->id);
             }
         });
     }
@@ -46,7 +49,7 @@ class BusinessFaqCategory extends Model
         $originalSlug = $slug;
         $count = 1;
 
-        $query = static::where('business_id', $businessId)->where('slug', $slug);
+        $query = static::where('listing_id', $businessId)->where('slug', $slug);
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
@@ -54,7 +57,7 @@ class BusinessFaqCategory extends Model
         while ($query->exists()) {
             $slug = $originalSlug . '-' . $count;
             $count++;
-            $query = static::where('business_id', $businessId)->where('slug', $slug);
+            $query = static::where('listing_id', $businessId)->where('slug', $slug);
             if ($excludeId) {
                 $query->where('id', '!=', $excludeId);
             }
@@ -65,7 +68,7 @@ class BusinessFaqCategory extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function faqs(): HasMany

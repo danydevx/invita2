@@ -16,11 +16,11 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/social-networks`"
+      :endpoint="`/member/listings/${business?.id}/social-networks`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/businesses/${business?.id}/social-networks/reorder`"
+      :reorder-endpoint="`/member/listings/${business?.id}/social-networks/reorder`"
       search-placeholder="Buscar redes sociales..."
       empty-title="No hay redes sociales"
       empty-text="Comienza agregando tu primera red social."
@@ -199,7 +199,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Redes Sociales', active: true },
       ]
     }
@@ -278,7 +278,7 @@ const openEditModal = (network) => {
 const submitNetwork = () => {
   sending.value = true
   if (editingNetwork.value) {
-    router.put(`/member/businesses/${business.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
+    router.put(`/member/listings/${business.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -292,7 +292,7 @@ const submitNetwork = () => {
       },
     })
   } else {
-    router.post(`/member/businesses/${business.value.id}/social-networks`, form.data(), {
+    router.post(`/member/listings/${business.value.id}/social-networks`, form.data(), {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -310,7 +310,7 @@ const submitNetwork = () => {
 
 const deleteNetwork = (network) => {
   if (confirm('Estas seguro de eliminar esta red social?')) {
-    router.delete(`/member/businesses/${business.value.id}/social-networks/${network.id}`, {
+    router.delete(`/member/listings/${business.value.id}/social-networks/${network.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

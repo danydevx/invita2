@@ -156,7 +156,7 @@ class PlanController extends Controller
             'limits.can_export' => ['boolean'],
             'limits.can_upload_files' => ['boolean'],
             'modules' => ['nullable', 'array'],
-            'modules.*.module_definition_id' => ['required', 'exists:business_module_definitions,id'],
+            'modules.*.module_definition_id' => ['required', 'exists:listing_module_definitions,id'],
             'modules.*.is_enabled' => ['required', 'boolean'],
         ]);
 

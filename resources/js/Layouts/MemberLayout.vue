@@ -32,18 +32,18 @@
           
           <template v-if="primaryBusiness">
             <Link
-              :href="`/member/businesses/${primaryBusiness.id}/modules`"
+              :href="`/member/listings/${primaryBusiness.id}/modules`"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/modules`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/modules`) }"
             >
               <i class="bi bi-grid"></i>
               <span>Ver módulos</span>
             </Link>
 
             <Link
-              :href="`/member/businesses/${primaryBusiness.id}/edit`"
+              :href="`/member/listings/${primaryBusiness.id}/edit`"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/edit`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/edit`) }"
             >
               <i class="bi bi-pencil"></i>
               <span>Editar negocio</span>
@@ -52,7 +52,7 @@
             <a
               href="#"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/team-members`) || isActive(`/member/businesses/${primaryBusiness.id}/team-member-positions`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/team-members`) || isActive(`/member/listings/${primaryBusiness.id}/team-member-positions`) }"
               @click.prevent="teamSubmenuOpen = !teamSubmenuOpen"
             >
               <i class="bi bi-people"></i>
@@ -61,17 +61,17 @@
             </a>
             <div v-show="teamSubmenuOpen" class="sidebar-submenu">
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/team-members`"
+                :href="`/member/listings/${primaryBusiness.id}/team-members`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/team-members`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/team-members`) }"
               >
                 <i class="bi bi-person-badge"></i>
                 <span>Miembros</span>
               </Link>
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/team-member-positions`"
+                :href="`/member/listings/${primaryBusiness.id}/team-member-positions`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/team-member-positions`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/team-member-positions`) }"
               >
                 <i class="bi bi-folder"></i>
                 <span>Puestos</span>
@@ -79,9 +79,9 @@
             </div>
 
             <Link
-              :href="`/member/businesses/${primaryBusiness.id}/packages`"
+              :href="`/member/listings/${primaryBusiness.id}/packages`"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/packages`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/packages`) }"
             >
               <i class="bi bi-box-seam"></i>
               <span>Paquetes</span>
@@ -90,7 +90,7 @@
             <a
               href="#"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/products`) || isActive(`/member/businesses/${primaryBusiness.id}/product-categories`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) || isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
               @click.prevent="productsSubmenuOpen = !productsSubmenuOpen"
             >
               <i class="bi bi-cart"></i>
@@ -99,17 +99,17 @@
             </a>
             <div v-show="productsSubmenuOpen" class="sidebar-submenu">
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/products`"
+                :href="`/member/listings/${primaryBusiness.id}/products`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/products`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) }"
               >
                 <i class="bi bi-list"></i>
                 <span>Lista</span>
               </Link>
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/product-categories`"
+                :href="`/member/listings/${primaryBusiness.id}/product-categories`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/product-categories`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
               >
                 <i class="bi bi-folder"></i>
                 <span>Categorías</span>
@@ -119,7 +119,7 @@
             <a
               href="#"
               class="sidebar-link"
-              :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/menu-products`) || isActive(`/member/businesses/${primaryBusiness.id}/menu-categories`) }"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) || isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
               @click.prevent="menuSubmenuOpen = !menuSubmenuOpen"
             >
               <i class="bi bi-cup-hot"></i>
@@ -128,17 +128,17 @@
             </a>
             <div v-show="menuSubmenuOpen" class="sidebar-submenu">
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/menu-products`"
+                :href="`/member/listings/${primaryBusiness.id}/menu-products`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/menu-products`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) }"
               >
                 <i class="bi bi-list"></i>
                 <span>Productos</span>
               </Link>
               <Link
-                :href="`/member/businesses/${primaryBusiness.id}/menu-categories`"
+                :href="`/member/listings/${primaryBusiness.id}/menu-categories`"
                 class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/businesses/${primaryBusiness.id}/menu-categories`) }"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
               >
                 <i class="bi bi-folder"></i>
                 <span>Categorías</span>
@@ -348,9 +348,9 @@
                 
                 <template v-if="openBusiness === business.id">
                   <Link
-                    :href="`/member/businesses/${business.id}/edit`"
+                    :href="`/member/listings/${business.id}/edit`"
                     class="sidebar-link ps-4"
-                    :class="{ active: isActive(`/member/businesses/${business.id}/edit`) }"
+                    :class="{ active: isActive(`/member/listings/${business.id}/edit`) }"
                   >
                     <span><i class="bi bi-pencil"></i> Editar</span>
                   </Link>
@@ -369,9 +369,9 @@
 
             <Link 
               v-else
-              href="/member/businesses" 
+              href="/member/listings" 
               class="sidebar-link" 
-              :class="{ active: isActive('/member/businesses') }"
+              :class="{ active: isActive('/member/listings') }"
             >
               <i class="bi bi-building"></i>
               <span>Mis Negocios</span>
@@ -465,16 +465,16 @@ const checkAndOpenSubmenu = (path) => {
   if (!primaryBusiness.value) return
   const bizId = primaryBusiness.value.id
 
-  if (path.startsWith(`/member/businesses/${bizId}/team-members`) ||
-      path.startsWith(`/member/businesses/${bizId}/team-member-positions`)) {
+  if (path.startsWith(`/member/listings/${bizId}/team-members`) ||
+      path.startsWith(`/member/listings/${bizId}/team-member-positions`)) {
     teamSubmenuOpen.value = true
   }
-  if (path.startsWith(`/member/businesses/${bizId}/products`) ||
-      path.startsWith(`/member/businesses/${bizId}/product-categories`)) {
+  if (path.startsWith(`/member/listings/${bizId}/products`) ||
+      path.startsWith(`/member/listings/${bizId}/product-categories`)) {
     productsSubmenuOpen.value = true
   }
-  if (path.startsWith(`/member/businesses/${bizId}/menu-products`) ||
-      path.startsWith(`/member/businesses/${bizId}/menu-categories`)) {
+  if (path.startsWith(`/member/listings/${bizId}/menu-products`) ||
+      path.startsWith(`/member/listings/${bizId}/menu-categories`)) {
     menuSubmenuOpen.value = true
   }
 }
@@ -525,7 +525,7 @@ const getModuleByUrl = (url) => {
     if (module) {
       return { business, module }
     }
-    const editUrl = `/member/businesses/${business.id}/edit`
+    const editUrl = `/member/listings/${business.id}/edit`
     if (url === editUrl) {
       return { business, module: { title: 'Editar', url: editUrl } }
     }
@@ -537,7 +537,7 @@ const dynamicBreadcrumbs = computed(() => {
   const path = currentPath.value
   const result = []
 
-  result.push({ label: 'Mis Negocios', href: '/member/businesses' })
+  result.push({ label: 'Mis Negocios', href: '/member/listings' })
 
   const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
   if (businessMatch) {
@@ -546,7 +546,7 @@ const dynamicBreadcrumbs = computed(() => {
     if (business) {
       result.push({
         label: business.name,
-        href: `/member/businesses/${business.id}/edit`
+        href: `/member/listings/${business.id}/edit`
       })
 
       const moduleInfo = getModuleByUrl(path)
@@ -563,7 +563,7 @@ const dynamicBreadcrumbs = computed(() => {
       if (moduleInfo && moduleInfo.module) {
         result.push({
           label: moduleInfo.business.name,
-          href: `/member/businesses/${moduleInfo.business.id}/edit`
+          href: `/member/listings/${moduleInfo.business.id}/edit`
         })
         result.push({ label: moduleInfo.module.title, active: true })
       }
@@ -575,7 +575,7 @@ const dynamicBreadcrumbs = computed(() => {
     if (moduleInfo) {
       result.push({
         label: moduleInfo.business.name,
-        href: `/member/businesses/${moduleInfo.business.id}/edit`
+        href: `/member/listings/${moduleInfo.business.id}/edit`
       })
       result.push({ label: moduleInfo.module.title, active: true })
     }

@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BusinessMinisiteSetting extends Model
 {
+
+    protected $table = 'listing_minisite_settings';
+
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'theme_key',
         'hero_layout',
         'hero_title',
@@ -29,12 +32,12 @@ class BusinessMinisiteSetting extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function sections(): HasMany
     {
-        return $this->hasMany(BusinessMinisiteSection::class, 'business_id');
+        return $this->hasMany(BusinessMinisiteSection::class, 'listing_id');
     }
 
     public static function getHeroLayouts(): array

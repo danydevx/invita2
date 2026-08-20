@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_galleries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->string('name', 150);
             $table->string('description', 500)->nullable();
             $table->boolean('is_primary')->default(false);
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index(['business_id', 'is_active', 'sort_order']);
+            $table->index(['listing_id', 'is_active', 'sort_order']);
         });
     }
 

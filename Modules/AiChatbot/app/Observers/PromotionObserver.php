@@ -9,16 +9,16 @@ class PromotionObserver
     public function created($model): void
     {
         if (!$model->is_active) return;
-        event(new BusinessContentChanged($model->business_id, 'promotion', $model->id, 'created'));
+        event(new BusinessContentChanged($model->listing_id, 'promotion', $model->id, 'created'));
     }
 
     public function updated($model): void
     {
-        event(new BusinessContentChanged($model->business_id, 'promotion', $model->id, 'updated'));
+        event(new BusinessContentChanged($model->listing_id, 'promotion', $model->id, 'updated'));
     }
 
     public function deleted($model): void
     {
-        event(new BusinessContentChanged($model->business_id, 'promotion', $model->id, 'deleted'));
+        event(new BusinessContentChanged($model->listing_id, 'promotion', $model->id, 'deleted'));
     }
 }

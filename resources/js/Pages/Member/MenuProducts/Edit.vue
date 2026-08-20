@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/menu-products`"
+      :backHref="`/member/listings/${business?.id}/menu-products`"
     />
 
     <div class="container-fluid py-4">
@@ -245,8 +245,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Menu del Restaurant', href: `/member/businesses/${biz.id}/menu-products` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Menu del Restaurant', href: `/member/listings/${biz.id}/menu-products` },
         { label: 'Editar Producto', active: true },
       ]
     }
@@ -376,7 +376,7 @@ const submitForm = () => {
     image: variantImages.value[i],
   }))
 
-  router.post(`/member/businesses/${business.value.id}/menu-products/${product.value.id}`, {
+  router.post(`/member/listings/${business.value.id}/menu-products/${product.value.id}`, {
     ...form.value,
     image: productImage.value,
     variants: variantsWithImages,
@@ -405,10 +405,10 @@ const submitForm = () => {
 const deleteProduct = () => {
   if (!confirm(`Eliminar el producto "${product.value?.title}"?`)) return
 
-  router.delete(`/member/businesses/${business.value.id}/menu-products/${product.value.id}`, {
+  router.delete(`/member/listings/${business.value.id}/menu-products/${product.value.id}`, {
     preserveScroll: true,
     onSuccess: () => {
-      window.location.href = `/member/businesses/${business.value.id}/menu-products`
+      window.location.href = `/member/listings/${business.value.id}/menu-products`
     },
   })
 }

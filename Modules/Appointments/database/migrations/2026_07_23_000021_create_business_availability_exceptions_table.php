@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('business_availability_exceptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->date('exception_date');
             $table->boolean('is_available')->default(false);
             $table->time('start_time')->nullable();
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('reason')->nullable();
             $table->timestamps();
 
-            $table->unique(['business_id', 'exception_date'], 'availability_exceptions_business_date_unique');
+            $table->unique(['listing_id', 'exception_date'], 'availability_exceptions_business_date_unique');
             $table->index('exception_date');
         });
     }

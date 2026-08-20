@@ -3,7 +3,7 @@
 namespace Modules\OfficeHours\Policies;
 
 use App\Models\User;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\OfficeHours\Models\BusinessSchedule;
 
 class BusinessSchedulePolicy

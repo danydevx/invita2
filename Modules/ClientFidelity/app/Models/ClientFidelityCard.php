@@ -12,7 +12,7 @@ class ClientFidelityCard extends Model
     use HasFactory;
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'client_name',
         'client_email',
         'client_phone',
@@ -41,7 +41,7 @@ class ClientFidelityCard extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public static function generatePublicCode(): string

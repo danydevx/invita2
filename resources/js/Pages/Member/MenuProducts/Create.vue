@@ -5,7 +5,7 @@
     <PageHeader
       title="Nuevo Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/menu-products`"
+      :backHref="`/member/listings/${business?.id}/menu-products`"
     />
 
     <div class="container-fluid py-4">
@@ -168,7 +168,7 @@
               <button type="submit" class="btn btn-primary flex-grow-1" :disabled="sending">
                 {{ sending ? 'Creando...' : 'Crear Producto' }}
               </button>
-              <Link :href="`/member/businesses/${business?.id}/menu-products`" class="btn btn-outline-secondary">
+              <Link :href="`/member/listings/${business?.id}/menu-products`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -241,8 +241,8 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
-        { label: 'Productos', href: `/member/businesses/${biz.id}/menu-products` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Productos', href: `/member/listings/${biz.id}/menu-products` },
         { label: 'Nuevo Producto', active: true },
       ]
     }
@@ -340,7 +340,7 @@ const submitForm = () => {
     image: variantImages.value[i],
   }))
 
-  router.post(`/member/businesses/${business.value.id}/menu-products`, {
+  router.post(`/member/listings/${business.value.id}/menu-products`, {
     ...form.value,
     image: productImage.value,
     variants: variantsWithImages,

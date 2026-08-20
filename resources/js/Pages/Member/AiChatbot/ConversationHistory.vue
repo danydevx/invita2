@@ -11,7 +11,7 @@
         <p class="text-muted small mb-0">Últimas 100 conversaciones del chatbot</p>
       </div>
       <Link
-        :href="`/member/businesses/${business.id}/ai-chatbot`"
+        :href="`/member/listings/${business.id}/ai-chatbot`"
         class="btn btn-outline-secondary"
       >
         <i class="bi bi-arrow-left me-1"></i>Volver
@@ -72,13 +72,13 @@ const props = defineProps({
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: props.business?.name || 'Negocio', href: `/member/businesses/${props.business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/businesses/${props.business?.id}/ai-chatbot` },
+  { label: props.business?.name || 'Negocio', href: `/member/listings/${props.business?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${props.business?.id}/ai-chatbot` },
   { label: 'Historial', active: true },
 ])
 
 const viewConversation = (sessionId) => {
-  window.location.href = `/member/businesses/${props.business.id}/ai-chatbot/history/${sessionId}`
+  window.location.href = `/member/listings/${props.business.id}/ai-chatbot/history/${sessionId}`
 }
 
 const formatDate = (dateStr) => {

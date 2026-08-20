@@ -5,10 +5,10 @@
     <PageHeader
       :title="`Envios: ${form?.name || 'Formulario'}`"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/businesses/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${business?.id}/contact-forms`"
     >
       <template #actions>
-        <a :href="`/member/businesses/${business?.id}/contact-forms/${form?.id}/export`" class="btn btn-success btn-sm">
+        <a :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/export`" class="btn btn-success btn-sm">
           <i class="bi bi-download me-1"></i>Exportar CSV
         </a>
       </template>
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/businesses/${business?.id}/contact-forms/${form?.id}/submissions`"
+      :endpoint="`/member/listings/${business?.id}/contact-forms/${form?.id}/submissions`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar mensajes..."
@@ -48,7 +48,7 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/businesses/${business?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${business?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteSubmission(row)">
@@ -82,7 +82,7 @@ const breadcrumbs = computed(() => {
     if (biz) {
       return [
         { label: 'Mis Negocios', href: '/member/business-modules' },
-        { label: biz.name, href: `/member/businesses/${biz.id}/edit` },
+        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Respuestas', active: true },
       ]
     }
@@ -115,7 +115,7 @@ const formatDate = (date) => {
 
 const deleteSubmission = (row) => {
   if (confirm(`¿Eliminar el mensaje de "${row.name}"?`)) {
-    router.delete(`/member/businesses/${business.value?.id}/leads/${row.id}`, {
+    router.delete(`/member/listings/${business.value?.id}/leads/${row.id}`, {
       preserveScroll: true,
     })
   }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('order_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
             $table->enum('order_type', ['delivery', 'pickup', 'both'])->default('both');
             $table->decimal('delivery_radius_km', 8, 2)->default(10);
             $table->decimal('delivery_fee_base', 10, 2)->default(30);

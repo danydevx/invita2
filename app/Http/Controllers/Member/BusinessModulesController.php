@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Businesses\Models\Business;
+use Modules\Listings\Models\Listing;
 use Modules\BusinessModules\Models\BusinessModule;
 
 class BusinessModulesController extends Controller
 {
-    public function show(Request $request, Business $business)
+    public function show(Request $request, Listing $business)
     {
         $user = $request->user();
         abort_unless($user->id === $business->user_id || $user->hasAnyRole(['superadmin', 'admin']), 403);
@@ -56,8 +56,8 @@ class BusinessModulesController extends Controller
         return match ($moduleKey) {
             'leads' => "/member/leads?business={$businessId}",
             'appointments' => "/member/appointments?business={$businessId}",
-            'client_fidelity' => "/member/businesses/{$businessId}/fidelity-cards",
-            default => "/member/businesses/{$businessId}/" . $moduleKey,
+            'client_fidelity' => "/member/listings/{$businessId}/fidelity-cards",
+            default => "/member/listings/{$businessId}/" . $moduleKey,
         };
     }
 }

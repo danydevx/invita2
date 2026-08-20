@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/businesses/${business.id}/services`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${business.id}/services`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Nuevo Servicio</h1>
@@ -89,7 +89,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/admin/businesses/${business.id}/services`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/admin/listings/${business.id}/services`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -139,6 +139,6 @@ const handleImageChange = (e) => {
 }
 
 const submit = () => {
-  router.post(`/admin/businesses/${business.value.id}/services`, form)
+  router.post(`/admin/listings/${business.value.id}/services`, form)
 }
 </script>

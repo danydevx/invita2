@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderSetting extends Model
 {
+
+    protected $table = 'order_settings';
+
     protected $table = 'order_settings';
 
     protected $fillable = [
-        'business_id',
+        'listing_id',
         'order_type',
         'delivery_radius_km',
         'delivery_fee_base',
@@ -32,7 +35,7 @@ class OrderSetting extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Businesses\Models\Business::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
     public function calculateDeliveryFee(float $distanceKm): float
@@ -56,6 +59,6 @@ class OrderSetting extends Model
 
     public static function getForBusiness(int $businessId): ?self
     {
-        return static::where('business_id', $businessId)->first();
+        return static::where('listing_id', $businessId)->first();
     }
 }
