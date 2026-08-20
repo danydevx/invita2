@@ -1,3 +1,5 @@
+php_value sys_temp_dir /desarrollo/server/laravel/laravel-invita2/storage/tmp
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
