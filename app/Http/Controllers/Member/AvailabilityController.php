@@ -63,7 +63,7 @@ class AvailabilityController extends Controller
             });
 
         return Inertia::render('Member/Appointments/Availability', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Pregunta - ${business.name}`" />
+    <Head :title="`Editar Pregunta - ${listing.name}`" />
 
     <PageHeader
       :title="'Editar Pregunta Frecuente'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/faqs`"
+      :backHref="`/member/listings/${listing.id}/faqs`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -66,7 +66,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/listings/${business.id}/faqs`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${listing.id}/faqs`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -87,7 +87,7 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 
 const props = defineProps({
-  business: { type: Object, required: true },
+  listing: { type: Object },
   faq: { type: Object, required: true },
   categories: { type: Array, default: () => [] },
 })
@@ -122,7 +122,7 @@ const validateForm = () => {
 }
 
 const sending = ref(false)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const categoryOptions = computed(() => [
   { value: '', label: 'Sin categoria' },
@@ -165,7 +165,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.put(`/member/listings/${props.business.id}/faqs/${props.faq.id}`, form.value, {
+  router.put(`/member/listings/${props.listing.id}/faqs/${props.faq.id}`, form.value, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

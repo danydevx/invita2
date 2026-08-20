@@ -64,7 +64,7 @@ class ServiceController extends Controller
         ];
 
         return Inertia::render('Member/Services/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -81,7 +81,7 @@ class ServiceController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Member/Services/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -125,7 +125,7 @@ class ServiceController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.services.index', $business->id)
+        return redirect()->route('member.listings.services.index', $business->id)
             ->with('success', 'Servicio creado correctamente.');
     }
 
@@ -137,7 +137,7 @@ class ServiceController extends Controller
         $serviceImages = $service->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
 
         return Inertia::render('Member/Services/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -206,7 +206,7 @@ class ServiceController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.services.index', $business->id)
+        return redirect()->route('member.listings.services.index', $business->id)
             ->with('success', 'Servicio actualizado correctamente.');
     }
 
@@ -222,7 +222,7 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return redirect()->route('member.businesses.services.index', $business->id)
+        return redirect()->route('member.listings.services.index', $business->id)
             ->with('success', 'Servicio eliminado correctamente.');
     }
 

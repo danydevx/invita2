@@ -71,7 +71,7 @@ class PromotionController extends Controller
         ];
 
         return Inertia::render('Member/Promotions/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -87,7 +87,7 @@ class PromotionController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Member/Promotions/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -130,7 +130,7 @@ class PromotionController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.promotions.index', $business->id)
+        return redirect()->route('member.listings.promotions.index', $business->id)
             ->with('success', 'Promocion creada correctamente.');
     }
 
@@ -141,7 +141,7 @@ class PromotionController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Member/Promotions/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -210,7 +210,7 @@ class PromotionController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.promotions.index', $business->id)
+        return redirect()->route('member.listings.promotions.index', $business->id)
             ->with('success', 'Promocion actualizada correctamente.');
     }
 
@@ -228,7 +228,7 @@ class PromotionController extends Controller
 
         $promotion->delete();
 
-        return redirect()->route('member.businesses.promotions.index', $business->id)
+        return redirect()->route('member.listings.promotions.index', $business->id)
             ->with('success', 'Promocion eliminada correctamente.');
     }
 
@@ -293,13 +293,13 @@ class PromotionController extends Controller
         $this->authorize('update', [ListingPromotion::class, $promotion]);
 
         if (!$promotion->coupon_code) {
-            return redirect()->route('member.businesses.promotions.edit', [$business->id, $promotion->id])
+            return redirect()->route('member.listings.promotions.edit', [$business->id, $promotion->id])
                 ->with('error', 'La promoción no tiene código de cupón.');
         }
 
         $promotion->regenerateQrCode();
 
-        return redirect()->route('member.businesses.promotions.edit', [$business->id, $promotion->id])
+        return redirect()->route('member.listings.promotions.edit', [$business->id, $promotion->id])
             ->with('success', 'Código QR regenerado correctamente.');
     }
 
@@ -331,6 +331,6 @@ class PromotionController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.promotions.edit', [$business->id, $cloned->id]);
+        return redirect()->route('member.listings.promotions.edit', [$business->id, $cloned->id]);
     }
 }

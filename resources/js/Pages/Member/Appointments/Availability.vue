@@ -1,14 +1,14 @@
 <template>
   <MemberLayout>
-    <Head :title="`Disponibilidad - ${business?.name || ''}`" />
+    <Head :title="`Disponibilidad - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Disponibilidad de Citas"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/appointments`"
+      :backHref="`/member/listings/${listing?.id}/appointments`"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/appointments`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/appointments`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left me-1"></i>
           Volver a Citas
         </Link>
@@ -74,7 +74,7 @@
           </p>
           <WeeklyScheduleEditor
             :schedule="schedule"
-            :businessId="business?.id"
+            :businessId="listing?.id"
             :errors="errors"
             @saved="onSaved"
           />
@@ -86,7 +86,7 @@
           </p>
           <ExceptionDatesList
             :exceptions="exceptions"
-            :businessId="business?.id"
+            :businessId="listing?.id"
             @create="openCreateException"
             @edit="openEditException"
             @saved="onSaved"
@@ -109,7 +109,7 @@
 
     <ExceptionModal
       ref="exceptionModalRef"
-      :businessId="business?.id"
+      :businessId="listing?.id"
     />
   </MemberLayout>
 </template>
@@ -126,7 +126,7 @@ import AvailabilityCalendar from '@/Components/Availability/AvailabilityCalendar
 
 const page = usePage()
 
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const schedule = computed(() => page.props.weeklySchedule || [])
 const exceptions = computed(() => page.props.exceptions || [])
 const appointmentCounts = computed(() => page.props.appointmentCounts || {})
@@ -141,8 +141,8 @@ const exceptionModalRef = ref(null)
 const breadcrumbs = computed(() => {
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: business.value?.name || '', href: `/member/listings/${business.value?.id}/edit` },
-    { label: 'Citas', href: `/member/listings/${business.value?.id}/appointments` },
+    { label: listing.value?.name || '', href: `/member/listings/${listing.value?.id}/edit` },
+    { label: 'Citas', href: `/member/listings/${listing.value?.id}/appointments` },
     { label: 'Disponibilidad', active: true },
   ]
 })

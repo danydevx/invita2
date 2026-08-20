@@ -79,7 +79,7 @@ class TeamMemberController extends Controller
         ];
 
         return Inertia::render('Member/TeamMembers/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -101,7 +101,7 @@ class TeamMemberController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/TeamMembers/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -153,7 +153,7 @@ class TeamMemberController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.team-members.index', $business->id)
+        return redirect()->route('member.listings.team-members.index', $business->id)
             ->with('success', 'Miembro del equipo creado correctamente.');
     }
 
@@ -169,7 +169,7 @@ class TeamMemberController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/TeamMembers/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -234,7 +234,7 @@ class TeamMemberController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.team-members.index', $business->id)
+        return redirect()->route('member.listings.team-members.index', $business->id)
             ->with('success', 'Miembro del equipo actualizado correctamente.');
     }
 
@@ -257,7 +257,7 @@ class TeamMemberController extends Controller
 
         $member->delete();
 
-        return redirect()->route('member.businesses.team-members.index', $business->id)
+        return redirect()->route('member.listings.team-members.index', $business->id)
             ->with('success', 'Miembro del equipo eliminado correctamente.');
     }
 

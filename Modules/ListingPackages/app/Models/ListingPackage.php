@@ -31,9 +31,14 @@ class ListingPackage extends Model
         'sort_order' => 'integer',
     ];
 
+    public function listing(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
+    }
+
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
+        return $this->listing();
     }
 
     public function features(): HasMany

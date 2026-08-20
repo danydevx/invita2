@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nuevo Servicio - ${business.name}`" />
+    <Head :title="`Nuevo Servicio - ${listing.name}`" />
 
     <PageHeader
       :title="'Nuevo Servicio'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/services`"
+      :backHref="`/member/listings/${listing.id}/services`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -154,7 +154,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Servicio' }}
             </button>
-            <Link :href="`/member/listings/${business.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${listing.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -177,12 +177,12 @@ import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const props = defineProps({
-  business: { type: Object, required: true },
+  listing: { type: Object, required: true },
   locations: { type: Array, default: () => [] },
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 
 const locationOptions = computed(() => [
   { value: '', label: 'Todas las ubicaciones' },
@@ -264,7 +264,7 @@ watch(() => form.name, (val) => {
   }
 })
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -311,7 +311,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.post(`/member/listings/${business.value.id}/services`, formData, {
+  router.post(`/member/listings/${listing.value.id}/services`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

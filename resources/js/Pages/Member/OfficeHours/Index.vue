@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Horarios de Atención'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/locations/${location.id}/edit`"
+      :backHref="`/member/listings/${listing.id}/locations/${location.id}/edit`"
     />
 
     <div v-if="flashSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -20,7 +20,7 @@
         </p>
       </div>
       <Link
-        :href="`/member/listings/${business.id}/locations/${location.id}/schedules/create`"
+        :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/create`"
         class="btn btn-primary btn-sm"
       >
         <i class="bi bi-plus-lg me-1"></i>
@@ -34,7 +34,7 @@
           <i class="bi bi-clock text-muted" style="font-size: 3rem;"></i>
           <p class="text-muted mt-3">No hay horarios configurados.</p>
           <Link
-            :href="`/member/listings/${business.id}/locations/${location.id}/schedules/create`"
+            :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/create`"
             class="btn btn-primary btn-sm"
           >
             <i class="bi bi-plus-lg me-1"></i>
@@ -69,7 +69,7 @@
                 <td class="text-end">
                   <div class="btn-group btn-group-sm">
                     <Link
-                      :href="`/member/listings/${business.id}/locations/${location.id}/schedules/${schedule.id}/edit`"
+                      :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/${schedule.id}/edit`"
                       class="btn btn-outline-secondary"
                       title="Editar"
                     >
@@ -109,34 +109,34 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const location = computed(() => page.props.location)
 const schedules = computed(() => page.props.schedules || [])
 
 const flashSuccess = computed(() => page.props.flash?.success || null)
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find(b => b.id === business.value.id)
+  const biz = businessMenu.value.find(b => b.id === listing.value.id)
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: biz?.name || '', href: `/member/listings/${business.value.id}/edit` },
-    { label: 'Ubicaciones', href: `/member/listings/${business.value.id}/locations` },
-    { label: location.value.name, href: `/member/listings/${business.value.id}/locations/${location.value.id}/edit` },
+    { label: biz?.name || '', href: `/member/listings/${listing.value.id}/edit` },
+    { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
+    { label: location.value.name, href: `/member/listings/${listing.value.id}/locations/${location.value.id}/edit` },
     { label: 'Horarios', active: true },
   ]
 })
 
 const cloneSchedule = (scheduleId) => {
   if (confirm('¿Clonar este horario?')) {
-    router.post(`/member/listings/${business.value.id}/locations/${location.value.id}/schedules/${scheduleId}/clone`)
+    router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${scheduleId}/clone`)
   }
 }
 
 const deleteSchedule = (scheduleId) => {
   if (confirm('¿Eliminar este horario? Esta acción no se puede deshacer.')) {
-    router.delete(`/member/listings/${business.value.id}/locations/${location.value.id}/schedules/${scheduleId}`)
+    router.delete(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${scheduleId}`)
   }
 }
 </script>

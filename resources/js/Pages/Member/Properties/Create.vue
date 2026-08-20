@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Propiedad - ${business?.name || ''}`" />
+    <Head :title="`Nueva Propiedad - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nueva Propiedad"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/properties`"
+      :backHref="`/member/listings/${listing?.id}/properties`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -230,7 +230,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Propiedad' }}
             </button>
-            <Link :href="`/member/listings/${business?.id}/properties`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${listing?.id}/properties`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -263,7 +263,7 @@ import FieldFile from '@/Components/Fields/FieldFile.vue'
 import PropertyLocationSection from '@/Components/Properties/PropertyLocationSection.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const propertyTypes = computed(() => page.props.propertyTypes || [])
 const formSchema = computed(() => page.props.formSchema)
 const hasGalleryFields = computed(() => {
@@ -300,7 +300,7 @@ const localErrors = reactive({})
 const mergedErrors = computed(() => {
   return { ...serverErrors.value, ...localErrors }
 })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -353,11 +353,11 @@ if (formSchema.value?.sections) {
 }
 
 const selectType = (typeId) => {
-  window.location.href = `/member/listings/${business.value.id}/properties/create?type=${typeId}`
+  window.location.href = `/member/listings/${listing.value.id}/properties/create?type=${typeId}`
 }
 
 const changeType = () => {
-  window.location.href = `/member/listings/${business.value.id}/properties/create`
+  window.location.href = `/member/listings/${listing.value.id}/properties/create`
 }
 
 const getFieldColClass = (fieldType) => {
@@ -444,7 +444,7 @@ const submit = () => {
     formData.append('main_image', mainImageFile.value)
   }
 
-  router.post(`/member/listings/${business.value.id}/properties`, formData, {
+  router.post(`/member/listings/${listing.value.id}/properties`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

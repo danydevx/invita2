@@ -1,10 +1,10 @@
 <template>
   <AdminLayout>
-    <Head :title="`Editar Ubicacion - ${business.name}`" />
+    <Head :title="`Editar Ubicacion - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${business.id}/locations`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing.id}/locations`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Editar Ubicacion</h1>
@@ -96,7 +96,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/admin/listings/${business.id}/locations`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/admin/listings/${listing.id}/locations`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -114,7 +114,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import MapPicker from '@/Components/MapPicker.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const location = computed(() => page.props.location)
 const errors = computed(() => page.props.errors || {})
 const sending = computed(() => false)
@@ -137,6 +137,6 @@ const form = reactive({
 })
 
 const submit = () => {
-  router.put(`/admin/listings/${business.value.id}/locations/${location.value.id}`, form)
+  router.put(`/admin/listings/${listing.value.id}/locations/${location.value.id}`, form)
 }
 </script>

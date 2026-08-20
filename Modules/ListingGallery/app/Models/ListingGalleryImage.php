@@ -12,8 +12,8 @@ class ListingGalleryImage extends Model
 
     protected $fillable = [
         'listing_id',
-        'listing_gallery_id',
-        'listing_location_id',
+        'business_gallery_id',
+        'business_location_id',
         'path',
         'filename',
         'original_name',
@@ -44,6 +44,6 @@ class ListingGalleryImage extends Model
 
     public function location(): BelongsTo
     {
-        return $this->belongsTo(\Modules\ListingLocations\Models\ListingLocation::class, 'listing_location_id');
+        return $this->belongsTo(\Modules\ListingLocations\Models\ListingLocation::class, 'business_location_id');
     }
 }

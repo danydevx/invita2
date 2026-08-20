@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`${card?.client_name || 'Tarjeta'} - ${business?.name || ''}`" />
+    <Head :title="`${card?.client_name || 'Tarjeta'} - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Tarjeta"
@@ -40,7 +40,7 @@
             <div class="d-grid gap-2">
               <Link
                 v-if="card?.is_active && !card?.is_completed"
-                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/scan`"
+                :href="`/member/listings/${listing?.id}/fidelity-cards/${card?.id}/scan`"
                 method="post"
                 class="btn btn-success btn-sm"
                 as="button"
@@ -49,7 +49,7 @@
               </Link>
               <Link
                 v-if="card?.is_completed || card?.reset_count > 0"
-                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/reset`"
+                :href="`/member/listings/${listing?.id}/fidelity-cards/${card?.id}/reset`"
                 method="post"
                 class="btn btn-warning btn-sm"
                 as="button"
@@ -57,7 +57,7 @@
                 <i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar
               </Link>
               <Link
-                :href="`/member/listings/${business?.id}/fidelity-cards/${card?.id}/edit`"
+                :href="`/member/listings/${listing?.id}/fidelity-cards/${card?.id}/edit`"
                 class="btn btn-outline-primary btn-sm"
               >
                 <i class="bi bi-pencil me-1"></i>Editar
@@ -148,13 +148,13 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 import QRCode from '@/Components/QRCode/QRCode.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const card = computed(() => page.props.card)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const qrUrl = computed(() => {
   if (!card.value) return ''
-  return `${window.location.origin}/b/${business.value?.slug}/fidelity/${card.value.public_code}`
+  return `${window.location.origin}/b/${listing.value?.slug}/fidelity/${card.value.public_code}`
 })
 
 const breadcrumbs = computed(() => {
@@ -174,7 +174,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
     { label: card.value?.client_name || 'Ver', active: true },
   ]
 })
@@ -194,7 +194,7 @@ const deleteCard = () => {
   if (!confirm(`¿Estás seguro de eliminar la tarjeta de "${card.value?.client_name}"?`)) {
     return
   }
-  router.delete(`/member/listings/${business.value?.id}/fidelity-cards/${card.value?.id}`, {
+  router.delete(`/member/listings/${listing.value?.id}/fidelity-cards/${card.value?.id}`, {
     preserveScroll: true,
   })
 }

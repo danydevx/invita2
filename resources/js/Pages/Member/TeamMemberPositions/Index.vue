@@ -1,14 +1,14 @@
 <template>
   <MemberLayout>
-    <Head :title="`Puestos - ${business?.name || ''}`" />
+    <Head :title="`Puestos - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Puestos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/team-members`"
+      :backHref="`/member/listings/${listing?.id}/team-members`"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/team-member-positions/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/team-member-positions/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Puesto
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/listings/${business?.id}/team-members`"
+        :href="`/member/listings/${listing?.id}/team-members`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-people me-1"></i>Miembros
       </Link>
       <Link
-        :href="`/member/listings/${business?.id}/team-member-positions`"
+        :href="`/member/listings/${listing?.id}/team-member-positions`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Puestos
@@ -58,7 +58,7 @@
               </span>
             </div>
             <div class="d-flex gap-2">
-              <Link :href="`/member/listings/${business?.id}/team-member-positions/${position.id}/edit`" class="btn btn-outline-primary btn-sm">
+              <Link :href="`/member/listings/${listing?.id}/team-member-positions/${position.id}/edit`" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-pencil"></i>
               </Link>
               <button 
@@ -83,9 +83,9 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const positions = computed(() => page.props.positions || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -104,7 +104,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Equipo', href: `/member/listings/${business.value?.id}/team-members` },
+    { label: 'Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
     { label: 'Puestos', active: true },
   ]
 })
@@ -114,7 +114,7 @@ const deletePosition = (position) => {
     return
   }
 
-  router.delete(`/member/listings/${business.value.id}/team-member-positions/${position.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/team-member-positions/${position.id}`, {
     preserveScroll: true,
   })
 }

@@ -1,12 +1,12 @@
 <template>
   <AdminLayout>
-    <Head :title="`Minisite - ${business.name}`" />
+    <Head :title="`Minisite - ${listing.name}`" />
 
     <div class="container-fluid py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h4 mb-1">Minisite</h1>
-          <p class="text-muted mb-0">{{ business.name }}</p>
+          <p class="text-muted mb-0">{{ listing.name }}</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ import { Head, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   setting: Object,
 })
 
@@ -80,7 +80,7 @@ let sending = false
 
 const submit = () => {
   sending = true
-  form.post(`/admin/listings/${props.business.id}/minisite`, {
+  form.post(`/admin/listings/${props.listing.id}/minisite`, {
     onFinish: () => {
       sending = false
     },

@@ -10,33 +10,33 @@ class OrderPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(Business $business, Order $order): bool
+    public function viewAny(Listing $listing, Order $order): bool
     {
-        return $business->user_id === auth()->id();
+        return $listing->user_id === auth()->id();
     }
 
-    public function view(Business $business, Order $order): bool
+    public function view(Listing $listing, Order $order): bool
     {
-        return $order->listing_id === $business->id && $business->user_id === auth()->id();
+        return $order->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function create(Business $business): bool
+    public function create(Listing $listing): bool
     {
-        return $business->user_id === auth()->id();
+        return $listing->user_id === auth()->id();
     }
 
-    public function update(Business $business, Order $order): bool
+    public function update(Listing $listing, Order $order): bool
     {
-        return $order->listing_id === $business->id && $business->user_id === auth()->id();
+        return $order->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function delete(Business $business, Order $order): bool
+    public function delete(Listing $listing, Order $order): bool
     {
-        return $order->listing_id === $business->id && $business->user_id === auth()->id();
+        return $order->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function updateStatus(Business $business, Order $order): bool
+    public function updateStatus(Listing $listing, Order $order): bool
     {
-        return $order->listing_id === $business->id && $business->user_id === auth()->id();
+        return $order->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 }

@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Modules\Listings\Enums\ListingType;
 use Modules\Listings\Models\Listing;
 use App\Services\ActivityService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class ListingController extends Controller
@@ -42,26 +40,17 @@ class ListingController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
-        $listingTypes = array_map(fn ($type) => [
-            'value' => $type->value,
-            'label' => $type->label(),
-        ], ListingType::cases());
-
         return Inertia::render('Admin/Listings/Create', [
             'users' => $users,
-            'listingTypes' => $listingTypes,
         ]);
     }
 
     public function store(Request $request, ActivityService $activity)
     {
-        $validTypes = array_column(ListingType::cases(), 'value');
-
         $data = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'name' => ['required', 'string', 'max:150'],
             'slug' => ['required', 'string', 'max:150', 'unique:listings,slug'],
-            'listing_type' => ['required', 'string', Rule::in($validTypes)],
             'timezone' => ['nullable', 'string', 'max:100'],
             'currency' => ['nullable', 'string', 'max:10'],
             'is_active' => ['boolean'],
@@ -72,7 +61,6 @@ class ListingController extends Controller
             'user_id' => $data['user_id'],
             'name' => trim($data['name']),
             'slug' => trim($data['slug']),
-            'listing_type' => $data['listing_type'],
             'timezone' => $data['timezone'] ?? 'UTC',
             'currency' => $data['currency'] ?? 'MXN',
             'is_active' => (bool) ($data['is_active'] ?? true),

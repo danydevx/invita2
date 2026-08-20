@@ -17,7 +17,7 @@ class ListingHeroController extends Controller
         $hero = $business->hero;
 
         return Inertia::render('Admin/Hero/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

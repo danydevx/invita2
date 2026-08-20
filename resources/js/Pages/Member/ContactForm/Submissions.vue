@@ -1,14 +1,14 @@
 <template>
   <MemberLayout>
-    <Head :title="`Envios - ${form?.name || 'Formulario'} - ${business?.name || ''}`" />
+    <Head :title="`Envios - ${form?.name || 'Formulario'} - ${listing?.name || ''}`" />
 
     <PageHeader
       :title="`Envios: ${form?.name || 'Formulario'}`"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${listing?.id}/contact-forms`"
     >
       <template #actions>
-        <a :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/export`" class="btn btn-success btn-sm">
+        <a :href="`/member/listings/${listing?.id}/contact-forms/${form?.id}/export`" class="btn btn-success btn-sm">
           <i class="bi bi-download me-1"></i>Exportar CSV
         </a>
       </template>
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/contact-forms/${form?.id}/submissions`"
+      :endpoint="`/member/listings/${listing?.id}/contact-forms/${form?.id}/submissions`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar mensajes..."
@@ -48,7 +48,7 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/listings/${business?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/leads/${row.id}`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteSubmission(row)">
@@ -68,10 +68,10 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const form = computed(() => page.props.form)
 const dataTable = computed(() => page.props.dataTable)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -115,7 +115,7 @@ const formatDate = (date) => {
 
 const deleteSubmission = (row) => {
   if (confirm(`¿Eliminar el mensaje de "${row.name}"?`)) {
-    router.delete(`/member/listings/${business.value?.id}/leads/${row.id}`, {
+    router.delete(`/member/listings/${listing.value?.id}/leads/${row.id}`, {
       preserveScroll: true,
     })
   }

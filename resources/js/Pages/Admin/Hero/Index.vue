@@ -1,12 +1,12 @@
 <template>
   <AdminLayout>
-    <Head :title="`Hero - ${business.name}`" />
+    <Head :title="`Hero - ${listing.name}`" />
 
     <div class="container-fluid py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h4 mb-1">Hero</h1>
-          <p class="text-muted mb-0">{{ business.name }}</p>
+          <p class="text-muted mb-0">{{ listing.name }}</p>
         </div>
       </div>
 
@@ -214,7 +214,7 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   hero: Object,
 })
 
@@ -269,7 +269,7 @@ const submit = () => {
   formData.background_color = cleanColor(form.background_color)
   formData.background_gradient_start = cleanColor(form.background_gradient_start)
   formData.background_gradient_end = cleanColor(form.background_gradient_end)
-  form.post(`/admin/listings/${props.business.id}/hero`, {
+  form.post(`/admin/listings/${props.listing.id}/hero`, {
     data: formData,
     forceFormData: true,
     onFinish: () => {

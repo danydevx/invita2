@@ -1,14 +1,14 @@
 <template>
   <MemberLayout>
-    <Head :title="`Modulos - ${business.name}`" />
+    <Head :title="`Modulos - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <h1 class="h4 mb-1">{{ business.name }}</h1>
+        <h1 class="h4 mb-1">{{ listing.name }}</h1>
         <p class="text-muted mb-0">Gestiona el contenido de cada modulo.</p>
       </div>
       <div class="d-flex gap-2">
-        <Link :href="`/member/listings/${business.id}/edit`" class="btn btn-outline-primary btn-sm">
+        <Link :href="`/member/listings/${listing.id}/edit`" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-pencil me-1"></i>Editar negocio
         </Link>
         <Link href="/member/business-modules" class="btn btn-outline-secondary btn-sm">
@@ -53,13 +53,6 @@
               >
                 <i class="bi bi-eye me-1"></i>Ver Contenido
               </button>
-              <button
-                class="btn btn-sm"
-                :class="mod.is_enabled ? 'btn-outline-danger' : 'btn-success'"
-                @click="toggleModule(mod)"
-              >
-                <i class="bi bi-power me-1"></i>{{ mod.is_enabled ? 'Desactivar' : 'Activar' }}
-              </button>
             </div>
           </div>
         </div>
@@ -81,14 +74,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
-import { toast } from 'vue3-toastify'
 
 const props = defineProps({
-  business: {
+  listing: {
     type: Object,
-    required: true,
   },
   planName: {
     type: String,
@@ -96,8 +87,7 @@ const props = defineProps({
   },
 })
 
-const localModules = ref([...props.business.modules])
-const saving = ref(null)
+const localModules = ref([...props.listing.modules])
 
 const moduleIcons = {
   hero: 'bi bi-house',
@@ -151,46 +141,12 @@ const getModuleIcon = (key) => moduleIcons[key] || 'bi bi-box'
 
 const getModuleUrl = (key) => {
   const path = moduleUrls[key] || key
-  return `/member/listings/${props.business.id}/${path}`
+  return `/member/listings/${props.listing.id}/${path}`
 }
 
 const goToModule = (mod) => {
   window.location.href = getModuleUrl(mod.module_key)
 }
 
-const toggleModule = (mod) => {
-  const message = mod.is_enabled
-    ? `Desactivar el modulo "${mod.module_name}"? El contenido no aparecera en el minisitio.`
-    : `Activar el modulo "${mod.module_name}"?`
 
-  if (!confirm(message)) {
-    return
-  }
-
-  saving.value = mod.id
-  const newState = !mod.is_enabled
-
-  router.put(
-    `/member/listings/${props.business.id}/modules`,
-    {
-      modules: [{ id: mod.id, is_enabled: newState }],
-    },
-    {
-      preserveScroll: true,
-      preserveState: true,
-      onSuccess: () => {
-        const idx = localModules.value.findIndex(m => m.id === mod.id)
-        if (idx !== -1) {
-          localModules.value[idx].is_enabled = newState
-        }
-        saving.value = null
-        toast.success(newState ? 'Modulo activado' : 'Modulo desactivado')
-      },
-      onError: (errors) => {
-        saving.value = null
-        toast.error(errors?.message || 'Error al actualizar el modulo')
-      },
-    }
-  )
-}
 </script>

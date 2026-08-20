@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Ubicaciones - ${business?.name || ''}`" />
+    <Head :title="`Ubicaciones - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Ubicaciones"
@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/locations/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/locations/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Ubicacion
         </Link>
@@ -17,7 +17,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/locations`"
+      :endpoint="`/member/listings/${listing?.id}/locations`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar ubicaciones..."
@@ -29,7 +29,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/locations/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/locations/bulk-delete`"
           item-name="ubicaciones"
           @deleted="onBulkDeleted"
         />
@@ -85,10 +85,10 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/listings/${business?.id}/locations/${row.id}/schedules`" class="btn btn-sm btn-outline-secondary" title="Horarios">
+          <Link :href="`/member/listings/${listing?.id}/locations/${row.id}/schedules`" class="btn btn-sm btn-outline-secondary" title="Horarios">
             <i class="bi bi-clock"></i>
           </Link>
-          <Link :href="`/member/listings/${business?.id}/locations/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/locations/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
         </div>
@@ -106,9 +106,9 @@ import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -164,7 +164,7 @@ const deleteSelected = () => {
 
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} ubicacion${count > 1 ? 'es' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
-    router.post(`/member/listings/${business.value.id}/locations/bulk-delete`, {
+    router.post(`/member/listings/${listing.value.id}/locations/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

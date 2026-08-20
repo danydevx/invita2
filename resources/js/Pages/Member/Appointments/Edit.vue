@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Cita - ${business.name}`" />
+    <Head :title="`Editar Cita - ${listing.name}`" />
 
     <PageHeader
       title="Editar Cita"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/appointments`"
+      :backHref="`/member/listings/${listing.id}/appointments`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -121,7 +121,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/appointments`" class="btn btn-outline-secondary">
+              <Link :href="`/member/listings/${listing.id}/appointments`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -147,7 +147,7 @@ import FieldTime from '@/Components/Fields/FieldTime.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const appointment = computed(() => page.props.appointment)
 const services = computed(() => page.props.services || [])
 const locations = computed(() => page.props.locations || [])
@@ -213,7 +213,7 @@ const validateForm = () => {
 watch(() => errors.appointment_date, (val) => {
   if (val) showDateValidation.value = true
 })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -270,7 +270,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.put(`/member/listings/${business.value.id}/appointments/${appointment.value.id}`, form, {
+  router.put(`/member/listings/${listing.value.id}/appointments/${appointment.value.id}`, form, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

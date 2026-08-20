@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Promocion - ${business.name}`" />
+    <Head :title="`Editar Promocion - ${listing.name}`" />
 
     <PageHeader
       title="Editar Promocion"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/promotions`"
+      :backHref="`/member/listings/${listing.id}/promotions`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -150,7 +150,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/promotions`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${listing.id}/promotions`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
               <button
@@ -184,9 +184,9 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const promotion = computed(() => page.props.promotion)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -304,7 +304,7 @@ const submit = () => {
     formData.append('remove_image', '1')
   }
 
-  router.post(`/member/listings/${business.value.id}/promotions/${promotion.value.id}`, formData, {
+  router.post(`/member/listings/${listing.value.id}/promotions/${promotion.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false
@@ -327,7 +327,7 @@ const submit = () => {
 const regenerateQr = () => {
   if (!confirm('Regenerar el codigo QR?')) return
   regenerating.value = true
-  router.post(`/member/listings/${business.value.id}/promotions/${promotion.value.id}/regenerate-qr`, {
+  router.post(`/member/listings/${listing.value.id}/promotions/${promotion.value.id}/regenerate-qr`, {
     onSuccess: () => {
       regenerating.value = false
       console.log('QR regenerated, reloading...')
@@ -343,9 +343,9 @@ const regenerateQr = () => {
 
 const deletePromotion = () => {
   if (!confirm(`Eliminar la promocion "${promotion.value.name}"?`)) return
-  router.delete(`/member/listings/${business.value.id}/promotions/${promotion.value.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/promotions/${promotion.value.id}`, {
     onSuccess: () => {
-      window.location.href = `/member/listings/${business.value.id}/promotions`
+      window.location.href = `/member/listings/${listing.value.id}/promotions`
     },
   })
 }

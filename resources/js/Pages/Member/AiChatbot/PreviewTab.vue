@@ -28,7 +28,7 @@
                 <i class="bi bi-robot"></i>
               </div>
               <div>
-                <div class="chat-title">Asistente {{ business?.name || '' }}</div>
+                <div class="chat-title">Asistente {{ listing?.name || '' }}</div>
                 <div class="chat-status">
                   <span class="status-dot"></span> En línea
                 </div>
@@ -42,7 +42,7 @@
           <div class="chat-messages" ref="messagesContainer">
             <div v-if="messages.length === 0" class="chat-empty">
               <i class="bi bi-chat-dots"></i>
-              <p>¡Hola! Soy el asistente virtual de {{ business?.name }}. ¿En qué puedo ayudarte?</p>
+              <p>¡Hola! Soy el asistente virtual de {{ listing?.name }}. ¿En qué puedo ayudarte?</p>
             </div>
 
             <div
@@ -101,7 +101,7 @@ import { ref, computed, nextTick } from 'vue'
 import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   settings: Object,
 })
 
@@ -131,7 +131,7 @@ const sendMessage = () => {
   sending.value = true
   isTyping.value = true
 
-  fetch(`/m/${props.business?.slug}/ai-chatbot/chat`, {
+  fetch(`/m/${props.listing?.slug}/ai-chatbot/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

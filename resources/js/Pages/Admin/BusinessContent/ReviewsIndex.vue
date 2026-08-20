@@ -1,15 +1,15 @@
 <template>
   <AdminLayout>
-    <Head :title="`Reviews - ${business.name}`" />
+    <Head :title="`Reviews - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Businesses
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Reviews</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Reviews</h1>
       </div>
-      <Link :href="`/admin/listings/${business.id}/reviews/create`" class="btn btn-primary btn-sm">
+      <Link :href="`/admin/listings/${listing.id}/reviews/create`" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg me-1"></i>
         New Review
       </Link>
@@ -52,7 +52,7 @@
                   <span v-else class="badge bg-secondary">Inactive</span>
                 </td>
                 <td class="text-end">
-                  <Link :href="`/admin/listings/${business.id}/reviews/${review.id}/edit`" class="btn btn-sm btn-outline-primary">
+                  <Link :href="`/admin/listings/${listing.id}/reviews/${review.id}/edit`" class="btn btn-sm btn-outline-primary">
                     Edit
                   </Link>
                 </td>
@@ -76,6 +76,6 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Pagination from '@/Components/Admin/Pagination.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const reviews = computed(() => page.props.reviews || { data: [], links: [] })
 </script>

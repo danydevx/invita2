@@ -10,38 +10,38 @@ class ClientFidelityCardPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(Business $business): bool
+    public function viewAny(Listing $listing): bool
     {
-        return $business->user_id === auth()->id();
+        return $listing->user_id === auth()->id();
     }
 
-    public function view(Business $business, ClientFidelityCard $card): bool
+    public function view(Listing $listing, ClientFidelityCard $card): bool
     {
-        return $card->listing_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function create(Business $business): bool
+    public function create(Listing $listing): bool
     {
-        return $business->user_id === auth()->id();
+        return $listing->user_id === auth()->id();
     }
 
-    public function update(Business $business, ClientFidelityCard $card): bool
+    public function update(Listing $listing, ClientFidelityCard $card): bool
     {
-        return $card->listing_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function delete(Business $business, ClientFidelityCard $card): bool
+    public function delete(Listing $listing, ClientFidelityCard $card): bool
     {
-        return $card->listing_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function scan(Business $business, ClientFidelityCard $card): bool
+    public function scan(Listing $listing, ClientFidelityCard $card): bool
     {
-        return $card->listing_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 
-    public function reset(Business $business, ClientFidelityCard $card): bool
+    public function reset(Listing $listing, ClientFidelityCard $card): bool
     {
-        return $card->listing_id === $business->id && $business->user_id === auth()->id();
+        return $card->listing_id === $listing->id && $listing->user_id === auth()->id();
     }
 }

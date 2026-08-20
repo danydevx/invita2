@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h1 class="h4 mb-0">{{ business?.name || 'Cargando...' }}</h1>
+          <h1 class="h4 mb-0">{{ listing?.name || 'Cargando...' }}</h1>
           <small class="text-muted">Modulos del minisite</small>
         </div>
         <Link href="/admin/listings" class="btn btn-outline-secondary">
@@ -81,10 +81,10 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 
 const form = reactive({
-  modules: business.value?.modules?.map(m => ({
+  modules: listing.value?.modules?.map(m => ({
     id: m.id,
     module_key: m.module_key,
     module_name: m.module_name,
@@ -97,7 +97,7 @@ const form = reactive({
 })
 
 const toggleModule = (module) => {
-  router.put(`/admin/listings/${business.value.id}/modules`, {
+  router.put(`/admin/listings/${listing.value.id}/modules`, {
     modules: [{
       id: module.id,
       is_enabled: !module.is_enabled,
@@ -112,7 +112,7 @@ const goToConfig = (module) => {
   if (module.settings_url) {
     let url = module.settings_url
     if (url.includes('{business}')) {
-      url = url.replace('{business}', business.value.id)
+      url = url.replace('{business}', listing.value.id)
     }
     window.location.href = url
   }

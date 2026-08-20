@@ -1,15 +1,15 @@
 <template>
   <MemberLayout>
-    <Head :title="`Módulos - ${business?.name || ''}`" />
+    <Head :title="`Módulos - ${listing?.name || ''}`" />
 
     <PageHeader
-      :title="business?.name || 'Módulos'"
+      :title="listing?.name || 'Módulos'"
       :breadcrumbs="breadcrumbs"
       backHref="/member/dashboard"
     >
       <template #description>
-        <p v-if="business?.industry_name" class="text-muted mb-0">
-          Industria: <strong>{{ business.industry_name }}</strong>
+        <p v-if="listing?.industry_name" class="text-muted mb-0">
+          Industria: <strong>{{ listing.industry_name }}</strong>
         </p>
         <p v-else class="text-muted mb-0">Selecciona un módulo para ver y gestionar su contenido.</p>
       </template>
@@ -60,12 +60,12 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const moduleSummary = computed(() => page.props.moduleSummary || [])
 
 const breadcrumbs = computed(() => [
   { label: 'Dashboard', href: '/member/dashboard' },
-  { label: business.value?.name || 'Módulos', active: true },
+  { label: listing.value?.name || 'Módulos', active: true },
 ])
 </script>
 

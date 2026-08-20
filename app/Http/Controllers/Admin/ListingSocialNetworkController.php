@@ -16,7 +16,7 @@ class ListingSocialNetworkController extends Controller
         $socialNetworks = $business->socialNetworks()->orderBy('sort_order')->get();
 
         return Inertia::render('Admin/SocialNetworks/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

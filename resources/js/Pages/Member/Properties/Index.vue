@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Propiedades - ${business?.name || ''}`" />
+    <Head :title="`Propiedades - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Propiedades"
@@ -17,7 +17,7 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/listings/${business?.id}/properties/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/properties/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Propiedad
         </Link>
@@ -59,7 +59,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/properties/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/properties/bulk-delete`"
           item-name="propiedades"
           @deleted="onBulkDeleted"
         />
@@ -90,12 +90,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/properties`"
+      :endpoint="`/member/listings/${listing?.id}/properties`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/properties/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/properties/reorder`"
       search-placeholder="Buscar propiedades..."
       empty-title="No hay propiedades"
       empty-text="Comienza creando tu primera propiedad."
@@ -161,7 +161,7 @@
       <template #cell-actions="{ row }">
         <div class="actions">
           <Link
-            :href="`/member/listings/${business?.id}/properties/${row.id}/edit`"
+            :href="`/member/listings/${listing?.id}/properties/${row.id}/edit`"
             class="btn btn-sm btn-outline-primary"
           >
             <i class="bi bi-pencil"></i>
@@ -242,9 +242,9 @@ const props = defineProps({
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -317,7 +317,7 @@ const onBulkDeleted = () => {
 }
 
 const filterProperties = () => {
-  let url = `/member/listings/${business.value.id}/properties?`
+  let url = `/member/listings/${listing.value.id}/properties?`
   const params = []
 
   if (filters.value.property_type_id) {
@@ -361,7 +361,7 @@ const clearFilters = () => {
     city: null,
   }
   searchQuery.value = ''
-  window.location.href = `/member/listings/${business.value.id}/properties`
+  window.location.href = `/member/listings/${listing.value.id}/properties`
 }
 
 const getOperationLabel = (op) => {
@@ -402,7 +402,7 @@ const getStatusBadgeClass = (status) => {
 }
 
 const changeStatus = (property, status) => {
-  router.post(`/member/listings/${business.value.id}/properties/${property.id}/change-status`, {
+  router.post(`/member/listings/${listing.value.id}/properties/${property.id}/change-status`, {
     status,
   }, {
     preserveScroll: true,
@@ -417,7 +417,7 @@ const changeStatus = (property, status) => {
 const duplicateProperty = (property) => {
   if (confirm(`Duplicar la propiedad "${property.title}"?`)) {
     duplicating.value = property.id
-    router.post(`/member/listings/${business.value.id}/properties/${property.id}/duplicate`, {}, {
+    router.post(`/member/listings/${listing.value.id}/properties/${property.id}/duplicate`, {}, {
       preserveScroll: true,
       onSuccess: () => {
         duplicating.value = null
@@ -435,7 +435,7 @@ const duplicateProperty = (property) => {
 const deleteProperty = (property) => {
   if (confirm(`Eliminar la propiedad "${property.title}"?`)) {
     deleting.value = property.id
-    router.delete(`/member/listings/${business.value.id}/properties/${property.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/properties/${property.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -453,7 +453,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} propert${count > 1 ? 'es' : 'ad'} seleccionado${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/listings/${business.value.id}/properties/bulk-delete`, {
+    router.post(`/member/listings/${listing.value.id}/properties/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

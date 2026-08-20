@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar ${business.name}`" />
+    <Head :title="`Editar ${listing.name}`" />
 
     <PageHeader
       :title="'Editar Negocio'"
@@ -20,8 +20,8 @@
                     style="width: 120px; height: 120px; overflow: hidden;"
                   >
                     <img
-                      v-if="logoPreview || business.logo_path"
-                      :src="logoPreview || business.logo_path"
+                      v-if="logoPreview || listing.logo_path"
+                      :src="logoPreview || listing.logo_path"
                       alt="Logo"
                       class="w-100 h-100"
                       style="object-fit: cover;"
@@ -46,7 +46,7 @@
                 <div v-if="errors.logo" class="text-danger small mt-1">{{ errors.logo }}</div>
                 <div class="text-muted small mt-2">JPG, PNG o WebP. Max 2MB.</div>
                 <button
-                  v-if="business.logo_path && !removeLogoFlag"
+                  v-if="listing.logo_path && !removeLogoFlag"
                   type="button"
                   class="btn btn-sm btn-outline-danger mt-2"
                   @click="removeLogo"
@@ -66,41 +66,6 @@
                 required
               />
             </div>
-
-            <div class="col-12 col-md-6" v-if="listingTypes.length">
-              <label for="business-type" class="form-label">Tipo de Negocio</label>
-              <select
-                id="business-type"
-                class="form-select"
-                v-model="form.listing_type"
-              >
-                <option value="">Seleccionar tipo...</option>
-                <option v-for="type in listingTypes" :key="type.value" :value="type.value">
-                  {{ type.label }}
-                </option>
-              </select>
-              <div v-if="errors.listing_type" class="text-danger small mt-1">{{ errors.listing_type }}</div>
-            </div>
-
-            <div class="col-12 col-md-6">
-              <FieldText
-                id="business-email"
-                label="Email"
-                type="email"
-                v-model="form.email"
-                :formError="errors.email"
-              />
-            </div>
-
-            <div class="col-12 col-md-6">
-              <FieldText
-                id="business-phone"
-                label="Telefono"
-                v-model="form.phone"
-                :formError="errors.phone"
-              />
-            </div>
-
 
           </div>
 
@@ -175,13 +140,9 @@ import FieldText from '@/Components/Fields/FieldText.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 
 const props = defineProps({
-  business: {
+  listing: {
     type: Object,
     required: true,
-  },
-  listingTypes: {
-    type: Array,
-    default: () => [],
   },
 })
 
@@ -189,8 +150,7 @@ const page = usePage()
 const errors = computed(() => page.props.errors || {})
 const sending = ref(false)
 
-const business = computed(() => props.business)
-const listingTypes = computed(() => props.listingTypes || [])
+const listing = computed(() => props.listing)
 const removeLogoFlag = ref(false)
 const logoPreview = ref(null)
 
@@ -202,15 +162,12 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/listings' },
-    { label: business.value.name, active: true },
+    { label: listing.value.name, active: true },
   ]
 })
 
 const form = ref({
-  name: props.business.name,
-  listing_type: props.business.listing_type || '',
-  phone: props.business.phone || '',
-  email: props.business.email || '',
+  name: props.listing.name,
 })
 
 const qrVersion = ref('mobile')
@@ -218,7 +175,7 @@ const qrVersion = ref('mobile')
 const qrLink = computed(() => {
   const baseUrl = window.location.origin
   const prefix = qrVersion.value === 'mobile' ? '/m' : '/b'
-  return `${baseUrl}${prefix}/${props.business.slug}`
+  return `${baseUrl}${prefix}/${props.listing.slug}`
 })
 
 const qrCodeUrl = computed(() => {
@@ -242,9 +199,6 @@ const submit = () => {
   sending.value = true
   const data = new FormData()
   data.append('name', form.value.name)
-  data.append('listing_type', form.value.listing_type || '')
-  data.append('phone', form.value.phone || '')
-  data.append('email', form.value.email || '')
 
   if (logoPreview.value) {
     const fileInput = document.getElementById('logo-input')
@@ -259,7 +213,7 @@ const submit = () => {
 
   data.append('_method', 'PUT')
 
-  router.post(`/member/listings/${props.business.id}`, data, {
+  router.post(`/member/listings/${props.listing.id}`, data, {
     onFinish: () => {
       sending.value = false
     },

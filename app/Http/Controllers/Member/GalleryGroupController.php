@@ -33,7 +33,7 @@ class GalleryGroupController extends Controller
             ]);
 
         return Inertia::render('Member/Galleries/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -46,7 +46,7 @@ class GalleryGroupController extends Controller
         $this->authorize('create', [ListingGallery::class, $business]);
 
         return Inertia::render('Member/Galleries/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -86,7 +86,7 @@ class GalleryGroupController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.galleries.index', $business->id)
+        return redirect()->route('member.listings.galleries.index', $business->id)
             ->with('success', 'Galería creada correctamente.');
     }
 
@@ -96,7 +96,7 @@ class GalleryGroupController extends Controller
         $this->authorize('update', [ListingGallery::class, $gallery]);
 
         return Inertia::render('Member/Galleries/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -147,7 +147,7 @@ class GalleryGroupController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.galleries.index', $business->id)
+        return redirect()->route('member.listings.galleries.index', $business->id)
             ->with('success', 'Galería actualizada correctamente.');
     }
 
@@ -164,7 +164,7 @@ class GalleryGroupController extends Controller
 
         $gallery->delete();
 
-        return redirect()->route('member.businesses.galleries.index', $business->id)
+        return redirect()->route('member.listings.galleries.index', $business->id)
             ->with('success', 'Galería eliminada correctamente.');
     }
 
@@ -191,7 +191,7 @@ class GalleryGroupController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.galleries.index', $business->id)
+        return redirect()->route('member.listings.galleries.index', $business->id)
             ->with('success', 'Galería marcada como principal.');
     }
 }

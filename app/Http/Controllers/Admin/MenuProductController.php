@@ -37,7 +37,7 @@ class MenuProductController extends Controller
             });
 
         return inertia('Admin/Products/Index', [
-            'business' => $business,
+            'listing' => $business,
             'products' => $products,
             'categories' => $categories,
             'selectedCategory' => $request->boolean('uncategorized') ? 'uncategorized' : ($category?->id ?? null),

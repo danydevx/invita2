@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nuevo Producto - ${business?.name || ''}`" />
+    <Head :title="`Nuevo Producto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nuevo Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/menu-products`"
+      :backHref="`/member/listings/${listing?.id}/menu-products`"
     />
 
     <div class="container-fluid py-4">
@@ -168,7 +168,7 @@
               <button type="submit" class="btn btn-primary flex-grow-1" :disabled="sending">
                 {{ sending ? 'Creando...' : 'Crear Producto' }}
               </button>
-              <Link :href="`/member/listings/${business?.id}/menu-products`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/menu-products`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -194,7 +194,7 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const categories = computed(() => page.props.categories || [])
 
 const errors = reactive({
@@ -230,7 +230,7 @@ const validateForm = () => {
   return isValid
 }
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -340,7 +340,7 @@ const submitForm = () => {
     image: variantImages.value[i],
   }))
 
-  router.post(`/member/listings/${business.value.id}/menu-products`, {
+  router.post(`/member/listings/${listing.value.id}/menu-products`, {
     ...form.value,
     image: productImage.value,
     variants: variantsWithImages,

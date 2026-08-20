@@ -61,11 +61,10 @@ class SocialNetworkController extends Controller
         ];
 
         return Inertia::render('Member/SocialNetworks/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
-            'socialNetworks' => $socialNetworks,
             'platforms' => ListingSocialNetwork::$platforms,
             'dataTable' => $dataTable,
         ]);

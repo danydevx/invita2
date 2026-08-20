@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ListingProductImage extends Model
 {
     protected $fillable = [
-        'listing_product_id',
+        'business_product_id',
         'path',
         'filename',
         'original_name',
@@ -27,6 +27,6 @@ class ListingProductImage extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(ListingProduct::class, 'listing_product_id');
+        return $this->belongsTo(ListingProduct::class, 'business_product_id');
     }
 }

@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Modules\ListingOfficeHours\Http\Controllers\Member\ScheduleController;
 
 Route::middleware(['auth', 'active'])
-    ->prefix('member/businesses/{business}/locations/{location}/schedules')
-    ->name('member.businesses.locations.schedules.')
+    ->prefix('member/listings/{listing}/locations/{location}/schedules')
+    ->name('member.listings.locations.schedules.')
     ->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('index');
         Route::get('/create', [ScheduleController::class, 'create'])->name('create');
@@ -17,8 +17,8 @@ Route::middleware(['auth', 'active'])
     });
 
 Route::middleware(['auth', 'active'])
-    ->prefix('member/businesses/{business}/office-hours')
-    ->name('member.businesses.office-hours.')
+    ->prefix('member/listings/{listing}/office-hours')
+    ->name('member.listings.office-hours.')
     ->group(function () {
         Route::get('/', [ScheduleController::class, 'indexAll'])->name('index');
     });

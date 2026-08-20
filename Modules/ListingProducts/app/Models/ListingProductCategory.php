@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class ListingProductCategory extends Model
+{
 
     protected $table = 'listing_product_categories';
 

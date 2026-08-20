@@ -108,6 +108,7 @@
                 <li v-if="canViewTemplates"><Link href="/admin/message-templates" class="dropdown-item" prefetch="hover">Plantillas</Link></li>
                 <li v-if="isSuperAdmin && canViewModules"><Link href="/admin/modules" class="dropdown-item" prefetch="hover">Modulos</Link></li>
                 <li v-if="canViewLegalDocuments && modules.legal !== false"><Link href="/admin/legal-documents" class="dropdown-item" prefetch="hover">Legales</Link></li>
+                <li><Link href="/admin/locations" class="dropdown-item" prefetch="hover">Ubicaciones</Link></li>
                 <li v-if="canViewSettings"><Link href="/admin/settings" class="dropdown-item" prefetch="hover">Settings</Link></li>
               </ul>
             </li>

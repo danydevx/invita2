@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Member\ContactFormController;
 use App\Http\Controllers\Public\BusinessController;
 
-Route::middleware(['auth', 'verified', 'active', 'role:member'])->prefix('member/businesses/{business}')->name('member.business.')->group(function () {
+Route::middleware(['auth', 'verified', 'active', 'role:member'])->prefix('member/listings/{listing}')->name('member.listings.')->group(function () {
     Route::get('/contact-forms', [ContactFormController::class, 'index'])->name('contact-forms.index');
     Route::get('/contact-forms/create', [ContactFormController::class, 'create'])->name('contact-forms.create');
     Route::post('/contact-forms', [ContactFormController::class, 'store'])->name('contact-forms.store');

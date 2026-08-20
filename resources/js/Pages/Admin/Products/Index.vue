@@ -1,13 +1,13 @@
 <template>
   <AdminLayout>
-    <Head :title="`Productos del Menú - ${business.name}`" />
+    <Head :title="`Productos del Menú - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Productos del Menú</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Productos del Menú</h1>
       </div>
     </div>
 
@@ -15,7 +15,7 @@
       <div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><Link :href="`/admin/listings/${business.id}/menu-categories`">Categorías</Link></li>
+            <li class="breadcrumb-item"><Link :href="`/admin/listings/${listing.id}/menu-categories`">Categorías</Link></li>
             <li v-if="selectedCategoryName" class="breadcrumb-item active">{{ selectedCategoryName }}</li>
           </ol>
         </nav>
@@ -187,7 +187,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   products: Object,
   categories: Array,
   selectedCategory: [Number, String],
@@ -219,7 +219,7 @@ const form = ref({
 })
 
 const filterProducts = () => {
-  let url = `/admin/listings/${props.business.id}/menu-products`
+  let url = `/admin/listings/${props.listing.id}/menu-products`
   if (filterCategory.value) {
     if (filterCategory.value === 'uncategorized') {
       url += '?uncategorized=1'
@@ -253,7 +253,7 @@ const editProduct = (product) => {
 
 const deleteProduct = (product) => {
   if (!confirm(`¿Eliminar el producto "${product.title}"?`)) return
-  router.delete(`/admin/listings/${props.business.id}/menu-products/${product.id}`)
+  router.delete(`/admin/listings/${props.listing.id}/menu-products/${product.id}`)
 }
 
 const closeModal = () => {
@@ -290,7 +290,7 @@ const submitForm = () => {
 
   if (editingProduct.value) {
     router.put(
-      `/admin/listings/${props.business.id}/menu-products/${editingProduct.value.id}`,
+      `/admin/listings/${props.listing.id}/menu-products/${editingProduct.value.id}`,
       form.value,
       {
         onFinish: () => {
@@ -301,7 +301,7 @@ const submitForm = () => {
     )
   } else {
     router.post(
-      `/admin/listings/${props.business.id}/menu-products`,
+      `/admin/listings/${props.listing.id}/menu-products`,
       form.value,
       {
         onFinish: () => {

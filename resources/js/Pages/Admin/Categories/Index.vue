@@ -1,16 +1,16 @@
 <template>
   <AdminLayout>
-    <Head :title="`Categorías del Menú - ${business.name}`" />
+    <Head :title="`Categorías del Menú - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Categorías del Menú</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Categorías del Menú</h1>
       </div>
       <div>
-        <Link :href="`/admin/listings/${business.id}/menu-products`" class="btn btn-outline-secondary btn-sm me-2">
+        <Link :href="`/admin/listings/${listing.id}/menu-products`" class="btn btn-outline-secondary btn-sm me-2">
           <i class="bi bi-box-seam me-1"></i>Productos
         </Link>
         <button @click="showCreateModal = true" class="btn btn-primary btn-sm">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="mb-3">
-      <Link :href="`/admin/listings/${business.id}/menu-products?uncategorized=1`" class="btn btn-outline-secondary btn-sm">
+      <Link :href="`/admin/listings/${listing.id}/menu-products?uncategorized=1`" class="btn btn-outline-secondary btn-sm">
         <i class="bi bi-dash-circle me-1"></i>Productos sin categoría
       </Link>
     </div>
@@ -46,7 +46,7 @@
             <span v-if="!category.active" class="badge bg-secondary ms-2">Inactiva</span>
           </span>
           <small class="text-muted d-block">{{ category.children?.length || 0 }} subcategorías, {{ category.products?.length || 0 }} productos</small>
-          <Link :href="`/admin/listings/${business.id}/menu-products?category=${category.id}`" class="text-decoration-none small">
+          <Link :href="`/admin/listings/${listing.id}/menu-products?category=${category.id}`" class="text-decoration-none small">
             <i class="bi bi-box-seam me-1"></i>Ver productos
           </Link>
         </div>
@@ -68,7 +68,7 @@
               <span :class="{ 'text-muted': !child.active }">
                 {{ child.title }}
                 <span v-if="!child.active" class="badge bg-secondary ms-2">Inactiva</span>
-                <Link :href="`/admin/listings/${business.id}/menu-products?category=${child.id}`" class="text-decoration-none small ms-2">
+                <Link :href="`/admin/listings/${listing.id}/menu-products?category=${child.id}`" class="text-decoration-none small ms-2">
                   <i class="bi bi-box-seam"></i> {{ child.products?.length || 0 }}
                 </Link>
               </span>
@@ -162,7 +162,7 @@ import { usePage, Head, Link, router } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   categories: Array,
 })
 
@@ -241,7 +241,7 @@ const handleImageChange = (e) => {
 const deleteCategory = (category) => {
   if (!confirm(`¿Eliminar la categoría "${category.title}"?`)) return
 
-  router.delete(`/admin/listings/${props.business.id}/menu-categories/${category.id}`)
+  router.delete(`/admin/listings/${props.listing.id}/menu-categories/${category.id}`)
 }
 
 const closeModal = () => {
@@ -286,7 +286,7 @@ const submitForm = () => {
   if (editingCategory.value) {
     data.append('_method', 'PUT')
     router.post(
-      `/admin/listings/${props.business.id}/menu-categories/${editingCategory.value.id}`,
+      `/admin/listings/${props.listing.id}/menu-categories/${editingCategory.value.id}`,
       data,
       {
         onFinish: () => {
@@ -297,7 +297,7 @@ const submitForm = () => {
     )
   } else {
     router.post(
-      `/admin/listings/${props.business.id}/menu-categories`,
+      `/admin/listings/${props.listing.id}/menu-categories`,
       data,
       {
         onFinish: () => {

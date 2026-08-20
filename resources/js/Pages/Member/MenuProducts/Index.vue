@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="business ? `Productos - ${business.name}` : 'Productos'" />
+    <Head :title="listing ? `Productos - ${listing.name}` : 'Productos'" />
 
     <PageHeader
       title="Menu del Restaurant"
@@ -20,10 +20,10 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/listings/${business?.id}/menu-categories`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/menu-categories`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-folder me-1"></i>Categorias
         </Link>
-        <Link :href="`/member/listings/${business?.id}/menu-products/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/menu-products/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Producto
         </Link>
       </template>
@@ -54,7 +54,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/menu-products/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/menu-products/bulk-delete`"
           item-name="productos"
           @deleted="onBulkDeleted"
         />
@@ -71,7 +71,7 @@
       :items="productsList"
       item-class="col-6 col-md-4 col-lg-2"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/menu-products/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/menu-products/reorder`"
       :loading="loading"
       empty-title="No hay productos"
       :empty-text="selectedCategoryName ? 'No hay productos en esta categoria.' : 'Comienza creando tu primer producto.'"
@@ -116,7 +116,7 @@
             <button @click="cloneProduct(product)" class="btn btn-sm btn-outline-secondary">
               <i class="bi bi-copy"></i>
             </button>
-            <Link :href="`/member/listings/${business?.id}/menu-products/${product.id}/edit`" class="btn btn-sm btn-outline-primary flex-grow-1">
+            <Link :href="`/member/listings/${listing?.id}/menu-products/${product.id}/edit`" class="btn btn-sm btn-outline-primary flex-grow-1">
               <i class="bi bi-pencil"></i>
             </Link>
             <button @click="deleteProduct(product)" class="btn btn-sm btn-outline-danger">
@@ -128,7 +128,7 @@
     </SortableCards>
 
     <div v-if="products.total > products.per_page" class="d-flex justify-content-center mt-4">
-      <pagination :data="products" />
+      <Pagination :links="products.links" />
     </div>
   </MemberLayout>
 </template>
@@ -139,10 +139,11 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import SortableCards from '@/Components/DataTable/SortableCards.vue'
+import Pagination from '@/Components/Member/Pagination.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   products: Object,
   categories: Array,
   selectedCategory: [Number, String],
@@ -150,8 +151,8 @@ const props = defineProps({
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -210,7 +211,7 @@ const onBulkDeleted = () => {
 }
 
 const filterProducts = () => {
-  let url = `/member/listings/${props.business.id}/menu-products`
+  let url = `/member/listings/${props.listing.id}/menu-products`
   const params = []
   if (filterCategory.value) {
     if (filterCategory.value === 'uncategorized') {
@@ -231,13 +232,13 @@ const filterProducts = () => {
 const clearFilters = () => {
   filterCategory.value = null
   searchQuery.value = ''
-  window.location.href = `/member/listings/${props.business.id}/menu-products`
+  window.location.href = `/member/listings/${props.listing.id}/menu-products`
 }
 
 const deleteProduct = (product) => {
   if (!confirm(`Eliminar el producto "${product.title}"?`)) return
 
-  router.delete(`/member/listings/${props.business.id}/menu-products/${product.id}`, {
+  router.delete(`/member/listings/${props.listing.id}/menu-products/${product.id}`, {
     preserveScroll: true,
   })
 }
@@ -245,7 +246,7 @@ const deleteProduct = (product) => {
 const cloneProduct = (product) => {
   if (!confirm(`Clonar el producto "${product.title}"?`)) return
 
-  router.post(`/member/listings/${props.business.id}/menu-products/${product.id}/clone`, {
+  router.post(`/member/listings/${props.listing.id}/menu-products/${product.id}/clone`, {
     preserveScroll: true,
   })
 }
@@ -256,7 +257,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} producto${count > 1 ? 's' : ''} seleccionado${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/listings/${props.business.id}/menu-products/bulk-delete`, {
+    router.post(`/member/listings/${props.listing.id}/menu-products/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

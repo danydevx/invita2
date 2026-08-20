@@ -18,12 +18,6 @@ class ListingBrandingSetting extends Model
         'dark_mode',
         'buttons_style',
         'buttons_uppercase',
-        'generated_css',
-        'section_variants',
-        'page_style',
-        'section_style',
-        'hero_style',
-        'animations',
     ];
 
     protected function casts(): array
@@ -33,11 +27,6 @@ class ListingBrandingSetting extends Model
             'fonts' => 'array',
             'dark_mode' => 'boolean',
             'buttons_uppercase' => 'boolean',
-            'section_variants' => 'array',
-            'page_style' => 'array',
-            'section_style' => 'array',
-            'hero_style' => 'array',
-            'animations' => 'array',
         ];
     }
 
@@ -133,11 +122,6 @@ class ListingBrandingSetting extends Model
 
         $buttonsUppercase = $this->buttons_uppercase ? 'uppercase' : 'none';
 
-        $pageStyle = $this->page_style ?? 'light';
-        $sectionStyle = $this->section_style ?? 'spacious';
-        $heroStyle = $this->hero_style ?? 'fullwidth';
-        $animations = $this->animations ?? [];
-
         $darkPrimary = $colors['brand_primary']['dark'] ?? $primary;
         $darkSecondary = $colors['brand_secondary']['dark'] ?? $secondary;
         $darkAccent = $colors['brand_accent']['dark'] ?? $accent;
@@ -163,9 +147,6 @@ class ListingBrandingSetting extends Model
     --buttons-font: '{$fontButtons}', sans-serif !important;
     --buttons-border-radius: {$buttonsStyle} !important;
     --buttons-text-transform: {$buttonsUppercase} !important;
-    --page-style: {$pageStyle} !important;
-    --section-style: {$sectionStyle} !important;
-    --hero-style: {$heroStyle} !important;
 }
 
 .brand-dark {
@@ -188,11 +169,5 @@ class ListingBrandingSetting extends Model
 
         $this->generated_css = $css;
         return $css;
-    }
-
-    public function getSectionVariant(string $section, string $default = 'cards'): string
-    {
-        $variants = $this->section_variants ?? [];
-        return $variants[$section] ?? $default;
     }
 }

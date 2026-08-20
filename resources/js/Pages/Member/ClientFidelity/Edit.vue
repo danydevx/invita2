@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Tarjeta - ${business?.name || ''}`" />
+    <Head :title="`Editar Tarjeta - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Tarjeta"
@@ -87,7 +87,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
+                <Link :href="`/member/listings/${listing?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
                   Cancelar
                 </Link>
               </div>
@@ -112,9 +112,9 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const card = computed(() => page.props.card)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const visitOptions = [
   { value: 5, label: '5 visitas' },
@@ -142,7 +142,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
     { label: card.value?.client_name || 'Editar', active: true },
   ]
 })
@@ -157,7 +157,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/listings/${business.value.id}/fidelity-cards/${card.value.id}`, {
+  form.post(`/member/listings/${listing.value.id}/fidelity-cards/${card.value.id}`, {
     preserveScroll: true,
   })
 }

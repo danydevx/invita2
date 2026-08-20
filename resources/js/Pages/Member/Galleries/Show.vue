@@ -5,7 +5,7 @@
     <PageHeader
       :title="currentGallery?.name || 'Galería'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id || ''}/galleries`"
+      :backHref="`/member/listings/${listing?.id || ''}/galleries`"
     >
       <template #description>
         <p class="text-muted mb-0">Gestiona las imagenes de esta galería. Arrastra para reordenar.</p>
@@ -22,7 +22,7 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li v-for="gallery in galleries" :key="gallery.id">
-              <Link class="dropdown-item" :href="`/member/listings/${business?.id}/gallery/${gallery.id}`">
+              <Link class="dropdown-item" :href="`/member/listings/${listing?.id}/gallery/${gallery.id}`">
                 {{ gallery.name }}
                 <i v-if="gallery.is_primary" class="bi bi-star-fill text-warning ms-1"></i>
               </Link>
@@ -60,11 +60,11 @@
     <BaseDataTable
       v-else
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/gallery/${currentGallery?.id}`"
+      :endpoint="`/member/listings/${listing?.id}/gallery/${currentGallery?.id}`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/gallery/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/gallery/reorder`"
       search-placeholder="Buscar imagenes..."
       empty-title="No hay imagenes"
       empty-text="Sube tu primera imagen para empezar."
@@ -93,7 +93,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/gallery/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/gallery/bulk-delete`"
           item-name="imagenes"
           @deleted="onBulkDeleted"
         />
@@ -102,7 +102,7 @@
 
     <ImageUpload
       ref="imageUploadRef"
-      :business-id="business?.id"
+      :business-id="listing?.id"
       :gallery-id="currentGallery?.id"
       :locations="locations"
       @uploaded="onImageUploaded"
@@ -175,13 +175,13 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import ImageUpload from '@/Components/ImageUpload/ImageUpload.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const currentGallery = computed(() => page.props.currentGallery)
 const galleries = computed(() => page.props.galleries || [])
 const locations = computed(() => page.props.locations || [])
 const images = computed(() => page.props.images || { data: [] })
 const dataTable = computed(() => page.props.dataTable || { data: [], total: 0 })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -200,7 +200,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/listings' },
-    { label: 'Galerías', href: `/member/listings/${business.value?.id}/galleries` },
+    { label: 'Galerías', href: `/member/listings/${listing.value?.id}/galleries` },
     { label: currentGallery.value?.name || 'Galería', active: true },
   ]
 })
@@ -258,7 +258,7 @@ const onImageUploaded = () => {
 const saveEdit = () => {
   saving.value = true
 
-  router.put(`/member/listings/${business.value.id}/gallery/${editForm.id}`, {
+  router.put(`/member/listings/${listing.value.id}/gallery/${editForm.id}`, {
     business_gallery_id: currentGallery.value.id,
     title: editForm.title,
     description: editForm.description,
@@ -276,7 +276,7 @@ const saveEdit = () => {
 
 const deleteImage = (img) => {
   if (confirm('Estas seguro de eliminar esta imagen?')) {
-    router.delete(`/member/listings/${business.value.id}/gallery/${img.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/gallery/${img.id}`, {
       preserveScroll: true,
     })
   }
@@ -287,7 +287,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} imagen${count > 1 ? 'es' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/listings/${business.value.id}/gallery/bulk-delete`, {
+    router.post(`/member/listings/${listing.value.id}/gallery/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

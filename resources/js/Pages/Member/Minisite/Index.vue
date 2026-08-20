@@ -1,14 +1,14 @@
 <template>
   <MemberLayout>
-    <Head :title="`Minisite - ${business?.name || ''}`" />
+    <Head :title="`Minisite - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Configuración del Minisite"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/minisite/sections`"
+      :backHref="`/member/listings/${listing?.id}/minisite/sections`"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/minisite/sections`" class="btn btn-outline-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/minisite/sections`" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-layout-text-sidebar me-1"></i>Secciones
         </Link>
       </template>
@@ -139,10 +139,10 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const setting = computed(() => page.props.setting)
 const heroLayouts = computed(() => page.props.heroLayouts || {})
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -213,7 +213,7 @@ const saveSettings = () => {
     formData.append('hero_background_image', form.hero_background_image)
   }
 
-  router.post(`/member/listings/${business.value.id}/minisite`, formData, {
+  router.post(`/member/listings/${listing.value.id}/minisite`, formData, {
     forceFormData: true,
     onFinish: () => {
       sending.value = false

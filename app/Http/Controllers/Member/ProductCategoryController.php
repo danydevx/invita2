@@ -60,7 +60,7 @@ class ProductCategoryController extends Controller
             ->get();
 
         return Inertia::render('Member/Products/CategoriesIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

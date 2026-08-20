@@ -45,7 +45,7 @@ class ScheduleController extends Controller
             })->toArray();
 
         return Inertia::render('Member/OfficeHours/IndexAll', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -53,7 +53,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function index(Request $request, Listing $listing, BusinessLocation $location)
+    public function index(Request $request, Listing $listing, ListingLocation $location)
     {
         $this->authorize('viewAny', [ListingSchedule::class, $listing]);
 
@@ -63,7 +63,7 @@ class ScheduleController extends Controller
             ->get();
 
         return Inertia::render('Member/OfficeHours/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -75,12 +75,12 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function create(Request $request, Listing $listing, BusinessLocation $location)
+    public function create(Request $request, Listing $listing, ListingLocation $location)
     {
         $this->authorize('create', [ListingSchedule::class, $listing]);
 
         return Inertia::render('Member/OfficeHours/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -91,7 +91,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function store(Request $request, Listing $listing, BusinessLocation $location)
+    public function store(Request $request, Listing $listing, ListingLocation $location)
     {
         $this->authorize('create', [ListingSchedule::class, $listing]);
 
@@ -119,16 +119,16 @@ class ScheduleController extends Controller
             'listing_id' => $listing->id,
         ]);
 
-        return redirect()->route('member.businesses.locations.schedules.index', [$listing->id, $location->id])
+        return redirect()->route('member.listings.locations.schedules.index', [$listing->id, $location->id])
             ->with('success', 'Horario creado correctamente.');
     }
 
-    public function edit(Request $request, Listing $listing, BusinessLocation $location, ListingSchedule $schedule)
+    public function edit(Request $request, Listing $listing, ListingLocation $location, ListingSchedule $schedule)
     {
         $this->authorize('update', [ListingSchedule::class, $listing]);
 
         return Inertia::render('Member/OfficeHours/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -149,7 +149,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $listing, BusinessLocation $location, ListingSchedule $schedule)
+    public function update(Request $request, Listing $listing, ListingLocation $location, ListingSchedule $schedule)
     {
         $this->authorize('update', [ListingSchedule::class, $listing]);
 
@@ -174,11 +174,11 @@ class ScheduleController extends Controller
 
         $schedule->update($data);
 
-        return redirect()->route('member.businesses.locations.schedules.index', [$listing->id, $location->id])
+        return redirect()->route('member.listings.locations.schedules.index', [$listing->id, $location->id])
             ->with('success', 'Horario actualizado correctamente.');
     }
 
-    public function clone(Request $request, Listing $listing, BusinessLocation $location, ListingSchedule $schedule)
+    public function clone(Request $request, Listing $listing, ListingLocation $location, ListingSchedule $schedule)
     {
         $this->authorize('create', [ListingSchedule::class, $listing]);
 
@@ -193,17 +193,17 @@ class ScheduleController extends Controller
             'is_active' => false,
         ]);
 
-        return redirect()->route('member.businesses.locations.schedules.edit', [$listing->id, $location->id, $newSchedule->id])
+        return redirect()->route('member.listings.locations.schedules.edit', [$listing->id, $location->id, $newSchedule->id])
             ->with('success', 'Horario clonado. Edítalo y guarda los cambios.');
     }
 
-    public function destroy(Request $request, Listing $listing, BusinessLocation $location, ListingSchedule $schedule)
+    public function destroy(Request $request, Listing $listing, ListingLocation $location, ListingSchedule $schedule)
     {
         $this->authorize('delete', $schedule);
 
         $schedule->delete();
 
-        return redirect()->route('member.businesses.locations.schedules.index', [$listing->id, $location->id])
+        return redirect()->route('member.listings.locations.schedules.index', [$listing->id, $location->id])
             ->with('success', 'Horario eliminado correctamente.');
     }
 }

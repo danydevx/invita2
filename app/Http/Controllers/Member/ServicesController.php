@@ -18,7 +18,7 @@ class ServicesController extends Controller
         $services = $business->services()->orderBy('sort_order')->get();
 
         return Inertia::render('Member/Services/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

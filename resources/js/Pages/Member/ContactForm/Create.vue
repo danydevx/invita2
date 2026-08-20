@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Crear Formulario - ${business?.name || ''}`" />
+    <Head :title="`Crear Formulario - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nuevo Formulario"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${listing?.id}/contact-forms`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -94,7 +94,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Formulario' }}
             </button>
-            <Link :href="`/member/listings/${business?.id}/contact-forms`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${listing?.id}/contact-forms`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -111,13 +111,13 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const sending = ref(false)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const form = ref({
   name: '',
@@ -151,7 +151,7 @@ const breadcrumbs = computed(() => {
 
 const submit = () => {
   sending.value = true
-  router.post(`/member/listings/${business.value.id}/contact-forms`, form.value, {
+  router.post(`/member/listings/${listing.value.id}/contact-forms`, form.value, {
     onFinish: () => {
       sending.value = false
     },

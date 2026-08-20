@@ -65,7 +65,7 @@ class PackageController extends Controller
         ];
 
         return Inertia::render('Member/Packages/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -78,7 +78,7 @@ class PackageController extends Controller
         $this->authorize('create', [ListingPackage::class, $business]);
 
         return Inertia::render('Member/Packages/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -150,7 +150,7 @@ class PackageController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.packages.index', $business->id)
+        return redirect()->route('member.listings.packages.index', $business->id)
             ->with('success', 'Paquete creado correctamente.');
     }
 
@@ -163,7 +163,7 @@ class PackageController extends Controller
         $package->load('features');
 
         return Inertia::render('Member/Packages/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -252,7 +252,7 @@ class PackageController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.packages.index', $business->id)
+        return redirect()->route('member.listings.packages.index', $business->id)
             ->with('success', 'Paquete actualizado correctamente.');
     }
 
@@ -277,7 +277,7 @@ class PackageController extends Controller
 
         $package->delete();
 
-        return redirect()->route('member.businesses.packages.index', $business->id)
+        return redirect()->route('member.listings.packages.index', $business->id)
             ->with('success', 'Paquete eliminado correctamente.');
     }
 
@@ -375,6 +375,6 @@ class PackageController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.packages.edit', [$business->id, $cloned->id]);
+        return redirect()->route('member.listings.packages.edit', [$business->id, $cloned->id]);
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Redes Sociales - ${business?.name || ''}`" />
+    <Head :title="`Redes Sociales - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Redes Sociales"
@@ -16,11 +16,11 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/social-networks`"
+      :endpoint="`/member/listings/${listing?.id}/social-networks`"
       :columns="columns"
       :initial-data="dataTable"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/social-networks/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/social-networks/reorder`"
       search-placeholder="Buscar redes sociales..."
       empty-title="No hay redes sociales"
       empty-text="Comienza agregando tu primera red social."
@@ -179,16 +179,15 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const props = defineProps({
-  business: Object,
-  socialNetworks: Array,
+  listing: Object,
   platforms: Object,
   dataTable: Object,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -278,7 +277,7 @@ const openEditModal = (network) => {
 const submitNetwork = () => {
   sending.value = true
   if (editingNetwork.value) {
-    router.put(`/member/listings/${business.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
+    router.put(`/member/listings/${listing.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -292,7 +291,7 @@ const submitNetwork = () => {
       },
     })
   } else {
-    router.post(`/member/listings/${business.value.id}/social-networks`, form.data(), {
+    router.post(`/member/listings/${listing.value.id}/social-networks`, form.data(), {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false
@@ -310,7 +309,7 @@ const submitNetwork = () => {
 
 const deleteNetwork = (network) => {
   if (confirm('Estas seguro de eliminar esta red social?')) {
-    router.delete(`/member/listings/${business.value.id}/social-networks/${network.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/social-networks/${network.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

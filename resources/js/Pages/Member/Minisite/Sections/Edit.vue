@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Sección - ${business?.name || ''}`" />
+    <Head :title="`Editar Sección - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Sección"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/minisite/sections`"
+      :backHref="`/member/listings/${listing?.id}/minisite/sections`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -633,12 +633,12 @@ import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const section = computed(() => page.props.section)
 const sectionTypes = computed(() => page.props.sectionTypes || {})
 const galleries = computed(() => page.props.galleries || [])
 const forms = computed(() => page.props.forms || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -658,8 +658,8 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Minisite', href: `/member/listings/${business.value?.id}/minisite` },
-    { label: 'Secciones', href: `/member/listings/${business.value?.id}/minisite/sections` },
+    { label: 'Minisite', href: `/member/listings/${listing.value?.id}/minisite` },
+    { label: 'Secciones', href: `/member/listings/${listing.value?.id}/minisite/sections` },
     { label: 'Editar', active: true },
   ]
 })
@@ -725,7 +725,7 @@ const updateSection = () => {
   sending.value = true
 
   if (section.value.section_type === 'hero') {
-    router.put(`/member/listings/${business.value.id}/minisite`, {
+    router.put(`/member/listings/${listing.value.id}/minisite`, {
       hero_title: form.hero_title || '',
       hero_subtitle: form.hero_subtitle || '',
       hero_layout: form.hero_layout || 'left',
@@ -735,7 +735,7 @@ const updateSection = () => {
       },
     })
   } else if (section.value.section_type === 'footer') {
-    router.put(`/member/listings/${business.value.id}/minisite`, {
+    router.put(`/member/listings/${listing.value.id}/minisite`, {
       footer_text: form.footer_text || '',
       footer_show_social: form.footer_show_social ? 1 : 0,
     }, {
@@ -744,7 +744,7 @@ const updateSection = () => {
       },
     })
   } else {
-    router.put(`/member/listings/${business.value.id}/minisite/sections/${section.value.id}`, {
+    router.put(`/member/listings/${listing.value.id}/minisite/sections/${section.value.id}`, {
       title: form.title || null,
       subtitle: form.subtitle || null,
       description: form.description || null,

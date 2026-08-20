@@ -34,7 +34,7 @@ class ListingContentController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/LocationsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -46,7 +46,7 @@ class ListingContentController extends Controller
     public function locationsCreate(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/LocationsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -88,7 +88,7 @@ class ListingContentController extends Controller
     public function locationsEdit(Request $request, Listing $business, ListingLocation $location)
     {
         return Inertia::render('Admin/BusinessContent/LocationsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -167,7 +167,7 @@ class ListingContentController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/ServicesIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -181,7 +181,7 @@ class ListingContentController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ServicesCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -227,7 +227,7 @@ class ListingContentController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ServicesEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -304,7 +304,7 @@ class ListingContentController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/FaqsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -321,7 +321,7 @@ class ListingContentController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/FaqsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -362,7 +362,7 @@ class ListingContentController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/FaqsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -423,7 +423,7 @@ class ListingContentController extends Controller
             ->get();
 
         return Inertia::render('Admin/BusinessContent/FaqCategoriesIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -484,7 +484,7 @@ class ListingContentController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/ProductsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -498,7 +498,7 @@ class ListingContentController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ProductsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -544,7 +544,7 @@ class ListingContentController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ProductsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -642,7 +642,7 @@ class ListingContentController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/GalleryIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -661,7 +661,7 @@ class ListingContentController extends Controller
             'file' => ['required', 'file', 'max:'.self::MAX_FILE_SIZE_KB, 'mimetypes:'.implode(',', self::ALLOWED_MIME_TYPES)],
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -706,7 +706,7 @@ class ListingContentController extends Controller
         $data = $request->validate([
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -764,7 +764,7 @@ class ListingContentController extends Controller
             ]);
 
         return Inertia::render('Admin/BusinessContent/GalleriesIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -776,7 +776,7 @@ class ListingContentController extends Controller
     public function galleriesCreate(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/GalleriesCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -822,7 +822,7 @@ class ListingContentController extends Controller
         abort_unless($gallery->listing_id === $business->id, 404);
 
         return Inertia::render('Admin/BusinessContent/GalleriesEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -924,7 +924,7 @@ class ListingContentController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/AppointmentsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -946,7 +946,7 @@ class ListingContentController extends Controller
             ->get(['id', 'name', 'address_line_1']);
 
         return Inertia::render('Admin/BusinessContent/AppointmentsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -1002,7 +1002,7 @@ class ListingContentController extends Controller
         $appointment->load(['location', 'service']);
 
         return Inertia::render('Admin/BusinessContent/AppointmentsShow', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -1045,7 +1045,7 @@ class ListingContentController extends Controller
             ->get(['id', 'name', 'address_line_1']);
 
         return Inertia::render('Admin/BusinessContent/AppointmentsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

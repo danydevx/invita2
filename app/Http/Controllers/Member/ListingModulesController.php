@@ -41,8 +41,8 @@ class ListingModulesController extends Controller
             ];
         })->values()->toArray();
 
-        return Inertia::render('Member/ListingModules', [
-            'business' => [
+        return Inertia::render('Member/ListingModules/Index', [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'industry_name' => $industry?->name,

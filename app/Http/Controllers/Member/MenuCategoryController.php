@@ -27,7 +27,7 @@ class MenuCategoryController extends Controller
             ->get();
 
         return inertia('Member/Categories/Index', [
-            'business' => $business,
+            'listing' => $business,
             'categories' => $categories,
         ]);
     }

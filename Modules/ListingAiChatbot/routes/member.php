@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Modules\ListingAiChatbot\Http\Controllers\Member\AiChatbotController;
 
 Route::middleware(['auth', 'verified', 'active', 'role:member'])
-    ->prefix('member/businesses/{business}/ai-chatbot')
-    ->name('member.business.listing-aichatbot.')
+    ->prefix('member/listings/{listing}/ai-chatbot')
+    ->name('member.listings.listing-aichatbot.')
     ->group(function () {
         Route::get('/', [AiChatbotController::class, 'index'])->name('index');
         Route::post('/settings', [AiChatbotController::class, 'saveSettings'])->name('settings');

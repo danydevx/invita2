@@ -52,7 +52,7 @@ class ListingProduct extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(ListingProductImage::class);
+        return $this->hasMany(ListingProductImage::class, 'business_product_id');
     }
 
     public function category(): BelongsTo

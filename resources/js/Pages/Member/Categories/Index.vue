@@ -29,7 +29,7 @@
       </div>
 
       <div class="mb-3">
-        <Link :href="`/member/listings/${business.id}/menu-products?uncategorized=1`" class="btn btn-outline-secondary btn-sm">
+        <Link :href="`/member/listings/${listing.id}/menu-products?uncategorized=1`" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-dash-circle me-1"></i>Productos sin categoria
         </Link>
       </div>
@@ -44,7 +44,7 @@
                   <span v-if="!category.active" class="badge bg-secondary ms-2">Inactiva</span>
                 </span>
                 <small class="text-muted d-block">{{ category.children?.length || 0 }} subcategorias, {{ category.products?.length || 0 }} productos</small>
-                <Link :href="`/member/listings/${business.id}/menu-products?category=${category.id}`" class="text-decoration-none small">
+                <Link :href="`/member/listings/${listing.id}/menu-products?category=${category.id}`" class="text-decoration-none small">
                   <i class="bi bi-box-seam me-1"></i>Ver productos
                 </Link>
               </div>
@@ -66,7 +66,7 @@
                     <span :class="{ 'text-muted': !child.active }">
                       {{ child.title }}
                       <span v-if="!child.active" class="badge bg-secondary ms-2">Inactiva</span>
-                      <Link :href="`/member/listings/${business.id}/menu-products?category=${child.id}`" class="text-decoration-none small ms-2">
+                      <Link :href="`/member/listings/${listing.id}/menu-products?category=${child.id}`" class="text-decoration-none small ms-2">
                         <i class="bi bi-box-seam"></i> {{ child.products?.length || 0 }}
                       </Link>
                     </span>
@@ -187,13 +187,13 @@ import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   categories: Array,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -312,7 +312,7 @@ const handleImageChange = (e) => {
 const deleteCategory = (category) => {
   if (!confirm(`Eliminar la categoria "${category.title}"?`)) return
 
-  router.delete(`/member/listings/${props.business.id}/menu-categories/${category.id}`, {
+  router.delete(`/member/listings/${props.listing.id}/menu-categories/${category.id}`, {
     preserveScroll: true,
   })
 }
@@ -348,7 +348,7 @@ const submitForm = () => {
 
   if (editingCategory.value) {
     data.append('_method', 'PUT')
-    router.post(`/member/listings/${props.business.id}/menu-categories/${editingCategory.value.id}`, data, {
+    router.post(`/member/listings/${props.listing.id}/menu-categories/${editingCategory.value.id}`, data, {
       preserveScroll: true,
       onFinish: () => {
         sending.value = false
@@ -356,7 +356,7 @@ const submitForm = () => {
       },
     })
   } else {
-    router.post(`/member/listings/${props.business.id}/menu-categories`, data, {
+    router.post(`/member/listings/${props.listing.id}/menu-categories`, data, {
       preserveScroll: true,
       onFinish: () => {
         sending.value = false

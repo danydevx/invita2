@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Ubicacion - ${business.name}`" />
+    <Head :title="`Editar Ubicacion - ${listing.name}`" />
 
     <PageHeader
       :title="'Editar Ubicacion'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/locations`"
+      :backHref="`/member/listings/${listing.id}/locations`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -207,7 +207,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Actualizando...' : 'Actualizar Ubicacion' }}
             </button>
-            <Link :href="`/member/listings/${business.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${listing.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -226,7 +226,7 @@ import LocationSelector from '@/Components/LocationSelector.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const location = computed(() => page.props.location)
 
 const locationData = ref({
@@ -264,7 +264,7 @@ const form = reactive({
   is_active: !!location.value.is_active,
 })
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -408,9 +408,9 @@ const submit = () => {
     formData.append('remove_image', '1')
   }
 
-  router.post(`/member/listings/${business.value.id}/locations/${location.value.id}`, formData, {
+  router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}`, formData, {
     onSuccess: () => {
-      window.location.href = `/member/listings/${business.value.id}/locations?success=updated`
+      window.location.href = `/member/listings/${listing.value.id}/locations?success=updated`
     },
     onError: (serverErrors) => {
       sending.value = false

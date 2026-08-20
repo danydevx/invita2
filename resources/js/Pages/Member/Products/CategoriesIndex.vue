@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Categorias - ${business?.name || ''}`" />
+    <Head :title="`Categorias - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Categorias de Productos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/products`"
+      :backHref="`/member/listings/${listing?.id}/products`"
     >
       <template #actions>
         <button class="btn btn-primary btn-sm" @click="openCreateModal">
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/product-categories`"
+      :endpoint="`/member/listings/${listing?.id}/product-categories`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
@@ -137,10 +137,10 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const categories = computed(() => page.props.categories || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -234,7 +234,7 @@ const createCategory = () => {
   formData.append('description', form.description || '')
   formData.append('parent_id', form.parent_id ?? '')
   formData.append('is_active', form.is_active ? '1' : '0')
-  router.post(`/member/listings/${business.value.id}/product-categories`, formData, {
+  router.post(`/member/listings/${listing.value.id}/product-categories`, formData, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -252,7 +252,7 @@ const updateCategory = () => {
   formData.append('description', form.description || '')
   formData.append('parent_id', form.parent_id ?? '')
   formData.append('is_active', form.is_active ? '1' : '0')
-  router.put(`/member/listings/${business.value.id}/product-categories/${editingCategory.value.id}`, formData, {
+  router.put(`/member/listings/${listing.value.id}/product-categories/${editingCategory.value.id}`, formData, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -265,7 +265,7 @@ const updateCategory = () => {
 
 const deleteCategory = (category) => {
   if (confirm(`Eliminar la categoria "${category.name}"?`)) {
-    router.delete(`/member/listings/${business.value.id}/product-categories/${category.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/product-categories/${category.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

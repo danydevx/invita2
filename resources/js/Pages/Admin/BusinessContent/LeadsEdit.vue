@@ -1,10 +1,10 @@
 <template>
   <AdminLayout>
-    <Head :title="`Editar Lead - ${business.name}`" />
+    <Head :title="`Editar Lead - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${business.id}/leads`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing.id}/leads`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Editar Lead</h1>
@@ -97,7 +97,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
               </button>
-              <Link :href="`/admin/listings/${business.id}/leads`" class="btn btn-outline-secondary">
+              <Link :href="`/admin/listings/${listing.id}/leads`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -114,7 +114,7 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const lead = computed(() => page.props.lead)
 const locations = computed(() => page.props.locations || [])
 const errors = computed(() => page.props.errors || {})
@@ -133,7 +133,7 @@ const form = reactive({
 
 const submit = () => {
   sending.value = true
-  router.put(`/admin/listings/${business.value.id}/leads/${lead.value.id}`, form, {
+  router.put(`/admin/listings/${listing.value.id}/leads/${lead.value.id}`, form, {
     preserveScroll: true,
     onFinish: () => {
       sending.value = false

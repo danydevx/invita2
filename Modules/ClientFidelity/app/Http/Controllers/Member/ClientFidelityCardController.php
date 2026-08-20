@@ -14,9 +14,9 @@ use Modules\ClientFidelity\Notifications\FidelityCardCompletedNotification;
 
 class ClientFidelityCardController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -30,7 +30,7 @@ class ClientFidelityCardController extends Controller
         }
         $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
 
-        $query = ClientFidelityCard::where('listing_id', $business->id)
+        $query = ClientFidelityCard::where('listing_id', $listing->id)
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $q->where('client_name', 'like', "%{$search}%")
@@ -78,9 +78,9 @@ class ClientFidelityCardController extends Controller
         ];
 
         return Inertia::render('Member/ClientFidelity/Index', [
-            'business' => [
-                'id' => $business->id,
-                'name' => $business->name,
+            'listing' => [
+                'id' => $listing->id,
+                'name' => $listing->name,
             ],
             'dataTable' => $dataTable,
             'filters' => [
@@ -90,23 +90,23 @@ class ClientFidelityCardController extends Controller
         ]);
     }
 
-    public function create(Business $business)
+    public function create(Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         return Inertia::render('Member/ClientFidelity/Create', [
-            'business' => $business,
+            'listing' => $listing,
         ]);
     }
 
-    public function store(CreateClientFidelityCardRequest $request, Business $business)
+    public function store(CreateClientFidelityCardRequest $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $validated = $request->validated();
 
         $card = ClientFidelityCard::create([
-            'listing_id' => $business->id,
+            'listing_id' => $listing->id,
             'client_name' => $validated['client_name'],
             'client_email' => $validated['client_email'] ?? null,
             'client_phone' => $validated['client_phone'] ?? null,
@@ -117,38 +117,38 @@ class ClientFidelityCardController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('member.businesses.fidelity-cards.show', [$business->id, $card->id])
+        return redirect()->route('member.listings.fidelity-cards.show', [$listing->id, $card->id])
             ->with('success', 'Tarjeta creada correctamente.');
     }
 
-    public function show(Business $business, ClientFidelityCard $card)
+    public function show(Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         $card->load('business');
 
         return Inertia::render('Member/ClientFidelity/Show', [
-            'business' => $business,
+            'listing' => $listing,
             'card' => $card,
         ]);
     }
 
-    public function edit(Business $business, ClientFidelityCard $card)
+    public function edit(Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         return Inertia::render('Member/ClientFidelity/Edit', [
-            'business' => $business,
+            'listing' => $listing,
             'card' => $card,
         ]);
     }
 
-    public function update(UpdateClientFidelityCardRequest $request, Business $business, ClientFidelityCard $card)
+    public function update(UpdateClientFidelityCardRequest $request, Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         $validated = $request->validated();
 
@@ -168,21 +168,21 @@ class ClientFidelityCardController extends Controller
         return redirect()->back()->with('success', 'Tarjeta actualizada correctamente.');
     }
 
-    public function destroy(Business $business, ClientFidelityCard $card)
+    public function destroy(Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         $card->delete();
 
-        return redirect()->route('member.businesses.fidelity-cards.index', [$business->id])
+        return redirect()->route('member.listings.fidelity-cards.index', [$listing->id])
             ->with('success', 'Tarjeta eliminada correctamente.');
     }
 
-    public function scan(Business $business, ClientFidelityCard $card)
+    public function scan(Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         if ($card->current_visits <= 0) {
             return redirect()->back()->with('error', 'Esta tarjeta ya esta completada.');
@@ -191,7 +191,7 @@ class ClientFidelityCardController extends Controller
         $card->decrementVisit();
 
         if ($card->current_visits <= 0) {
-            $owner = $business->user;
+            $owner = $listing->user;
             $owner->notify(new FidelityCardCompletedNotification($card, $business));
 
             return redirect()->back()->with('success', "¡Tarjeta completada! El cliente {$card->client_name} ha ganado su premio.");
@@ -200,42 +200,42 @@ class ClientFidelityCardController extends Controller
         return redirect()->back()->with('success', "Visita registrada. {$card->visits_remaining} visitas restantes.");
     }
 
-    public function reset(Business $business, ClientFidelityCard $card)
+    public function reset(Listing $listing, ClientFidelityCard $card)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($card->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($card->listing_id === $listing->id, 403);
 
         $card->reset();
 
         return redirect()->back()->with('success', 'Tarjeta reseteada correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $validated = $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'exists:client_fidelity_cards,id',
         ]);
 
-        ClientFidelityCard::where('listing_id', $business->id)
+        ClientFidelityCard::where('listing_id', $listing->id)
             ->whereIn('id', $validated['ids'])
             ->delete();
 
         return redirect()->back()->with('success', 'Tarjetas eliminadas correctamente.');
     }
 
-    public function scanByCode(Business $business, Request $request)
+    public function scanByCode(Listing $listing, Request $request)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $request->validate([
             'public_code' => 'required|string|max:15',
         ]);
 
         $card = ClientFidelityCard::where('public_code', strtoupper($request->public_code))
-            ->where('listing_id', $business->id)
+            ->where('listing_id', $listing->id)
             ->first();
 
         if (!$card) {
@@ -249,7 +249,7 @@ class ClientFidelityCardController extends Controller
         $card->decrementVisit();
 
         if ($card->current_visits <= 0) {
-            $owner = $business->user;
+            $owner = $listing->user;
             $owner->notify(new FidelityCardCompletedNotification($card, $business));
 
             return redirect()->back()->with('success', "¡Tarjeta completada! El cliente {$card->client_name} ha ganado su premio.");
@@ -258,12 +258,12 @@ class ClientFidelityCardController extends Controller
         return redirect()->back()->with('success', "Visita registrada para {$card->client_name}. {$card->visits_remaining} visitas restantes.");
     }
 
-    public function scanView(Business $business)
+    public function scanView(Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         return Inertia::render('Member/ClientFidelity/Scan', [
-            'business' => $business,
+            'listing' => $listing,
         ]);
     }
 }

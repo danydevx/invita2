@@ -87,7 +87,7 @@ class AppointmentController extends Controller
         ];
 
         return Inertia::render('Member/Appointments/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -113,7 +113,7 @@ class AppointmentController extends Controller
             ->get(['id', 'name', 'address_line_1']);
 
         return Inertia::render('Member/Appointments/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -179,7 +179,7 @@ class AppointmentController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.appointments.index', $business->id)
+        return redirect()->route('member.listings.appointments.index', $business->id)
             ->with('success', 'Cita creada correctamente.');
     }
 
@@ -190,7 +190,7 @@ class AppointmentController extends Controller
         $appointment->load(['location', 'service']);
 
         return Inertia::render('Member/Appointments/Show', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -234,7 +234,7 @@ class AppointmentController extends Controller
             ->get(['id', 'name', 'address_line_1']);
 
         return Inertia::render('Member/Appointments/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -314,7 +314,7 @@ class AppointmentController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.appointments.index', $business->id)
+        return redirect()->route('member.listings.appointments.index', $business->id)
             ->with('success', 'Cita actualizada correctamente.');
     }
 
@@ -330,7 +330,7 @@ class AppointmentController extends Controller
 
         $appointment->delete();
 
-        return redirect()->route('member.businesses.appointments.index', $business->id)
+        return redirect()->route('member.listings.appointments.index', $business->id)
             ->with('success', 'Cita eliminada correctamente.');
     }
 

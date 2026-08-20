@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Tarjeta - ${business?.name || ''}`" />
+    <Head :title="`Nueva Tarjeta - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nueva Tarjeta"
@@ -73,7 +73,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
+                <Link :href="`/member/listings/${listing?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
                   Cancelar
                 </Link>
               </div>
@@ -97,8 +97,8 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const visitOptions = [
   { value: 5, label: '5 visitas' },
@@ -126,7 +126,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
     { label: 'Nueva', active: true },
   ]
 })
@@ -140,7 +140,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/listings/${business.value.id}/fidelity-cards`, {
+  form.post(`/member/listings/${listing.value.id}/fidelity-cards`, {
     preserveScroll: true,
   })
 }

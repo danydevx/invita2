@@ -35,7 +35,7 @@
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Guardando...' : 'Crear galería' }}
             </button>
-            <Link :href="`/admin/listings/${business.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/admin/listings/${listing.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -49,7 +49,7 @@ import { computed } from 'vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 
 const form = useForm({
   name: '',
@@ -60,6 +60,6 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/admin/listings/${business.value.id}/galleries`)
+  form.post(`/admin/listings/${listing.value.id}/galleries`)
 }
 </script>

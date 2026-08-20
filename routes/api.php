@@ -3,7 +3,7 @@
 use App\Http\Controllers\Public\BookingWidgetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\ListingLocations\Http\Controllers\LocationDataController;
+use Modules\Locations\Http\Controllers\Admin\LocationController;
 
 Route::middleware(['api_key', 'throttle:api-key'])->group(function () {
     Route::get('/me', function (Request $request) {
@@ -17,8 +17,10 @@ Route::middleware(['api_key', 'throttle:api-key'])->group(function () {
     })->name('api.me');
 });
 
-Route::get('v1/location-data/states', [LocationDataController::class, 'states']);
-Route::get('v1/location-data/municipalities/{stateCode}', [LocationDataController::class, 'municipalities']);
+Route::get('v1/location-data/countries', [LocationController::class, 'getCountries']);
+Route::get('v1/location-data/states', [LocationController::class, 'getStates']);
+Route::get('v1/location-data/states/{countryCode}', [LocationController::class, 'getStates']);
+Route::get('v1/location-data/municipalities/{stateCode}', [LocationController::class, 'getMunicipalities']);
 
 Route::prefix('book')->group(function () {
     Route::get('businesses/active', [BookingWidgetController::class, 'activeBusinesses'])

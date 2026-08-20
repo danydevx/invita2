@@ -33,7 +33,7 @@ class ContactFormController extends Controller
         $maxForms = $this->getMaxFormsPerBusiness();
 
         return Inertia::render('Member/ContactForm/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -55,7 +55,7 @@ class ContactFormController extends Controller
         }
 
         return Inertia::render('Member/ContactForm/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -118,7 +118,7 @@ class ContactFormController extends Controller
         ]);
 
         return Inertia::render('Member/ContactForm/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -191,7 +191,7 @@ class ContactFormController extends Controller
             ->toArray();
 
         return Inertia::render('Member/ContactForm/Preview', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -390,7 +390,7 @@ class ContactFormController extends Controller
         ];
 
         return Inertia::render('Member/ContactForm/Submissions', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

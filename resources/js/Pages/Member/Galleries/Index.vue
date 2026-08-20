@@ -8,7 +8,7 @@
       :backHref="'/member/listings'"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/galleries/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/galleries/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva galería
         </Link>
@@ -20,7 +20,7 @@
         <i class="bi bi-images display-1 text-muted"></i>
         <h3 class="h5 mt-3">No hay galerías registradas</h3>
         <p class="text-muted">Crea tu primera galería para empezar a organizar imágenes.</p>
-        <Link :href="`/member/listings/${business?.id}/galleries/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/galleries/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Crear primera galería
         </Link>
@@ -47,10 +47,10 @@
             </p>
 
             <div class="d-flex flex-wrap gap-2 mt-3">
-              <Link :href="`/member/listings/${business?.id}/gallery/${gallery.id}`" class="btn btn-sm btn-outline-primary">
+              <Link :href="`/member/listings/${listing?.id}/gallery/${gallery.id}`" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-images me-1"></i>Ver imagenes
               </Link>
-              <Link :href="`/member/listings/${business?.id}/galleries/${gallery.id}/edit`" class="btn btn-sm btn-outline-secondary">
+              <Link :href="`/member/listings/${listing?.id}/galleries/${gallery.id}/edit`" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-pencil me-1"></i>Editar
               </Link>
               <button
@@ -83,9 +83,9 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const galleries = computed(() => page.props.galleries || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -109,13 +109,13 @@ const breadcrumbs = computed(() => {
 
 const setPrimary = (gallery) => {
   if (confirm(`Marcar "${gallery.name}" como galería principal?`)) {
-    router.post(`/member/listings/${business.value.id}/galleries/${gallery.id}/set-primary`)
+    router.post(`/member/listings/${listing.value.id}/galleries/${gallery.id}/set-primary`)
   }
 }
 
 const confirmDestroy = (gallery) => {
   if (confirm(`Eliminar "${gallery.name}"? Sus imágenes también se eliminarán.`)) {
-    router.delete(`/member/listings/${business.value.id}/galleries/${gallery.id}`)
+    router.delete(`/member/listings/${listing.value.id}/galleries/${gallery.id}`)
   }
 }
 </script>

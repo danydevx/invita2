@@ -1,17 +1,17 @@
 <template>
   <MemberLayout>
-    <Head :title="`Secciones del Minisite - ${business?.name || ''}`" />
+    <Head :title="`Secciones del Minisite - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Secciones del Minisite"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/minisite`"
+      :backHref="`/member/listings/${listing?.id}/minisite`"
     >
       <template #actions>
-        <!-- <a v-if="business?.slug" :href="`/b/${business.slug}`" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
+        <!-- <a v-if="listing?.slug" :href="`/b/${listing.slug}`" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
           <i class="bi bi-display me-1"></i>Ver Desktop
         </a> -->
-        <Link :href="`/member/listings/${business?.id}/minisite/sections/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/minisite/sections/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva Sección
         </Link>
       </template>
@@ -30,7 +30,7 @@
               <i class="bi bi-layout-text-sidebar display-1"></i>
               <h5 class="mt-3">No hay secciones</h5>
               <p>Crea tu primera sección para empezar a construir tu minisite.</p>
-              <Link :href="`/member/listings/${business?.id}/minisite/sections/create`" class="btn btn-primary">
+               <Link :href="`/member/listings/${listing?.id}/minisite/sections/create`" class="btn btn-primary">
                 <i class="bi bi-plus-lg me-1"></i>Crear Sección
               </Link>
             </div>
@@ -54,8 +54,8 @@
                 <div class="minisite-sections__actions">
                   <Link
                     :href="section.id === 'hero' || section.id === 'footer'
-                      ? `/member/listings/${business?.id}/minisite`
-                      : `/member/listings/${business?.id}/minisite/sections/${section.id}/edit`"
+                      ? `/member/listings/${listing?.id}/minisite`
+                      : `/member/listings/${listing?.id}/minisite/sections/${section.id}/edit`"
                     class="btn btn-sm btn-outline-primary"
                   >
                     <i class="bi bi-pencil"></i>
@@ -81,7 +81,7 @@
           </h6>
           <MinisitePreview
             :key="sectionsKey"
-            :business="business"
+            :business="listing"
             :setting="setting"
             :sections="localSections"
             :socialNetworks="socialNetworks"
@@ -102,12 +102,12 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 import MinisitePreview from '@/Components/Minisite/MinisitePreview.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const sections = computed(() => page.props.sections || [])
 const sectionTypes = computed(() => page.props.sectionTypes || {})
 const setting = computed(() => page.props.setting)
 const socialNetworks = computed(() => page.props.socialNetworks || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const localSections = ref([...sections.value])
 const sectionsList = ref(null)
@@ -138,14 +138,14 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Minisite', href: `/member/listings/${business.value?.id}/minisite` },
+    { label: 'Minisite', href: `/member/listings/${listing.value?.id}/minisite` },
     { label: 'Secciones', active: true },
   ]
 })
 
 const deleteSection = (section) => {
   if (confirm(`¿Eliminar la sección "${section.title || section.section_key}"?`)) {
-    router.delete(`/member/listings/${business.value.id}/minisite/sections/${section.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/minisite/sections/${section.id}`, {
       preserveScroll: true,
     })
   }
@@ -173,7 +173,7 @@ const initSortable = () => {
 
       if (ids.length > 0) {
         router.post(
-          `/member/listings/${business.value.id}/minisite/sections/reorder`,
+          `/member/listings/${listing.value.id}/minisite/sections/reorder`,
           { ids },
           {
             preserveScroll: true,

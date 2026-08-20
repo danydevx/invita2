@@ -29,7 +29,7 @@ class FidelityCardCompletedNotification extends Notification implements ShouldQu
             ->line("El cliente {$this->card->client_name} ha completado su tarjeta de fidelidad en {$this->business->name}.")
             ->line("Numero de visitas: {$this->card->max_visits}")
             ->line("Premio/discount: {$this->card->description}")
-            ->action('Ver tarjeta', url("/member/businesses/{$this->business->id}/fidelity-cards/{$this->card->id}"))
+            ->action('Ver tarjeta', url("/member/listings/{$this->business->id}/fidelity-cards/{$this->card->id}"))
             ->line('No olvides entregar el premio o descuento al cliente.');
     }
 

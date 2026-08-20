@@ -70,7 +70,7 @@ class LeadController extends Controller
         ];
 
         return Inertia::render('Member/Leads/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -89,7 +89,7 @@ class LeadController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Leads/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -128,7 +128,7 @@ class LeadController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.leads.index', $business->id)
+        return redirect()->route('member.listings.leads.index', $business->id)
             ->with('success', 'Contacto creado correctamente.');
     }
 
@@ -139,7 +139,7 @@ class LeadController extends Controller
         $lead->load('location');
 
         return Inertia::render('Member/Leads/Show', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -175,7 +175,7 @@ class LeadController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Leads/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -224,7 +224,7 @@ class LeadController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.leads.index', $business->id)
+        return redirect()->route('member.listings.leads.index', $business->id)
             ->with('success', 'Contacto actualizado correctamente.');
     }
 
@@ -240,7 +240,7 @@ class LeadController extends Controller
 
         $lead->delete();
 
-        return redirect()->route('member.businesses.leads.index', $business->id)
+        return redirect()->route('member.listings.leads.index', $business->id)
             ->with('success', 'Contacto eliminado correctamente.');
     }
 

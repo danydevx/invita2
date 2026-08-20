@@ -1,16 +1,16 @@
 <template>
   <MemberLayout>
-    <Head :title="`Theme de ${business.name}`" />
+    <Head :title="`Theme de ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/member/business-modules" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Mis Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Theme del Minisite</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Theme del Minisite</h1>
       </div>
       <div>
-        <a :href="`/b/${business.slug}`" target="_blank" class="btn btn-outline-secondary btn-sm">
+        <a :href="`/b/${listing.slug}`" target="_blank" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-eye me-1"></i>Ver minisite
         </a>
       </div>
@@ -23,7 +23,7 @@
 
     <div class="alert alert-info mb-4">
       <i class="bi bi-info-circle me-2"></i>
-      El theme define el estilo visual de tu minisite público. Actualmente tienes asignado: <strong>{{ business.theme?.name || 'Ninguno (se asignará por defecto)' }}</strong>
+      El theme define el estilo visual de tu minisite público. Actualmente tienes asignado: <strong>{{ listing.theme?.name || 'Ninguno (se asignará por defecto)' }}</strong>
     </div>
 
     <div class="row g-4">
@@ -31,16 +31,16 @@
         <div
           class="card h-100 theme-card"
           :class="{
-            'border-primary': business.theme?.id === theme.id,
-            'border-success': business.theme?.id === theme.id,
-            'selected': business.theme?.id === theme.id
+            'border-primary': listing.theme?.id === theme.id,
+            'border-success': listing.theme?.id === theme.id,
+            'selected': listing.theme?.id === theme.id
           }"
         >
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-3">
               <div>
                 <h5 class="card-title mb-1">{{ theme.name }}</h5>
-                <span v-if="business.theme?.id === theme.id" class="badge bg-success">
+                <span v-if="listing.theme?.id === theme.id" class="badge bg-success">
                   <i class="bi bi-check-circle me-1"></i>Seleccionado
                 </span>
               </div>
@@ -71,7 +71,7 @@
             </div>
 
             <button
-              v-if="business.theme?.id !== theme.id"
+              v-if="listing.theme?.id !== theme.id"
               @click="selectTheme(theme)"
               class="btn btn-outline-primary w-100"
               :disabled="selecting"
@@ -91,7 +91,7 @@ import { usePage, Head, Link, router } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   themes: Array,
 })
 
@@ -103,7 +103,7 @@ const selectTheme = (theme) => {
   selecting.value = true
 
   router.put(
-    `/member/listings/${props.business.id}/minisite-theme/${theme.id}`,
+    `/member/listings/${props.listing.id}/minisite-theme/${theme.id}`,
     {},
     {
       onFinish: () => {

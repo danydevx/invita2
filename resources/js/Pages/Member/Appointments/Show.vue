@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Cita - ${business.name}`" />
+    <Head :title="`Cita - ${listing.name}`" />
 
     <PageHeader
       :title="'Detalle de Cita'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/appointments`"
+      :backHref="`/member/listings/${listing.id}/appointments`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -88,9 +88,9 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const appointment = computed(() => page.props.appointment)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const statusOptions = [
   { value: 'pending', label: 'Pendiente', color: 'warning' },
@@ -141,7 +141,7 @@ const statusClass = (status) => {
 }
 
 const updateStatus = (status) => {
-  router.put(`/member/listings/${business.value.id}/appointments/${appointment.value.id}`, {
+  router.put(`/member/listings/${listing.value.id}/appointments/${appointment.value.id}`, {
     status,
   }, { preserveScroll: true })
 }

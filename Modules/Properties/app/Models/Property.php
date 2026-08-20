@@ -11,12 +11,9 @@ use Modules\Listings\Models\Listing;
 
 class Property extends Model
 {
-
     protected $table = 'properties';
 
     use HasFactory, SoftDeletes;
-
-    protected $table = 'properties';
 
     public const STATUS_DRAFT = 'draft';
     public const STATUS_PUBLISHED = 'published';

@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Propiedad - ${business?.name || ''}`" />
+    <Head :title="`Editar Propiedad - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Propiedad"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/properties`"
+      :backHref="`/member/listings/${listing?.id}/properties`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -79,7 +79,7 @@
               </div>
               <div class="property-section__body">
                 <PropertyImageUpload
-                  :businessId="business?.id"
+                  :businessId="listing?.id"
                   :propertyId="property?.id"
                   :images="propertyImages || []"
                   :maxFiles="10"
@@ -109,7 +109,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/listings/${business?.id}/properties`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${listing?.id}/properties`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -145,7 +145,7 @@ import PropertyImageUpload from '@/Components/Fields/PropertyImageUpload.vue'
 import PropertyAmenityPicker from '@/Components/Fields/PropertyAmenityPicker.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const property = computed(() => page.props.property)
 const propertyType = computed(() => page.props.propertyType)
 const formSchema = computed(() => page.props.formSchema)
@@ -190,7 +190,7 @@ const localErrors = reactive({})
 const mergedErrors = computed(() => {
   return { ...serverErrors.value, ...localErrors }
 })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -385,7 +385,7 @@ const submit = () => {
     formData.append('main_image', mainImageFile.value)
   }
 
-  router.post(`/member/listings/${business.value.id}/properties/${property.value.id}`, formData, {
+  router.post(`/member/listings/${listing.value.id}/properties/${property.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

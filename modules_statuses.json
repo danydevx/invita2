@@ -30,5 +30,6 @@
     "ListingPackages": true,
     "ListingTeamMembers": true,
     "ListingRestaurantMenu": true,
-    "ListingCheckin": true
+    "ListingCheckin": true,
+    "Locations": true
 }

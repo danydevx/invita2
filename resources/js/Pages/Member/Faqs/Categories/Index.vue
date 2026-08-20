@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Categorías - ${business?.name || ''}`" />
+    <Head :title="`Categorías - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Categorías de Preguntas Frecuentes"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/faqs`"
+      :backHref="`/member/listings/${listing?.id}/faqs`"
     >
       <template #actions>
         <button class="btn btn-primary btn-sm" @click="openCreateModal">
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/faq-categories`"
+      :endpoint="`/member/listings/${listing?.id}/faq-categories`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
@@ -116,10 +116,10 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const categories = computed(() => page.props.categories || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -189,7 +189,7 @@ const closeModal = () => {
 
 const createCategory = () => {
   sending.value = true
-  router.post(`/member/listings/${business.value.id}/faq-categories`, form, {
+  router.post(`/member/listings/${listing.value.id}/faq-categories`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -202,7 +202,7 @@ const createCategory = () => {
 
 const updateCategory = () => {
   sending.value = true
-  router.put(`/member/listings/${business.value.id}/faq-categories/${editingCategory.value.id}`, form, {
+  router.put(`/member/listings/${listing.value.id}/faq-categories/${editingCategory.value.id}`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -215,7 +215,7 @@ const updateCategory = () => {
 
 const deleteCategory = (category) => {
   if (confirm(`Eliminar la categoría "${category.name}"? Las preguntas serán desvinculadas.`)) {
-    router.delete(`/member/listings/${business.value.id}/faq-categories/${category.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/faq-categories/${category.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

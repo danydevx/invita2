@@ -62,7 +62,7 @@ class LocationController extends Controller
         ];
 
         return Inertia::render('Member/Locations/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -76,7 +76,7 @@ class LocationController extends Controller
         $this->authorize('create', [ListingLocation::class, $business]);
 
         return Inertia::render('Member/Locations/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -143,7 +143,7 @@ class LocationController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.locations.index', $business->id)
+        return redirect()->route('member.listings.locations.index', $business->id)
             ->with('success', 'Ubicacion creada correctamente.');
     }
 
@@ -152,7 +152,7 @@ class LocationController extends Controller
         $this->authorize('update', [ListingLocation::class, $location]);
 
         return Inertia::render('Member/Locations/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -248,7 +248,7 @@ class LocationController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.locations.index', $business->id)
+        return redirect()->route('member.listings.locations.index', $business->id)
             ->with('success', 'Ubicacion actualizada correctamente.');
     }
 
@@ -258,7 +258,7 @@ class LocationController extends Controller
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_locations', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_locations', 'id')->where('listing_id', $business->id)],
         ]);
 
         $count = \Modules\ListingLocations\Models\ListingLocation::where('listing_id', $business->id)
@@ -284,7 +284,7 @@ class LocationController extends Controller
 
         $location->delete();
 
-        return redirect()->route('member.businesses.locations.index', $business->id)
+        return redirect()->route('member.listings.locations.index', $business->id)
             ->with('success', 'Ubicacion eliminada correctamente.');
     }
 }

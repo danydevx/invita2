@@ -24,9 +24,9 @@ class PropertyController extends Controller
         protected PropertyImageService $imageService
     ) {}
 
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $listing)
     {
-        $this->authorize('viewAny', [Property::class, $business]);
+        $this->authorize('viewAny', [Property::class, $listing]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -53,7 +53,7 @@ class PropertyController extends Controller
             'direction' => $direction,
         ]);
 
-        $query = $this->propertyService->getPropertiesQuery($business, $filters);
+        $query = $this->propertyService->getPropertiesQuery($listing, $filters);
 
         $properties = $query->paginate($perPage);
 
@@ -74,7 +74,7 @@ class PropertyController extends Controller
 
         $propertyTypes = PropertyType::active()->orderBy('name')->get(['id', 'name', 'key']);
 
-        $availableStates = $business->properties()
+        $availableStates = $listing->properties()
             ->whereNotNull('state_code')
             ->where('state_code', '!=', '')
             ->distinct()
@@ -84,7 +84,7 @@ class PropertyController extends Controller
 
         $availableCities = [];
         if ($state) {
-            $availableCities = $business->properties()
+            $availableCities = $listing->properties()
                 ->where('state_code', $state)
                 ->whereNotNull('city')
                 ->where('city', '!=', '')
@@ -108,9 +108,9 @@ class PropertyController extends Controller
         $operationOptions = Property::OPERATIONS;
 
         return Inertia::render('Member/Properties/Index', [
-            'business' => [
-                'id' => $business->id,
-                'name' => $business->name,
+            'listing' => [
+                'id' => $listing->id,
+                'name' => $listing->name,
             ],
             'properties' => $properties,
             'propertyTypes' => $propertyTypes,
@@ -123,11 +123,11 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function create(Request $request, Business $business)
+    public function create(Request $request, Listing $listing)
     {
-        $this->authorize('create', [Property::class, $business]);
+        $this->authorize('create', [Property::class, $listing]);
 
-        $limitCheck = (new PropertyLimitService())->forBusiness($business)->canCreateProperty();
+        $limitCheck = (new PropertyLimitService())->forBusiness($listing)->canCreateProperty();
 
         if (! $limitCheck['allowed']) {
             return redirect()->back()->with('error', $limitCheck['reason']);
@@ -146,9 +146,9 @@ class PropertyController extends Controller
         }
 
         return Inertia::render('Member/Properties/Create', [
-            'business' => [
-                'id' => $business->id,
-                'name' => $business->name,
+            'listing' => [
+                'id' => $listing->id,
+                'name' => $listing->name,
             ],
             'propertyTypes' => $propertyTypes,
             'selectedTypeId' => $selectedTypeId,
@@ -157,11 +157,11 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function store(StorePropertyRequest $request, Business $business, ActivityService $activity)
+    public function store(StorePropertyRequest $request, Listing $listing, ActivityService $activity)
     {
-        $this->authorize('create', [Property::class, $business]);
+        $this->authorize('create', [Property::class, $listing]);
 
-        $limitCheck = (new PropertyLimitService())->forBusiness($business)->canCreateProperty();
+        $limitCheck = (new PropertyLimitService())->forBusiness($listing)->canCreateProperty();
 
         if (! $limitCheck['allowed']) {
             return redirect()->back()->with('error', $limitCheck['reason']);
@@ -169,7 +169,7 @@ class PropertyController extends Controller
 
         $data = $request->validated();
 
-        $property = $this->propertyService->createProperty($business, $data);
+        $property = $this->propertyService->createProperty($listing, $data);
 
         $activity->log('property_created', [
             'actor' => $request->user(),
@@ -178,13 +178,13 @@ class PropertyController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.properties.index', $business->id)
+        return redirect()->route('member.listings.properties.index', $listing->id)
             ->with('success', 'Propiedad creada correctamente.');
     }
 
-    public function edit(Request $request, Business $business, Property $property)
+    public function edit(Request $request, Listing $listing, Property $property)
     {
-        $this->authorize('update', [property::class, $property]);
+        $this->authorize('update', [Property::class, $property]);
 
         $propertyType = $property->propertyType;
         $formSchema = $this->formSchemaService->getFormSchema($propertyType);
@@ -225,9 +225,9 @@ class PropertyController extends Controller
             ->toArray();
 
         return Inertia::render('Member/Properties/Edit', [
-            'business' => [
-                'id' => $business->id,
-                'name' => $business->name,
+            'listing' => [
+                'id' => $listing->id,
+                'name' => $listing->name,
             ],
             'property' => [
                 'id' => $property->id,
@@ -273,7 +273,7 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function update(UpdatePropertyRequest $request, Business $business, Property $property, ActivityService $activity)
+    public function update(UpdatePropertyRequest $request, Listing $listing, Property $property, ActivityService $activity)
     {
         $this->authorize('update', [Property::class, $property]);
 
@@ -288,11 +288,11 @@ class PropertyController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.properties.index', $business->id)
+        return redirect()->route('member.listings.properties.index', $listing->id)
             ->with('success', 'Propiedad actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Business $business, Property $property, ActivityService $activity)
+    public function destroy(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
         $this->authorize('delete', [Property::class, $property]);
 
@@ -304,15 +304,15 @@ class PropertyController extends Controller
             'description' => 'Propiedad eliminada',
         ]);
 
-        return redirect()->route('member.businesses.properties.index', $business->id)
+        return redirect()->route('member.listings.properties.index', $listing->id)
             ->with('success', 'Propiedad eliminada correctamente.');
     }
 
-    public function duplicate(Request $request, Business $business, Property $property, ActivityService $activity)
+    public function duplicate(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
         $this->authorize('update', [Property::class, $property]);
 
-        $limitCheck = (new PropertyLimitService())->forBusiness($business)->canCreateProperty();
+        $limitCheck = (new PropertyLimitService())->forBusiness($listing)->canCreateProperty();
 
         if (! $limitCheck['allowed']) {
             return redirect()->back()->with('error', $limitCheck['reason']);
@@ -326,11 +326,11 @@ class PropertyController extends Controller
             'description' => 'Propiedad duplicada',
         ]);
 
-        return redirect()->route('member.businesses.properties.edit', [$business->id, $newProperty->id])
+        return redirect()->route('member.listings.properties.edit', [$listing->id, $newProperty->id])
             ->with('success', 'Propiedad duplicada correctamente.');
     }
 
-    public function changeStatus(Request $request, Business $business, Property $property, ActivityService $activity)
+    public function changeStatus(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
         $this->authorize('update', [Property::class, $property]);
 
@@ -350,13 +350,13 @@ class PropertyController extends Controller
             ->with('success', "Estado cambiado a {$property->getStatusLabel()}.");
     }
 
-    public function reorder(Request $request, Business $business)
+    public function reorder(Request $request, Listing $listing)
     {
         $user = $request->user();
 
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
         } else {
-            abort_unless($business->user_id === $user->id, 403);
+            abort_unless($listing->user_id === $user->id, 403);
         }
 
         $data = $request->validate([
@@ -369,20 +369,20 @@ class PropertyController extends Controller
 
         foreach ($ids as $id) {
             Property::where('id', $id)
-                ->where('listing_id', $business->id)
+                ->where('listing_id', $listing->id)
                 ->update(['sort_order' => $start++]);
         }
 
         return back(303);
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $listing)
     {
         $user = $request->user();
 
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
         } else {
-            abort_unless($business->user_id === $user->id, 403);
+            abort_unless($listing->user_id === $user->id, 403);
         }
 
         $data = $request->validate([
@@ -390,7 +390,7 @@ class PropertyController extends Controller
             'ids.*' => ['integer'],
         ]);
 
-        $properties = Property::where('listing_id', $business->id)
+        $properties = Property::where('listing_id', $listing->id)
             ->whereIn('id', $data['ids'])
             ->get();
 
@@ -407,9 +407,9 @@ class PropertyController extends Controller
             ->with('success', $message);
     }
 
-    public function getFormSchema(Request $request, Business $business)
+    public function getFormSchema(Request $request, Listing $listing)
     {
-        $this->authorize('viewAny', [Property::class, $business]);
+        $this->authorize('viewAny', [Property::class, $listing]);
 
         $typeId = $request->get('type_id');
 

@@ -19,7 +19,7 @@ class ListingReviewController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/ReviewsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -31,7 +31,7 @@ class ListingReviewController extends Controller
     public function create(Request $request, Listing $business)
     {
         return Inertia::render('Admin/BusinessContent/ReviewsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -69,7 +69,7 @@ class ListingReviewController extends Controller
     public function edit(Request $request, Listing $business, ListingReview $review)
     {
         return Inertia::render('Admin/BusinessContent/ReviewsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

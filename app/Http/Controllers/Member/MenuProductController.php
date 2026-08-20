@@ -29,7 +29,7 @@ class MenuProductController extends Controller
             });
 
         return inertia('Member/MenuProducts/Create', [
-            'business' => $business,
+            'listing' => $business,
             'categories' => $categories,
         ]);
     }
@@ -72,7 +72,7 @@ class MenuProductController extends Controller
             });
 
         return inertia('Member/MenuProducts/Index', [
-            'business' => $business,
+            'listing' => $business,
             'products' => $products,
             'categories' => $categories,
             'selectedCategory' => $request->boolean('uncategorized') ? 'uncategorized' : ($categoryId ?? null),
@@ -228,7 +228,7 @@ class MenuProductController extends Controller
             });
 
         return inertia('Member/MenuProducts/Edit', [
-            'business' => $business,
+            'listing' => $business,
             'product' => $product->load('variants', 'images'),
             'categories' => $categories,
         ]);

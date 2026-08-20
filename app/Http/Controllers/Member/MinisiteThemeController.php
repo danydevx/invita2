@@ -20,7 +20,7 @@ class MinisiteThemeController extends Controller
         $business->load('minisiteTheme');
 
         return inertia('Member/MinisiteThemes/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

@@ -5,7 +5,7 @@
     <PageHeader
       :title="'Nuevo Horario'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/locations/${location.id}/schedules`"
+      :backHref="`/member/listings/${listing.id}/locations/${location.id}/schedules`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -136,7 +136,7 @@
               {{ sending ? 'Guardando...' : 'Guardar Horario' }}
             </button>
             <Link
-              :href="`/member/listings/${business.id}/locations/${location.id}/schedules`"
+              :href="`/member/listings/${listing.id}/locations/${location.id}/schedules`"
               class="btn btn-outline-secondary"
             >
               Cancelar
@@ -155,7 +155,7 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const location = computed(() => page.props.location)
 
 const daysOfWeek = [
@@ -187,16 +187,16 @@ const form = reactive({
   is_active: true,
 })
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find(b => b.id === business.value.id)
+  const biz = businessMenu.value.find(b => b.id === listing.value.id)
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: biz?.name || '', href: `/member/listings/${business.value.id}/edit` },
-    { label: 'Ubicaciones', href: `/member/listings/${business.value.id}/locations` },
-    { label: location.value.name, href: `/member/listings/${business.value.id}/locations/${location.value.id}/edit` },
-    { label: 'Horarios', href: `/member/listings/${business.value.id}/locations/${location.value.id}/schedules` },
+    { label: biz?.name || '', href: `/member/listings/${listing.value.id}/edit` },
+    { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
+    { label: location.value.name, href: `/member/listings/${listing.value.id}/locations/${location.value.id}/edit` },
+    { label: 'Horarios', href: `/member/listings/${listing.value.id}/locations/${location.value.id}/schedules` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -257,7 +257,7 @@ const submit = () => {
   }
   formData.append('is_active', form.is_active ? '1' : '0')
 
-  router.post(`/member/listings/${business.value.id}/locations/${location.value.id}/schedules`, formData, {
+  router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules`, formData, {
     preserveScroll: true,
     onError: (serverErrors) => {
       sending.value = false

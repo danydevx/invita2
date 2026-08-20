@@ -65,7 +65,7 @@ class ClientController extends Controller
         ];
 
         return Inertia::render('Member/Clients/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -79,7 +79,7 @@ class ClientController extends Controller
         $this->authorize('create', [ListingClient::class, $business]);
 
         return Inertia::render('Member/Clients/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -121,7 +121,7 @@ class ClientController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.clients.index', $business->id)
+        return redirect()->route('member.listings.clients.index', $business->id)
             ->with('success', 'Cliente creado correctamente.');
     }
 
@@ -131,7 +131,7 @@ class ClientController extends Controller
         $this->authorize('update', [ListingClient::class, $client]);
 
         return Inertia::render('Member/Clients/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -193,7 +193,7 @@ class ClientController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.clients.index', $business->id)
+        return redirect()->route('member.listings.clients.index', $business->id)
             ->with('success', 'Cliente actualizado correctamente.');
     }
 
@@ -210,7 +210,7 @@ class ClientController extends Controller
 
         $client->delete();
 
-        return redirect()->route('member.businesses.clients.index', $business->id)
+        return redirect()->route('member.listings.clients.index', $business->id)
             ->with('success', 'Cliente eliminado correctamente.');
     }
 
@@ -266,7 +266,7 @@ class ClientController extends Controller
             'description' => 'Cliente clonado',
         ]);
 
-        return redirect()->route('member.businesses.clients.index', $business->id)
+        return redirect()->route('member.listings.clients.index', $business->id)
             ->with('success', 'Cliente clonado correctamente.');
     }
 }

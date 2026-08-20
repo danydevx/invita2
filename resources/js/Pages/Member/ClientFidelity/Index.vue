@@ -1,13 +1,13 @@
 <template>
   <MemberLayout>
-    <Head :title="`Fidelidad - ${business?.name || ''}`" />
+    <Head :title="`Fidelidad - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Tarjetas de Fidelidad"
       :breadcrumbs="breadcrumbs"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/fidelity-cards/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/fidelity-cards/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva
         </Link>
       </template>
@@ -15,13 +15,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/listings/${business?.id}/fidelity-cards`"
+        :href="`/member/listings/${listing?.id}/fidelity-cards`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-credit-card me-1"></i>Tarjetas
       </Link>
       <Link
-        :href="`/member/listings/${business?.id}/fidelity-cards/scan-view`"
+        :href="`/member/listings/${listing?.id}/fidelity-cards/scan-view`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-qr-code-scan me-1"></i>Escanear
@@ -47,7 +47,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/fidelity-cards`"
+      :endpoint="`/member/listings/${listing?.id}/fidelity-cards`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
@@ -60,7 +60,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/fidelity-cards/bulk-delete`"
+           :delete-endpoint="`/member/listings/${listing?.id}/fidelity-cards/bulk-delete`"
           item-name="tarjetas"
           @deleted="onBulkDeleted"
         />
@@ -108,10 +108,10 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/listings/${business?.id}/fidelity-cards/${row.id}`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/fidelity-cards/${row.id}`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye"></i>
           </Link>
-          <Link :href="`/member/listings/${business?.id}/fidelity-cards/${row.id}/edit`" class="btn btn-sm btn-outline-secondary">
+          <Link :href="`/member/listings/${listing?.id}/fidelity-cards/${row.id}/edit`" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteCard(row)">
@@ -132,9 +132,9 @@ import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable || { data: [] })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const filters = computed(() => page.props.filters || {})
 const getInitialFilter = () => {
@@ -202,7 +202,7 @@ const filterCards = () => {
   if (selectedFilter.value !== 'all') {
     params.filter = selectedFilter.value
   }
-  router.get(`/member/listings/${business.value.id}/fidelity-cards`, params, {
+  router.get(`/member/listings/${listing.value.id}/fidelity-cards`, params, {
     preserveScroll: true,
   })
 }
@@ -211,7 +211,7 @@ const deleteCard = (card) => {
   if (!confirm(`¿Estás seguro de eliminar la tarjeta de "${card.client_name}"?`)) {
     return
   }
-  router.delete(`/member/listings/${business.value.id}/fidelity-cards/${card.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/fidelity-cards/${card.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

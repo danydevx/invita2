@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Producto - ${business?.name || ''}`" />
+    <Head :title="`Editar Producto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/menu-products`"
+      :backHref="`/member/listings/${listing?.id}/menu-products`"
     />
 
     <div class="container-fluid py-4">
@@ -198,10 +198,10 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const product = computed(() => page.props.product)
 const categories = computed(() => page.props.categories || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const errors = reactive({
   title: '',
@@ -376,7 +376,7 @@ const submitForm = () => {
     image: variantImages.value[i],
   }))
 
-  router.post(`/member/listings/${business.value.id}/menu-products/${product.value.id}`, {
+  router.post(`/member/listings/${listing.value.id}/menu-products/${product.value.id}`, {
     ...form.value,
     image: productImage.value,
     variants: variantsWithImages,
@@ -405,10 +405,10 @@ const submitForm = () => {
 const deleteProduct = () => {
   if (!confirm(`Eliminar el producto "${product.value?.title}"?`)) return
 
-  router.delete(`/member/listings/${business.value.id}/menu-products/${product.value.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/menu-products/${product.value.id}`, {
     preserveScroll: true,
     onSuccess: () => {
-      window.location.href = `/member/listings/${business.value.id}/menu-products`
+      window.location.href = `/member/listings/${listing.value.id}/menu-products`
     },
   })
 }

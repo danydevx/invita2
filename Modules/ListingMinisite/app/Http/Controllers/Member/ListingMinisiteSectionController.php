@@ -125,7 +125,7 @@ class ListingMinisiteSectionController extends Controller
         }
 
         return Inertia::render('Member/Minisite/Sections/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
                 'slug' => $listing->slug,
@@ -169,7 +169,7 @@ class ListingMinisiteSectionController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Minisite/Sections/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -217,7 +217,7 @@ class ListingMinisiteSectionController extends Controller
             'is_active' => $data['is_active'] ?? true,
         ]);
 
-        return redirect()->route('member.businesses.minisite.sections.index', $listing->id)
+        return redirect()->route('member.listings.minisite.sections.index', $listing->id)
             ->with('success', 'Sección creada.');
     }
 
@@ -238,7 +238,7 @@ class ListingMinisiteSectionController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Minisite/Sections/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $listing->id,
                 'name' => $listing->name,
             ],
@@ -309,7 +309,7 @@ class ListingMinisiteSectionController extends Controller
                 ->update(['sort_order' => $index + 1]);
         }
 
-        return redirect()->to("/member/businesses/{$listing->id}/minisite/sections", 303);
+        return redirect()->to("/member/listings/{$listing->id}/minisite/sections", 303);
     }
 
     private function getServicesData(Listing $listing, array $config): array

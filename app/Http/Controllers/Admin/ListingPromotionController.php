@@ -20,7 +20,7 @@ class ListingPromotionController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/PromotionsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -34,7 +34,7 @@ class ListingPromotionController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/PromotionsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -80,7 +80,7 @@ class ListingPromotionController extends Controller
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/PromotionsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

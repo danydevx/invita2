@@ -54,8 +54,8 @@ class ListingModuleController extends Controller
 
         $business->load(['modules.moduleDefinition' => fn ($q) => $q->where('is_active', true)]);
 
-        return Inertia::render('Member/ListingModules/Edit', [
-            'business' => [
+        return Inertia::render('Member/ListingModules/Index', [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -74,29 +74,6 @@ class ListingModuleController extends Controller
             ],
             'planName' => $this->getUserPlanName($user),
         ]);
-    }
-
-    public function update(Request $request, Listing $business)
-    {
-        $user = $request->user();
-
-        if ($business->user_id !== $user->id) {
-            abort(403, 'No tienes permiso para gestionar este negocio.');
-        }
-
-        $data = $request->validate([
-            'modules' => ['required', 'array'],
-            'modules.*.id' => ['required', 'exists:listing_modules,id'],
-            'modules.*.is_enabled' => ['required', 'boolean'],
-        ]);
-
-        foreach ($data['modules'] as $moduleData) {
-            $business->modules()
-                ->where('id', $moduleData['id'])
-                ->update(['is_enabled' => $moduleData['is_enabled']]);
-        }
-
-        return redirect()->back()->with('success', 'Modulo actualizado correctamente.');
     }
 
     private function getUserPlanName($user): string

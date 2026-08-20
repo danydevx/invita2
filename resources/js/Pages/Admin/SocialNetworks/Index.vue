@@ -6,7 +6,7 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h4 mb-1">Redes Sociales</h1>
-          <p class="text-muted mb-0">{{ business.name }}</p>
+          <p class="text-muted mb-0">{{ listing.name }}</p>
         </div>
         <button class="btn btn-primary" @click="openCreateModal">
           <i class="bi bi-plus me-1"></i>Agregar red social
@@ -163,7 +163,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   socialNetworks: Array,
   platforms: Object,
 })
@@ -228,14 +228,14 @@ const openEditModal = (network) => {
 const submitNetwork = () => {
   sending = true
   if (editingNetwork.value) {
-    form.post(`/admin/listings/${props.business.id}/social-networks/${editingNetwork.value.id}`, {
+    form.post(`/admin/listings/${props.listing.id}/social-networks/${editingNetwork.value.id}`, {
       onFinish: () => {
         sending = false
         networkModal.hide()
       },
     })
   } else {
-    form.post(`/admin/listings/${props.business.id}/social-networks`, {
+    form.post(`/admin/listings/${props.listing.id}/social-networks`, {
       onFinish: () => {
         sending = false
         networkModal.hide()
@@ -246,7 +246,7 @@ const submitNetwork = () => {
 
 const deleteNetwork = (network) => {
   if (confirm('¿Estás seguro de eliminar esta red social?')) {
-    router.delete(`/admin/listings/${props.business.id}/social-networks/${network.id}`, {
+    router.delete(`/admin/listings/${props.listing.id}/social-networks/${network.id}`, {
       preserveScroll: true,
     })
   }

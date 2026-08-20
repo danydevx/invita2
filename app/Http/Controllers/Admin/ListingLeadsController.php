@@ -21,7 +21,7 @@ class ListingLeadsController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/LeadsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -38,7 +38,7 @@ class ListingLeadsController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/LeadsCreate', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -85,7 +85,7 @@ class ListingLeadsController extends Controller
         $lead->load('location');
 
         return Inertia::render('Admin/BusinessContent/LeadsShow', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,
@@ -121,7 +121,7 @@ class ListingLeadsController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/LeadsEdit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

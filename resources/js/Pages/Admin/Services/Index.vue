@@ -6,7 +6,7 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h4 mb-1">Servicios</h1>
-          <p class="text-muted mb-0">{{ business.name }}</p>
+          <p class="text-muted mb-0">{{ listing.name }}</p>
         </div>
         <button class="btn btn-primary" @click="openCreateModal">
           <i class="bi bi-plus me-1"></i>Nuevo servicio
@@ -147,7 +147,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   services: Array,
 })
 
@@ -200,14 +200,14 @@ const openEditModal = (service) => {
 const submitService = () => {
   sending = true
   if (editingService.value) {
-    form.post(`/admin/listings/${props.business.id}/services/${editingService.value.id}`, {
+    form.post(`/admin/listings/${props.listing.id}/services/${editingService.value.id}`, {
       onFinish: () => {
         sending = false
         serviceModal.hide()
       },
     })
   } else {
-    form.post(`/admin/listings/${props.business.id}/services`, {
+    form.post(`/admin/listings/${props.listing.id}/services`, {
       onFinish: () => {
         sending = false
         serviceModal.hide()
@@ -218,7 +218,7 @@ const submitService = () => {
 
 const deleteService = (service) => {
   if (confirm('¿Estás seguro de eliminar este servicio?')) {
-    router.delete(`/admin/listings/${props.business.id}/services/${service.id}`, {
+    router.delete(`/admin/listings/${props.listing.id}/services/${service.id}`, {
       preserveScroll: true,
     })
   }

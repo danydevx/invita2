@@ -12,11 +12,11 @@ use Modules\Orders\Models\OrderSetting;
 
 class OrderController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
-        $query = Order::where('listing_id', $business->id)
+        $query = Order::where('listing_id', $listing->id)
             ->with(['items', 'deliveryAddress'])
             ->orderByDesc('created_at');
 
@@ -47,10 +47,10 @@ class OrderController extends Controller
 
         $statuses = OrderStatus::cases();
 
-        $setting = OrderSetting::getForBusiness($business->id);
+        $setting = OrderSetting::getForBusiness($listing->id);
 
         return inertia('Member/Orders/Index', [
-            'business' => $business,
+            'listing' => $listing,
             'dataTable' => $dataTable,
             'statuses' => array_map(fn($s) => ['value' => $s->value, 'label' => $s->label()], $statuses),
             'filters' => $request->only(['status', 'search']),
@@ -58,23 +58,23 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(Business $business, Order $order)
+    public function show(Listing $listing, Order $order)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($order->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($order->listing_id === $listing->id, 403);
 
         $order->load(['items', 'deliveryAddress', 'pickupLocation']);
 
         return inertia('Member/Orders/Show', [
-            'business' => $business,
+            'listing' => $listing,
             'order' => $order,
         ]);
     }
 
-    public function updateStatus(Request $request, Business $business, Order $order)
+    public function updateStatus(Request $request, Listing $listing, Order $order)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
-        abort_unless($order->listing_id === $business->id, 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($order->listing_id === $listing->id, 403);
 
         $validated = $request->validate([
             'status' => ['required', 'in:' . implode(',', array_column(OrderStatus::cases(), 'value'))],
@@ -85,12 +85,12 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Estado actualizado correctamente.');
     }
 
-    public function settings(Request $request, Business $business)
+    public function settings(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $setting = OrderSetting::firstOrCreate(
-            ['listing_id' => $business->id],
+            ['listing_id' => $listing->id],
             [
                 'order_type' => 'both',
                 'delivery_radius_km' => 10,
@@ -104,14 +104,14 @@ class OrderController extends Controller
         );
 
         return inertia('Member/Orders/Settings', [
-            'business' => $business,
+            'listing' => $listing,
             'setting' => $setting,
         ]);
     }
 
-    public function updateSettings(Request $request, Business $business)
+    public function updateSettings(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $validated = $request->validate([
             'order_type' => 'required|in:delivery,pickup,both',
@@ -125,23 +125,23 @@ class OrderController extends Controller
         ]);
 
         $setting = OrderSetting::updateOrCreate(
-            ['listing_id' => $business->id],
+            ['listing_id' => $listing->id],
             $validated
         );
 
         return redirect()->back()->with('success', 'Configuración guardada correctamente.');
     }
 
-    public function bulkDelete(Request $request, Business $business)
+    public function bulkDelete(Request $request, Listing $listing)
     {
-        abort_unless($business->user_id === Auth::id(), 403);
+        abort_unless($listing->user_id === Auth::id(), 403);
 
         $validated = $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'exists:orders,id',
         ]);
 
-        Order::where('listing_id', $business->id)
+        Order::where('listing_id', $listing->id)
             ->whereIn('id', $validated['ids'])
             ->delete();
 

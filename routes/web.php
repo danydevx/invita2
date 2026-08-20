@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\HelpArticleController;
 use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\Admin\InvoiceController as AdminInvoiceController;
 use App\Http\Controllers\Admin\LegalDocumentController;
+use Modules\Locations\Http\Controllers\Admin\LocationController as AdminLocationController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuProductController;
 use App\Http\Controllers\Admin\MenuProductImageController;
@@ -287,9 +288,7 @@ Route::post('/member/listings', [App\Http\Controllers\Member\BusinessController:
 Route::get('/member/listings/{listing}/modules', [App\Http\Controllers\Member\ListingModuleController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.edit');
-Route::put('/member/listings/{listing}/modules', [App\Http\Controllers\Member\ListingModuleController::class, 'update'])
-    ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.business-modules.update');
+
 Route::get('/member/listings/{listing}/edit', [App\Http\Controllers\Member\BusinessController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.edit');
@@ -1186,6 +1185,29 @@ Route::post('/admin/api-explorer/fetch', [App\Http\Controllers\Admin\ApiExplorer
     ->name('admin.api-explorer.fetch');
 
 Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function () {
+
+    Route::get('/locations', [AdminLocationController::class, 'index'])
+        ->name('admin.locations.index');
+    Route::get('/locations/countries', [AdminLocationController::class, 'countriesIndex'])
+        ->name('admin.locations.countries.index');
+    Route::post('/locations/countries', [AdminLocationController::class, 'countriesStore'])
+        ->name('admin.locations.countries.store');
+    Route::put('/locations/countries/{country}', [AdminLocationController::class, 'countriesUpdate'])
+        ->name('admin.locations.countries.update');
+
+    Route::get('/locations/states', [AdminLocationController::class, 'statesIndex'])
+        ->name('admin.locations.states.index');
+    Route::post('/locations/states', [AdminLocationController::class, 'statesStore'])
+        ->name('admin.locations.states.store');
+    Route::put('/locations/states/{state}', [AdminLocationController::class, 'statesUpdate'])
+        ->name('admin.locations.states.update');
+
+    Route::get('/locations/municipalities', [AdminLocationController::class, 'municipalitiesIndex'])
+        ->name('admin.locations.municipalities.index');
+    Route::post('/locations/municipalities', [AdminLocationController::class, 'municipalitiesStore'])
+        ->name('admin.locations.municipalities.store');
+    Route::put('/locations/municipalities/{municipality}', [AdminLocationController::class, 'municipalitiesUpdate'])
+        ->name('admin.locations.municipalities.update');
 
     Route::get('/listings/{listing}/modules', [ListingModuleController::class, 'edit'])
         ->name('admin.business-modules.edit');

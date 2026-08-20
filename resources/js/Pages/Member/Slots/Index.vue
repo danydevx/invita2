@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Slots - ${business?.name || ''}`" />
+    <Head :title="`Slots - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Turnos de Disponibilidad"
@@ -16,7 +16,7 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/slots`"
+      :endpoint="`/member/listings/${listing?.id}/slots`"
       :columns="columns"
       :initial-data="dataTable"
       search-placeholder="Buscar turnos..."
@@ -303,11 +303,11 @@ import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const services = computed(() => page.props.services || [])
 const locations = computed(() => page.props.locations || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -439,7 +439,7 @@ const createSlot = () => {
   } else {
     delete data.day_of_week
   }
-  router.post(`/member/listings/${business.value.id}/slots`, data, {
+  router.post(`/member/listings/${listing.value.id}/slots`, data, {
     onFinish: () => {
       creating.value = false
       closeCreateModal()
@@ -459,7 +459,7 @@ const updateSlot = () => {
     delete data.day_of_week
   }
   delete data.id
-  router.put(`/member/listings/${business.value.id}/slots/${editingSlot.value.id}`, data, {
+  router.put(`/member/listings/${listing.value.id}/slots/${editingSlot.value.id}`, data, {
     onFinish: () => {
       saving.value = false
       closeEditModal()
@@ -471,7 +471,7 @@ const updateSlot = () => {
 }
 
 const toggleSlot = (slot) => {
-  router.put(`/member/listings/${business.value.id}/slots/${slot.id}`, {
+  router.put(`/member/listings/${listing.value.id}/slots/${slot.id}`, {
     is_available: !slot.is_available,
   }, {
     preserveScroll: true,
@@ -485,7 +485,7 @@ const toggleSlot = (slot) => {
 
 const deleteSlot = (slot) => {
   if (confirm('Eliminar este turno?')) {
-    router.delete(`/member/listings/${business.value.id}/slots/${slot.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/slots/${slot.id}`, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {

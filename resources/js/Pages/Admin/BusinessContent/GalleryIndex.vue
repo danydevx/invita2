@@ -1,13 +1,13 @@
 <template>
   <AdminLayout>
-    <Head :title="`Galeria - ${business.name}`" />
+    <Head :title="`Galeria - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Galeria</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Galeria</h1>
       </div>
       <div>
         <button class="btn btn-primary btn-sm" @click="openUploadModal">
@@ -210,7 +210,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Pagination from '@/Components/Admin/Pagination.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const images = computed(() => page.props.images || { data: [], links: [] })
 const locations = computed(() => page.props.locations || [])
 
@@ -304,7 +304,7 @@ const uploadImage = () => {
     formData.append('business_location_id', uploadForm.business_location_id)
   }
 
-  router.post(`/admin/listings/${business.value.id}/gallery`, formData, {
+  router.post(`/admin/listings/${listing.value.id}/gallery`, formData, {
     preserveScroll: true,
     onFinish: () => {
       uploading.value = false
@@ -322,7 +322,7 @@ const uploadImage = () => {
 const saveEdit = () => {
   saving.value = true
 
-  router.put(`/admin/listings/${business.value.id}/gallery/${editForm.id}`, {
+  router.put(`/admin/listings/${listing.value.id}/gallery/${editForm.id}`, {
     title: editForm.title,
     description: editForm.description,
     business_location_id: editForm.business_location_id,
@@ -339,7 +339,7 @@ const saveEdit = () => {
 
 const deleteImage = (img) => {
   if (confirm('Estas seguro de eliminar esta imagen?')) {
-    router.delete(`/admin/listings/${business.value.id}/gallery/${img.id}`, {
+    router.delete(`/admin/listings/${listing.value.id}/gallery/${img.id}`, {
       preserveScroll: true,
     })
   }

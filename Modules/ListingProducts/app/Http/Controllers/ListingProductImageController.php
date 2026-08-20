@@ -69,7 +69,7 @@ class ListingProductImageController extends Controller
         $user = Auth::user();
         abort_unless($listing->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
         abort_unless($product->listing_id === $listing->id, 403);
-        abort_unless($image->listing_product_id === $product->id, 403);
+        abort_unless($image->business_product_id === $product->id, 403);
 
         if ($image->path) {
             Storage::disk('public')->delete($image->path);

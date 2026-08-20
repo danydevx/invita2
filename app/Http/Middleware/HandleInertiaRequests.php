@@ -102,12 +102,11 @@ class HandleInertiaRequests extends Middleware
                 'modules' => $biz->modules
                     ->filter(fn ($m) => $m->is_enabled &&
                         $m->moduleDefinition &&
-                        $m->moduleDefinition->show_in_menu &&
-                        $m->moduleDefinition->menu_title
+                        $m->moduleDefinition->show_in_menu
                     )
                     ->map(fn ($m) => [
                         'key' => $m->module_key,
-                        'title' => $m->moduleDefinition->menu_title,
+                        'title' => $m->moduleDefinition->menu_title ?: $m->moduleDefinition->name,
                         'url' => '/member/listings/'.$biz->id.'/'.$this->getModulePath($m->module_key),
                     ])->values(),
             ])
@@ -144,8 +143,10 @@ class HandleInertiaRequests extends Middleware
             'clients' => 'clients',
             'minisite' => 'minisite/sections',
             'properties' => 'properties',
+            'orders' => 'orders',
             'office_hours' => 'office-hours',
             'client_fidelity' => 'fidelity-cards',
+            'fidelity_cards' => 'fidelity-cards',
         ];
 
         return $paths[$moduleKey] ?? $moduleKey;

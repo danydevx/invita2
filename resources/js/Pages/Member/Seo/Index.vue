@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`SEO - ${business.name}`" />
+    <Head :title="`SEO - ${listing.name}`" />
 
     <PageHeader
       title="Posicionamiento SEO"
@@ -81,7 +81,7 @@
                     <strong>Vista previa en Google:</strong>
                     <div class="mt-2 p-2 bg-white rounded border">
                       <div style="color: #1a0dab; font-size: 18px; line-height: 1.3;">
-                        {{ form.seo_title || business.name }}
+                        {{ form.seo_title || listing.name }}
                       </div>
                       <div style="color: #006621; font-size: 14px;">
                         {{ canonicalUrl }}
@@ -154,7 +154,7 @@
                       <div class="d-flex gap-3">
                         <img v-if="imagePreview || form.og_image" :src="imagePreview || form.og_image" class="rounded" style="max-width: 150px; max-height: 150px; object-fit: cover;" />
                         <div>
-                          <div style="color: #000; font-size: 16px; font-weight: 600;">{{ form.og_title || form.seo_title || business.name }}</div>
+                          <div style="color: #000; font-size: 16px; font-weight: 600;">{{ form.og_title || form.seo_title || listing.name }}</div>
                           <div style="color: #000; font-size: 14px;">{{ form.og_description || form.seo_description || 'Sin descripcion' }}</div>
                           <div style="color: #888; font-size: 12px;">{{ canonicalUrl }}</div>
                         </div>
@@ -255,10 +255,10 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const seo = computed(() => page.props.seo)
 const errors = computed(() => page.props.errors || {})
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -314,7 +314,7 @@ const form = reactive({
 })
 
 const canonicalUrl = computed(() => {
-  return form.canonical_url || `${window.location.origin}/${business.value.name.toLowerCase().replace(/\s+/g, '-')}`
+  return form.canonical_url || `${window.location.origin}/${listing.value.name.toLowerCase().replace(/\s+/g, '-')}`
 })
 
 const handleOgImageChange = (e) => {
@@ -345,7 +345,7 @@ const submit = () => {
     data.append('og_image', form.og_image)
   }
 
-  router.post(`/member/listings/${business.value.id}/seo`, data, {
+  router.post(`/member/listings/${listing.value.id}/seo`, data, {
     onFinish: () => {
       sending.value = false
     },

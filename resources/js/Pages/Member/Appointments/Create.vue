@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Cita - ${business.name}`" />
+    <Head :title="`Nueva Cita - ${listing.name}`" />
 
     <PageHeader
       title="Nueva Cita"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/appointments`"
+      :backHref="`/member/listings/${listing.id}/appointments`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -107,7 +107,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Crear Cita' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/appointments`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${listing.id}/appointments`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -133,7 +133,7 @@ import FieldTime from '@/Components/Fields/FieldTime.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const services = computed(() => page.props.services || [])
 const locations = computed(() => page.props.locations || [])
 
@@ -198,7 +198,7 @@ const validateForm = () => {
 watch(() => errors.appointment_date, (val) => {
   if (val) showDateValidation.value = true
 })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -254,7 +254,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.post(`/member/listings/${business.value.id}/appointments`, form, {
+  router.post(`/member/listings/${listing.value.id}/appointments`, form, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

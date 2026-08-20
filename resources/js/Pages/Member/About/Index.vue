@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Acerca de - ${business.name}`" />
+    <Head :title="`Acerca de - ${listing.name}`" />
 
     <PageHeader
       title="Acerca de"
@@ -134,13 +134,13 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   about: Object,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -258,7 +258,7 @@ const submit = () => {
     data.append('remove_logo', '1')
   }
 
-  form.post(`/member/listings/${props.business.id}/about`, {
+  form.post(`/member/listings/${props.listing.id}/about`, {
     forceFormData: true,
     preserveScroll: true,
     onFinish: () => {

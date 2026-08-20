@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Preguntas Frecuentes - ${business?.name || ''}`" />
+    <Head :title="`Preguntas Frecuentes - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Preguntas Frecuentes"
@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/faqs/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/faqs/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nueva Pregunta
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/listings/${business?.id}/faqs`"
+        :href="`/member/listings/${listing?.id}/faqs`"
         class="btn btn-outline-secondary btn-sm"
       >
         Todas
       </Link>
       <Link
-        :href="`/member/listings/${business?.id}/faq-categories`"
+        :href="`/member/listings/${listing?.id}/faq-categories`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Categorías
@@ -49,12 +49,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/faqs`"
+      :endpoint="`/member/listings/${listing?.id}/faqs`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/faqs/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/faqs/reorder`"
       search-placeholder="Buscar preguntas..."
       empty-title="No hay preguntas frecuentes"
       empty-text="Comienza creando tu primera pregunta frecuente."
@@ -64,7 +64,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/faqs/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/faqs/bulk-delete`"
           item-name="preguntas"
           @deleted="onBulkDeleted"
         />
@@ -115,7 +115,7 @@
           <button class="btn btn-sm btn-outline-secondary" @click="cloneFaq(row)" title="Clonar">
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/listings/${business?.id}/faqs/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/faqs/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteFaq(row)">
@@ -136,10 +136,10 @@ import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const categories = computed(() => page.props.categories || [])
 const dataTable = computed(() => page.props.dataTable || { data: [] })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const filters = computed(() => page.props.filters || {})
 const getInitialCategory = () => {
@@ -207,7 +207,7 @@ const filterByCategory = () => {
   if (selectedCategory.value) {
     params.category = selectedCategory.value
   }
-  router.get(`/member/listings/${business.value.id}/faqs`, params, {
+  router.get(`/member/listings/${listing.value.id}/faqs`, params, {
     preserveScroll: true,
   })
 }
@@ -217,7 +217,7 @@ const deleteFaq = (faq) => {
     return
   }
 
-  router.delete(`/member/listings/${business.value.id}/faqs/${faq.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/faqs/${faq.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {
@@ -232,7 +232,7 @@ const cloneFaq = (faq) => {
     return
   }
 
-  router.post(`/member/listings/${business.value.id}/faqs/${faq.id}/clone`, {}, {
+  router.post(`/member/listings/${listing.value.id}/faqs/${faq.id}/clone`, {}, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

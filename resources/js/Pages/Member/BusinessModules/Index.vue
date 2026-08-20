@@ -29,9 +29,9 @@
                 class="rounded bg-light d-flex align-items-center justify-content-center flex-shrink-0"
                 style="width: 64px; height: 64px; overflow: hidden;"
               >
-                <img
-                  v-if="business.logo_path"
-                  :src="business.logo_path"
+                  <img
+                    v-if="business.logo_path"
+                    :src="business.logo_path"
                   alt="Logo"
                   class="w-100 h-100"
                   style="object-fit: cover;"

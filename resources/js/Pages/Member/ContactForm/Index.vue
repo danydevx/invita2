@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Formularios de Contacto - ${business?.name || ''}`" />
+    <Head :title="`Formularios de Contacto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Formularios de Contacto"
@@ -10,7 +10,7 @@
       <template #actions>
         <Link
           v-if="canCreateMore"
-          :href="`/member/listings/${business?.id}/contact-forms/create`"
+          :href="`/member/listings/${listing?.id}/contact-forms/create`"
           class="btn btn-primary"
         >
           <i class="bi bi-plus me-1"></i>Nuevo Formulario
@@ -34,7 +34,7 @@
           <p class="text-muted small">Crea tu primer formulario de contacto para empezar a recibir mensajes.</p>
           <Link
             v-if="canCreateMore"
-            :href="`/member/listings/${business?.id}/contact-forms/create`"
+            :href="`/member/listings/${listing?.id}/contact-forms/create`"
             class="btn btn-primary"
           >
             <i class="bi bi-plus me-1"></i>Crear Primer Formulario
@@ -74,13 +74,13 @@
                 <td class="text-end">
                   <div class="btn-group">
                     <Link
-                      :href="`/member/listings/${business?.id}/contact-forms/${form.id}/edit`"
+                      :href="`/member/listings/${listing?.id}/contact-forms/${form.id}/edit`"
                       class="btn btn-sm btn-outline-primary"
                     >
                       <i class="bi bi-pencil"></i>
                     </Link>
                     <Link
-                      :href="`/member/listings/${business?.id}/contact-forms/${form.id}/submissions`"
+                      :href="`/member/listings/${listing?.id}/contact-forms/${form.id}/submissions`"
                       class="btn btn-sm btn-outline-secondary"
                     >
                       <i class="bi bi-envelope"></i>
@@ -115,7 +115,7 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   forms: {
     type: Array,
     default: () => [],
@@ -131,8 +131,8 @@ const props = defineProps({
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -165,7 +165,7 @@ const copyShortcode = (shortcode) => {
 
 const deleteForm = (form) => {
   if (confirm(`¿Eliminar el formulario "${form.name}"? Esta accion no se puede deshacer.`)) {
-    router.delete(`/member/listings/${business.value.id}/contact-forms/${form.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/contact-forms/${form.id}`, {
       preserveScroll: true,
     })
   }

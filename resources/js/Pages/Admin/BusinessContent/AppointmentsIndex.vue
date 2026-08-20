@@ -1,16 +1,16 @@
 <template>
   <AdminLayout>
-    <Head :title="`Citas - ${business.name}`" />
+    <Head :title="`Citas - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Citas</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Citas</h1>
       </div>
       <div>
-        <Link :href="`/admin/listings/${business.id}/appointments/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/admin/listings/${listing.id}/appointments/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Cita
         </Link>
@@ -57,7 +57,7 @@
                 </td>
                 <td class="text-end">
                   <div class="d-flex gap-1 justify-content-end">
-                    <Link :href="`/admin/listings/${business.id}/appointments/${apt.id}/edit`" class="btn btn-sm btn-outline-primary">
+                    <Link :href="`/admin/listings/${listing.id}/appointments/${apt.id}/edit`" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-pencil"></i>
                     </Link>
                     <button
@@ -95,7 +95,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Pagination from '@/Components/Admin/Pagination.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const appointments = computed(() => page.props.appointments || { data: [], links: [] })
 
 const formatDate = (date) => {
@@ -120,7 +120,7 @@ const statusClass = (status) => {
 
 const cancelAppointment = (apt) => {
   if (confirm('¿Estás seguro de cancelar esta cita?')) {
-    router.post(`/admin/listings/${business.value.id}/appointments/${apt.id}/cancel`, {}, {
+    router.post(`/admin/listings/${listing.value.id}/appointments/${apt.id}/cancel`, {}, {
       preserveScroll: true,
     })
   }
@@ -128,7 +128,7 @@ const cancelAppointment = (apt) => {
 
 const deleteAppointment = (apt) => {
   if (confirm('¿Estás seguro de eliminar esta cita? Esta acción no se puede deshacer.')) {
-    router.delete(`/admin/listings/${business.value.id}/appointments/${apt.id}`, {
+    router.delete(`/admin/listings/${listing.value.id}/appointments/${apt.id}`, {
       preserveScroll: true,
     })
   }

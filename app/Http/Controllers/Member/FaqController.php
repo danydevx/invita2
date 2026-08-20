@@ -75,7 +75,7 @@ class FaqController extends Controller
         ];
 
         return Inertia::render('Member/Faqs/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -97,7 +97,7 @@ class FaqController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Faqs/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -134,7 +134,7 @@ class FaqController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.faqs.index', $business->id)
+        return redirect()->route('member.listings.faqs.index', $business->id)
             ->with('success', 'Pregunta frecuente creada correctamente.');
     }
 
@@ -148,7 +148,7 @@ class FaqController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Member/Faqs/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -198,7 +198,7 @@ class FaqController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.faqs.index', $business->id)
+        return redirect()->route('member.listings.faqs.index', $business->id)
             ->with('success', 'Pregunta frecuente actualizada correctamente.');
     }
 
@@ -219,7 +219,7 @@ class FaqController extends Controller
 
         $faq->delete();
 
-        return redirect()->route('member.businesses.faqs.index', $business->id)
+        return redirect()->route('member.listings.faqs.index', $business->id)
             ->with('success', 'Pregunta frecuente eliminada correctamente.');
     }
 
@@ -244,7 +244,7 @@ class FaqController extends Controller
             'description' => 'Pregunta frecuente clonada',
         ]);
 
-        return redirect()->route('member.businesses.faqs.index', $business->id)
+        return redirect()->route('member.listings.faqs.index', $business->id)
             ->with('success', 'Pregunta frecuente clonada correctamente.');
     }
 

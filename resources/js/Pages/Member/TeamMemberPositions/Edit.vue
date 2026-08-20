@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Puesto - ${business?.name || ''}`" />
+    <Head :title="`Editar Puesto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Puesto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/team-member-positions`"
+      :backHref="`/member/listings/${listing?.id}/team-member-positions`"
     />
 
     <div class="row">
@@ -60,7 +60,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/team-member-positions`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/team-member-positions`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -84,10 +84,10 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const position = computed(() => page.props.position)
 const parentPositions = computed(() => page.props.parentPositions || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const parentPositionOptions = computed(() => {
   const options = parentPositions.value.map(p => ({
@@ -115,7 +115,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Puestos', href: `/member/listings/${business.value?.id}/team-member-positions` },
+    { label: 'Puestos', href: `/member/listings/${listing.value?.id}/team-member-positions` },
     { label: position.value?.name || 'Editar', active: true },
   ]
 })
@@ -128,7 +128,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.put(`/member/listings/${business.value.id}/team-member-positions/${position.value.id}`, {
+  form.put(`/member/listings/${listing.value.id}/team-member-positions/${position.value.id}`, {
     preserveScroll: true,
   })
 }

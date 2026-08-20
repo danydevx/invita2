@@ -206,7 +206,7 @@ import 'trix'
 import 'trix/dist/trix.css'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   contexts: Array,
 })
 
@@ -381,7 +381,7 @@ const extractUrl = () => {
   extracting.value = true
   urlImportError.value = null
 
-  router.post(`/member/listings/${props.business.id}/ai-chatbot/extract-url`, { url: urlForm.url }, {
+  router.post(`/member/listings/${props.listing.id}/ai-chatbot/extract-url`, { url: urlForm.url }, {
     preserveScroll: true,
     onSuccess: (page) => {
       if (page.props.flash?.extractResult) {
@@ -416,7 +416,7 @@ const importFromUrl = () => {
   successMessage.value = null
 
   router.post(
-    `/member/listings/${props.business.id}/ai-chatbot/contexts`,
+    `/member/listings/${props.listing.id}/ai-chatbot/contexts`,
     {
       title: urlForm.title,
       content: urlForm.content,
@@ -450,7 +450,7 @@ const saveContext = () => {
 
   if (editingContext.value) {
     router.put(
-      `/member/listings/${props.business.id}/ai-chatbot/contexts/${editingContext.value.id}`,
+      `/member/listings/${props.listing.id}/ai-chatbot/contexts/${editingContext.value.id}`,
       data,
       {
         preserveScroll: true,
@@ -465,7 +465,7 @@ const saveContext = () => {
       }
     )
   } else {
-    router.post(`/member/listings/${props.business.id}/ai-chatbot/contexts`, data, {
+    router.post(`/member/listings/${props.listing.id}/ai-chatbot/contexts`, data, {
       preserveScroll: true,
       onSuccess: () => {
         closeModal()
@@ -482,7 +482,7 @@ const saveContext = () => {
 const deleteContext = (context) => {
   if (confirm(`¿Eliminar el contexto "${context.title}"?`)) {
     router.delete(
-      `/member/listings/${props.business.id}/ai-chatbot/contexts/${context.id}`,
+      `/member/listings/${props.listing.id}/ai-chatbot/contexts/${context.id}`,
       {
         preserveScroll: true,
         onSuccess: () => {

@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`AI Chatbot - ${business?.name || ''}`" />
+    <Head :title="`AI Chatbot - ${listing?.name || ''}`" />
 
     <PageHeader
       title="AI Chatbot"
@@ -8,7 +8,7 @@
     >
       <template #actions>
         <a
-          :href="`/m/${business?.slug}`"
+          :href="`/m/${listing?.slug}`"
           target="_blank"
           class="btn btn-outline-primary btn-sm"
         >
@@ -75,7 +75,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <Link
-            :href="`/member/listings/${business?.id}/ai-chatbot/presets`"
+            :href="`/member/listings/${listing?.id}/ai-chatbot/presets`"
             class="nav-link"
           >
             <i class="bi bi-robot me-2"></i>Presets
@@ -86,7 +86,7 @@
       <div class="tab-content">
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'config' }">
           <ConfigTab
-            :business="business"
+            :business="listing"
             :settings="settings"
             :presets="presets"
             @saved="onSettingsSaved"
@@ -95,7 +95,7 @@
 
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'contexts' }">
           <ContextsTab
-            :business="business"
+            :business="listing"
             :contexts="contexts"
             @saved="refreshPage"
             @deleted="refreshPage"
@@ -104,7 +104,7 @@
 
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'reindex' }">
           <ReindexTab
-            :business="business"
+            :business="listing"
             :settings="settings"
             :embedding-counts="embeddingCounts"
             @reindex="onReindex"
@@ -113,18 +113,18 @@
 
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'preview' }">
           <PreviewTab
-            :business="business"
+            :business="listing"
             :settings="settings"
           />
         </div>
 
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'history' }">
-          <HistoryTab :business="business" />
+          <HistoryTab :business="listing" />
         </div>
 
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'analytics' }">
           <AnalyticsTab
-            :business="business"
+            :business="listing"
             :totals="analyticsData.totals"
             :daily-stats="analyticsData.dailyStats"
             :top-questions="analyticsData.topQuestions"
@@ -153,8 +153,8 @@ import HistoryTab from './HistoryTab.vue'
 import AnalyticsTab from './AnalyticsTab.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 const settings = computed(() => page.props.settings)
 const presets = computed(() => page.props.presets || [])
 const contexts = computed(() => page.props.contexts || [])
@@ -205,7 +205,7 @@ const refreshPage = () => {
 }
 
 const loadAnalyticsData = (period = '30days') => {
-  fetch(`/member/listings/${business.value.id}/ai-chatbot/analytics-json?period=${period}`, {
+  fetch(`/member/listings/${listing.value.id}/ai-chatbot/analytics-json?period=${period}`, {
     headers: {
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
     },

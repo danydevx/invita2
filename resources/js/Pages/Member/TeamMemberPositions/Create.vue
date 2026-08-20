@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nuevo Puesto - ${business?.name || ''}`" />
+    <Head :title="`Nuevo Puesto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nuevo Puesto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/team-member-positions`"
+      :backHref="`/member/listings/${listing?.id}/team-member-positions`"
     />
 
     <div class="row">
@@ -60,7 +60,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/team-member-positions`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/team-member-positions`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -84,9 +84,9 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const parentPositions = computed(() => page.props.parentPositions || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const parentPositionOptions = computed(() => {
   return [
@@ -116,7 +116,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Puestos', href: `/member/listings/${business.value?.id}/team-member-positions` },
+    { label: 'Puestos', href: `/member/listings/${listing.value?.id}/team-member-positions` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -129,7 +129,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(`/member/listings/${business.value.id}/team-member-positions`, {
+  form.post(`/member/listings/${listing.value.id}/team-member-positions`, {
     preserveScroll: true,
   })
 }

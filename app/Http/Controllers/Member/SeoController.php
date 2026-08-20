@@ -18,7 +18,7 @@ class SeoController extends Controller
         $seo = $business->seoSetting;
 
         return Inertia::render('Member/Seo/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

@@ -71,6 +71,6 @@ class ListingLocation extends Model
 
     public function schedules(): HasMany
     {
-        return $this->hasMany(\Modules\ListingOfficeHours\Models\ListingSchedule::class);
+        return $this->hasMany(\Modules\ListingOfficeHours\Models\ListingSchedule::class, 'business_location_id');
     }
 }

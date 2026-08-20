@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Escanear - ${business?.name || ''}`" />
+    <Head :title="`Escanear - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Escanear Tarjeta"
@@ -11,13 +11,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/listings/${business?.id}/fidelity-cards`"
+        :href="`/member/listings/${listing?.id}/fidelity-cards`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-credit-card me-1"></i>Tarjetas
       </Link>
       <Link
-        :href="`/member/listings/${business?.id}/fidelity-cards/scan-view`"
+        :href="`/member/listings/${listing?.id}/fidelity-cards/scan-view`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-qr-code-scan me-1"></i>Escanear
@@ -94,8 +94,8 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const scannerContainer = ref(null)
 const scannerError = ref(null)
@@ -119,7 +119,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Fidelidad', href: `/member/listings/${business.value?.id}/fidelity-cards` },
+    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
     { label: 'Escanear', active: true },
   ]
 })
@@ -172,7 +172,7 @@ const stopScanner = async () => {
 const submitCode = () => {
   if (!form.public_code) return
 
-  form.post(`/member/listings/${business.value.id}/fidelity-cards/scan-by-code`, {
+  form.post(`/member/listings/${listing.value.id}/fidelity-cards/scan-by-code`, {
     preserveScroll: true,
     onSuccess: (page) => {
       if (page.props.lastScannedCard) {

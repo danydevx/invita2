@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Contacto - ${business.name}`" />
+    <Head :title="`Editar Contacto - ${listing.name}`" />
 
     <PageHeader
       title="Editar Contacto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/leads`"
+      :backHref="`/member/listings/${listing.id}/leads`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -97,7 +97,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/leads`" class="btn btn-outline-secondary">
+              <Link :href="`/member/listings/${listing.id}/leads`" class="btn btn-outline-secondary">
                 Cancelar
               </Link>
             </div>
@@ -120,11 +120,11 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const lead = computed(() => page.props.lead)
 const locations = computed(() => page.props.locations || [])
 const errors = computed(() => page.props.errors || {})
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -161,7 +161,7 @@ const form = reactive({
 
 const submit = () => {
   sending.value = true
-  router.put(`/member/listings/${business.value.id}/leads/${lead.value.id}`, form, {
+  router.put(`/member/listings/${listing.value.id}/leads/${lead.value.id}`, form, {
     preserveScroll: true,
     onFinish: () => {
       sending.value = false

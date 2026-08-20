@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Promocion - ${business.name}`" />
+    <Head :title="`Nueva Promocion - ${listing.name}`" />
 
     <PageHeader
       title="Nueva Promocion"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/promotions`"
+      :backHref="`/member/listings/${listing.id}/promotions`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -115,7 +115,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/promotions`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${listing.id}/promotions`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -141,8 +141,8 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -253,7 +253,7 @@ const submit = () => {
     formData.append('image', mainImage.value)
   }
 
-  router.post(`/member/listings/${business.value.id}/promotions`, formData, {
+  router.post(`/member/listings/${listing.value.id}/promotions`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

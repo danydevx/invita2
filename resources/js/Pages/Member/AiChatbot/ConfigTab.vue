@@ -89,7 +89,7 @@
                   </option>
                 </select>
                 <small class="text-muted">
-                  <a :href="`/member/listings/${business.id}/ai-chatbot/presets`" target="_blank">
+                  <a :href="`/member/listings/${listing.id}/ai-chatbot/presets`" target="_blank">
                     Gestionar presets
                   </a>
                 </small>
@@ -603,7 +603,7 @@ import { computed, ref, reactive, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   settings: Object,
   presets: {
     type: Array,
@@ -814,7 +814,7 @@ const saveSettings = () => {
     formData.append('chatbot_avatar', form.chatbot_avatar_file)
   }
 
-  router.post(`/member/listings/${props.business.id}/ai-chatbot/settings`, formData, {
+  router.post(`/member/listings/${props.listing.id}/ai-chatbot/settings`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       successMessage.value = 'Configuración guardada correctamente.'

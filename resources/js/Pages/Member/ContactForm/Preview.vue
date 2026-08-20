@@ -4,15 +4,15 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/edit`" class="text-decoration-none text-muted small">
+        <Link :href="`/member/listings/${listing?.id}/contact-forms/${form?.id}/edit`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>
           Volver al editor
         </Link>
         <h4 class="mb-0 mt-1">Vista Previa: {{ form?.name }}</h4>
       </div>
       <a
-        v-if="business?.slug && form?.shortcode"
-        :href="`/b/${business.slug}/form/${form.shortcode}`"
+        v-if="listing?.slug && form?.shortcode"
+        :href="`/b/${listing.slug}/form/${form.shortcode}`"
         target="_blank"
         class="btn btn-outline-primary"
       >
@@ -211,7 +211,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   form: Object,
   fields: {
     type: Array,
@@ -219,7 +219,7 @@ const props = defineProps({
   },
 })
 
-const business = computed(() => props.business)
+const listing = computed(() => props.listing)
 const form = computed(() => props.form)
 
 const formData = reactive({})

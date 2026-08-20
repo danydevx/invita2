@@ -31,7 +31,7 @@ class GalleryController extends Controller
 
         if (! $gallery || $gallery->listing_id !== $business->id) {
             return Inertia::render('Member/Galleries/Show', [
-                'business' => [
+                'listing' => [
                     'id' => $business->id,
                     'name' => $business->name,
                 ],
@@ -66,13 +66,13 @@ class GalleryController extends Controller
             'file' => ['required_without:files', 'file', 'max:'.self::MAX_FILE_SIZE_KB, 'mimetypes:'.implode(',', self::ALLOWED_MIME_TYPES)],
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
             'business_location_id' => [
                 'nullable',
-                Rule::exists('business_locations', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_locations', 'id')->where('listing_id', $business->id),
             ],
         ], [
             'files.max' => 'Solo puedes subir hasta 10 imágenes por vez.',
@@ -144,7 +144,7 @@ class GalleryController extends Controller
         $data = $request->validate([
             'business_gallery_id' => [
                 'required',
-                Rule::exists('business_galleries', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_galleries', 'id')->where('listing_id', $business->id),
             ],
             'title' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -152,7 +152,7 @@ class GalleryController extends Controller
             'is_active' => ['boolean'],
             'business_location_id' => [
                 'nullable',
-                Rule::exists('business_locations', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_locations', 'id')->where('listing_id', $business->id),
             ],
         ]);
 
@@ -301,7 +301,7 @@ class GalleryController extends Controller
         ];
 
         return Inertia::render('Member/Galleries/Show', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

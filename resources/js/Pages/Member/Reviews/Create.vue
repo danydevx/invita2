@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Resena - ${business.name}`" />
+    <Head :title="`Nueva Resena - ${listing.name}`" />
 
     <PageHeader
       title="Nueva Resena"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/reviews`"
+      :backHref="`/member/listings/${listing.id}/reviews`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -79,7 +79,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Guardando...' : 'Guardar' }}
               </button>
-              <Link :href="`/member/listings/${business.id}/reviews`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/member/listings/${listing.id}/reviews`" class="btn btn-outline-secondary ms-2">
                 Cancelar
               </Link>
             </div>
@@ -103,7 +103,7 @@ import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const errors = reactive({
   client_name: '',
   company: '',
@@ -112,7 +112,7 @@ const errors = reactive({
   google_link: '',
 })
 const sending = ref(false)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -186,7 +186,7 @@ const submit = () => {
   }
 
   sending.value = true
-  router.post(`/member/listings/${business.value.id}/reviews`, form, {
+  router.post(`/member/listings/${listing.value.id}/reviews`, form, {
     preserveScroll: true,
     onError: (errs) => {
       errors.client_name = errs.client_name || ''

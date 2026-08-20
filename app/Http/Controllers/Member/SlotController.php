@@ -79,7 +79,7 @@ class SlotController extends Controller
         ];
 
         return Inertia::render('Member/Slots/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

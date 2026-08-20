@@ -13,11 +13,11 @@ use Modules\Properties\Models\PropertyType;
 
 class PropertyApiController extends Controller
 {
-    public function index(Request $request, Business $business)
+    public function index(Request $request, Listing $listing)
     {
         $perPage = min((int) $request->get('per_page', 12), 50);
 
-        $query = Property::where('listing_id', $business->id)
+        $query = Property::where('listing_id', $listing->id)
             ->where('status', 'published')
             ->where('is_public', true)
             ->with(['propertyType', 'values.propertyField']);
@@ -57,9 +57,9 @@ class PropertyApiController extends Controller
         return new PropertyCollection($properties);
     }
 
-    public function show(Business $business, Property $property)
+    public function show(Listing $listing, Property $property)
     {
-        if ($property->listing_id !== $business->id) {
+        if ($property->listing_id !== $listing->id) {
             abort(404);
         }
 

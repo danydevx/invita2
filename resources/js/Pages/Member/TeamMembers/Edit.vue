@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Miembro - ${business?.name || ''}`" />
+    <Head :title="`Editar Miembro - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Miembro"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/team-members`"
+      :backHref="`/member/listings/${listing?.id}/team-members`"
     />
 
     <div class="row">
@@ -63,7 +63,7 @@
                   placeholder="Cuéntanos sobre este miembro del equipo"
                   v-model="form.bio"
                   :formError="form.errors.bio"
-                  rows="3"
+                  :rows="3"
                 />
               </div>
 
@@ -108,7 +108,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/team-members`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/team-members`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -133,10 +133,10 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const member = computed(() => page.props.member)
 const positions = computed(() => page.props.positions || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const positionOptions = computed(() => {
   return [
@@ -167,7 +167,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Mi Equipo', href: `/member/listings/${business.value?.id}/team-members` },
+    { label: 'Mi Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
     { label: member.value?.name || 'Editar', active: true },
   ]
 })
@@ -196,7 +196,7 @@ const removeImage = () => {
 }
 
 const submit = () => {
-  form.post(`/member/listings/${business.value.id}/team-members/${member.value.id}`, {
+  form.post(`/member/listings/${listing.value.id}/team-members/${member.value.id}`, {
     preserveScroll: true,
   })
 }

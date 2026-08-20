@@ -39,7 +39,7 @@ class TeamMemberPositionController extends Controller
             });
 
         return Inertia::render('Member/TeamMemberPositions/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -57,7 +57,7 @@ class TeamMemberPositionController extends Controller
             ->get(['id', 'name', 'parent_id']);
 
         return Inertia::render('Member/TeamMemberPositions/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -99,7 +99,7 @@ class TeamMemberPositionController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.team-member-positions.index', $business->id)
+        return redirect()->route('member.listings.team-member-positions.index', $business->id)
             ->with('success', 'Puesto creado correctamente.');
     }
 
@@ -116,7 +116,7 @@ class TeamMemberPositionController extends Controller
             ->get(['id', 'name', 'parent_id']);
 
         return Inertia::render('Member/TeamMemberPositions/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -166,7 +166,7 @@ class TeamMemberPositionController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.team-member-positions.index', $business->id)
+        return redirect()->route('member.listings.team-member-positions.index', $business->id)
             ->with('success', 'Puesto actualizado correctamente.');
     }
 
@@ -192,7 +192,7 @@ class TeamMemberPositionController extends Controller
 
         $position->delete();
 
-        return redirect()->route('member.businesses.team-member-positions.index', $business->id)
+        return redirect()->route('member.listings.team-member-positions.index', $business->id)
             ->with('success', 'Puesto eliminado correctamente.');
     }
 }

@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nuevo Paquete - ${business?.name || ''}`" />
+    <Head :title="`Nuevo Paquete - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Nuevo Paquete"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/packages`"
+      :backHref="`/member/listings/${listing?.id}/packages`"
     />
 
     <div class="row">
@@ -42,7 +42,7 @@
                   placeholder="Descripción detallada del paquete"
                   v-model="form.long_description"
                   :formError="form.errors.long_description"
-                  rows="3"
+                  :rows="3"
                 />
               </div>
 
@@ -116,7 +116,7 @@
                   placeholder="Usa {package_title} para incluir el nombre del paquete"
                   v-model="form.whatsapp_message"
                   :formError="form.errors.whatsapp_message"
-                  rows="2"
+                  :rows="2"
                 />
               </div>
 
@@ -180,7 +180,7 @@
                   <i class="bi bi-check me-1"></i>
                   {{ form.processing ? 'Guardando...' : 'Guardar' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/packages`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/packages`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -204,10 +204,10 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const defaultWhatsapp = computed(() => page.props.defaultWhatsapp || '')
 const defaultWhatsappMessage = computed(() => page.props.defaultWhatsappMessage || '')
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const imagePreview = ref(null)
 
@@ -228,7 +228,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Dashboard', href: '/member/dashboard' },
-    { label: 'Paquetes', href: `/member/listings/${business.value?.id}/packages` },
+    { label: 'Paquetes', href: `/member/listings/${listing.value?.id}/packages` },
     { label: 'Nuevo', active: true },
   ]
 })
@@ -271,7 +271,7 @@ const removeFeature = (index) => {
 }
 
 const submit = () => {
-  form.post(`/member/listings/${business.value.id}/packages`, {
+  form.post(`/member/listings/${listing.value.id}/packages`, {
     preserveScroll: true,
   })
 }

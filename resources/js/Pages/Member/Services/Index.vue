@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Servicios - ${business?.name || ''}`" />
+    <Head :title="`Servicios - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Servicios"
@@ -8,7 +8,7 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/services/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/services/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo servicio
         </Link>
       </template>
@@ -16,12 +16,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/services`"
+      :endpoint="`/member/listings/${listing?.id}/services`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/services/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/services/reorder`"
       search-placeholder="Buscar servicios..."
       empty-title="No hay servicios"
       empty-text="Comienza creando tu primer servicio."
@@ -31,7 +31,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/services/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/services/bulk-delete`"
           item-name="servicios"
           @deleted="onBulkDeleted"
         />
@@ -91,7 +91,7 @@
           >
             <i class="bi bi-copy"></i>
           </button>
-          <Link :href="`/member/listings/${business?.id}/services/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/services/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteService(row)">
@@ -112,15 +112,15 @@ import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   services: Object,
   locations: { type: Array, default: () => [] },
   dataTable: Object,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -179,7 +179,7 @@ const deleteService = (service) => {
     return
   }
 
-  router.delete(`/member/listings/${business.value.id}/services/${service.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/services/${service.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {
@@ -195,7 +195,7 @@ const cloneService = (service) => {
   }
 
   cloning.value = service.id
-  router.post(`/member/listings/${business.value.id}/services/${service.id}/clone`, {}, {
+  router.post(`/member/listings/${listing.value.id}/services/${service.id}/clone`, {}, {
     preserveScroll: true,
     onFinish: () => {
       cloning.value = null
@@ -208,7 +208,7 @@ const deleteSelected = () => {
 
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} servicio${count > 1 ? 's' : ''} seleccionado${count > 1 ? 's' : ''}?`)) {
-    router.post(`/member/listings/${business.value.id}/services/bulk-delete`, {
+    router.post(`/member/listings/${listing.value.id}/services/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,

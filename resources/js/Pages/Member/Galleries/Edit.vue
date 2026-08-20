@@ -5,7 +5,7 @@
     <PageHeader
       title="Editar galería"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id || ''}/galleries`"
+      :backHref="`/member/listings/${listing?.id || ''}/galleries`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -67,7 +67,7 @@
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Guardando...' : 'Guardar cambios' }}
             </button>
-            <Link :href="`/member/listings/${business?.id || ''}/galleries`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${listing?.id || ''}/galleries`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -88,14 +88,14 @@ import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const gallery = computed(() => page.props.gallery)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const isPrimary = computed(() => !!gallery.value?.is_primary)
 
 const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find((b) => b.id === business.value?.id)
+  const biz = businessMenu.value.find((b) => b.id === listing.value?.id)
   if (biz) {
     return [
       { label: 'Mis Negocios', href: '/member/listings' },
@@ -106,7 +106,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/listings' },
-    { label: 'Galerías', href: `/member/listings/${business.value?.id}/galleries` },
+    { label: 'Galerías', href: `/member/listings/${listing.value?.id}/galleries` },
     { label: 'Editar', active: true },
   ]
 })
@@ -120,6 +120,6 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.put(`/member/listings/${business.value.id}/galleries/${gallery.value.id}`)
+  form.put(`/member/listings/${listing.value.id}/galleries/${gallery.value.id}`)
 }
 </script>

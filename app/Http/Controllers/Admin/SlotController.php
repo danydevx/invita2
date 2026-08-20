@@ -33,7 +33,7 @@ class SlotController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/SlotsIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

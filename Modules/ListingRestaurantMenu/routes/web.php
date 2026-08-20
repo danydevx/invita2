@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Listings\Models\Listing;
 
-Route::prefix('admin/businesses/{business}')->middleware(['auth', 'role:superadmin|admin'])->group(function () {
+Route::prefix('admin/listings/{listing}')->middleware(['auth', 'role:superadmin|admin'])->group(function () {
     Route::resource('menu-categories', \App\Http\Controllers\Admin\MenuCategoryController::class)->names([
         'index' => 'admin.menu.categories.index',
         'store' => 'admin.menu.categories.store',
@@ -27,7 +27,7 @@ Route::prefix('admin/businesses/{business}')->middleware(['auth', 'role:superadm
     Route::delete('menu-products/{product}/images/{image}', [\App\Http\Controllers\Admin\MenuProductImageController::class, 'destroy'])->name('admin.menu.products.images.destroy');
 });
 
-Route::prefix('member/businesses/{business}')->middleware(['auth', 'role:superadmin|admin|member'])->group(function () {
+Route::prefix('member/listings/{listing}')->middleware(['auth', 'role:superadmin|admin|member'])->group(function () {
     Route::resource('menu-categories', \App\Http\Controllers\Member\MenuCategoryController::class)->names([
         'index' => 'member.menu.categories.index',
         'store' => 'member.menu.categories.store',

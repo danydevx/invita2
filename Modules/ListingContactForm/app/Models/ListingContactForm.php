@@ -52,12 +52,12 @@ class ListingContactForm extends Model
 
     public function fields(): HasMany
     {
-        return $this->hasMany(ListingContactFormField::class)->orderBy('order');
+        return $this->hasMany(ListingContactFormField::class, 'business_contact_form_id')->orderBy('order');
     }
 
     public function activeFields(): HasMany
     {
-        return $this->hasMany(ListingContactFormField::class)
+        return $this->hasMany(ListingContactFormField::class, 'business_contact_form_id')
             ->where('is_active', true)
             ->orderBy('order');
     }

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\ListingFeatures\Http\Controllers\Member\FeatureController;
 
-Route::middleware(['auth', 'verified'])->prefix('member/businesses/{business}')->name('member.businesses.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('member/listings/{listing}')->name('member.listings.')->group(function () {
     Route::get('/features', [FeatureController::class, 'index'])->name('features.index');
     Route::post('/features', [FeatureController::class, 'store'])->name('features.store');
     Route::post('/features/import/{feature}', [FeatureController::class, 'import'])->name('features.import');

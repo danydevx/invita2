@@ -1,13 +1,13 @@
 <template>
   <AdminLayout>
-    <Head :title="`AI Chatbot - ${business.name}`" />
+    <Head :title="`AI Chatbot - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - AI Chatbot</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - AI Chatbot</h1>
       </div>
     </div>
 
@@ -30,5 +30,5 @@ import { Head, Link, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 </script>

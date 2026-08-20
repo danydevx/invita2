@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Producto - ${business?.name || ''}`" />
+    <Head :title="`Editar Producto - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Editar Producto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/products`"
+      :backHref="`/member/listings/${listing?.id}/products`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -164,7 +164,7 @@
 
             <div class="col-12">
               <ProductImageUpload
-                :businessId="business?.id"
+                :businessId="listing?.id"
                 :productId="product?.id"
                 :images="productImagesList"
                 :maxFiles="10"
@@ -179,7 +179,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
-            <Link :href="`/member/listings/${business?.id}/products`" class="btn btn-outline-secondary">
+            <Link :href="`/member/listings/${listing?.id}/products`" class="btn btn-outline-secondary">
               Cancelar
             </Link>
           </div>
@@ -205,7 +205,7 @@ import FieldImage from '@/Components/Fields/FieldImage.vue'
 import ProductImageUpload from '@/Components/Fields/ProductImageUpload.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const product = computed(() => page.props.product)
 const locations = computed(() => page.props.locations || [])
 const categories = computed(() => page.props.categories || [])
@@ -264,7 +264,7 @@ const validateForm = () => {
 }
 
 const sending = ref(false)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 const productImages = ref([])
 const initialPreview = computed(() => product.value.image ? `/storage/${product.value.image}` : '')
 const productImagesList = computed(() => page.props.productImages || [])
@@ -330,7 +330,7 @@ const submit = () => {
   if (productImages.value instanceof File) {
     formData.append('image', productImages.value)
   }
-  router.post(`/member/listings/${business.value.id}/products/${product.value.id}`, formData, {
+  router.post(`/member/listings/${listing.value.id}/products/${product.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

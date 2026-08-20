@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Editar Servicio - ${business?.name || ''}`" />
+    <Head :title="`Editar Servicio - ${listing?.name || ''}`" />
 
     <PageHeader
       :title="'Editar Servicio'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/services`"
+      :backHref="`/member/listings/${listing?.id}/services`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -139,7 +139,7 @@
 
             <div class="col-12">
               <ServiceImageUpload
-                :businessId="business?.id"
+                :businessId="listing?.id"
                 :serviceId="service?.id"
                 :images="props.serviceImages || []"
                 :maxFiles="10"
@@ -154,7 +154,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Actualizando...' : 'Actualizar Servicio' }}
             </button>
-            <Link :href="`/member/listings/${business?.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${listing?.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -178,14 +178,14 @@ import FieldImage from '@/Components/Fields/FieldImage.vue'
 import ServiceImageUpload from '@/Components/Fields/ServiceImageUpload.vue'
 
 const props = defineProps({
-  business: { type: Object, required: true },
+  listing: { type: Object, required: true },
   service: { type: Object, required: true },
   locations: { type: Array, default: () => [] },
   serviceImages: { type: Array, default: () => [] },
 })
 
 const page = usePage()
-const business = computed(() => props.business)
+const listing = computed(() => props.listing)
 const service = computed(() => props.service)
 
 const sending = ref(false)
@@ -278,7 +278,7 @@ onMounted(() => {
   form.business_location_id = service.value?.business_location_id || ''
 })
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -326,7 +326,7 @@ const submit = () => {
     formData.append('image', mainImage.value)
   }
 
-  router.post(`/member/listings/${business.value.id}/services/${service.value.id}`, formData, {
+  router.post(`/member/listings/${listing.value.id}/services/${service.value.id}`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       sending.value = false

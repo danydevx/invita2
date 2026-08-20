@@ -18,7 +18,7 @@ class AiChatbotController extends Controller
         }
 
         return Inertia::render('Member/AiChatbot/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

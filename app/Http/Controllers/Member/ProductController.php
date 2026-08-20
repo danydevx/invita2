@@ -77,7 +77,7 @@ class ProductController extends Controller
         ];
 
         return Inertia::render('Member/Products/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -97,7 +97,7 @@ class ProductController extends Controller
         $categories = $business->productCategories()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Member/Products/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -151,7 +151,7 @@ class ProductController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.products.index', $business->id)
+        return redirect()->route('member.listings.products.index', $business->id)
             ->with('success', 'Producto creado correctamente.');
     }
 
@@ -165,7 +165,7 @@ class ProductController extends Controller
         $productImages = $product->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
 
         return Inertia::render('Member/Products/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -248,7 +248,7 @@ class ProductController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.products.index', $business->id)
+        return redirect()->route('member.listings.products.index', $business->id)
             ->with('success', 'Producto actualizado correctamente.');
     }
 
@@ -264,7 +264,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('member.businesses.products.index', $business->id)
+        return redirect()->route('member.listings.products.index', $business->id)
             ->with('success', 'Producto eliminado correctamente.');
     }
 
@@ -277,7 +277,7 @@ class ProductController extends Controller
         $newProduct->slug = \Illuminate\Support\Str::slug($product->name) . '-' . time();
         $newProduct->save();
 
-        return redirect()->route('member.businesses.products.edit', [$business->id, $newProduct->id])
+        return redirect()->route('member.listings.products.edit', [$business->id, $newProduct->id])
             ->with('success', 'Producto clonado correctamente.');
     }
 

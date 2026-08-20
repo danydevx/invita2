@@ -55,7 +55,7 @@
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Guardando...' : 'Guardar cambios' }}
             </button>
-            <Link :href="`/admin/listings/${business.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/admin/listings/${listing.id}/galleries`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -69,7 +69,7 @@ import { computed } from 'vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const gallery = computed(() => page.props.gallery)
 const isPrimary = computed(() => !!gallery.value?.is_primary)
 
@@ -82,6 +82,6 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.put(`/admin/listings/${business.value.id}/galleries/${gallery.value.id}`)
+  form.put(`/admin/listings/${listing.value.id}/galleries/${gallery.value.id}`)
 }
 </script>

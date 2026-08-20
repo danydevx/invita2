@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Contacto - ${business.name}`" />
+    <Head :title="`Contacto - ${listing.name}`" />
 
     <PageHeader
       title="Detalle del Contacto"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/leads`"
+      :backHref="`/member/listings/${listing.id}/leads`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -55,7 +55,7 @@
         </div>
 
         <div class="mt-4 d-flex gap-2">
-          <Link :href="`/member/listings/${business.id}/leads/${lead.id}/edit`" class="btn btn-primary">
+          <Link :href="`/member/listings/${listing.id}/leads/${lead.id}/edit`" class="btn btn-primary">
             <i class="bi bi-pencil me-1"></i>Editar
           </Link>
           <button
@@ -77,9 +77,9 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const lead = computed(() => page.props.lead)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -124,7 +124,7 @@ const statusClass = (status) => {
 
 const deleteLead = () => {
   if (confirm('¿Estás seguro de eliminar este contacto?')) {
-    router.delete(`/member/listings/${business.value.id}/leads/${lead.value.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/leads/${lead.value.id}`, {
       preserveScroll: true,
     })
   }

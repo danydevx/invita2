@@ -25,7 +25,7 @@ class MenuCategoryController extends Controller
             ->get();
 
         return inertia('Admin/Categories/Index', [
-            'business' => $business,
+            'listing' => $business,
             'categories' => $categories,
         ]);
     }

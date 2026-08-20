@@ -55,7 +55,7 @@ class FaqCategoryController extends Controller
             ->get();
 
         return Inertia::render('Member/Faqs/Categories/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

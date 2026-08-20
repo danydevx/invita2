@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Mi Equipo - ${business?.name || ''}`" />
+    <Head :title="`Mi Equipo - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Mi Equipo"
@@ -8,7 +8,7 @@
       backHref="/member/dashboard"
     >
       <template #actions>
-        <Link :href="`/member/listings/${business?.id}/team-members/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/team-members/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Miembro
         </Link>
       </template>
@@ -16,13 +16,13 @@
 
     <div class="mb-3 d-flex gap-2">
       <Link
-        :href="`/member/listings/${business?.id}/team-members`"
+        :href="`/member/listings/${listing?.id}/team-members`"
         class="btn btn-secondary btn-sm"
       >
         <i class="bi bi-people me-1"></i>Miembros
       </Link>
       <Link
-        :href="`/member/listings/${business?.id}/team-member-positions`"
+        :href="`/member/listings/${listing?.id}/team-member-positions`"
         class="btn btn-outline-secondary btn-sm"
       >
         <i class="bi bi-folder me-1"></i>Puestos
@@ -49,12 +49,12 @@
 
     <BaseDataTable
       ref="dataTableRef"
-      :endpoint="`/member/listings/${business?.id}/team-members`"
+      :endpoint="`/member/listings/${listing?.id}/team-members`"
       :columns="columns"
       :initial-data="dataTable"
       :initial-per-page="perPage"
       :reorderable="true"
-      :reorder-endpoint="`/member/listings/${business?.id}/team-members/reorder`"
+      :reorder-endpoint="`/member/listings/${listing?.id}/team-members/reorder`"
       search-placeholder="Buscar miembros..."
       empty-title="No hay miembros del equipo"
       empty-text="Comienza invitando a tu primer miembro del equipo."
@@ -64,7 +64,7 @@
         <BulkSelect
           v-model:selectedIds="selectedIds"
           :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${business?.id}/team-members/bulk-delete`"
+          :delete-endpoint="`/member/listings/${listing?.id}/team-members/bulk-delete`"
           item-name="miembros"
           @deleted="onBulkDeleted"
         />
@@ -113,7 +113,7 @@
 
       <template #cell-actions="{ row }">
         <div class="actions">
-          <Link :href="`/member/listings/${business?.id}/team-members/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+          <Link :href="`/member/listings/${listing?.id}/team-members/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil"></i>
           </Link>
           <button class="btn btn-sm btn-outline-danger" @click="deleteMember(row)">
@@ -134,10 +134,10 @@ import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 import { BulkSelect, BulkSelectRowCheckbox } from '@/Components/BulkSelect'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const positions = computed(() => page.props.positions || [])
 const dataTable = computed(() => page.props.dataTable || { data: [] })
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const filters = computed(() => page.props.filters || {})
 const getInitialPosition = () => {
@@ -205,7 +205,7 @@ const filterByPosition = () => {
   if (selectedPosition.value) {
     params.position = selectedPosition.value
   }
-  router.get(`/member/listings/${business.value.id}/team-members`, params, {
+  router.get(`/member/listings/${listing.value.id}/team-members`, params, {
     preserveScroll: true,
   })
 }
@@ -215,7 +215,7 @@ const deleteMember = (member) => {
     return
   }
 
-  router.delete(`/member/listings/${business.value.id}/team-members/${member.id}`, {
+  router.delete(`/member/listings/${listing.value.id}/team-members/${member.id}`, {
     preserveScroll: true,
     onSuccess: () => {
       if (dataTableRef.value) {

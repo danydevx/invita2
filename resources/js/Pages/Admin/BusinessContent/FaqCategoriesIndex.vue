@@ -1,13 +1,13 @@
 <template>
   <AdminLayout>
-    <Head :title="`Categorias FAQs - ${business.name}`" />
+    <Head :title="`Categorias FAQs - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${business.id}/faqs`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing.id}/faqs`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver a Preguntas
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ business.name }} - Categorias de FAQs</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Categorias de FAQs</h1>
       </div>
       <button class="btn btn-primary btn-sm" @click="openCreateModal">
         <i class="bi bi-plus-lg me-1"></i>Nueva Categoria
@@ -105,7 +105,7 @@ import { Modal } from 'bootstrap'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const categories = computed(() => page.props.categories || [])
 const errors = computed(() => page.props.errors || {})
 
@@ -143,7 +143,7 @@ const closeModal = () => {
 
 const createCategory = () => {
   sending.value = true
-  router.post(`/admin/listings/${business.value.id}/faq-categories`, form, {
+  router.post(`/admin/listings/${listing.value.id}/faq-categories`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()
@@ -153,7 +153,7 @@ const createCategory = () => {
 
 const updateCategory = () => {
   sending.value = true
-  router.put(`/admin/listings/${business.value.id}/faq-categories/${editingCategory.value.id}`, form, {
+  router.put(`/admin/listings/${listing.value.id}/faq-categories/${editingCategory.value.id}`, form, {
     onFinish: () => {
       sending.value = false
       closeModal()

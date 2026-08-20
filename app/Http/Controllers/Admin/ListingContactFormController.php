@@ -18,7 +18,7 @@ class ListingContactFormController extends Controller
             ->paginate(20);
 
         return Inertia::render('Admin/BusinessContent/ContactFormIndex', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

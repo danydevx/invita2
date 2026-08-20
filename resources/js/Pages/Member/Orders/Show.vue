@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Pedido ${order?.order_number} - ${business?.name || ''}`" />
+    <Head :title="`Pedido ${order?.order_number} - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Detalle del Pedido"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/orders`"
+      :backHref="`/member/listings/${listing?.id}/orders`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show">
@@ -151,10 +151,10 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const order = computed(() => page.props.order)
 const statuses = computed(() => page.props.statuses || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const currentStatus = ref(order.value?.status)
 const updating = ref(false)
@@ -176,7 +176,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Pedidos', href: `/member/listings/${business.value?.id}/orders` },
+    { label: 'Pedidos', href: `/member/listings/${listing.value?.id}/orders` },
     { label: order.value?.order_number || 'Detalle', active: true },
   ]
 })
@@ -213,7 +213,7 @@ const updateStatus = () => {
 
   updating.value = true
 
-  router.post(`/member/listings/${business.value.id}/orders/${order.value.id}/status`, {
+  router.post(`/member/listings/${listing.value.id}/orders/${order.value.id}/status`, {
     status: currentStatus.value,
   }, {
     preserveScroll: true,

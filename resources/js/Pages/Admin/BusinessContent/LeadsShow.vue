@@ -1,10 +1,10 @@
 <template>
   <AdminLayout>
-    <Head :title="`Lead: ${lead.name} - ${business.name}`" />
+    <Head :title="`Lead: ${lead.name} - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${business.id}/leads`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing.id}/leads`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver a Leads
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ lead.name }}</h1>
@@ -87,7 +87,7 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const lead = computed(() => page.props.lead)
 
 const form = reactive({
@@ -96,7 +96,7 @@ const form = reactive({
 })
 
 const submit = () => {
-  router.put(`/admin/listings/${business.value.id}/leads/${lead.value.id}`, form)
+  router.put(`/admin/listings/${listing.value.id}/leads/${lead.value.id}`, form)
 }
 
 const formatDate = (date) => {

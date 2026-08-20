@@ -41,16 +41,6 @@
               />
             </div>
 
-            <div class="col-12 col-md-6">
-              <label for="business-type" class="form-label">Tipo de Listado</label>
-              <select id="business-type" class="form-select" v-model="form.listing_type">
-                <option value="">Seleccionar tipo...</option>
-                <option v-for="type in listingTypes" :key="type.value" :value="type.value">
-                  {{ type.label }}
-                </option>
-              </select>
-            </div>
-
             <div class="col-12 col-md-3">
               <label for="business-timezone" class="form-label">Zona Horaria</label>
               <select id="business-timezone" class="form-select" v-model="form.timezone" :class="{ 'is-invalid': form.errors.timezone }">
@@ -109,17 +99,12 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  listingTypes: {
-    type: Array,
-    default: () => [],
-  },
 })
 
 const form = useForm({
   user_id: '',
   name: '',
   slug: '',
-  listing_type: '',
   timezone: 'America/Mexico_City',
   currency: 'MXN',
   is_active: true,

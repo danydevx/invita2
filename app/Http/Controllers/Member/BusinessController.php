@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use App\Services\PlanLimits;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Modules\Listings\Enums\ListingType;
 use Modules\Listings\Models\Listing;
 
@@ -38,7 +38,7 @@ class BusinessController extends Controller
         $user = $request->user();
 
         if ($planLimits->exceeded($user, 'max_businesses', $user->listings()->count())) {
-            return redirect()->route('member.businesses.index')
+            return redirect()->route('member.listings.index')
                 ->with('error', 'Has alcanzado el limite de negocios de tu plan.');
         }
 
@@ -61,7 +61,7 @@ class BusinessController extends Controller
         $businessCount = $user->listings()->count();
 
         if ($planLimits->exceeded($user, 'max_businesses', $businessCount)) {
-            return redirect()->route('member.businesses.index')
+            return redirect()->route('member.listings.index')
                 ->with('error', 'Has alcanzado el limite de negocios de tu plan.');
         }
 
@@ -101,7 +101,7 @@ class BusinessController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.edit', $listing)
+        return redirect()->route('member.listings.edit', $listing)
             ->with('success', 'Negocio creado correctamente.');
     }
 
@@ -111,13 +111,7 @@ class BusinessController extends Controller
         abort_unless($business->user_id === $user->id, 403);
 
         return inertia('Member/Listings/Edit', [
-            'business' => $business,
-            'listingTypes' => array_map(fn ($type) => [
-                'value' => $type->value,
-                'label' => $type->label(),
-                'icon' => $type->icon(),
-                'color' => $type->color(),
-            ], ListingType::cases()),
+            'listing' => $business,
         ]);
     }
 
@@ -130,13 +124,6 @@ class BusinessController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'listing_type' => ['required', 'string', Rule::in($validTypes)],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:150'],
-            'website' => ['nullable', 'url', 'max:255'],
-            'timezone' => ['nullable', 'string', 'max:100'],
-            'is_active' => ['boolean'],
             'logo' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:'.self::MAX_LOGO_SIZE_KB],
             'remove_logo' => ['boolean'],
         ], [

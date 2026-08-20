@@ -32,7 +32,7 @@ class ListingPackagePolicy
             return true;
         }
 
-        return $user->id === $package->business->user_id;
+        return $user->id === $package->listing?->user_id;
     }
 
     public function delete(User $user, ListingPackage $package): bool
@@ -41,7 +41,7 @@ class ListingPackagePolicy
             return true;
         }
 
-        return $user->id === $package->business->user_id;
+        return $user->id === $package->listing?->user_id;
     }
 
     public function deleteAny(User $user, Listing $business): bool

@@ -19,11 +19,11 @@ class PropertyImageController extends Controller
     protected const MAX_SIZE_KB = 5120;
     protected const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 
-    public function store(Request $request, Business $business, Property $property)
+    public function store(Request $request, Listing $listing, Property $property)
     {
         $user = Auth::user();
-        abort_unless($property->listing_id === $business->id, 403);
-        abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
+        abort_unless($property->listing_id === $listing->id, 403);
+        abort_unless($listing->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
 
         $files = $request->file('images');
         if (!$files) {
@@ -71,11 +71,11 @@ class PropertyImageController extends Controller
         return redirect()->back()->with('success', 'Imágenes subidas correctamente.');
     }
 
-    public function destroy(Business $business, Property $property, PropertyImage $image)
+    public function destroy(Listing $listing, Property $property, PropertyImage $image)
     {
         $user = Auth::user();
-        abort_unless($property->listing_id === $business->id, 403);
-        abort_unless($business->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
+        abort_unless($property->listing_id === $listing->id, 403);
+        abort_unless($listing->user_id === $user->id || $user->hasAnyRole(['superadmin', 'admin']), 403);
         abort_unless($image->property_id === $property->id, 403);
 
         if ($image->image_path) {

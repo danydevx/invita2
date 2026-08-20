@@ -65,7 +65,7 @@ class ReviewController extends Controller
         ];
 
         return Inertia::render('Member/Reviews/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -79,7 +79,7 @@ class ReviewController extends Controller
         $this->authorize('create', [ListingReview::class, $business]);
 
         return Inertia::render('Member/Reviews/Create', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -112,7 +112,7 @@ class ReviewController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.reviews.index', $business->id)
+        return redirect()->route('member.listings.reviews.index', $business->id)
             ->with('success', 'Resena creada correctamente.');
     }
 
@@ -121,7 +121,7 @@ class ReviewController extends Controller
         $this->authorize('update', [ListingReview::class, $review]);
 
         return Inertia::render('Member/Reviews/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
@@ -163,7 +163,7 @@ class ReviewController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.reviews.index', $business->id)
+        return redirect()->route('member.listings.reviews.index', $business->id)
             ->with('success', 'Resena actualizada correctamente.');
     }
 
@@ -177,7 +177,7 @@ class ReviewController extends Controller
             'description' => 'Resena eliminada',
         ]);
 
-        return redirect()->route('member.businesses.reviews.index', $business->id)
+        return redirect()->route('member.listings.reviews.index', $business->id)
             ->with('success', 'Resena eliminada correctamente.');
     }
 
@@ -264,6 +264,6 @@ class ReviewController extends Controller
             'request' => $request,
         ]);
 
-        return redirect()->route('member.businesses.reviews.edit', [$business->id, $cloned->id]);
+        return redirect()->route('member.listings.reviews.edit', [$business->id, $cloned->id]);
     }
 }

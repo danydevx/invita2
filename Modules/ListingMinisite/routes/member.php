@@ -5,8 +5,8 @@ use Modules\ListingMinisite\Http\Controllers\Member\ListingMinisiteController;
 use Modules\ListingMinisite\Http\Controllers\Member\ListingMinisiteSectionController;
 
 Route::middleware(['auth', 'verified', 'active', 'role:member'])
-    ->prefix('member/businesses/{business}/minisite')
-    ->name('member.businesses.minisite.')
+    ->prefix('member/listings/{listing}/minisite')
+    ->name('member.listings.minisite.')
     ->group(function () {
         Route::get('/', [ListingMinisiteController::class, 'index'])->name('index');
         Route::post('/', [ListingMinisiteController::class, 'store'])->name('store');

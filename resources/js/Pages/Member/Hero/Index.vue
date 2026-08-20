@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Hero - ${business.name}`" />
+    <Head :title="`Hero - ${listing.name}`" />
 
     <PageHeader
       title="Hero"
@@ -247,13 +247,13 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   hero: Object,
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
-const businessMenu = computed(() => page.props.businessMenu || [])
+const listing = computed(() => page.props.listing)
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -388,7 +388,7 @@ const submit = () => {
     return fd
   })
 
-  form.post(`/member/listings/${props.business.id}/hero`, {
+  form.post(`/member/listings/${props.listing.id}/hero`, {
     forceFormData: true,
     onFinish: () => {
       sending.value = false

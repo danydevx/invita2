@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Configuración de Pedidos - ${business?.name || ''}`" />
+    <Head :title="`Configuración de Pedidos - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Configuración de Pedidos"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/orders`"
+      :backHref="`/member/listings/${listing?.id}/orders`"
     />
 
     <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show">
@@ -133,7 +133,7 @@
                 <button type="submit" class="btn btn-primary" :disabled="saving">
                   {{ saving ? 'Guardando...' : 'Guardar configuración' }}
                 </button>
-                <Link :href="`/member/listings/${business?.id}/orders`" class="btn btn-outline-secondary">
+                <Link :href="`/member/listings/${listing?.id}/orders`" class="btn btn-outline-secondary">
                   Cancelar
                 </Link>
               </div>
@@ -152,9 +152,9 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const setting = computed(() => page.props.setting || {})
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const saving = ref(false)
 
@@ -186,7 +186,7 @@ const breadcrumbs = computed(() => {
   }
   return [
     { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Pedidos', href: `/member/listings/${business.value?.id}/orders` },
+    { label: 'Pedidos', href: `/member/listings/${listing.value?.id}/orders` },
     { label: 'Configuración', active: true },
   ]
 })
@@ -194,7 +194,7 @@ const breadcrumbs = computed(() => {
 const submit = () => {
   saving.value = true
 
-  router.post(`/member/listings/${business.value.id}/orders/settings`, form, {
+  router.post(`/member/listings/${listing.value.id}/orders/settings`, form, {
     preserveScroll: true,
     onFinish: () => {
       saving.value = false

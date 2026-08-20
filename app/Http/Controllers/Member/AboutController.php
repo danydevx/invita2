@@ -22,7 +22,7 @@ class AboutController extends Controller
         $about = $business->about;
 
         return Inertia::render('Member/About/Index', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],

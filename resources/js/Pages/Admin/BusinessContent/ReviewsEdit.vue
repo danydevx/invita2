@@ -1,10 +1,10 @@
 <template>
   <AdminLayout>
-    <Head :title="`Edit Review - ${business.name}`" />
+    <Head :title="`Edit Review - ${listing.name}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${business.id}/reviews`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing.id}/reviews`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Back
         </Link>
         <h1 class="h4 mb-1 mt-1">Edit Review</h1>
@@ -60,7 +60,7 @@
               <button type="submit" class="btn btn-primary" :disabled="sending">
                 {{ sending ? 'Saving...' : 'Save' }}
               </button>
-              <Link :href="`/admin/listings/${business.id}/reviews`" class="btn btn-outline-secondary ms-2">
+              <Link :href="`/admin/listings/${listing.id}/reviews`" class="btn btn-outline-secondary ms-2">
                 Cancel
               </Link>
             </div>
@@ -77,7 +77,7 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const review = computed(() => page.props.review)
 const errors = computed(() => page.props.errors || {})
 const sending = computed(() => false)
@@ -92,6 +92,6 @@ const form = reactive({
 })
 
 const submit = () => {
-  router.put(`/admin/listings/${business.value.id}/reviews/${review.value.id}`, form)
+  router.put(`/admin/listings/${listing.value.id}/reviews/${review.value.id}`, form)
 }
 </script>

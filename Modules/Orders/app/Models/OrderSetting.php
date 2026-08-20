@@ -10,8 +10,6 @@ class OrderSetting extends Model
 
     protected $table = 'order_settings';
 
-    protected $table = 'order_settings';
-
     protected $fillable = [
         'listing_id',
         'order_type',

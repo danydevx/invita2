@@ -90,7 +90,7 @@ class ListingGallery extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(ListingGalleryImage::class, 'listing_gallery_id');
+        return $this->hasMany(ListingGalleryImage::class, 'business_gallery_id');
     }
 
     public function scopePrimary($query)

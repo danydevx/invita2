@@ -1,15 +1,15 @@
 <template>
   <MemberLayout>
-    <Head :title="`Form Builder - ${form?.name || 'Formulario'} - ${business?.name || ''}`" />
+    <Head :title="`Form Builder - ${form?.name || 'Formulario'} - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Constructor de Formulario"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business?.id}/contact-forms`"
+      :backHref="`/member/listings/${listing?.id}/contact-forms`"
     >
       <template #actions>
         <Link
-          :href="`/member/listings/${business?.id}/contact-forms/${form?.id}/preview`"
+          :href="`/member/listings/${listing?.id}/contact-forms/${form?.id}/preview`"
           class="btn btn-outline-secondary"
           target="_blank"
         >
@@ -179,7 +179,7 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldModal from '@/Components/ContactForm/FieldModal.vue'
 
 const props = defineProps({
-  business: Object,
+  listing: Object,
   form: Object,
   fields: {
     type: Array,
@@ -188,12 +188,12 @@ const props = defineProps({
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const showFieldModal = ref(false)
 const editingField = ref(null)
 const isActive = ref(props.form?.is_active || false)
 const localFields = ref([...props.fields])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 watch(() => props.fields, (newFields) => {
   localFields.value = [...newFields]
@@ -227,7 +227,7 @@ const copyShortcode = () => {
 }
 
 const toggleActive = () => {
-  router.put(`/member/listings/${business.value.id}/contact-forms/${props.form.id}`, {
+  router.put(`/member/listings/${listing.value.id}/contact-forms/${props.form.id}`, {
     is_active: isActive.value,
   }, {
     preserveScroll: true,
@@ -247,7 +247,7 @@ const closeFieldModal = () => {
 const saveField = (fieldData) => {
   if (editingField.value?.id) {
     router.put(
-      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields/${editingField.value.id}`,
+      `/member/listings/${listing.value.id}/contact-forms/${props.form.id}/fields/${editingField.value.id}`,
       fieldData,
       {
         onSuccess: () => closeFieldModal(),
@@ -255,7 +255,7 @@ const saveField = (fieldData) => {
     )
   } else {
     router.post(
-      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields`,
+      `/member/listings/${listing.value.id}/contact-forms/${props.form.id}/fields`,
       fieldData,
       {
         onSuccess: () => closeFieldModal(),
@@ -267,7 +267,7 @@ const saveField = (fieldData) => {
 const deleteField = (field) => {
   if (confirm(`¿Eliminar el campo "${field.field_config?.label || field.label}"?`)) {
     router.delete(
-      `/member/listings/${business.value.id}/contact-forms/${props.form.id}/fields/${field.id}`,
+      `/member/listings/${listing.value.id}/contact-forms/${props.form.id}/fields/${field.id}`,
       {
         preserveScroll: true,
       }
@@ -282,7 +282,7 @@ const onDragEnd = () => {
   }))
 
   router.post(
-    `/member/listings/${business.value.id}/contact-forms/${props.form.id}/reorder`,
+    `/member/listings/${listing.value.id}/contact-forms/${props.form.id}/reorder`,
     { fields: orders },
     { preserveScroll: true }
   )

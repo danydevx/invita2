@@ -16,7 +16,7 @@ class ListingModuleController extends Controller
         $business->load('user.subscriptions.plan');
 
         return Inertia::render('Admin/ListingModules/Edit', [
-            'business' => [
+            'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
                 'slug' => $business->slug,

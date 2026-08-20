@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Citas - ${business?.name || ''}`" />
+    <Head :title="`Citas - ${listing?.name || ''}`" />
 
     <PageHeader
       title="Citas"
@@ -26,7 +26,7 @@
         </div>
 
         <Link
-          :href="`/member/listings/${business?.id}/appointments/availability`"
+          :href="`/member/listings/${listing?.id}/appointments/availability`"
           class="btn btn-outline-primary btn-sm"
           title="Configurar disponibilidad"
         >
@@ -43,7 +43,7 @@
           <i class="bi bi-trash me-1"></i>
           Eliminar ({{ selectedIds.length }})
         </button>
-        <Link :href="`/member/listings/${business?.id}/appointments/create`" class="btn btn-primary btn-sm">
+        <Link :href="`/member/listings/${listing?.id}/appointments/create`" class="btn btn-primary btn-sm">
           <i class="bi bi-plus-lg me-1"></i>
           Nueva Cita
         </Link>
@@ -55,7 +55,7 @@
         :appointments="calendarAppointments"
         :services="services"
         :locations="locations"
-        :businessId="business?.id"
+        :businessId="listing?.id"
         @reschedule="handleReschedule"
         @create="handleCreate"
         @edit="handleEdit"
@@ -65,7 +65,7 @@
     <div :class="{ 'd-none': viewMode !== 'list' }">
       <BaseDataTable
         ref="dataTableRef"
-        :endpoint="`/member/listings/${business?.id}/appointments`"
+        :endpoint="`/member/listings/${listing?.id}/appointments`"
         :columns="columns"
         :initial-data="dataTable"
         search-placeholder="Buscar citas..."
@@ -109,7 +109,7 @@
 
         <template #cell-actions="{ row }">
           <div class="actions">
-            <Link :href="`/member/listings/${business?.id}/appointments/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
+            <Link :href="`/member/listings/${listing?.id}/appointments/${row.id}/edit`" class="btn btn-sm btn-outline-primary">
               <i class="bi bi-pencil"></i>
             </Link>
             <button
@@ -132,7 +132,7 @@
           <BulkSelect
             v-model:selectedIds="selectedIds"
             :current-page-ids="currentPageIds"
-            :delete-endpoint="`/member/listings/${business?.id}/appointments/bulk-delete`"
+            :delete-endpoint="`/member/listings/${listing?.id}/appointments/bulk-delete`"
             item-name="citas"
             @deleted="onBulkDeleted"
           />
@@ -144,7 +144,7 @@
       ref="appointmentModal"
       :services="services"
       :locations="locations"
-      :businessId="business?.id"
+       :businessId="listing?.id"
       @saved="handleModalSaved"
     />
   </MemberLayout>
@@ -161,11 +161,11 @@ import CalendarView from '@/Components/Appointments/CalendarView.vue'
 import AppointmentModal from '@/Components/Appointments/AppointmentModal.vue'
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const services = computed(() => page.props.services || [])
 const locations = computed(() => page.props.locations || [])
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const viewMode = ref('calendar')
 
@@ -251,7 +251,7 @@ const statusClass = (status) => {
 
 const cancelAppointment = (apt) => {
   if (confirm('Estas seguro de cancelar esta cita?')) {
-    router.post(`/member/listings/${business.value.id}/appointments/${apt.id}/cancel`, {}, {
+    router.post(`/member/listings/${listing.value.id}/appointments/${apt.id}/cancel`, {}, {
       preserveScroll: true,
       onSuccess: () => {
         if (dataTableRef.value) {
@@ -265,7 +265,7 @@ const cancelAppointment = (apt) => {
 const deleteAppointment = (apt) => {
   if (confirm('Estas seguro de eliminar esta cita? Esta accion no se puede deshacer.')) {
     deleting.value = apt.id
-    router.delete(`/member/listings/${business.value.id}/appointments/${apt.id}`, {
+    router.delete(`/member/listings/${listing.value.id}/appointments/${apt.id}`, {
       preserveScroll: true,
       onFinish: () => {
         deleting.value = null
@@ -283,7 +283,7 @@ const deleteSelected = () => {
   const count = selectedIds.value.length
   if (confirm(`Eliminar ${count} cita${count > 1 ? 's' : ''} seleccionada${count > 1 ? 's' : ''}?`)) {
     deleting.value = true
-    router.post(`/member/listings/${business.value.id}/appointments/bulk-delete`, {
+    router.post(`/member/listings/${listing.value.id}/appointments/bulk-delete`, {
       ids: selectedIds.value,
     }, {
       preserveScroll: true,
@@ -301,7 +301,7 @@ const deleteSelected = () => {
 }
 
 const handleReschedule = ({ appointment, newDate, newTime }) => {
-  router.put(`/member/listings/${business.value.id}/appointments/${appointment.id}/reschedule`, {
+  router.put(`/member/listings/${listing.value.id}/appointments/${appointment.id}/reschedule`, {
     appointment_date: newDate,
     start_time: newTime,
   }, {
@@ -327,7 +327,7 @@ const handleCreate = ({ date, time }) => {
 }
 
 const handleEdit = (appointment) => {
-  window.location.href = `/member/listings/${business.value.id}/appointments/${appointment.id}/edit`
+  window.location.href = `/member/listings/${listing.value.id}/appointments/${appointment.id}/edit`
 }
 
 const handleModalSaved = () => {

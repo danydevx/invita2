@@ -1,11 +1,11 @@
 <template>
   <MemberLayout>
-    <Head :title="`Nueva Ubicacion - ${business.name}`" />
+    <Head :title="`Nueva Ubicacion - ${listing.name}`" />
 
     <PageHeader
       :title="'Nueva Ubicacion'"
       :breadcrumbs="breadcrumbs"
-      :backHref="`/member/listings/${business.id}/locations`"
+      :backHref="`/member/listings/${listing.id}/locations`"
     />
 
     <div class="card border-0 shadow-sm">
@@ -206,7 +206,7 @@
             <button type="submit" class="btn btn-primary" :disabled="sending">
               {{ sending ? 'Creando...' : 'Crear Ubicacion' }}
             </button>
-            <Link :href="`/member/listings/${business.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
+            <Link :href="`/member/listings/${listing.id}/locations`" class="btn btn-outline-secondary">Cancelar</Link>
           </div>
         </form>
       </div>
@@ -225,14 +225,14 @@ import LocationSelector from '@/Components/LocationSelector.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 
 const props = defineProps({
-  business: {
+  listing: {
     type: Object,
     required: true,
   },
 })
 
 const page = usePage()
-const business = computed(() => page.props.business)
+const listing = computed(() => page.props.listing)
 
 const locationData = ref({ state_code: '', municipality: '' })
 
@@ -264,7 +264,7 @@ const form = reactive({
   is_active: true,
 })
 
-const businessMenu = computed(() => page.props.businessMenu || [])
+const businessMenu = computed(() => page.props.listingMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -398,9 +398,9 @@ const submit = () => {
     formData.append('image', locationImage.value)
   }
 
-  router.post(`/member/listings/${business.value.id}/locations`, formData, {
+  router.post(`/member/listings/${listing.value.id}/locations`, formData, {
     onSuccess: () => {
-      window.location.href = `/member/listings/${business.value.id}/locations?success=created`
+      window.location.href = `/member/listings/${listing.value.id}/locations?success=created`
     },
     onError: (serverErrors) => {
       sending.value = false

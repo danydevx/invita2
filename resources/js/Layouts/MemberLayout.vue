@@ -30,7 +30,7 @@
         <div class="sidebar-section">
           <div class="sidebar-section-title">Mi Negocio</div>
 
-          <template v-if="primaryBusiness">
+            <template v-if="primaryBusiness">
             <Link
               v-if="hasRealListing"
               :href="`/member/listings/${primaryBusiness.id}/modules`"
@@ -522,7 +522,16 @@ const toggleBusiness = (id) => {
   openBusiness.value = openBusiness.value === id ? null : id
 }
 
+const currentBusinessId = computed(() => {
+  const match = currentPath.value.match(/^\/member\/listings\/(\d+)/)
+  return match ? parseInt(match[1]) : null
+})
+
 const primaryBusiness = computed(() => {
+  if (currentBusinessId.value) {
+    return businessMenu.value.find(biz => biz.id === currentBusinessId.value) || businessMenu.value[0] || null
+  }
+
   return businessMenu.value[0] || null
 })
 
@@ -567,7 +576,7 @@ const dynamicBreadcrumbs = computed(() => {
 
   result.push({ label: 'Mis Negocios', href: '/member/listings' })
 
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const business = getBusinessById(businessId)

@@ -41,14 +41,14 @@ class FidelityCardController extends Controller
         ]);
     }
 
-    public function findByCode(Request $request, Business $business): JsonResponse
+    public function findByCode(Request $request, Listing $listing): JsonResponse
     {
         $request->validate([
             'public_code' => 'required|string|max:15',
         ]);
 
         $card = ClientFidelityCard::where('public_code', strtoupper($request->public_code))
-            ->where('listing_id', $business->id)
+            ->where('listing_id', $listing->id)
             ->first();
 
         if (!$card) {

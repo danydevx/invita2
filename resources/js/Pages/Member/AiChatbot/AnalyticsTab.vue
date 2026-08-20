@@ -201,7 +201,7 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
 const props = defineProps({
-  business: Object,
+  listing: Object,
   totals: Object,
   dailyStats: Array,
   topQuestions: Array,
@@ -213,8 +213,8 @@ const props = defineProps({
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: props.business?.name || 'Negocio', href: `/member/listings/${props.business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/listings/${props.business?.id}/ai-chatbot` },
+  { label: props.listing?.name || 'Negocio', href: `/member/listings/${props.listing?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${props.listing?.id}/ai-chatbot` },
   { label: 'Estadísticas', active: true },
 ])
 

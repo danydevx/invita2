@@ -11,7 +11,7 @@
         <p class="text-muted small mb-0">Session: {{ conversation.session_id }}</p>
       </div>
       <Link
-        :href="`/member/listings/${business.id}/ai-chatbot/history`"
+        :href="`/member/listings/${listing.id}/ai-chatbot/history`"
         class="btn btn-outline-secondary"
       >
         <i class="bi bi-arrow-left me-1"></i>Volver
@@ -84,16 +84,16 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 
 const page = usePage()
 const props = defineProps({
-  business: Object,
+  listing: Object,
   conversation: Object,
   messages: Array,
 })
 
 const breadcrumbs = computed(() => [
   { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: props.business?.name || 'Negocio', href: `/member/listings/${props.business?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/listings/${props.business?.id}/ai-chatbot` },
-  { label: 'Historial', href: `/member/listings/${props.business?.id}/ai-chatbot/history` },
+  { label: props.listing?.name || 'Negocio', href: `/member/listings/${props.listing?.id}/edit` },
+  { label: 'AI Chatbot', href: `/member/listings/${props.listing?.id}/ai-chatbot` },
+  { label: 'Historial', href: `/member/listings/${props.listing?.id}/ai-chatbot/history` },
   { label: props.conversation?.session_id?.substring(0, 8) || 'Detalle', active: true },
 ])
 
