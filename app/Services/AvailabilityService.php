@@ -4,9 +4,9 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Modules\Listings\Models\Listing;
-use Modules\Appointments\Models\BusinessAvailability;
-use Modules\Appointments\Models\BusinessAvailabilityException;
-use Modules\Appointments\Models\BusinessAppointment;
+use Modules\ListingAppointments\Models\ListingAvailability;
+use Modules\ListingAppointments\Models\ListingAvailabilityException;
+use Modules\ListingAppointments\Models\ListingAppointment;
 
 class AvailabilityService
 {

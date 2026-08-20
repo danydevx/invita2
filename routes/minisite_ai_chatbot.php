@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\AiChatbot\Http\Controllers\Public\ChatController;
-use Modules\AiChatbot\Http\Middleware\RateLimitChatbot;
+use Modules\ListingAiChatbot\Http\Controllers\Public\ChatController;
+use Modules\ListingAiChatbot\Http\Middleware\RateLimitChatbot;
 
 Route::middleware(['web', RateLimitChatbot::class])
     ->prefix('m/{slug}/ai-chatbot')

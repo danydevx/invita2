@@ -1,0 +1,11 @@
+{
+    "name": "ListingMinisite",
+    "alias": "listingminisite",
+    "description": "Minisite module for mobile-first business minisites",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingMinisite\\Providers\\ListingMinisiteServiceProvider"
+    ],
+    "files": []
+}

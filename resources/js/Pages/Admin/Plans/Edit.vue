@@ -175,33 +175,6 @@
             </div>
           </div>
 
-          <div class="col-12">
-            <div class="card border rounded-3">
-              <div class="card-body">
-                <h3 class="h6 mb-3">Modulos del Plan</h3>
-                <div class="row g-3">
-                  <div v-for="module in localModules" :key="module.id" class="col-12 col-md-6 col-lg-4">
-                    <div class="form-check">
-                      <input
-                        type="checkbox"
-                        :id="'module-' + module.id"
-                        class="form-check-input"
-                        v-model="module.is_enabled"
-                      />
-                      <label :for="'module-' + module.id" class="form-check-label">
-                        <i :class="module.icon || 'bi bi-box'"></i>
-                        {{ module.name }}
-                      </label>
-                      <small v-if="module.description" class="form-text text-muted d-block">
-                        {{ module.description }}
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="col-12 d-flex gap-2">
             <button type="submit" class="btn btn-primary" :disabled="form.processing">
               {{ form.processing ? 'Actualizando...' : 'Actualizar' }}
@@ -227,13 +200,7 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  modules: {
-    type: Array,
-    default: () => [],
-  },
 })
-
-const localModules = props.modules.map(m => ({ ...m }))
 
 const form = useForm({
   name: props.plan.name,
@@ -253,7 +220,6 @@ const form = useForm({
     can_export: !!props.plan.limits?.can_export,
     can_upload_files: !!props.plan.limits?.can_upload_files,
   },
-  modules: [],
 })
 
 const breadcrumbs = [
@@ -262,10 +228,6 @@ const breadcrumbs = [
 ]
 
 const submit = () => {
-  form.modules = localModules.map(m => ({
-    module_definition_id: m.id,
-    is_enabled: m.is_enabled,
-  }))
   form.put(`/admin/plans/${props.plan.id}`)
 }
 </script>

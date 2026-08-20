@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
-use App\Models\Industry;
 use App\Services\ActivityService;
 use App\Services\PlanLimits;
 use Illuminate\Http\Request;
@@ -11,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Modules\Listings\Enums\ListingType;
 use Modules\Listings\Models\Listing;
 
 class BusinessController extends Controller
@@ -43,9 +43,12 @@ class BusinessController extends Controller
         }
 
         return inertia('Member/Listings/Create', [
-            'industries' => Industry::where('is_active', true)
-                ->orderBy('name')
-                ->get(['id', 'name', 'icon']),
+            'listingTypes' => array_map(fn ($type) => [
+                'value' => $type->value,
+                'label' => $type->label(),
+                'icon' => $type->icon(),
+                'color' => $type->color(),
+            ], ListingType::cases()),
             'maxBusinesses' => $planLimits->max($user, 'max_businesses'),
             'businessCount' => $user->listings()->count(),
             'planName' => $planLimits->currentPlan($user)?->name ?? 'Sin plan',
@@ -62,12 +65,11 @@ class BusinessController extends Controller
                 ->with('error', 'Has alcanzado el limite de negocios de tu plan.');
         }
 
+        $validTypes = array_column(ListingType::cases(), 'value');
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'industry_id' => [
-                'required',
-                Rule::exists('industries', 'id')->where('is_active', true),
-            ],
+            'listing_type' => ['required', 'string', Rule::in($validTypes)],
             'description' => ['nullable', 'string', 'max:1000'],
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:150'],
@@ -76,13 +78,15 @@ class BusinessController extends Controller
             'currency' => ['nullable', 'string', 'size:3'],
         ]);
 
-        $industry = Industry::where('is_active', true)->findOrFail($validated['industry_id']);
-
         $listing = Listing::create([
-            ...$validated,
             'user_id' => $user->id,
+            'name' => $validated['name'],
             'slug' => $this->uniqueSlug($validated['name']),
-            'business_type' => $industry->listingType(),
+            'listing_type' => $validated['listing_type'],
+            'description' => $validated['description'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'website' => $validated['website'] ?? null,
             'timezone' => $validated['timezone'] ?? 'UTC',
             'currency' => strtoupper($validated['currency'] ?? 'USD'),
             'is_active' => true,
@@ -106,13 +110,14 @@ class BusinessController extends Controller
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
-        $industries = Industry::where('is_active', true)
-            ->orderBy('name')
-            ->get(['id', 'name', 'icon']);
-
         return inertia('Member/Listings/Edit', [
             'business' => $business,
-            'industries' => $industries,
+            'listingTypes' => array_map(fn ($type) => [
+                'value' => $type->value,
+                'label' => $type->label(),
+                'icon' => $type->icon(),
+                'color' => $type->color(),
+            ], ListingType::cases()),
         ]);
     }
 
@@ -121,9 +126,11 @@ class BusinessController extends Controller
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
 
+        $validTypes = array_column(ListingType::cases(), 'value');
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'industry_id' => ['nullable', 'exists:industries,id'],
+            'listing_type' => ['required', 'string', Rule::in($validTypes)],
             'description' => ['nullable', 'string', 'max:1000'],
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:150'],

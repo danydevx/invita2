@@ -42,11 +42,11 @@
             </div>
 
             <div class="col-12 col-md-6">
-              <label for="business-industry" class="form-label">Industria</label>
-              <select id="business-industry" class="form-select" v-model="form.industry_id">
-                <option :value="null">Sin industria</option>
-                <option v-for="industry in industries" :key="industry.id" :value="industry.id">
-                  {{ industry.name }}
+              <label for="business-type" class="form-label">Tipo de Listado</label>
+              <select id="business-type" class="form-select" v-model="form.listing_type">
+                <option value="">Seleccionar tipo...</option>
+                <option v-for="type in listingTypes" :key="type.value" :value="type.value">
+                  {{ type.label }}
                 </option>
               </select>
             </div>
@@ -109,7 +109,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  industries: {
+  listingTypes: {
     type: Array,
     default: () => [],
   },
@@ -119,7 +119,7 @@ const form = useForm({
   user_id: '',
   name: '',
   slug: '',
-  industry_id: null,
+  listing_type: '',
   timezone: 'America/Mexico_City',
   currency: 'MXN',
   is_active: true,

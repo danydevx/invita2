@@ -1,0 +1,11 @@
+{
+    "name": "ListingGuests",
+    "alias": "listingguests",
+    "description": "Gestión de invitados y RSVP para invitaciones digitales",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingGuests\\Providers\\ListingGuestsServiceProvider"
+    ],
+    "files": []
+}

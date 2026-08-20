@@ -1,0 +1,11 @@
+{
+    "name": "ListingCheckin",
+    "alias": "listingcheckin",
+    "description": "Registro de asistencia para eventos",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingCheckin\\Providers\\ListingCheckinServiceProvider"
+    ],
+    "files": []
+}

@@ -8,14 +8,14 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Appointments\Models\BusinessAvailability;
-use Modules\Appointments\Models\BusinessAvailabilityException;
+use Modules\ListingAppointments\Models\ListingAvailability;
+use Modules\ListingAppointments\Models\ListingAvailabilityException;
 
 class AvailabilityController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessAvailability::class, $business]);
+        $this->authorize('viewAny', [ListingAvailability::class, $business]);
 
         $availability = $business->availability()
             ->orderBy('day_of_week')
@@ -23,7 +23,7 @@ class AvailabilityController extends Controller
             ->keyBy('day_of_week');
 
         $weeklySchedule = [];
-        foreach (BusinessAvailability::DAY_NAMES as $day => $name) {
+        foreach (ListingAvailability::DAY_NAMES as $day => $name) {
             $schedule = $availability->get($day);
             $weeklySchedule[] = [
                 'day_of_week' => $day,
@@ -75,7 +75,7 @@ class AvailabilityController extends Controller
 
     public function updateWeekly(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessAvailability::class, $business]);
+        $this->authorize('update', [ListingAvailability::class, $business]);
 
         $data = $request->validate([
             'schedule' => ['required', 'array'],
@@ -102,7 +102,7 @@ class AvailabilityController extends Controller
                 $endTime = $this->normalizeTime($day['end_time']);
             }
 
-            BusinessAvailability::updateOrCreate(
+            ListingAvailability::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'day_of_week' => $day['day_of_week'],
@@ -129,7 +129,7 @@ class AvailabilityController extends Controller
 
     public function storeException(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessAvailability::class, $business]);
+        $this->authorize('update', [ListingAvailability::class, $business]);
 
         $data = $request->validate([
             'exception_date' => ['required', 'date', 'after_or_equal:today'],
@@ -154,7 +154,7 @@ class AvailabilityController extends Controller
             $endTime = $this->normalizeTime($data['end_time']);
         }
 
-        $exception = BusinessAvailabilityException::updateOrCreate(
+        $exception = ListingAvailabilityException::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'exception_date' => $data['exception_date'],
@@ -178,9 +178,9 @@ class AvailabilityController extends Controller
         return back()->with('success', 'Excepción guardada correctamente.');
     }
 
-    public function destroyException(Request $request, Listing $business, BusinessAvailabilityException $exception, ActivityService $activity)
+    public function destroyException(Request $request, Listing $business, ListingAvailabilityException $exception, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessAvailability::class, $business]);
+        $this->authorize('update', [ListingAvailability::class, $business]);
 
         if ($exception->listing_id !== $business->id) {
             abort(404);

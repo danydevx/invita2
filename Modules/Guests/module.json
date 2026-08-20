@@ -1,9 +1,0 @@
-{
-    "name": "Guests",
-    "alias": "guests",
-    "description": "Gestión de invitados y RSVP para invitaciones digitales",
-    "keywords": [],
-    "priority": 0,
-    "providers": [],
-    "files": []
-}

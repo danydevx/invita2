@@ -7,15 +7,15 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Packages\Models\BusinessPackage;
-use Modules\Packages\Models\PackageFeature;
+use Modules\ListingPackages\Models\ListingPackage;
+use Modules\ListingPackages\Models\PackageFeature;
 use Illuminate\Support\Facades\Storage;
 
 class PackageController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessPackage::class, $business]);
+        $this->authorize('viewAny', [ListingPackage::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -75,7 +75,7 @@ class PackageController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessPackage::class, $business]);
+        $this->authorize('create', [ListingPackage::class, $business]);
 
         return Inertia::render('Member/Packages/Create', [
             'business' => [
@@ -89,7 +89,7 @@ class PackageController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessPackage::class, $business]);
+        $this->authorize('create', [ListingPackage::class, $business]);
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:150'],
@@ -125,13 +125,13 @@ class PackageController extends Controller
         }
 
         if (!isset($data['sort_order'])) {
-            $data['sort_order'] = BusinessPackage::where('listing_id', $business->id)->max('sort_order') + 1;
+            $data['sort_order'] = ListingPackage::where('listing_id', $business->id)->max('sort_order') + 1;
         }
 
         $features = $data['features'] ?? [];
         unset($data['features']);
 
-        $package = BusinessPackage::create($data);
+        $package = ListingPackage::create($data);
 
         foreach ($features as $index => $featureName) {
             if (!empty(trim($featureName))) {
@@ -154,9 +154,9 @@ class PackageController extends Controller
             ->with('success', 'Paquete creado correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessPackage $package)
+    public function edit(Request $request, Listing $business, ListingPackage $package)
     {
-        $this->authorize('update', [BusinessPackage::class, $package]);
+        $this->authorize('update', [ListingPackage::class, $package]);
 
         abort_unless($package->listing_id === $business->id, 404);
 
@@ -186,9 +186,9 @@ class PackageController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessPackage $package, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingPackage $package, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessPackage::class, $package]);
+        $this->authorize('update', [ListingPackage::class, $package]);
 
         abort_unless($package->listing_id === $business->id, 404);
 
@@ -256,9 +256,9 @@ class PackageController extends Controller
             ->with('success', 'Paquete actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessPackage $package, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingPackage $package, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessPackage::class, $package]);
+        $this->authorize('delete', [ListingPackage::class, $package]);
 
         abort_unless($package->listing_id === $business->id, 404);
 
@@ -283,14 +283,14 @@ class PackageController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [BusinessPackage::class, $business]);
+        $this->authorize('deleteAny', [ListingPackage::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_packages', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $packages = BusinessPackage::where('listing_id', $business->id)
+        $packages = ListingPackage::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->with('features')
             ->get();
@@ -303,7 +303,7 @@ class PackageController extends Controller
             $package->features()->delete();
         }
 
-        $count = BusinessPackage::where('listing_id', $business->id)
+        $count = ListingPackage::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
@@ -333,7 +333,7 @@ class PackageController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                BusinessPackage::where('id', $id)
+                ListingPackage::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
@@ -342,9 +342,9 @@ class PackageController extends Controller
         return back(303);
     }
 
-    public function clone(Request $request, Listing $business, BusinessPackage $package, ActivityService $activity)
+    public function clone(Request $request, Listing $business, ListingPackage $package, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessPackage::class, $business]);
+        $this->authorize('create', [ListingPackage::class, $business]);
 
         $maxOrder = $business->packages()->max('sort_order') ?? 0;
 

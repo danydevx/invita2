@@ -12,27 +12,27 @@ use Illuminate\Http\Request;
 use Modules\Listings\Models\Listing;
 use App\Models\User;
 use App\Models\Industry;
-use Modules\Gallery\Models\BusinessGalleryImage;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Faqs\Models\BusinessFaq;
-use Modules\Seo\Models\BusinessSeoSetting;
-use Modules\Branding\Models\BusinessBrandingSetting;
-use Modules\Hero\Models\BusinessHero;
-use Modules\About\Models\BusinessAbout;
-use Modules\Services\Models\BusinessService;
-use Modules\Products\Models\BusinessProduct;
-use Modules\Reviews\Models\BusinessReview;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Appointments\Models\BusinessAppointmentSlot;
+use Modules\ListingGallery\Models\ListingGalleryImage;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingFaqs\Models\ListingFaq;
+use Modules\ListingSeo\Models\ListingSeoSetting;
+use Modules\ListingBranding\Models\ListingBrandingSetting;
+use Modules\ListingHero\Models\ListingHero;
+use Modules\ListingAbout\Models\ListingAbout;
+use Modules\ListingServices\Models\ListingService;
+use Modules\ListingProducts\Models\ListingProduct;
+use Modules\ListingReviews\Models\ListingReview;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingAppointments\Models\ListingAppointment;
+use Modules\ListingAppointments\Models\ListingAppointmentSlot;
 use Modules\Properties\Models\Property;
-use Modules\Clients\Models\BusinessClient;
-use Modules\RestaurantMenu\Entities\MenuProduct;
-use Modules\RestaurantMenu\Entities\MenuCategory;
-use Modules\OfficeHours\Models\BusinessSchedule;
-use Modules\TeamMembers\Models\BusinessTeamMember;
-use Modules\TeamMembers\Models\TeamMemberPosition;
-use Modules\Packages\Models\BusinessPackage;
+use Modules\ListingClients\Models\ListingClient;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuCategory;
+use Modules\ListingOfficeHours\Models\ListingSchedule;
+use Modules\ListingTeamMembers\Models\ListingTeamMember;
+use Modules\ListingTeamMembers\Models\TeamMemberPosition;
+use Modules\ListingPackages\Models\ListingPackage;
 
 class ApiExplorerController extends Controller
 {
@@ -182,7 +182,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $locations = BusinessLocation::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $locations = ListingLocation::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $locations->isEmpty() ? ['data' => null, 'message' => 'No hay ubicaciones configuradas'] : ['data' => $locations, 'meta' => ['total' => $locations->count()]];
         }
 
@@ -192,7 +192,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $images = BusinessGalleryImage::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $images = ListingGalleryImage::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $images->isEmpty() ? ['data' => null, 'message' => 'No hay imagenes en la galeria'] : ['data' => $images, 'meta' => ['total' => $images->count()]];
         }
 
@@ -202,7 +202,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $faqs = BusinessFaq::where('listing_id', $business->id)->with('category:id,name')->orderBy('order', 'asc')->get();
+            $faqs = ListingFaq::where('listing_id', $business->id)->with('category:id,name')->orderBy('order', 'asc')->get();
             return $faqs->isEmpty() ? ['data' => null, 'message' => 'No hay preguntas frecuentes'] : ['data' => $faqs, 'meta' => ['total' => $faqs->count()]];
         }
 
@@ -212,7 +212,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $services = BusinessService::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $services = ListingService::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $services->isEmpty() ? ['data' => null, 'message' => 'No hay servicios configurados'] : ['data' => $services, 'meta' => ['total' => $services->count()]];
         }
 
@@ -222,7 +222,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $seo = BusinessSeoSetting::where('listing_id', $business->id)->first();
+            $seo = ListingSeoSetting::where('listing_id', $business->id)->first();
             return !$seo ? ['data' => null, 'message' => 'No hay configuracion SEO'] : ['data' => $seo];
         }
 
@@ -232,7 +232,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $branding = BusinessBrandingSetting::where('listing_id', $business->id)->first();
+            $branding = ListingBrandingSetting::where('listing_id', $business->id)->first();
             return !$branding ? ['data' => null, 'message' => 'No hay configuracion de marca'] : ['data' => $branding];
         }
 
@@ -242,7 +242,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $hero = BusinessHero::where('listing_id', $business->id)->first();
+            $hero = ListingHero::where('listing_id', $business->id)->first();
             return !$hero ? ['data' => null, 'message' => 'No hay configuracion de hero'] : ['data' => $hero];
         }
 
@@ -252,7 +252,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $about = BusinessAbout::where('listing_id', $business->id)->first();
+            $about = ListingAbout::where('listing_id', $business->id)->first();
             return !$about ? ['data' => null, 'message' => 'No hay seccion about'] : ['data' => $about];
         }
 
@@ -262,7 +262,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $products = BusinessProduct::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $products = ListingProduct::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $products->isEmpty() ? ['data' => null, 'message' => 'No hay productos configurados'] : ['data' => $products, 'meta' => ['total' => $products->count()]];
         }
 
@@ -272,7 +272,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $reviews = BusinessReview::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $reviews = ListingReview::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $reviews->isEmpty() ? ['data' => null, 'message' => 'No hay reviews'] : ['data' => $reviews, 'meta' => ['total' => $reviews->count(), 'average_rating' => $reviews->avg('rating')]];
         }
 
@@ -282,7 +282,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $leads = BusinessLead::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
+            $leads = ListingLead::where('listing_id', $business->id)->orderBy('created_at', 'desc')->get();
             return $leads->isEmpty() ? ['data' => null, 'message' => 'No hay leads'] : ['data' => $leads, 'meta' => ['total' => $leads->count()]];
         }
 
@@ -292,7 +292,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $appointments = BusinessAppointment::where('listing_id', $business->id)
+            $appointments = ListingAppointment::where('listing_id', $business->id)
                 ->with(['location:id,name', 'service:id,name'])
                 ->orderBy('appointment_date', 'desc')
                 ->paginate($perPage);
@@ -305,7 +305,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $slots = BusinessAppointmentSlot::where('listing_id', $business->id)->with(['service:id,name', 'location:id,name'])->orderBy('day_of_week')->orderBy('start_time')->get();
+            $slots = ListingAppointmentSlot::where('listing_id', $business->id)->with(['service:id,name', 'location:id,name'])->orderBy('day_of_week')->orderBy('start_time')->get();
             return $slots->isEmpty() ? ['data' => null, 'message' => 'No hay horarios configurados'] : ['data' => $slots, 'meta' => ['total' => $slots->count()]];
         }
 
@@ -328,7 +328,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $clients = BusinessClient::where('listing_id', $business->id)
+            $clients = ListingClient::where('listing_id', $business->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
             return $clients->isEmpty() ? ['data' => null, 'message' => 'No hay clientes'] : ['data' => $clients, 'meta' => ['total' => $clients->count()]];
@@ -366,7 +366,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $schedules = BusinessSchedule::where('listing_id', $business->id)
+            $schedules = ListingSchedule::where('listing_id', $business->id)
                 ->with(['location:id,name'])
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -379,7 +379,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $members = BusinessTeamMember::where('listing_id', $business->id)
+            $members = ListingTeamMember::where('listing_id', $business->id)
                 ->with(['position:id,name'])
                 ->orderBy('sort_order')
                 ->get();
@@ -404,7 +404,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $packages = BusinessPackage::where('listing_id', $business->id)
+            $packages = ListingPackage::where('listing_id', $business->id)
                 ->orderBy('sort_order')
                 ->get();
             return $packages->isEmpty() ? ['data' => null, 'message' => 'No hay paquetes'] : ['data' => $packages, 'meta' => ['total' => $packages->count()]];

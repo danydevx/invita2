@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Appointments\Models\BusinessAppointment;
+use Modules\ListingAppointments\Models\ListingAppointment;
 use Modules\Listings\Models\Listing;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Promotions\Models\BusinessPromotion;
-use Modules\Reviews\Models\BusinessReview;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingPromotions\Models\ListingPromotion;
+use Modules\ListingReviews\Models\ListingReview;
 
 class DashboardController extends Controller
 {
@@ -39,10 +39,10 @@ class DashboardController extends Controller
             ];
         } else {
             $counts = [
-                'leads' => BusinessLead::whereIn('listing_id', $businessIds)->count(),
-                'appointments' => BusinessAppointment::whereIn('listing_id', $businessIds)->count(),
-                'promotions' => BusinessPromotion::whereIn('listing_id', $businessIds)->count(),
-                'reviews' => BusinessReview::whereIn('listing_id', $businessIds)->count(),
+                'leads' => ListingLead::whereIn('listing_id', $businessIds)->count(),
+                'appointments' => ListingAppointment::whereIn('listing_id', $businessIds)->count(),
+                'promotions' => ListingPromotion::whereIn('listing_id', $businessIds)->count(),
+                'reviews' => ListingReview::whereIn('listing_id', $businessIds)->count(),
             ];
         }
 

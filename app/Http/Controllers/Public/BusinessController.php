@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Services\AvailabilityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Appointments\Models\BusinessAppointment;
+use Modules\ListingAppointments\Models\ListingAppointment;
 use Modules\Listings\Models\Listing;
-use Modules\Gallery\Models\BusinessGallery;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Packages\Models\BusinessPackage;
-use Modules\Services\Models\BusinessService;
+use Modules\ListingGallery\Models\ListingGallery;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingPackages\Models\ListingPackage;
+use Modules\ListingServices\Models\ListingService;
 
 class BusinessController extends Controller
 {
@@ -74,12 +74,12 @@ class BusinessController extends Controller
 
         $gallery = [];
         if (in_array('gallery', $modules)) {
-            $primary = BusinessGallery::primaryFor($business->id);
+            $primary = ListingGallery::primaryFor($business->id);
 
             $gallery = $primary
                 ? $business->galleryImages()
                     ->where('is_active', true)
-                    ->where('business_gallery_id', $primary->id)
+                    ->where('listing_gallery_id', $primary->id)
                     ->orderBy('sort_order')
                     ->limit(12)
                     ->get()
@@ -133,7 +133,7 @@ class BusinessController extends Controller
         $menuCategories = [];
         $menuProducts = [];
         if (in_array('restaurant_menu', $modules)) {
-            $menuCategories = \Modules\RestaurantMenu\Entities\MenuCategory::where('listing_id', $business->id)
+            $menuCategories = \Modules\ListingRestaurantMenu\Entities\MenuCategory::where('listing_id', $business->id)
                 ->whereNull('parent_id')
                 ->where('active', true)
                 ->with(['images', 'children.images', 'children' => function ($q) {
@@ -201,7 +201,7 @@ class BusinessController extends Controller
                 'website' => $business->website,
                 'timezone' => $business->timezone,
                 'currency' => $business->currency,
-                'business_type' => $business->business_type->value ?? $business->business_type,
+                'listing_type' => $business->listing_type->value ?? $business->listing_type,
                 'logo_path' => $business->logo_path,
                 'cover_image_path' => $business->cover_image_path,
             ],
@@ -510,8 +510,8 @@ class BusinessController extends Controller
         }
 
         $data = $request->validate([
-            'service_id' => ['required', 'exists:business_services,id'],
-            'location_id' => ['required', 'exists:business_locations,id'],
+            'service_id' => ['required', 'exists:listing_services,id'],
+            'location_id' => ['required', 'exists:listing_locations,id'],
             'appointment_date' => ['required', 'date', 'after_or_equal:today'],
             'start_time' => ['required', 'date_format:H:i'],
             'customer_name' => ['required', 'string', 'max:150'],
@@ -520,8 +520,8 @@ class BusinessController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
-        $service = BusinessService::findOrFail($data['service_id']);
-        $location = BusinessLocation::findOrFail($data['location_id']);
+        $service = ListingService::findOrFail($data['service_id']);
+        $location = ListingLocation::findOrFail($data['location_id']);
 
         if (! $service->allows_online_booking) {
             return back()->withErrors(['start_time' => 'Este servicio no permite reservas en línea.']);
@@ -541,7 +541,7 @@ class BusinessController extends Controller
 
         $endTime = date('H:i', strtotime($data['start_time'].' + '.$service->duration_minutes.' minutes'));
 
-        $appointment = BusinessAppointment::create([
+        $appointment = ListingAppointment::create([
             'listing_id' => $business->id,
             'business_location_id' => $location->id,
             'business_service_id' => $service->id,
@@ -641,7 +641,7 @@ class BusinessController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
-        $lead = BusinessLead::create([
+        $lead = ListingLead::create([
             'listing_id' => $business->id,
             'name' => $data['name'],
             'email' => $data['email'],
@@ -784,7 +784,7 @@ class BusinessController extends Controller
             }
         }
 
-        $lead = BusinessLead::create([
+        $lead = ListingLead::create([
             'listing_id' => $business->id,
             'business_contact_form_id' => $form->id,
             'name' => $data['name'],
@@ -854,7 +854,7 @@ class BusinessController extends Controller
             abort(404);
         }
 
-        $packages = BusinessPackage::where('listing_id', $business->id)
+        $packages = ListingPackage::where('listing_id', $business->id)
             ->where('is_active', true)
             ->with('features')
             ->orderBy('sort_order')

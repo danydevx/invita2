@@ -8,16 +8,16 @@ use App\Services\AvailabilityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Appointments\Enums\AppointmentStatus;
-use Modules\Services\Models\BusinessService;
-use Modules\Locations\Models\BusinessLocation;
+use Modules\ListingAppointments\Models\ListingAppointment;
+use Modules\ListingAppointments\Enums\AppointmentStatus;
+use Modules\ListingServices\Models\ListingService;
+use Modules\ListingLocations\Models\ListingLocation;
 
 class AppointmentController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessAppointment::class, $business]);
+        $this->authorize('viewAny', [ListingAppointment::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -100,7 +100,7 @@ class AppointmentController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessAppointment::class, $business]);
+        $this->authorize('create', [ListingAppointment::class, $business]);
 
         $services = $business->services()
             ->where('is_active', true)
@@ -124,14 +124,14 @@ class AppointmentController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity, AvailabilityService $availability)
     {
-        $this->authorize('create', [BusinessAppointment::class, $business]);
+        $this->authorize('create', [ListingAppointment::class, $business]);
 
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
             'customer_email' => ['required', 'email', 'max:150'],
             'customer_phone' => ['nullable', 'string', 'max:50'],
-            'business_service_id' => ['required', 'exists:business_services,id'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_service_id' => ['required', 'exists:listing_services,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'appointment_date' => ['required', 'date', 'after_or_equal:today'],
             'start_time' => ['required', 'string'],
             'notes' => ['nullable', 'string'],
@@ -143,7 +143,7 @@ class AppointmentController extends Controller
         }
         $data['start_time'] = $normalizedStartTime;
 
-        $service = BusinessService::findOrFail($data['business_service_id']);
+        $service = ListingService::findOrFail($data['business_service_id']);
 
         $slotCheck = $availability->isSlotAvailable(
             $business,
@@ -183,9 +183,9 @@ class AppointmentController extends Controller
             ->with('success', 'Cita creada correctamente.');
     }
 
-    public function show(Request $request, Listing $business, BusinessAppointment $appointment)
+    public function show(Request $request, Listing $business, ListingAppointment $appointment)
     {
-        $this->authorize('viewAny', [BusinessAppointment::class, $business]);
+        $this->authorize('viewAny', [ListingAppointment::class, $business]);
 
         $appointment->load(['location', 'service']);
 
@@ -217,9 +217,9 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Listing $business, BusinessAppointment $appointment)
+    public function edit(Request $request, Listing $business, ListingAppointment $appointment)
     {
-        $this->authorize('update', [BusinessAppointment::class, $appointment]);
+        $this->authorize('update', [ListingAppointment::class, $appointment]);
 
         $appointment->load(['location', 'service']);
 
@@ -256,16 +256,16 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity, AvailabilityService $availability)
+    public function update(Request $request, Listing $business, ListingAppointment $appointment, ActivityService $activity, AvailabilityService $availability)
     {
-        $this->authorize('update', [BusinessAppointment::class, $appointment]);
+        $this->authorize('update', [ListingAppointment::class, $appointment]);
 
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
             'customer_email' => ['required', 'email', 'max:150'],
             'customer_phone' => ['nullable', 'string', 'max:50'],
-            'business_service_id' => ['required', 'exists:business_services,id'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_service_id' => ['required', 'exists:listing_services,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'appointment_date' => ['required', 'date'],
             'start_time' => ['required', 'string'],
             'status' => ['required', 'string', 'in:pending,confirmed,cancelled,completed,no_show'],
@@ -278,7 +278,7 @@ class AppointmentController extends Controller
         }
         $data['start_time'] = $normalizedStartTime;
 
-        $service = BusinessService::findOrFail($data['business_service_id']);
+        $service = ListingService::findOrFail($data['business_service_id']);
 
         $slotCheck = $availability->isSlotAvailable(
             $business,
@@ -318,9 +318,9 @@ class AppointmentController extends Controller
             ->with('success', 'Cita actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingAppointment $appointment, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessAppointment::class, $appointment]);
+        $this->authorize('delete', [ListingAppointment::class, $appointment]);
 
         $activity->log('appointment_deleted', [
             'actor' => $request->user(),
@@ -334,9 +334,9 @@ class AppointmentController extends Controller
             ->with('success', 'Cita eliminada correctamente.');
     }
 
-    public function cancel(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity)
+    public function cancel(Request $request, Listing $business, ListingAppointment $appointment, ActivityService $activity)
     {
-        $this->authorize('cancel', [BusinessAppointment::class, $appointment]);
+        $this->authorize('cancel', [ListingAppointment::class, $appointment]);
 
         $appointment->update([
             'status' => AppointmentStatus::CANCELLED,
@@ -355,7 +355,7 @@ class AppointmentController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [BusinessAppointment::class, $business]);
+        $this->authorize('deleteAny', [ListingAppointment::class, $business]);
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
@@ -376,9 +376,9 @@ class AppointmentController extends Controller
             ->with('success', $message);
     }
 
-    public function reschedule(Request $request, Listing $business, BusinessAppointment $appointment, ActivityService $activity, AvailabilityService $availability)
+    public function reschedule(Request $request, Listing $business, ListingAppointment $appointment, ActivityService $activity, AvailabilityService $availability)
     {
-        $this->authorize('update', [BusinessAppointment::class, $appointment]);
+        $this->authorize('update', [ListingAppointment::class, $appointment]);
 
         $data = $request->validate([
             'appointment_date' => ['required', 'date'],

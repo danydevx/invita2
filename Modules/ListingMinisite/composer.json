@@ -1,0 +1,32 @@
+{
+    "name": "nwidart/listingminisite",
+    "description": "Minisite module for mobile-first business minisites",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\ListingMinisite\\Providers\\ListingMinisiteServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingMinisite\\": "app/",
+            "Modules\\ListingMinisite\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingMinisite\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ListingMinisite\\Tests\\": "tests/"
+        }
+    }
+}

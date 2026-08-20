@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingreviews",
+    "description": "Reviews module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingReviews\\": "app/",
+            "Modules\\ListingReviews\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingReviews\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

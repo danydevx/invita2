@@ -1,0 +1,9 @@
+{
+    "name": "ListingBranding",
+    "alias": "listingbranding",
+    "description": "Module for managing business branding settings (colors, fonts, styles)",
+    "keywords": [],
+    "priority": 0,
+    "providers": [],
+    "files": []
+}

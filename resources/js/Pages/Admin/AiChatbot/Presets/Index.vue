@@ -61,8 +61,8 @@
                   <small class="text-muted">{{ preset.description?.substring(0, 60) || '' }}...</small>
                 </td>
                 <td>
-                  <span v-if="preset.business_type" class="badge text-bg-secondary">
-                    {{ preset.business_type }}
+                  <span v-if="preset.listing_type" class="badge text-bg-secondary">
+                    {{ preset.listing_type }}
                   </span>
                   <span v-else class="text-muted">Todos</span>
                 </td>

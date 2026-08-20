@@ -5,9 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Modules\Listings\Models\Listing;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Leads\Enums\LeadStatus;
-use Modules\Leads\Enums\LeadSource;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingLeads\Enums\LeadStatus;
+use Modules\ListingLeads\Enums\LeadSource;
 
 class ContactFormSubmissionSeeder extends Seeder
 {
@@ -93,7 +93,7 @@ class ContactFormSubmissionSeeder extends Seeder
         for ($i = 0; $i < 20; $i++) {
             $createdAt = now()->subDays(rand(1, 60))->subHours(rand(0, 23));
 
-            BusinessLead::updateOrCreate(
+            ListingLead::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'email' => $emails[$i],

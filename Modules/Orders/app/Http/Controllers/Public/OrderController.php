@@ -39,7 +39,7 @@ class OrderController extends Controller
             'delivery_address.latitude' => 'nullable|numeric',
             'delivery_address.longitude' => 'nullable|numeric',
             'delivery_address.distance_km' => 'nullable|numeric|min:0',
-            'pickup_location_id' => 'required_if:order_type,pickup|nullable|exists:business_locations,id',
+            'pickup_location_id' => 'required_if:order_type,pickup|nullable|exists:listing_locations,id',
             'pickup_time' => 'nullable|string',
         ]);
 
@@ -122,7 +122,7 @@ class OrderController extends Controller
         }
 
         if ($validated['order_type'] === 'pickup' && isset($validated['pickup_location_id'])) {
-            $location = \Modules\Locations\Models\BusinessLocation::find($validated['pickup_location_id']);
+            $location = \Modules\ListingLocations\Models\ListingLocation::find($validated['pickup_location_id']);
             OrderPickupLocation::create([
                 'order_id' => $order->id,
                 'location_id' => $validated['pickup_location_id'],

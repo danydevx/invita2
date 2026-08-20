@@ -11,7 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Modules\Listings\Models\Listing;
-use Modules\Gallery\Models\BusinessGalleryImage;
+use Modules\ListingGallery\Models\ListingGalleryImage;
 use Tests\TestCase;
 
 class GalleryBulkUploadTest extends TestCase
@@ -26,7 +26,7 @@ class GalleryBulkUploadTest extends TestCase
             'user_id' => $user->id,
             'name' => 'Negocio',
             'slug' => 'negocio',
-            'business_type' => 'generic',
+            'listing_type' => 'generic',
         ]));
         $files = collect(range(1, 10))
             ->map(fn (int $index) => UploadedFile::fake()->image("image-{$index}.jpg"))
@@ -40,7 +40,7 @@ class GalleryBulkUploadTest extends TestCase
 
         app(GalleryController::class)->store($request, $business, $activity);
 
-        $this->assertSame(10, BusinessGalleryImage::where('listing_id', $business->id)->count());
+        $this->assertSame(10, ListingGalleryImage::where('listing_id', $business->id)->count());
     }
 
     public function test_more_than_ten_images_are_rejected(): void
@@ -51,7 +51,7 @@ class GalleryBulkUploadTest extends TestCase
             'user_id' => $user->id,
             'name' => 'Negocio',
             'slug' => 'negocio',
-            'business_type' => 'generic',
+            'listing_type' => 'generic',
         ]));
         $files = collect(range(1, 11))
             ->map(fn (int $index) => UploadedFile::fake()->image("image-{$index}.jpg"))

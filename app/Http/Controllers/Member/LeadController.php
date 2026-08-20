@@ -7,16 +7,16 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Leads\Enums\LeadStatus;
-use Modules\Leads\Enums\LeadSource;
-use Modules\Locations\Models\BusinessLocation;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingLeads\Enums\LeadStatus;
+use Modules\ListingLeads\Enums\LeadSource;
+use Modules\ListingLocations\Models\ListingLocation;
 
 class LeadController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessLead::class, $business]);
+        $this->authorize('viewAny', [ListingLead::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -81,7 +81,7 @@ class LeadController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessLead::class, $business]);
+        $this->authorize('create', [ListingLead::class, $business]);
 
         $locations = $business->locations()
             ->where('is_active', true)
@@ -99,14 +99,14 @@ class LeadController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessLead::class, $business]);
+        $this->authorize('create', [ListingLead::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'source' => ['nullable', 'string'],
         ]);
 
@@ -132,9 +132,9 @@ class LeadController extends Controller
             ->with('success', 'Contacto creado correctamente.');
     }
 
-    public function show(Request $request, Listing $business, BusinessLead $lead)
+    public function show(Request $request, Listing $business, ListingLead $lead)
     {
-        $this->authorize('view', [BusinessLead::class, $lead]);
+        $this->authorize('view', [ListingLead::class, $lead]);
 
         $lead->load('location');
 
@@ -163,9 +163,9 @@ class LeadController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Listing $business, BusinessLead $lead)
+    public function edit(Request $request, Listing $business, ListingLead $lead)
     {
-        $this->authorize('update', [BusinessLead::class, $lead]);
+        $this->authorize('update', [ListingLead::class, $lead]);
 
         $lead->load('location');
 
@@ -193,16 +193,16 @@ class LeadController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessLead $lead, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingLead $lead, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessLead::class, $lead]);
+        $this->authorize('update', [ListingLead::class, $lead]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150'],
             'phone' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'status' => ['required', 'string', 'in:new,contacted,qualified,converted,lost'],
             'source' => ['nullable', 'string'],
         ]);
@@ -228,9 +228,9 @@ class LeadController extends Controller
             ->with('success', 'Contacto actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessLead $lead, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingLead $lead, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessLead::class, $lead]);
+        $this->authorize('delete', [ListingLead::class, $lead]);
 
         $activity->log('lead_deleted', [
             'actor' => $request->user(),
@@ -246,7 +246,7 @@ class LeadController extends Controller
 
     public function export(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessLead::class, $business]);
+        $this->authorize('viewAny', [ListingLead::class, $business]);
 
         $leads = $business->leads()
             ->with('location')
@@ -285,7 +285,7 @@ class LeadController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [BusinessLead::class, $business]);
+        $this->authorize('deleteAny', [ListingLead::class, $business]);
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],

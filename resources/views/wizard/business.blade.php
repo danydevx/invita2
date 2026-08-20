@@ -44,7 +44,7 @@
                 @endforeach
             </div>
 
-            <input type="hidden" name="business_type" id="selectedIndustry" value="{{ old('business_type') }}">
+            <input type="hidden" name="listing_type" id="selectedType" value="{{ old('business_type') }}">
 
             <div class="form-floating mt-4">
                 <input type="text" name="business_name" id="businessName" class="form-control form-control-lg" placeholder="Nombre del negocio" value="{{ old('business_name') }}" required>
@@ -54,7 +54,7 @@
             @error('business_name')
                 <div class="text-danger mt-2">{{ $message }}</div>
             @enderror
-            @error('business_type')
+            @error('listing_type')
                 <div class="text-danger mt-2">{{ $message }}</div>
             @enderror
 
@@ -399,23 +399,23 @@
 
 @push('scripts')
 <script>
-const industryLabels = {
-    @foreach($businessTypes as $type)
+const typeLabels = {
+    @foreach($listingTypes as $type)
     '{{ $type->value }}': '{{ $type->label() }}',
     @endforeach
 };
 
-function selectIndustry(card) {
+function selectType(card) {
     document.querySelectorAll('.industry-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
-    document.getElementById('selectedIndustry').value = card.dataset.value;
+    document.getElementById('selectedType').value = card.dataset.value;
 }
 
 function goToStep2() {
-    const industry = document.getElementById('selectedIndustry').value;
+    const type = document.getElementById('selectedType').value;
     const name = document.getElementById('businessName').value;
 
-    if (!industry) {
+    if (!type) {
         alert('Por favor selecciona un tipo de negocio');
         return;
     }
@@ -432,7 +432,7 @@ function goToStep2() {
     document.getElementById('step1Indicator').classList.remove('active');
     document.getElementById('step2Indicator').classList.add('active');
 
-    document.getElementById('reviewType').textContent = industryLabels[industry] || industry;
+    document.getElementById('reviewType').textContent = typeLabels[type] || type;
     document.getElementById('reviewName').textContent = name;
 }
 
@@ -447,9 +447,9 @@ function goToStep1() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const selected = document.querySelector('.industry-card[data-value="{{ old('business_type') }}"]');
+    const selected = document.querySelector('.industry-card[data-value="{{ old('listing_type') }}"]');
     if (selected) {
-        selectIndustry(selected);
+        selectType(selected);
     }
 });
 </script>

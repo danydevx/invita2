@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuCategory;
-use Modules\RestaurantMenu\Entities\MenuProduct;
-use Modules\RestaurantMenu\Entities\MenuProductVariant;
+use Modules\ListingRestaurantMenu\Entities\MenuCategory;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuProductVariant;
 
 class LavanderiaManolosMenuSeeder extends Seeder
 {

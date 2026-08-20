@@ -33,9 +33,9 @@ class OrderItem extends Model
     public function getProduct()
     {
         if ($this->product_type === ProductType::MENU_PRODUCT) {
-            return \Modules\RestaurantMenu\Entities\MenuProduct::find($this->product_id);
+            return \Modules\ListingRestaurantMenu\Entities\MenuProduct::find($this->product_id);
         }
-        return \Modules\Products\Models\BusinessProduct::find($this->product_id);
+        return \Modules\ListingProducts\Models\ListingProduct::find($this->product_id);
     }
 
     public function getVariant()
@@ -45,7 +45,7 @@ class OrderItem extends Model
         }
 
         if ($this->product_type === ProductType::MENU_PRODUCT) {
-            return \Modules\RestaurantMenu\Entities\MenuProductVariant::find($this->variant_id);
+            return \Modules\ListingRestaurantMenu\Entities\MenuProductVariant::find($this->variant_id);
         }
         return null;
     }

@@ -59,9 +59,7 @@ class HandleInertiaRequests extends Middleware
 
         $businessMenu = [];
         if ($user && $user->hasRole('member')) {
-            $moduleVisibility = app(ModuleVisibilityService::class);
-            $planModuleKeys = $moduleVisibility->getPlanModuleKeysForUser($user);
-            $businessMenu = $this->buildBusinessMenu($user, $planModuleKeys, $moduleVisibility);
+            $businessMenu = $this->buildBusinessMenu($user);
         }
 
         return [
@@ -90,11 +88,13 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
-    private function buildBusinessMenu($user, array $planModuleKeys = [], $moduleVisibility = null): array
+    private function buildBusinessMenu($user): array
     {
-        $businesses = Listing::where('user_id', $user->id)
-            ->with(['modules.moduleDefinition', 'industry'])
-            ->get()
+        $listings = Listing::where('user_id', $user->id)
+            ->with(['modules.moduleDefinition'])
+            ->get();
+
+        $businesses = $listings
             ->map(fn ($biz) => [
                 'id' => $biz->id,
                 'name' => $biz->name,
@@ -103,8 +103,7 @@ class HandleInertiaRequests extends Middleware
                     ->filter(fn ($m) => $m->is_enabled &&
                         $m->moduleDefinition &&
                         $m->moduleDefinition->show_in_menu &&
-                        $m->moduleDefinition->menu_title &&
-                        $this->canAccessModule($m, $planModuleKeys, $biz, $moduleVisibility)
+                        $m->moduleDefinition->menu_title
                     )
                     ->map(fn ($m) => [
                         'key' => $m->module_key,
@@ -117,24 +116,6 @@ class HandleInertiaRequests extends Middleware
             ->toArray();
 
         return $businesses;
-    }
-
-    private function canAccessModule($module, array $planModuleKeys, $business, $moduleVisibility): bool
-    {
-        $isPremium = $module->moduleDefinition->is_premium;
-        $planHasModule = in_array($module->module_key, $planModuleKeys);
-
-        if ($isPremium && ! $planHasModule) {
-            return false;
-        }
-
-        if ($business->industry && $moduleVisibility) {
-            $industryModuleKeys = $business->industry->moduleDefinitions->pluck('key')->toArray();
-
-            return in_array($module->module_key, $industryModuleKeys);
-        }
-
-        return true;
     }
 
     private function getModulePath(string $moduleKey): string

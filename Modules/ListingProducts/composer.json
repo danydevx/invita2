@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingproducts",
+    "description": "Products module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingProducts\\": "app/",
+            "Modules\\ListingProducts\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingProducts\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

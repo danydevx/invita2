@@ -10,15 +10,15 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Modules\Listings\Models\Listing;
 use Modules\Listings\Enums\ListingType;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Services\Models\BusinessService;
-use Modules\Products\Models\BusinessProduct;
-use Modules\Gallery\Models\BusinessGalleryImage;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Appointments\Models\BusinessAppointment;
-use Modules\Appointments\Models\BusinessAppointmentSlot;
-use Modules\Appointments\Enums\AppointmentStatus;
-use Modules\Reviews\Models\BusinessReview;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingServices\Models\ListingService;
+use Modules\ListingProducts\Models\ListingProduct;
+use Modules\ListingGallery\Models\ListingGalleryImage;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingAppointments\Models\ListingAppointment;
+use Modules\ListingAppointments\Models\ListingAppointmentSlot;
+use Modules\ListingAppointments\Enums\AppointmentStatus;
+use Modules\ListingReviews\Models\ListingReview;
 
 class BusinessTestSeeder extends Seeder
 {
@@ -36,7 +36,7 @@ class BusinessTestSeeder extends Seeder
 
         $planBusiness = Plan::where('slug', 'business')->first();
         if (!$planBusiness) {
-            $this->command->error("Plan 'business' not found. Run PlanBusinessModuleSeeder first.");
+            $this->command->error("Plan 'business' not found.");
             return;
         }
 
@@ -55,7 +55,7 @@ class BusinessTestSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'name' => 'Barberia El Corte',
-                'business_type' => ListingType::BARBER_SHOP,
+                'listing_type' => ListingType::BARBER_SHOP,
                 'description' => 'La mejor barberia del barrio. Ofrecemos cortes klasicos y modernos.',
                 'phone' => '+54 11 1234 5678',
                 'email' => 'contacto@barberiaelcorte.com',
@@ -67,7 +67,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        $business->syncModulesFromPlan();
+        $business->syncAllModules();
 
         $location1 = BusinessLocation::updateOrCreate(
             [
@@ -105,7 +105,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        BusinessService::updateOrCreate(
+        ListingService::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'slug' => 'corte-klasico',
@@ -121,7 +121,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        BusinessService::updateOrCreate(
+        ListingService::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'slug' => 'corte-moderno',
@@ -137,7 +137,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        BusinessService::updateOrCreate(
+        ListingService::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'slug' => 'barba-completa',
@@ -153,7 +153,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        BusinessProduct::updateOrCreate(
+        ListingProduct::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'slug' => 'pomada-cola',
@@ -170,7 +170,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-        BusinessProduct::updateOrCreate(
+        ListingProduct::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'slug' => 'aceite-barba',
@@ -187,7 +187,7 @@ class BusinessTestSeeder extends Seeder
             ]
         );
 
-BusinessLead::updateOrCreate(
+ListingLead::updateOrCreate(
             ['listing_id' => $business->id, 'email' => 'juan@mail.com'],
             [
                 'name' => 'Juan Perez',
@@ -198,7 +198,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessLead::updateOrCreate(
+        ListingLead::updateOrCreate(
             ['listing_id' => $business->id, 'email' => 'marcos@mail.com'],
             [
                 'name' => 'Marcos Garcia',
@@ -209,7 +209,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessLead::updateOrCreate(
+        ListingLead::updateOrCreate(
             ['listing_id' => $business->id, 'email' => 'laura@mail.com'],
             [
                 'name' => 'Laura Fernandez',
@@ -220,7 +220,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessLead::updateOrCreate(
+        ListingLead::updateOrCreate(
             ['listing_id' => $business->id, 'email' => 'diego@mail.com'],
             [
                 'name' => 'Diego Martinez',
@@ -231,7 +231,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessAppointment::updateOrCreate(
+        ListingAppointment::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'appointment_date' => now()->addDays(1)->toDateString(),
@@ -248,7 +248,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessAppointment::updateOrCreate(
+        ListingAppointment::updateOrCreate(
             [
                 'listing_id' => $business->id,
                 'appointment_date' => now()->addDays(2)->toDateString(),
@@ -270,7 +270,7 @@ BusinessLead::updateOrCreate(
         $service3 = $business->services()->where('slug', 'barba-completa')->first();
 
         if ($service1) {
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service1->id,
@@ -283,7 +283,7 @@ BusinessLead::updateOrCreate(
                     'slots_available' => 2,
                 ]
             );
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service1->id,
@@ -296,7 +296,7 @@ BusinessLead::updateOrCreate(
                     'slots_available' => 2,
                 ]
             );
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service1->id,
@@ -309,7 +309,7 @@ BusinessLead::updateOrCreate(
                     'slots_available' => 1,
                 ]
             );
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service1->id,
@@ -325,7 +325,7 @@ BusinessLead::updateOrCreate(
         }
 
         if ($service2) {
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service2->id,
@@ -338,7 +338,7 @@ BusinessLead::updateOrCreate(
                     'slots_available' => 1,
                 ]
             );
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service2->id,
@@ -354,7 +354,7 @@ BusinessLead::updateOrCreate(
         }
 
         if ($service3) {
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service3->id,
@@ -367,7 +367,7 @@ BusinessLead::updateOrCreate(
                     'slots_available' => 1,
                 ]
             );
-            BusinessAppointmentSlot::updateOrCreate(
+            ListingAppointmentSlot::updateOrCreate(
                 [
                     'listing_id' => $business->id,
                     'business_service_id' => $service3->id,
@@ -382,7 +382,7 @@ BusinessLead::updateOrCreate(
             );
         }
 
-        BusinessReview::updateOrCreate(
+        ListingReview::updateOrCreate(
             ['listing_id' => $business->id, 'client_name' => 'Juan Perez'],
             [
                 'business_location_id' => $location1->id,
@@ -393,7 +393,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessReview::updateOrCreate(
+        ListingReview::updateOrCreate(
             ['listing_id' => $business->id, 'client_name' => 'Maria Lopez'],
             [
                 'business_location_id' => $location1->id,
@@ -404,7 +404,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessReview::updateOrCreate(
+        ListingReview::updateOrCreate(
             ['listing_id' => $business->id, 'client_name' => 'Carlos Garcia'],
             [
                 'business_location_id' => $location2->id,
@@ -415,7 +415,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessReview::updateOrCreate(
+        ListingReview::updateOrCreate(
             ['listing_id' => $business->id, 'client_name' => 'Pedro Rodriguez'],
             [
                 'business_location_id' => null,
@@ -426,7 +426,7 @@ BusinessLead::updateOrCreate(
             ]
         );
 
-        BusinessReview::updateOrCreate(
+        ListingReview::updateOrCreate(
             ['listing_id' => $business->id, 'client_name' => 'Ana Martinez'],
             [
                 'business_location_id' => $location1->id,

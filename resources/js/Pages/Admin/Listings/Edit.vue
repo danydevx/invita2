@@ -27,48 +27,12 @@
 
             <div class="col-12 col-md-6">
               <FieldText
-                id="listing-name"
-                label="Nombre"
-                v-model="form.name"
-                :formError="form.errors.name"
-                required
-              />
-            </div>
-
-            <div class="col-12 col-md-6">
-              <FieldText
                 id="listing-slug"
                 label="Slug"
                 v-model="form.slug"
                 :formError="form.errors.slug"
                 required
               />
-            </div>
-
-            <div class="col-12 col-md-6">
-              <label for="listing-industry" class="form-label">Industria</label>
-              <select id="listing-industry" class="form-select" v-model="form.industry_id">
-                <option :value="null">Sin industria</option>
-                <option v-for="industry in industries" :key="industry.id" :value="industry.id">
-                  {{ industry.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="col-12 col-md-3">
-              <label for="listing-timezone" class="form-label">Zona Horaria</label>
-              <select id="listing-timezone" class="form-select" v-model="form.timezone" :class="{ 'is-invalid': form.errors.timezone }">
-                <option value="America/Mexico_City">Ciudad de Mexico (America/Mexico_City)</option>
-              </select>
-              <div v-if="form.errors.timezone" class="invalid-feedback">{{ form.errors.timezone }}</div>
-            </div>
-
-            <div class="col-12 col-md-3">
-              <label for="listing-currency" class="form-label">Moneda</label>
-              <select id="listing-currency" class="form-select" v-model="form.currency" :class="{ 'is-invalid': form.errors.currency }">
-                <option value="MXN">MXN - Peso Mexicano</option>
-              </select>
-              <div v-if="form.errors.currency" class="invalid-feedback">{{ form.errors.currency }}</div>
             </div>
 
             <div class="col-12 col-md-4">
@@ -85,16 +49,6 @@
                 label="Publicado"
                 v-model="form.is_published"
               />
-            </div>
-
-            <div class="col-12 col-md-6">
-              <label for="listing-theme" class="form-label">Theme del Minisite</label>
-              <select id="listing-theme" class="form-select" v-model="form.minisite_theme_id">
-                <option :value="null">Por defecto</option>
-                <option v-for="theme in themes" :key="theme.id" :value="theme.id">
-                  {{ theme.name }}
-                </option>
-              </select>
             </div>
           </div>
 
@@ -126,26 +80,13 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  themes: {
-    type: Array,
-    default: () => [],
-  },
-  industries: {
-    type: Array,
-    default: () => [],
-  },
 })
 
 const form = useForm({
   user_id: props.listing.user_id,
-  name: props.listing.name,
   slug: props.listing.slug,
-  industry_id: props.listing.industry_id || null,
-  timezone: props.listing.timezone || 'America/Mexico_City',
-  currency: props.listing.currency || 'MXN',
   is_active: !!props.listing.is_active,
   is_published: !!props.listing.is_published,
-  minisite_theme_id: props.listing.minisite_theme_id || null,
 })
 
 const breadcrumbs = [

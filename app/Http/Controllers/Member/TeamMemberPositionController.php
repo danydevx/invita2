@@ -7,13 +7,13 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\TeamMembers\Models\TeamMemberPosition;
+use Modules\ListingTeamMembers\Models\TeamMemberPosition;
 
 class TeamMemberPositionController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
+        $this->authorize('viewAny', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $business]);
 
         $positions = TeamMemberPosition::where('listing_id', $business->id)
             ->with('parent:id,name')
@@ -49,7 +49,7 @@ class TeamMemberPositionController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
+        $this->authorize('create', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $business]);
 
         $parentPositions = TeamMemberPosition::where('listing_id', $business->id)
             ->where('is_active', true)
@@ -67,7 +67,7 @@ class TeamMemberPositionController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $business]);
+        $this->authorize('create', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -105,7 +105,7 @@ class TeamMemberPositionController extends Controller
 
     public function edit(Request $request, Listing $business, TeamMemberPosition $position)
     {
-        $this->authorize('update', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
+        $this->authorize('update', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 
@@ -135,7 +135,7 @@ class TeamMemberPositionController extends Controller
 
     public function update(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
-        $this->authorize('update', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
+        $this->authorize('update', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 
@@ -172,7 +172,7 @@ class TeamMemberPositionController extends Controller
 
     public function destroy(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
-        $this->authorize('delete', [\Modules\TeamMembers\Models\BusinessTeamMember::class, $position]);
+        $this->authorize('delete', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 

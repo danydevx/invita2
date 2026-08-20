@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuCategory;
-use Modules\RestaurantMenu\Entities\MenuCategoryImage;
+use Modules\ListingRestaurantMenu\Entities\MenuCategory;
+use Modules\ListingRestaurantMenu\Entities\MenuCategoryImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 

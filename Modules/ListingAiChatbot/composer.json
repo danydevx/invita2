@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/listingaichatbot",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingAiChatbot\\": "app/",
+            "Modules\\ListingAiChatbot\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingAiChatbot\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ListingAiChatbot\\Tests\\": "tests/"
+        }
+    }
+}

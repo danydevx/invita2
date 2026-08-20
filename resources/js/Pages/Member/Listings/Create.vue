@@ -23,23 +23,23 @@
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="business-industry" class="form-label">Industria *</label>
+            <label for="business-type" class="form-label">Tipo de Negocio *</label>
             <select
-              id="business-industry"
-              v-model="form.industry_id"
+              id="business-type"
+              v-model="form.listing_type"
               class="form-select"
-              :class="{ 'is-invalid': form.errors.industry_id }"
+              :class="{ 'is-invalid': form.errors.listing_type }"
               required
             >
-              <option value="">Seleccionar industria...</option>
-              <option v-for="industry in industries" :key="industry.id" :value="industry.id">
-                {{ industry.name }}
+              <option value="">Seleccionar tipo...</option>
+              <option v-for="type in listingTypes" :key="type.value" :value="type.value">
+                {{ type.label }}
               </option>
             </select>
-            <div v-if="form.errors.industry_id" class="invalid-feedback">
-              {{ form.errors.industry_id }}
+            <div v-if="form.errors.listing_type" class="invalid-feedback">
+              {{ form.errors.listing_type }}
             </div>
-            <div class="form-text">La industria define los modulos y la apariencia inicial del negocio.</div>
+            <div class="form-text">El tipo de negocio define los modulos y la apariencia inicial.</div>
           </div>
 
           <div class="col-12 col-md-6">
@@ -135,7 +135,7 @@ import FieldEmail from '@/Components/Fields/FieldEmail.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 
 const props = defineProps({
-  industries: { type: Array, default: () => [] },
+  listingTypes: { type: Array, default: () => [] },
   maxBusinesses: { type: Number, default: null },
   businessCount: { type: Number, default: 0 },
   planName: { type: String, default: 'Sin plan' },
@@ -143,7 +143,7 @@ const props = defineProps({
 
 const form = useForm({
   name: '',
-  industry_id: '',
+  listing_type: '',
   description: '',
   phone: '',
   email: '',

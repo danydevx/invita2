@@ -31,12 +31,10 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                Negocios
+                Listados
               </a>
               <ul class="dropdown-menu">
-                <li><Link href="/admin/listings" class="dropdown-item" prefetch="hover">Negocios</Link></li>
-                <li><Link href="/admin/business-modules" class="dropdown-item" prefetch="hover">Modulos de Negocio</Link></li>
-                <li><Link href="/admin/industries" class="dropdown-item" prefetch="hover">Industrias</Link></li>
+                <li><Link href="/admin/listings" class="dropdown-item" prefetch="hover">Listados</Link></li>
               </ul>
             </li>
             <li class="nav-item dropdown">

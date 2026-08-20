@@ -3,7 +3,7 @@
 use App\Http\Controllers\Public\BookingWidgetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\Locations\Http\Controllers\LocationDataController;
+use Modules\ListingLocations\Http\Controllers\LocationDataController;
 
 Route::middleware(['api_key', 'throttle:api-key'])->group(function () {
     Route::get('/me', function (Request $request) {

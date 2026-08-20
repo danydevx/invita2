@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuProduct;
-use Modules\RestaurantMenu\Entities\MenuProductImage;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuProductImage;
 use Illuminate\Support\Facades\Auth;
 
 class MenuProductImageController extends Controller

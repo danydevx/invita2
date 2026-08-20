@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/listingclients",
+    "description": "Clients module for business contact records",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingClients\\": "app/",
+            "Modules\\ListingClients\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingClients\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ListingClients\\Tests\\": "tests/"
+        }
+    }
+}

@@ -7,15 +7,15 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Appointments\Models\BusinessAppointmentSlot;
-use Modules\Services\Models\BusinessService;
-use Modules\Locations\Models\BusinessLocation;
+use Modules\ListingAppointments\Models\ListingAppointmentSlot;
+use Modules\ListingServices\Models\ListingService;
+use Modules\ListingLocations\Models\ListingLocation;
 
 class SlotController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [\Modules\Appointments\Models\BusinessAppointmentSlot::class, $business]);
+        $this->authorize('viewAny', [\Modules\ListingAppointments\Models\ListingAppointmentSlot::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -92,11 +92,11 @@ class SlotController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [\Modules\Appointments\Models\BusinessAppointmentSlot::class, $business]);
+        $this->authorize('create', [\Modules\ListingAppointments\Models\ListingAppointmentSlot::class, $business]);
 
         $data = $request->validate([
-            'business_service_id' => ['required', 'exists:business_services,id'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_service_id' => ['required', 'exists:listing_services,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'day_of_week' => ['nullable', 'integer', 'min:0', 'max:6'],
             'specific_date' => ['nullable', 'date', 'after_or_equal:today'],
             'start_time' => ['required', 'date_format:H:i'],
@@ -119,13 +119,13 @@ class SlotController extends Controller
         return redirect()->back()->with('success', 'Slot creado correctamente.');
     }
 
-    public function update(Request $request, Listing $business, BusinessAppointmentSlot $slot, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingAppointmentSlot $slot, ActivityService $activity)
     {
         $this->authorize('update', $slot);
 
         $data = $request->validate([
-            'business_service_id' => ['required', 'exists:business_services,id'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_service_id' => ['required', 'exists:listing_services,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'day_of_week' => ['nullable', 'integer', 'min:0', 'max:6'],
             'specific_date' => ['nullable', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
@@ -150,7 +150,7 @@ class SlotController extends Controller
         return redirect()->back()->with('success', 'Slot actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessAppointmentSlot $slot, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingAppointmentSlot $slot, ActivityService $activity)
     {
         $this->authorize('delete', $slot);
 

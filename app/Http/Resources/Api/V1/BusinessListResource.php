@@ -13,8 +13,7 @@ class BusinessListResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'business_type' => $this->business_type?->value ?? $this->business_type,
-            'industry_id' => $this->industry_id,
+            'listing_type' => $this->listing_type?->value ?? $this->listing_type,
             'logo_path' => $this->logo_path,
             'is_active' => $this->is_active,
             'is_published' => $this->is_published,
@@ -24,12 +23,6 @@ class BusinessListResource extends JsonResource
                     'id' => $this->user->id,
                     'name' => $this->user->name,
                 ];
-            }),
-            'industry' => $this->whenLoaded('industry', function () {
-                return $this->industry ? [
-                    'id' => $this->industry->id,
-                    'name' => $this->industry->name,
-                ] : null;
             }),
             'plan' => $this->whenLoaded('user.subscriptions', function () {
                 $activeSubscription = $this->user?->subscriptions?->where('status', 'active')->first();

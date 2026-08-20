@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Seo\Models\BusinessSeoSetting;
+use Modules\ListingSeo\Models\ListingSeoSetting;
 use Illuminate\Support\Facades\Storage;
 
 class SeoController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessSeoSetting::class, $business]);
+        $this->authorize('viewAny', [ListingSeoSetting::class, $business]);
 
         $seo = $business->seoSetting;
 
@@ -44,7 +44,7 @@ class SeoController extends Controller
 
     public function update(Request $request, Listing $business)
     {
-        $this->authorize('updateForBusiness', [BusinessSeoSetting::class, $business]);
+        $this->authorize('updateForBusiness', [ListingSeoSetting::class, $business]);
 
         $validated = $request->validate([
             'seo_title' => ['nullable', 'string', 'max:255'],

@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Products\Models\BusinessProduct;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingProducts\Models\ListingProduct;
 
 class ProductController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessProduct::class, $business]);
+        $this->authorize('viewAny', [ListingProduct::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -91,7 +91,7 @@ class ProductController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessProduct::class, $business]);
+        $this->authorize('create', [ListingProduct::class, $business]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
         $categories = $business->productCategories()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
@@ -108,7 +108,7 @@ class ProductController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessProduct::class, $business]);
+        $this->authorize('create', [ListingProduct::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -116,7 +116,7 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:150',
-                Rule::unique('business_products')->where('listing_id', $business->id),
+                Rule::unique('listing_products')->where('listing_id', $business->id),
             ],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
@@ -130,8 +130,8 @@ class ProductController extends Controller
             'is_featured' => ['boolean'],
             'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
-            'category_id' => ['nullable', 'exists:business_product_categories,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_product_categories,id'],
         ]);
 
         $data['listing_id'] = $business->id;
@@ -155,9 +155,9 @@ class ProductController extends Controller
             ->with('success', 'Producto creado correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessProduct $product)
+    public function edit(Request $request, Listing $business, ListingProduct $product)
     {
-        $this->authorize('update', [BusinessProduct::class, $product]);
+        $this->authorize('update', [ListingProduct::class, $product]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
         $categories = $business->productCategories()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
@@ -199,9 +199,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingProduct $product, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessProduct::class, $product]);
+        $this->authorize('update', [ListingProduct::class, $product]);
 
         \Log::info('Product update category_id received:', ['category_id' => $request->get('category_id')]);
 
@@ -211,7 +211,7 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:150',
-                Rule::unique('business_products')->where('listing_id', $business->id)->ignore($product->id),
+                Rule::unique('listing_products')->where('listing_id', $business->id)->ignore($product->id),
             ],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
@@ -225,8 +225,8 @@ class ProductController extends Controller
             'is_featured' => ['boolean'],
             'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
-            'category_id' => ['nullable', 'exists:business_product_categories,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_product_categories,id'],
         ]);
 
         $data['slug'] = \Illuminate\Support\Str::slug($data['slug']);
@@ -252,9 +252,9 @@ class ProductController extends Controller
             ->with('success', 'Producto actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessProduct $product, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingProduct $product, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessProduct::class, $product]);
+        $this->authorize('delete', [ListingProduct::class, $product]);
 
         $activity->log('product_deleted', [
             'actor' => $request->user(),
@@ -268,9 +268,9 @@ class ProductController extends Controller
             ->with('success', 'Producto eliminado correctamente.');
     }
 
-    public function clone(Request $request, Listing $business, BusinessProduct $product)
+    public function clone(Request $request, Listing $business, ListingProduct $product)
     {
-        $this->authorize('create', [BusinessProduct::class, $business]);
+        $this->authorize('create', [ListingProduct::class, $business]);
 
         $newProduct = $product->replicate();
         $newProduct->name = $product->name . ' (Copia)';
@@ -292,7 +292,7 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_products', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -303,7 +303,7 @@ class ProductController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\Products\Models\BusinessProduct::where('id', $id)
+                \Modules\ListingProducts\Models\ListingProduct::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
@@ -323,12 +323,12 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_products', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_products', 'id')->where('listing_id', $business->id)],
         ]);
 
         $count = count($data['ids']);
 
-        \Modules\Products\Models\BusinessProduct::where('listing_id', $business->id)
+        \Modules\ListingProducts\Models\ListingProduct::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->delete();
 

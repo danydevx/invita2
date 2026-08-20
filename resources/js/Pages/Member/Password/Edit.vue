@@ -8,6 +8,20 @@
       <div class="card-body">
         <form class="row g-3" @submit.prevent="submit">
           <div class="col-12 col-md-6">
+            <div class="form-floating">
+              <input
+                id="user-email"
+                type="email"
+                class="form-control"
+                :value="$page.props.auth?.user?.email"
+                readonly
+                placeholder="email"
+              />
+              <label for="user-email">Email registrado</label>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
             <div class="form-floating position-relative">
               <input
                 id="current-password"

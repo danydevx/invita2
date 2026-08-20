@@ -8,9 +8,9 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Modules\Listings\Models\Listing;
 use Modules\Listings\Enums\ListingType;
-use Modules\Services\Models\BusinessService;
-use Modules\Products\Models\BusinessProduct;
-use Modules\Gallery\Models\BusinessGalleryImage;
+use Modules\ListingServices\Models\ListingService;
+use Modules\ListingProducts\Models\ListingProduct;
+use Modules\ListingGallery\Models\ListingGalleryImage;
 
 class LavanderiaManolosSeeder extends Seeder
 {
@@ -24,7 +24,7 @@ class LavanderiaManolosSeeder extends Seeder
 
         $planBusiness = Plan::where('slug', 'business')->first();
         if (!$planBusiness) {
-            $this->command->error("Plan 'business' not found. Run PlanBusinessModuleSeeder first.");
+            $this->command->error("Plan 'business' not found.");
             return;
         }
 
@@ -43,7 +43,7 @@ class LavanderiaManolosSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'name' => 'Lavanderia Manolos',
-                'business_type' => ListingType::GENERIC,
+                'listing_type' => ListingType::GENERIC,
                 'description' => 'Lavanderia tradicional con mas de 20 anos de experiencia. Servicios de lavado, planchado, tintoreria y Lavado seco.',
                 'phone' => '+54 11 4567 8901',
                 'email' => 'contacto@lavanderiamanolos.com',
@@ -55,7 +55,7 @@ class LavanderiaManolosSeeder extends Seeder
             ]
         );
 
-        $business->syncModulesFromPlan();
+        $business->syncAllModules();
 
         $business->modules()->where('module_key', 'locations')->update(['is_enabled' => false]);
 
@@ -73,7 +73,7 @@ class LavanderiaManolosSeeder extends Seeder
         ];
 
         foreach ($services as $i => $service) {
-            BusinessService::updateOrCreate(
+            ListingService::updateOrCreate(
                 ['listing_id' => $business->id, 'slug' => $service['slug']],
                 [
                     'name' => $service['name'],
@@ -101,7 +101,7 @@ class LavanderiaManolosSeeder extends Seeder
         ];
 
         foreach ($products as $i => $product) {
-            BusinessProduct::updateOrCreate(
+            ListingProduct::updateOrCreate(
                 ['listing_id' => $business->id, 'slug' => $product['slug']],
                 [
                     'name' => $product['name'],
@@ -131,7 +131,7 @@ class LavanderiaManolosSeeder extends Seeder
 
         foreach ($galleryImages as $i => $image) {
             $path = "https://picsum.photos/seed/lavanderia{$i}/800/600";
-            BusinessGalleryImage::updateOrCreate(
+            ListingGalleryImage::updateOrCreate(
                 ['listing_id' => $business->id, 'filename' => $image['filename']],
                 [
                     'path' => $path,

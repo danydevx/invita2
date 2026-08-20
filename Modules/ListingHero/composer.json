@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listinghero",
+    "description": "Hero customization module for business minisites",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingHero\\": "app/",
+            "Modules\\ListingHero\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingHero\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

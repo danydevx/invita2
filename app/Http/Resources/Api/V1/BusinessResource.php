@@ -13,8 +13,7 @@ class BusinessResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'business_type' => $this->business_type?->value ?? $this->business_type,
-            'industry_id' => $this->industry_id,
+            'listing_type' => $this->listing_type?->value ?? $this->listing_type,
             'logo_path' => $this->logo_path,
             'cover_image_path' => $this->cover_image_path,
             'description' => $this->description,
@@ -34,14 +33,6 @@ class BusinessResource extends JsonResource
                     'name' => $this->user->name,
                     'email' => $this->user->email,
                 ];
-            }),
-
-            'industry' => $this->whenLoaded('industry', function () {
-                return $this->industry ? [
-                    'id' => $this->industry->id,
-                    'name' => $this->industry->name,
-                    'slug' => $this->industry->slug,
-                ] : null;
             }),
 
             'plan' => $this->whenLoaded('user.subscriptions', function () {

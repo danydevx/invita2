@@ -67,19 +67,19 @@
               />
             </div>
 
-            <div class="col-12 col-md-6" v-if="industries.length">
-              <label for="business-industry" class="form-label">Industria</label>
+            <div class="col-12 col-md-6" v-if="listingTypes.length">
+              <label for="business-type" class="form-label">Tipo de Negocio</label>
               <select
-                id="business-industry"
+                id="business-type"
                 class="form-select"
-                v-model="form.industry_id"
+                v-model="form.listing_type"
               >
-                <option value="">Seleccionar industria...</option>
-                <option v-for="ind in industries" :key="ind.id" :value="ind.id">
-                  {{ ind.name }}
+                <option value="">Seleccionar tipo...</option>
+                <option v-for="type in listingTypes" :key="type.value" :value="type.value">
+                  {{ type.label }}
                 </option>
               </select>
-              <div v-if="errors.industry_id" class="text-danger small mt-1">{{ errors.industry_id }}</div>
+              <div v-if="errors.listing_type" class="text-danger small mt-1">{{ errors.listing_type }}</div>
             </div>
 
             <div class="col-12 col-md-6">
@@ -179,7 +179,7 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  industries: {
+  listingTypes: {
     type: Array,
     default: () => [],
   },
@@ -190,7 +190,7 @@ const errors = computed(() => page.props.errors || {})
 const sending = ref(false)
 
 const business = computed(() => props.business)
-const industries = computed(() => props.industries || [])
+const listingTypes = computed(() => props.listingTypes || [])
 const removeLogoFlag = ref(false)
 const logoPreview = ref(null)
 
@@ -208,7 +208,7 @@ const breadcrumbs = computed(() => {
 
 const form = ref({
   name: props.business.name,
-  industry_id: props.business.industry_id || '',
+  listing_type: props.business.listing_type || '',
   phone: props.business.phone || '',
   email: props.business.email || '',
 })
@@ -242,7 +242,7 @@ const submit = () => {
   sending.value = true
   const data = new FormData()
   data.append('name', form.value.name)
-  data.append('industry_id', form.value.industry_id || '')
+  data.append('listing_type', form.value.listing_type || '')
   data.append('phone', form.value.phone || '')
   data.append('email', form.value.email || '')
 

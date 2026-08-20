@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Products\Models\BusinessProductCategory;
+use Modules\ListingProducts\Models\ListingProductCategory;
 use Illuminate\Support\Facades\Auth;
 
 class ProductCategoryController extends Controller
@@ -19,7 +19,7 @@ class ProductCategoryController extends Controller
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
 
-        $query = BusinessProductCategory::where('listing_id', $business->id)
+        $query = ListingProductCategory::where('listing_id', $business->id)
             ->with('parent')
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
@@ -53,7 +53,7 @@ class ProductCategoryController extends Controller
             'to' => $categories->lastItem(),
         ];
 
-        $allCategories = BusinessProductCategory::where('listing_id', $business->id)
+        $allCategories = ListingProductCategory::where('listing_id', $business->id)
             ->whereNull('parent_id')
             ->with('children')
             ->orderBy('name')
@@ -78,20 +78,20 @@ class ProductCategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|string',
-            'parent_id' => 'nullable|exists:business_product_categories,id',
+            'parent_id' => 'nullable|exists:listing_product_categories,id',
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ]);
 
         $validated['listing_id'] = $business->id;
-        $validated['slug'] = BusinessProductCategory::generateUniqueSlug($business->id, $validated['name']);
+        $validated['slug'] = ListingProductCategory::generateUniqueSlug($business->id, $validated['name']);
 
-        BusinessProductCategory::create($validated);
+        ListingProductCategory::create($validated);
 
         return redirect()->back()->with('success', 'Categoria creada exitosamente.');
     }
 
-    public function update(Request $request, Listing $business, BusinessProductCategory $category)
+    public function update(Request $request, Listing $business, ListingProductCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -103,7 +103,7 @@ class ProductCategoryController extends Controller
             'image' => 'nullable|string',
             'parent_id' => [
                 'nullable',
-                'exists:business_product_categories,id',
+                'exists:listing_product_categories,id',
                 function ($attribute, $value, $fail) use ($category) {
                     if ($value == $category->id) {
                         $fail('Una categoria no puede ser padre de si misma.');
@@ -119,7 +119,7 @@ class ProductCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoria actualizada exitosamente.');
     }
 
-    public function destroy(Listing $business, BusinessProductCategory $category)
+    public function destroy(Listing $business, ListingProductCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);

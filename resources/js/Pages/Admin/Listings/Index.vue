@@ -33,7 +33,6 @@
               <tr>
                 <th scope="col">Nombre</th>
                 <th scope="col">Propietario</th>
-                <th scope="col">Tipo</th>
                 <th scope="col">Estado</th>
                 <th scope="col">Acciones de Contenido</th>
                 <th scope="col" class="text-end">Accion</th>
@@ -55,7 +54,6 @@
                   <br><small class="text-muted" v-if="biz.user">{{ biz.user.email }}</small>
                   <span v-else class="text-muted">-</span>
                 </td>
-                <td>{{ biz.business_type }}</td>
                 <td>
                   <span v-if="biz.is_active" class="badge bg-success">Activo</span>
                   <span v-else class="badge bg-secondary">Inactivo</span>
@@ -113,9 +111,15 @@
                   <Link :href="`/admin/listings/${biz.id}/edit`" class="btn btn-sm btn-outline-primary me-1">
                     Editar
                   </Link>
-                  <Link :href="`/admin/listings/${biz.id}/modules`" class="btn btn-sm btn-outline-secondary">
+                  <Link :href="`/admin/listings/${biz.id}/modules`" class="btn btn-sm btn-outline-secondary me-1">
                     Modulos
                   </Link>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    @click="deleteListing(biz.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -142,5 +146,13 @@ const searchQuery = ref(page.props.filters?.search || '')
 
 const doSearch = () => {
   router.get('/admin/listings', { search: searchQuery.value }, { preserveState: true })
+}
+
+const deleteListing = (id) => {
+  if (confirm('¿Estás seguro de eliminar este listing?')) {
+    router.delete(`/admin/listings/${id}`, {
+      preserveScroll: true,
+    })
+  }
 }
 </script>

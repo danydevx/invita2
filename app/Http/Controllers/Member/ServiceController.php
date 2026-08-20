@@ -7,15 +7,15 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Services\Models\BusinessService;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingServices\Models\ListingService;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessService::class, $business]);
+        $this->authorize('viewAny', [ListingService::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -76,7 +76,7 @@ class ServiceController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessService::class, $business]);
+        $this->authorize('create', [ListingService::class, $business]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -91,7 +91,7 @@ class ServiceController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessService::class, $business]);
+        $this->authorize('create', [ListingService::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -105,7 +105,7 @@ class ServiceController extends Controller
             'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
         ]);
 
         $data['listing_id'] = $business->id;
@@ -129,9 +129,9 @@ class ServiceController extends Controller
             ->with('success', 'Servicio creado correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessService $service)
+    public function edit(Request $request, Listing $business, ListingService $service)
     {
-        $this->authorize('update', [BusinessService::class, $service]);
+        $this->authorize('update', [ListingService::class, $service]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
         $serviceImages = $service->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
@@ -167,9 +167,9 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingService $service, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessService::class, $service]);
+        $this->authorize('update', [ListingService::class, $service]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -183,7 +183,7 @@ class ServiceController extends Controller
             'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
         ]);
 
         if (isset($data['name'])) {
@@ -210,9 +210,9 @@ class ServiceController extends Controller
             ->with('success', 'Servicio actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingService $service, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessService::class, $service]);
+        $this->authorize('delete', [ListingService::class, $service]);
 
         $activity->log('service_deleted', [
             'actor' => $request->user(),
@@ -226,29 +226,13 @@ class ServiceController extends Controller
             ->with('success', 'Servicio eliminado correctamente.');
     }
 
-    public function clone(Request $request, Listing $business, \Modules\Services\Models\BusinessService $service)
+    public function clone(Request $request, Listing $business, \Modules\ListingServices\Models\ListingService $service)
     {
-        $this->authorize('create', [\Modules\Services\Models\BusinessService::class, $business]);
+        $this->authorize('create', [\Modules\ListingServices\Models\ListingService::class, $business]);
 
-        $newService = $service->replicate();
-        $newService->name = $service->name . ' (Copia)';
-        $newService->slug = \Illuminate\Support\Str::slug($service->name) . '-' . time();
-        $newService->save();
+        $this->authorize('deleteAny', [\Modules\ListingServices\Models\ListingService::class, $business]);
 
-        return redirect()->route('member.businesses.services.edit', [$business->id, $newService->id])
-            ->with('success', 'Servicio clonado correctamente.');
-    }
-
-    public function bulkDelete(Request $request, Listing $business)
-    {
-        $this->authorize('deleteAny', [\Modules\Services\Models\BusinessService::class, $business]);
-
-        $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_services', 'id')->where('listing_id', $business->id)],
-        ]);
-
-        $count = \Modules\Services\Models\BusinessService::where('listing_id', $business->id)
+        $count = \Modules\ListingServices\Models\ListingService::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
@@ -278,7 +262,7 @@ class ServiceController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\Services\Models\BusinessService::where('id', $id)
+                \Modules\ListingServices\Models\ListingService::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }

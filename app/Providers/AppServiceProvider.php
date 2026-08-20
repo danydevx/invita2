@@ -12,30 +12,31 @@ use App\Models\SupportTicket;
 use App\Models\User;
 use App\Models\WebhookEndpoint;
 use App\Policies\ApiKeyPolicy;
-use App\Policies\BusinessAboutPolicy;
-use App\Policies\BusinessAppointmentPolicy;
-use App\Policies\BusinessAppointmentSlotPolicy;
-use App\Policies\BusinessAvailabilityPolicy;
-use App\Policies\BusinessBrandingSettingPolicy;
-use App\Policies\BusinessClientPolicy;
-use App\Policies\BusinessFaqCategoryPolicy;
-use App\Policies\BusinessFaqPolicy;
-use App\Policies\BusinessGalleryImagePolicy;
-use App\Policies\BusinessGalleryPolicy;
-use App\Policies\BusinessHeroPolicy;
-use App\Policies\BusinessLeadPolicy;
-use App\Policies\BusinessLocationPolicy;
-use App\Policies\BusinessModulePolicy;
+use App\Policies\ListingAboutPolicy;
+use App\Policies\ListingAppointmentPolicy;
+use App\Policies\ListingAppointmentSlotPolicy;
+use App\Policies\ListingAvailabilityPolicy;
+use App\Policies\ListingBrandingSettingPolicy;
+use App\Policies\ListingClientPolicy;
+use App\Policies\ListingFaqCategoryPolicy;
+use App\Policies\ListingFaqPolicy;
+use App\Policies\ListingFeaturePolicy;
+use App\Policies\ListingGalleryImagePolicy;
+use App\Policies\ListingGalleryPolicy;
+use App\Policies\ListingHeroPolicy;
+use App\Policies\ListingLeadPolicy;
+use App\Policies\ListingLocationPolicy;
+use App\Policies\ListingModulePolicy;
 use App\Policies\BusinessPolicy;
-use App\Policies\BusinessProductCategoryPolicy;
-use App\Policies\BusinessProductPolicy;
-use App\Policies\BusinessPromotionPolicy;
-use App\Policies\BusinessReviewPolicy;
-use App\Policies\BusinessSeoSettingPolicy;
-use App\Policies\BusinessServicePolicy;
-use App\Policies\BusinessSocialNetworkPolicy;
-use App\Policies\BusinessTeamMemberPolicy;
-use App\Policies\BusinessPackagePolicy;
+use App\Policies\ListingProductCategoryPolicy;
+use App\Policies\ListingProductPolicy;
+use App\Policies\ListingPromotionPolicy;
+use App\Policies\ListingReviewPolicy;
+use App\Policies\ListingSeoSettingPolicy;
+use App\Policies\ListingServicePolicy;
+use App\Policies\ListingSocialNetworkPolicy;
+use App\Policies\ListingTeamMemberPolicy;
+use App\Policies\ListingPackagePolicy;
 use App\Policies\MediaFilePolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\SubscriptionPolicy;
@@ -50,11 +51,11 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Modules\Listings\Models\Listing;
-use Modules\Minisite\Models\BusinessMinisiteSection;
-use Modules\Minisite\Models\BusinessMinisiteSetting;
-use Modules\Minisite\Policies\MinisitePolicy;
-use Modules\OfficeHours\Models\BusinessSchedule;
-use Modules\OfficeHours\Policies\BusinessSchedulePolicy;
+use Modules\ListingMinisite\Models\ListingMinisiteSection;
+use Modules\ListingMinisite\Models\ListingMinisiteSetting;
+use Modules\ListingMinisite\Policies\ListingMinisitePolicy;
+use Modules\ListingOfficeHours\Models\ListingSchedule;
+use Modules\ListingOfficeHours\Policies\ListingSchedulePolicy;
 use Modules\Properties\Models\PropertyType;
 use Modules\Properties\Observers\PropertyTypeObserver;
 
@@ -73,27 +74,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Route model binding for Listing model
         $this->app->router->bind('listing', function ($value) {
             return Listing::findOrFail($value);
         });
 
-        // Route model binding for Listing by slug (for public booking widget)
         $this->app->router->bind('listingSlug', function ($value) {
             return Listing::where('slug', $value)->firstOrFail();
         });
 
-        // Route model binding for BusinessLocation
         $this->app->router->bind('location', function ($value) {
-            return \Modules\Locations\Models\BusinessLocation::findOrFail($value);
+            return \Modules\ListingLocations\Models\ListingLocation::findOrFail($value);
         });
 
-        // Route model binding for BusinessSchedule
         $this->app->router->bind('schedule', function ($value) {
-            return \Modules\OfficeHours\Models\BusinessSchedule::findOrFail($value);
+            return \Modules\ListingOfficeHours\Models\ListingSchedule::findOrFail($value);
         });
 
-        // Registra comandos del starter kit cuando se ejecuta en consola.
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateSuperAdmin::class,
@@ -102,7 +98,6 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        // Permite al usuario ID 1 pasar todas las validaciones de autorizacion.
         Gate::before(function ($user) {
             return (int) $user->id === 1 ? true : null;
         });
@@ -121,7 +116,6 @@ class AppServiceProvider extends ServiceProvider
             return '/';
         });
 
-        // Registra policies para un control de acceso por recurso.
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ApiKey::class, ApiKeyPolicy::class);
         Gate::policy(WebhookEndpoint::class, WebhookEndpointPolicy::class);
@@ -130,36 +124,37 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Payment::class, PaymentPolicy::class);
         Gate::policy(Subscription::class, SubscriptionPolicy::class);
         Gate::policy(Listing::class, BusinessPolicy::class);
-        Gate::policy(\Modules\BusinessModules\Models\BusinessModule::class, BusinessModulePolicy::class);
-        Gate::policy(\Modules\Locations\Models\BusinessLocation::class, BusinessLocationPolicy::class);
-        Gate::policy(\Modules\Gallery\Models\BusinessGalleryImage::class, BusinessGalleryImagePolicy::class);
-        Gate::policy(\Modules\Hero\Models\BusinessHero::class, BusinessHeroPolicy::class);
-        Gate::policy(\Modules\About\Models\BusinessAbout::class, BusinessAboutPolicy::class);
-        Gate::policy(\Modules\Products\Models\BusinessProduct::class, BusinessProductPolicy::class);
-        Gate::policy(\Modules\Products\Models\BusinessProductCategory::class, BusinessProductCategoryPolicy::class);
-        Gate::policy(\Modules\Services\Models\BusinessService::class, BusinessServicePolicy::class);
-        Gate::policy(\Modules\Promotions\Models\BusinessPromotion::class, BusinessPromotionPolicy::class);
-        Gate::policy(\Modules\Leads\Models\BusinessLead::class, BusinessLeadPolicy::class);
-        Gate::policy(\Modules\Appointments\Models\BusinessAppointment::class, BusinessAppointmentPolicy::class);
-        Gate::policy(\Modules\Clients\Models\BusinessClient::class, BusinessClientPolicy::class);
-        Gate::policy(\Modules\Gallery\Models\BusinessGallery::class, BusinessGalleryPolicy::class);
-        Gate::policy(\Modules\Appointments\Models\BusinessAppointmentSlot::class, BusinessAppointmentSlotPolicy::class);
-        Gate::policy(\Modules\Appointments\Models\BusinessAvailability::class, BusinessAvailabilityPolicy::class);
-        Gate::policy(\Modules\SocialMedia\Models\BusinessSocialNetwork::class, BusinessSocialNetworkPolicy::class);
-        Gate::policy(\Modules\Reviews\Models\BusinessReview::class, BusinessReviewPolicy::class);
-        Gate::policy(\Modules\Faqs\Models\BusinessFaq::class, BusinessFaqPolicy::class);
-        Gate::policy(\Modules\Faqs\Models\BusinessFaqCategory::class, BusinessFaqCategoryPolicy::class);
-        Gate::policy(\Modules\Seo\Models\BusinessSeoSetting::class, BusinessSeoSettingPolicy::class);
-        Gate::policy(\Modules\Branding\Models\BusinessBrandingSetting::class, BusinessBrandingSettingPolicy::class);
-        Gate::policy(\Modules\Tasks\Models\BusinessTask::class, \App\Policies\BusinessTaskPolicy::class);
-        Gate::policy(BusinessMinisiteSetting::class, MinisitePolicy::class);
-        Gate::policy(BusinessMinisiteSection::class, MinisitePolicy::class);
-        Gate::policy(Listing::class, MinisitePolicy::class);
+        Gate::policy(\Modules\ListingModules\Models\ListingModule::class, ListingModulePolicy::class);
+        Gate::policy(\Modules\ListingLocations\Models\ListingLocation::class, ListingLocationPolicy::class);
+        Gate::policy(\Modules\ListingGallery\Models\ListingGalleryImage::class, ListingGalleryImagePolicy::class);
+        Gate::policy(\Modules\ListingHero\Models\ListingHero::class, ListingHeroPolicy::class);
+        Gate::policy(\Modules\ListingAbout\Models\ListingAbout::class, ListingAboutPolicy::class);
+        Gate::policy(\Modules\ListingProducts\Models\ListingProduct::class, ListingProductPolicy::class);
+        Gate::policy(\Modules\ListingProducts\Models\ListingProductCategory::class, ListingProductCategoryPolicy::class);
+        Gate::policy(\Modules\ListingServices\Models\ListingService::class, ListingServicePolicy::class);
+        Gate::policy(\Modules\ListingPromotions\Models\ListingPromotion::class, ListingPromotionPolicy::class);
+        Gate::policy(\Modules\ListingLeads\Models\ListingLead::class, ListingLeadPolicy::class);
+        Gate::policy(\Modules\ListingAppointments\Models\ListingAppointment::class, ListingAppointmentPolicy::class);
+        Gate::policy(\Modules\ListingClients\Models\ListingClient::class, ListingClientPolicy::class);
+        Gate::policy(\Modules\ListingGallery\Models\ListingGallery::class, ListingGalleryPolicy::class);
+        Gate::policy(\Modules\ListingAppointments\Models\ListingAppointmentSlot::class, ListingAppointmentSlotPolicy::class);
+        Gate::policy(\Modules\ListingAppointments\Models\ListingAvailability::class, ListingAvailabilityPolicy::class);
+        Gate::policy(\Modules\ListingSocialMedia\Models\ListingSocialNetwork::class, ListingSocialNetworkPolicy::class);
+        Gate::policy(\Modules\ListingReviews\Models\ListingReview::class, ListingReviewPolicy::class);
+        Gate::policy(\Modules\ListingFaqs\Models\ListingFaq::class, ListingFaqPolicy::class);
+        Gate::policy(\Modules\ListingFaqs\Models\ListingFaqCategory::class, ListingFaqCategoryPolicy::class);
+        Gate::policy(\Modules\ListingFeatures\Models\ListingFeature::class, ListingFeaturePolicy::class);
+        Gate::policy(\Modules\ListingSeo\Models\ListingSeoSetting::class, ListingSeoSettingPolicy::class);
+        Gate::policy(\Modules\ListingBranding\Models\ListingBrandingSetting::class, ListingBrandingSettingPolicy::class);
+        Gate::policy(\Modules\ListingTasks\Models\ListingTask::class, \App\Policies\ListingTaskPolicy::class);
+        Gate::policy(ListingMinisiteSetting::class, ListingMinisitePolicy::class);
+        Gate::policy(ListingMinisiteSection::class, ListingMinisitePolicy::class);
+        Gate::policy(Listing::class, ListingMinisitePolicy::class);
         Gate::policy(\Modules\Properties\Models\Property::class, \App\Policies\PropertyPolicy::class);
         Gate::policy(\Modules\Properties\Models\PropertyType::class, \App\Policies\PropertyTypePolicy::class);
-        Gate::policy(BusinessSchedule::class, BusinessSchedulePolicy::class);
-        Gate::policy(\Modules\TeamMembers\Models\BusinessTeamMember::class, BusinessTeamMemberPolicy::class);
-        Gate::policy(\Modules\Packages\Models\BusinessPackage::class, BusinessPackagePolicy::class);
+        Gate::policy(ListingSchedule::class, ListingSchedulePolicy::class);
+        Gate::policy(\Modules\ListingTeamMembers\Models\ListingTeamMember::class, ListingTeamMemberPolicy::class);
+        Gate::policy(\Modules\ListingPackages\Models\ListingPackage::class, ListingPackagePolicy::class);
 
         PropertyType::observe(PropertyTypeObserver::class);
 

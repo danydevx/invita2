@@ -1,0 +1,13 @@
+{
+    "name": "ListingAbout",
+    "alias": "listingabout",
+    "description": "About section module for listings",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingAbout\\Providers\\ListingAboutServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

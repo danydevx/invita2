@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuCategory;
-use Modules\RestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuCategory;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -252,7 +252,7 @@ class MenuProductController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\RestaurantMenu\Entities\MenuProduct::where('id', $id)
+                \Modules\ListingRestaurantMenu\Entities\MenuProduct::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
@@ -273,7 +273,7 @@ class MenuProductController extends Controller
 
         $count = count($data['ids']);
 
-        $products = \Modules\RestaurantMenu\Entities\MenuProduct::where('listing_id', $business->id)
+        $products = \Modules\ListingRestaurantMenu\Entities\MenuProduct::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->get();
 

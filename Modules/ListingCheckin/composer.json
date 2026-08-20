@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingcheckin",
+    "description": "Checkin module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingCheckin\\": "app/",
+            "Modules\\ListingCheckin\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingCheckin\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

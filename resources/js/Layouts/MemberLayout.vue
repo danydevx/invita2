@@ -29,9 +29,10 @@
 
         <div class="sidebar-section">
           <div class="sidebar-section-title">Mi Negocio</div>
-          
+
           <template v-if="primaryBusiness">
             <Link
+              v-if="hasRealListing"
               :href="`/member/listings/${primaryBusiness.id}/modules`"
               class="sidebar-link"
               :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/modules`) }"
@@ -41,6 +42,7 @@
             </Link>
 
             <Link
+              v-if="hasRealListing"
               :href="`/member/listings/${primaryBusiness.id}/edit`"
               class="sidebar-link"
               :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/edit`) }"
@@ -49,7 +51,18 @@
               <span>Editar negocio</span>
             </Link>
 
+            <Link
+              v-else
+              href="/member/listings/create"
+              class="sidebar-link"
+              :class="{ active: isActive('/member/listings/create') }"
+            >
+              <i class="bi bi-plus-circle"></i>
+              <span>Crear negocio</span>
+            </Link>
+
             <a
+              v-if="hasRealListing"
               href="#"
               class="sidebar-link"
               :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/team-members`) || isActive(`/member/listings/${primaryBusiness.id}/team-member-positions`) }"
@@ -78,72 +91,74 @@
               </Link>
             </div>
 
-            <Link
-              :href="`/member/listings/${primaryBusiness.id}/packages`"
-              class="sidebar-link"
-              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/packages`) }"
-            >
-              <i class="bi bi-box-seam"></i>
-              <span>Paquetes</span>
-            </Link>
-
-            <a
-              href="#"
-              class="sidebar-link"
-              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) || isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
-              @click.prevent="productsSubmenuOpen = !productsSubmenuOpen"
-            >
-              <i class="bi bi-cart"></i>
-              <span>Productos</span>
-              <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': productsSubmenuOpen }"></i>
-            </a>
-            <div v-show="productsSubmenuOpen" class="sidebar-submenu">
+            <template v-if="hasRealListing">
               <Link
-                :href="`/member/listings/${primaryBusiness.id}/products`"
-                class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) }"
+                :href="`/member/listings/${primaryBusiness.id}/packages`"
+                class="sidebar-link"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/packages`) }"
               >
-                <i class="bi bi-list"></i>
-                <span>Lista</span>
+                <i class="bi bi-box-seam"></i>
+                <span>Paquetes</span>
               </Link>
-              <Link
-                :href="`/member/listings/${primaryBusiness.id}/product-categories`"
-                class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
-              >
-                <i class="bi bi-folder"></i>
-                <span>Categorías</span>
-              </Link>
-            </div>
 
-            <a
-              href="#"
-              class="sidebar-link"
-              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) || isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
-              @click.prevent="menuSubmenuOpen = !menuSubmenuOpen"
-            >
-              <i class="bi bi-cup-hot"></i>
-              <span>Menú Restaurante</span>
-              <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': menuSubmenuOpen }"></i>
-            </a>
-            <div v-show="menuSubmenuOpen" class="sidebar-submenu">
-              <Link
-                :href="`/member/listings/${primaryBusiness.id}/menu-products`"
-                class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) }"
+              <a
+                href="#"
+                class="sidebar-link"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) || isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
+                @click.prevent="productsSubmenuOpen = !productsSubmenuOpen"
               >
-                <i class="bi bi-list"></i>
+                <i class="bi bi-cart"></i>
                 <span>Productos</span>
-              </Link>
-              <Link
-                :href="`/member/listings/${primaryBusiness.id}/menu-categories`"
-                class="sidebar-link sidebar-link-sub"
-                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
+                <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': productsSubmenuOpen }"></i>
+              </a>
+              <div v-show="productsSubmenuOpen" class="sidebar-submenu">
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/products`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/products`) }"
+                >
+                  <i class="bi bi-list"></i>
+                  <span>Lista</span>
+                </Link>
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/product-categories`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/product-categories`) }"
+                >
+                  <i class="bi bi-folder"></i>
+                  <span>Categorías</span>
+                </Link>
+              </div>
+
+              <a
+                href="#"
+                class="sidebar-link"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) || isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
+                @click.prevent="menuSubmenuOpen = !menuSubmenuOpen"
               >
-                <i class="bi bi-folder"></i>
-                <span>Categorías</span>
-              </Link>
-            </div>
+                <i class="bi bi-cup-hot"></i>
+                <span>Menú Restaurante</span>
+                <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': menuSubmenuOpen }"></i>
+              </a>
+              <div v-show="menuSubmenuOpen" class="sidebar-submenu">
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/menu-products`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-products`) }"
+                >
+                  <i class="bi bi-list"></i>
+                  <span>Productos</span>
+                </Link>
+                <Link
+                  :href="`/member/listings/${primaryBusiness.id}/menu-categories`"
+                  class="sidebar-link sidebar-link-sub"
+                  :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/menu-categories`) }"
+                >
+                  <i class="bi bi-folder"></i>
+                  <span>Categorías</span>
+                </Link>
+              </div>
+            </template>
 
             <template v-if="primaryBusinessModules.length">
               <Link
@@ -348,11 +363,20 @@
                 
                 <template v-if="openBusiness === business.id">
                   <Link
+                    v-if="business.id !== 'personal'"
                     :href="`/member/listings/${business.id}/edit`"
                     class="sidebar-link ps-4"
                     :class="{ active: isActive(`/member/listings/${business.id}/edit`) }"
                   >
                     <span><i class="bi bi-pencil"></i> Editar</span>
+                  </Link>
+                  <Link
+                    v-if="business.id === 'personal'"
+                    href="/member/listings/create"
+                    class="sidebar-link ps-4"
+                    :class="{ active: isActive('/member/listings/create') }"
+                  >
+                    <span><i class="bi bi-plus-circle"></i> Crear negocio</span>
                   </Link>
                   <Link
                     v-for="mod in business.modules"
@@ -500,6 +524,10 @@ const toggleBusiness = (id) => {
 
 const primaryBusiness = computed(() => {
   return businessMenu.value[0] || null
+})
+
+const hasRealListing = computed(() => {
+  return primaryBusiness.value && primaryBusiness.value.id !== 'personal'
 })
 
 const primaryBusinessModules = computed(() => {

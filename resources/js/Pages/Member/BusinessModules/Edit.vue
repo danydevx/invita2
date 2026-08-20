@@ -17,21 +17,12 @@
       </div>
     </div>
 
-    <div class="alert alert-info d-flex align-items-center gap-2 mb-4" role="alert">
-      <i class="bi bi-info-circle"></i>
-      <div>
-        Los modulos marcados con <span class="badge bg-danger ms-1"><i class="bi bi-lock"></i> Requiere upgrade</span> no estan incluidos en tu plan actual.
-        <span v-if="planName"> Tu plan: <strong>{{ planName }}</strong></span>
-      </div>
-    </div>
-
     <div class="row g-3">
       <div class="col-6 col-md-4 col-lg-3" v-for="mod in localModules" :key="mod.id">
         <div
           class="card border-0 shadow-sm h-100"
           :class="{
             'opacity-50': !mod.is_enabled,
-            'border-danger': isLocked(mod),
           }"
         >
           <div v-if="mod.module_image" class="card-img-top overflow-hidden" style="height: 100px;">
@@ -48,12 +39,8 @@
               <div class="flex-grow-1 min-width-0">
                 <h3 class="h6 mb-0 small fw-semibold text-truncate d-flex align-items-center gap-2">
                   {{ mod.module_name }}
-                  <span v-if="isLocked(mod)" class="badge bg-danger ms-auto">
-                    <i class="bi bi-lock"></i>
-                  </span>
                 </h3>
-                <span v-if="isLocked(mod)" class="badge bg-danger">Requiere upgrade</span>
-                <span v-else-if="!mod.is_enabled" class="badge bg-secondary">Inactivo</span>
+                <span v-if="!mod.is_enabled" class="badge bg-secondary">Inactivo</span>
                 <span v-else class="badge bg-success">Activo</span>
               </div>
             </div>
@@ -61,23 +48,17 @@
             <div class="d-flex flex-column gap-2">
               <button
                 class="btn btn-primary btn-sm"
-                :class="{ 'disabled': !mod.is_enabled || isLocked(mod) }"
-                @click="!isLocked(mod) && mod.is_enabled && goToModule(mod)"
+                :class="{ 'disabled': !mod.is_enabled }"
+                @click="mod.is_enabled && goToModule(mod)"
               >
                 <i class="bi bi-eye me-1"></i>Ver Contenido
               </button>
               <button
                 class="btn btn-sm"
-                :class="isLocked(mod) ? 'btn-secondary' : (mod.is_enabled ? 'btn-outline-danger' : 'btn-success')"
-                @click="!isLocked(mod) && toggleModule(mod)"
-                :disabled="saving === mod.id || isLocked(mod)"
+                :class="mod.is_enabled ? 'btn-outline-danger' : 'btn-success'"
+                @click="toggleModule(mod)"
               >
-                <template v-if="isLocked(mod)">
-                  <i class="bi bi-lock me-1"></i>Bloqueado
-                </template>
-                <template v-else>
-                  <i class="bi bi-power me-1"></i>{{ mod.is_enabled ? 'Desactivar' : 'Activar' }}
-                </template>
+                <i class="bi bi-power me-1"></i>{{ mod.is_enabled ? 'Desactivar' : 'Activar' }}
               </button>
             </div>
           </div>
@@ -109,10 +90,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  planModules: {
-    type: Array,
-    default: () => [],
-  },
   planName: {
     type: String,
     default: '',
@@ -121,10 +98,6 @@ const props = defineProps({
 
 const localModules = ref([...props.business.modules])
 const saving = ref(null)
-
-const isLocked = (mod) => {
-  return !props.planModules.includes(mod.module_key)
-}
 
 const moduleIcons = {
   hero: 'bi bi-house',
@@ -186,10 +159,6 @@ const goToModule = (mod) => {
 }
 
 const toggleModule = (mod) => {
-  if (isLocked(mod)) {
-    return
-  }
-
   const message = mod.is_enabled
     ? `Desactivar el modulo "${mod.module_name}"? El contenido no aparecera en el minisitio.`
     : `Activar el modulo "${mod.module_name}"?`

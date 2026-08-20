@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\Branding\Models\BusinessBrandingSetting;
+use Modules\ListingBranding\Models\ListingBrandingSetting;
 use Modules\Listings\Models\Listing;
 
 class BrandingController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('updateForBusiness', [BusinessBrandingSetting::class, $business]);
+        $this->authorize('updateForBusiness', [ListingBrandingSetting::class, $business]);
 
-        $branding = BusinessBrandingSetting::where('listing_id', $business->id)->first();
+        $branding = ListingBrandingSetting::where('listing_id', $business->id)->first();
 
         return Inertia::render('Member/Branding/Index', [
             'business' => [
@@ -27,7 +27,7 @@ class BrandingController extends Controller
 
     public function update(Request $request, Listing $business)
     {
-        $this->authorize('updateForBusiness', [BusinessBrandingSetting::class, $business]);
+        $this->authorize('updateForBusiness', [ListingBrandingSetting::class, $business]);
 
         $validated = $request->validate([
             'colors' => 'nullable|string',
@@ -48,7 +48,7 @@ class BrandingController extends Controller
         $sectionVariants = $validated['section_variants'] ? json_decode($validated['section_variants'], true) : null;
         $animations = $validated['animations'] ? json_decode($validated['animations'], true) : null;
 
-        $branding = BusinessBrandingSetting::updateOrCreate(
+        $branding = ListingBrandingSetting::updateOrCreate(
             ['listing_id' => $business->id],
             [
                 'colors' => $colors,

@@ -1,0 +1,11 @@
+{
+    "name": "ListingClients",
+    "alias": "listingclients",
+    "description": "Clients module for business contact records",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingClients\\Providers\\ListingClientsServiceProvider"
+    ],
+    "files": []
+}

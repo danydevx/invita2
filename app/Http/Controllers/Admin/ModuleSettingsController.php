@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BusinessModuleDefinition;
+use App\Models\ModuleDefinition;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,7 +11,7 @@ class ModuleSettingsController extends Controller
 {
     public function show(Request $request, string $moduleKey)
     {
-        $definition = BusinessModuleDefinition::where('key', $moduleKey)->firstOrFail();
+        $definition = ModuleDefinition::where('key', $moduleKey)->firstOrFail();
 
         if (!$definition->has_settings) {
             abort(404);
@@ -32,7 +32,7 @@ class ModuleSettingsController extends Controller
 
     public function update(Request $request, string $moduleKey)
     {
-        $definition = BusinessModuleDefinition::where('key', $moduleKey)->firstOrFail();
+        $definition = ModuleDefinition::where('key', $moduleKey)->firstOrFail();
 
         if (!$definition->has_settings) {
             abort(404);

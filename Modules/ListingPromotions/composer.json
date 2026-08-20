@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingpromotions",
+    "description": "Promotions module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingPromotions\\": "app/",
+            "Modules\\ListingPromotions\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingPromotions\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

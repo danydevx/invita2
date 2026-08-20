@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Clients\Models\BusinessClient;
+use Modules\ListingClients\Models\ListingClient;
 
 class ClientController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessClient::class, $business]);
+        $this->authorize('viewAny', [ListingClient::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = trim((string) $request->get('search', ''));
@@ -42,7 +42,7 @@ class ClientController extends Controller
         $clients = $query->paginate($perPage);
 
         $dataTable = [
-            'data' => collect($clients->items())->map(function (BusinessClient $client) {
+            'data' => collect($clients->items())->map(function (ListingClient $client) {
                 return [
                     'id' => $client->id,
                     'customer_name' => $client->customer_name,
@@ -76,7 +76,7 @@ class ClientController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessClient::class, $business]);
+        $this->authorize('create', [ListingClient::class, $business]);
 
         return Inertia::render('Member/Clients/Create', [
             'business' => [
@@ -88,7 +88,7 @@ class ClientController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessClient::class, $business]);
+        $this->authorize('create', [ListingClient::class, $business]);
 
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
@@ -125,10 +125,10 @@ class ClientController extends Controller
             ->with('success', 'Cliente creado correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessClient $client)
+    public function edit(Request $request, Listing $business, ListingClient $client)
     {
         abort_unless($client->listing_id === $business->id, 404);
-        $this->authorize('update', [BusinessClient::class, $client]);
+        $this->authorize('update', [ListingClient::class, $client]);
 
         return Inertia::render('Member/Clients/Edit', [
             'business' => [
@@ -157,10 +157,10 @@ class ClientController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingClient $client, ActivityService $activity)
     {
         abort_unless($client->listing_id === $business->id, 404);
-        $this->authorize('update', [BusinessClient::class, $client]);
+        $this->authorize('update', [ListingClient::class, $client]);
 
         $data = $request->validate([
             'customer_name' => ['required', 'string', 'max:150'],
@@ -197,10 +197,10 @@ class ClientController extends Controller
             ->with('success', 'Cliente actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingClient $client, ActivityService $activity)
     {
         abort_unless($client->listing_id === $business->id, 404);
-        $this->authorize('delete', [BusinessClient::class, $client]);
+        $this->authorize('delete', [ListingClient::class, $client]);
 
         $activity->log('client_deleted', [
             'actor' => $request->user(),
@@ -216,17 +216,17 @@ class ClientController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [BusinessClient::class, $business]);
+        $this->authorize('deleteAny', [ListingClient::class, $business]);
 
         $data = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => [
                 'integer',
-                Rule::exists('business_clients', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_clients', 'id')->where('listing_id', $business->id),
             ],
         ]);
 
-        $count = BusinessClient::where('listing_id', $business->id)
+        $count = ListingClient::where('listing_id', $business->id)
             ->whereIn('id', $data['ids'])
             ->delete();
 
@@ -237,10 +237,10 @@ class ClientController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-    public function clone(Request $request, Listing $business, BusinessClient $client, ActivityService $activity)
+    public function clone(Request $request, Listing $business, ListingClient $client, ActivityService $activity)
     {
         abort_unless($client->listing_id === $business->id, 404);
-        $this->authorize('create', [BusinessClient::class, $business]);
+        $this->authorize('create', [ListingClient::class, $business]);
 
         $clonedClient = $business->clients()->create([
             'customer_name' => $client->customer_name . ' (copia)',

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Services\ActivityService;
@@ -101,6 +103,17 @@ class RegisterController extends Controller
 
         if ($role) {
             $user->syncRoles([$role]);
+        }
+
+        $freePlan = Plan::where('slug', 'free')->where('is_active', true)->first();
+        if ($freePlan) {
+            Subscription::create([
+                'user_id' => $user->id,
+                'plan_id' => $freePlan->id,
+                'status' => 'active',
+                'starts_at' => now(),
+                'ends_at' => null,
+            ]);
         }
 
         if (! empty($data['invite'])) {

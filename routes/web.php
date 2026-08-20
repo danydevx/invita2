@@ -3,25 +3,25 @@
 use App\Http\Controllers\Admin\ActivityController as AdminActivityController;
 use App\Http\Controllers\Admin\ApiKeyController as AdminApiKeyController;
 use App\Http\Controllers\Admin\AutomationController;
-use App\Http\Controllers\Admin\BusinessAiChatbotController;
-use Modules\AiChatbot\Http\Controllers\Admin\ChatbotPresetController;
-use Modules\AiChatbot\Http\Controllers\Admin\ChatbotPersonalityController;
-use Modules\AiChatbot\Http\Controllers\Admin\AiChatbotSettingsController;
-use App\Http\Controllers\Admin\BusinessContactFormController;
-use App\Http\Controllers\Admin\BusinessContentController;
+use App\Http\Controllers\Admin\ListingAiChatbotController;
+use Modules\ListingAiChatbot\Http\Controllers\Admin\ChatbotPresetController;
+use Modules\ListingAiChatbot\Http\Controllers\Admin\ChatbotPersonalityController;
+use Modules\ListingAiChatbot\Http\Controllers\Admin\AiChatbotSettingsController;
+use App\Http\Controllers\Admin\ListingContactFormController;
+use App\Http\Controllers\Admin\ListingContentController;
 use App\Http\Controllers\Admin\ListingController;
-use App\Http\Controllers\Admin\BusinessHeroController;
-use App\Http\Controllers\Admin\BusinessLeadsController;
-use App\Http\Controllers\Admin\BusinessModuleController;
-use App\Http\Controllers\Admin\BusinessModuleDefinitionController;
-use App\Http\Controllers\Admin\BusinessPromotionController;
-use App\Http\Controllers\Admin\BusinessReviewController;
-use App\Http\Controllers\Admin\BusinessSocialNetworkController;
+use App\Http\Controllers\Admin\ListingHeroController;
+use App\Http\Controllers\Admin\ListingLeadsController;
+use App\Http\Controllers\Admin\ListingModuleController;
+use App\Http\Controllers\Admin\ModuleDefinitionController;
+use App\Http\Controllers\Admin\ListingPromotionController;
+use App\Http\Controllers\Admin\ListingReviewController;
+use App\Http\Controllers\Admin\ListingSocialNetworkController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\FeatureFlagController;
 use App\Http\Controllers\Admin\HelpArticleController;
-use App\Http\Controllers\Admin\IndustryController;
+
 use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\Admin\InvoiceController as AdminInvoiceController;
 use App\Http\Controllers\Admin\LegalDocumentController;
@@ -31,7 +31,7 @@ use App\Http\Controllers\Admin\MenuProductImageController;
 use App\Http\Controllers\Admin\MenuProductVariantController;
 use App\Http\Controllers\Admin\MessageTemplateController;
 use App\Http\Controllers\Admin\MinisiteThemeController;
-use Modules\Minisite\Http\Controllers\Admin\MinisiteController as AdminMinisiteController;
+use Modules\ListingMinisite\Http\Controllers\Admin\ListingMinisiteController as AdminListingMinisiteController;
 use App\Http\Controllers\Admin\ModuleSettingsController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -99,12 +99,12 @@ use App\Http\Controllers\Member\PlanSelectionController;
 use App\Http\Controllers\Member\PreferenceController as MemberPreferenceController;
 use App\Http\Controllers\Member\ProductCategoryController as MemberProductCategoryController;
 use App\Http\Controllers\Member\ProductController;
-use Modules\Products\Http\Controllers\ProductImageController;
+use Modules\ListingProducts\Http\Controllers\ListingProductImageController;
 use App\Http\Controllers\Member\PromotionController;
 use App\Http\Controllers\Member\ReviewController;
 use App\Http\Controllers\Member\SeoController;
 use App\Http\Controllers\Member\ServiceController;
-use Modules\Services\Http\Controllers\ServiceImageController;
+use Modules\ListingServices\Http\Controllers\ServiceImageController;
 use Modules\Properties\Http\Controllers\Member\PropertyImageController;
 use App\Http\Controllers\Member\SessionController as MemberSessionController;
 use App\Http\Controllers\Member\SlotController;
@@ -115,8 +115,8 @@ use App\Http\Controllers\Member\TeamMemberController;
 use App\Http\Controllers\Member\TeamMemberPositionController;
 use App\Http\Controllers\Member\PackageController;
 use App\Http\Controllers\Member\WebhookController as MemberWebhookController;
-use Modules\Minisite\Http\Controllers\Member\MinisiteController;
-use Modules\Minisite\Http\Controllers\Member\MinisiteSectionController;
+use Modules\ListingMinisite\Http\Controllers\Member\ListingMinisiteController;
+use Modules\ListingMinisite\Http\Controllers\Member\ListingMinisiteSectionController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\Public\BusinessController as PublicBusinessController;
 use App\Http\Controllers\Public\DirectoryController;
@@ -126,9 +126,9 @@ use App\Http\Controllers\StripeWebhookController;
 use App\Services\SettingService;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Modules\Features\Http\Controllers\Member\FeatureController;
-use Modules\Features\Http\Controllers\Public\FeatureController as PublicFeatureController;
-use Modules\Tasks\Http\Controllers\Member\TaskController;
+use Modules\ListingFeatures\Http\Controllers\Member\FeatureController;
+use Modules\ListingFeatures\Http\Controllers\Public\FeatureController as PublicFeatureController;
+use Modules\ListingTasks\Http\Controllers\Member\TaskController;
 
 require __DIR__ . '/ai_chatbot.php';
 require __DIR__ . '/minisite_ai_chatbot.php';
@@ -272,10 +272,10 @@ Route::get('/member/dashboard', [DashboardController::class, 'index'])
 Route::get('/member/business-modules', fn () => redirect()->route('member.listings.index'))
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.index');
-Route::get('/member/listings', [App\Http\Controllers\Member\BusinessModuleController::class, 'index'])
+Route::get('/member/listings', [App\Http\Controllers\Member\ListingModuleController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.index');
-Route::get('/member/listings/{listing}/modules', [BusinessModulesController::class, 'show'])
+Route::get('/member/listings/{listing}/modules', [App\Http\Controllers\Member\ListingModulesController::class, 'show'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.modules');
 Route::get('/member/listings/create', [App\Http\Controllers\Member\BusinessController::class, 'create'])
@@ -284,10 +284,10 @@ Route::get('/member/listings/create', [App\Http\Controllers\Member\BusinessContr
 Route::post('/member/listings', [App\Http\Controllers\Member\BusinessController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.store');
-Route::get('/member/listings/{listing}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'edit'])
+Route::get('/member/listings/{listing}/modules', [App\Http\Controllers\Member\ListingModuleController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.edit');
-Route::put('/member/listings/{listing}/modules', [App\Http\Controllers\Member\BusinessModuleController::class, 'update'])
+Route::put('/member/listings/{listing}/modules', [App\Http\Controllers\Member\ListingModuleController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.business-modules.update');
 Route::get('/member/listings/{listing}/edit', [App\Http\Controllers\Member\BusinessController::class, 'edit'])
@@ -472,35 +472,35 @@ Route::delete('/member/listings/{listing}/faq-categories/{category}', [FaqCatego
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.faq-categories.destroy');
 
-Route::get('/member/listings/{listing}/minisite', [MinisiteController::class, 'index'])
+Route::get('/member/listings/{listing}/minisite', [ListingMinisiteController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.index');
-Route::post('/member/listings/{listing}/minisite', [MinisiteController::class, 'store'])
+Route::post('/member/listings/{listing}/minisite', [ListingMinisiteController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.store');
-Route::put('/member/listings/{listing}/minisite', [MinisiteController::class, 'update'])
+Route::put('/member/listings/{listing}/minisite', [ListingMinisiteController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.update');
 
-Route::get('/member/listings/{listing}/minisite/sections', [MinisiteSectionController::class, 'index'])
+Route::get('/member/listings/{listing}/minisite/sections', [ListingMinisiteSectionController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.index');
-Route::get('/member/listings/{listing}/minisite/sections/create', [MinisiteSectionController::class, 'create'])
+Route::get('/member/listings/{listing}/minisite/sections/create', [ListingMinisiteSectionController::class, 'create'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.create');
-Route::post('/member/listings/{listing}/minisite/sections', [MinisiteSectionController::class, 'store'])
+Route::post('/member/listings/{listing}/minisite/sections', [ListingMinisiteSectionController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.store');
-Route::get('/member/listings/{listing}/minisite/sections/{section}/edit', [MinisiteSectionController::class, 'edit'])
+Route::get('/member/listings/{listing}/minisite/sections/{section}/edit', [ListingMinisiteSectionController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.edit');
-Route::put('/member/listings/{listing}/minisite/sections/{section}', [MinisiteSectionController::class, 'update'])
+Route::put('/member/listings/{listing}/minisite/sections/{section}', [ListingMinisiteSectionController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.update');
-Route::delete('/member/listings/{listing}/minisite/sections/{section}', [MinisiteSectionController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/minisite/sections/{section}', [ListingMinisiteSectionController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.destroy');
-Route::post('/member/listings/{listing}/minisite/sections/reorder', [MinisiteSectionController::class, 'reorder'])
+Route::post('/member/listings/{listing}/minisite/sections/reorder', [ListingMinisiteSectionController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.minisite.sections.reorder');
 
@@ -668,10 +668,10 @@ Route::post('/member/listings/{listing}/products/reorder', [ProductController::c
 Route::post('/member/listings/{listing}/products/bulk-delete', [ProductController::class, 'bulkDelete'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.products.bulk-delete');
-Route::post('/member/listings/{listing}/products/{product}/images', [ProductImageController::class, 'store'])
+Route::post('/member/listings/{listing}/products/{product}/images', [ListingProductImageController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.products.images.store');
-Route::delete('/member/listings/{listing}/products/{product}/images/{image}', [ProductImageController::class, 'destroy'])
+Route::delete('/member/listings/{listing}/products/{product}/images/{image}', [ListingProductImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.products.images.destroy');
 
@@ -1187,11 +1187,9 @@ Route::post('/admin/api-explorer/fetch', [App\Http\Controllers\Admin\ApiExplorer
 
 Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function () {
 
-    Route::get('/business-modules', [BusinessModuleController::class, 'index'])
-        ->name('admin.business-modules.index');
-    Route::get('/listings/{listing}/modules', [BusinessModuleController::class, 'edit'])
+    Route::get('/listings/{listing}/modules', [ListingModuleController::class, 'edit'])
         ->name('admin.business-modules.edit');
-    Route::put('/listings/{listing}/modules', [BusinessModuleController::class, 'update'])
+    Route::put('/listings/{listing}/modules', [ListingModuleController::class, 'update'])
         ->name('admin.business-modules.update');
 
     Route::get('/listings', [ListingController::class, 'index'])
@@ -1207,123 +1205,123 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])
         ->name('admin.listings.destroy');
 
-    Route::get('/listings/{listing}/hero', [BusinessHeroController::class, 'index'])
+    Route::get('/listings/{listing}/hero', [ListingHeroController::class, 'index'])
         ->name('admin.business.hero.index');
-    Route::post('/listings/{listing}/hero', [BusinessHeroController::class, 'update'])
+    Route::post('/listings/{listing}/hero', [ListingHeroController::class, 'update'])
         ->name('admin.business.hero.update');
 
-    Route::get('/listings/{listing}/social-networks', [BusinessSocialNetworkController::class, 'index'])
+    Route::get('/listings/{listing}/social-networks', [ListingSocialNetworkController::class, 'index'])
         ->name('admin.business.social-networks.index');
-    Route::post('/listings/{listing}/social-networks', [BusinessSocialNetworkController::class, 'store'])
+    Route::post('/listings/{listing}/social-networks', [ListingSocialNetworkController::class, 'store'])
         ->name('admin.business.social-networks.store');
-    Route::post('/listings/{listing}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'update'])
+    Route::post('/listings/{listing}/social-networks/{socialNetwork}', [ListingSocialNetworkController::class, 'update'])
         ->name('admin.business.social-networks.update');
-    Route::delete('/listings/{listing}/social-networks/{socialNetwork}', [BusinessSocialNetworkController::class, 'destroy'])
+    Route::delete('/listings/{listing}/social-networks/{socialNetwork}', [ListingSocialNetworkController::class, 'destroy'])
         ->name('admin.business.social-networks.destroy');
 
-    Route::get('/listings/{listing}/locations', [BusinessContentController::class, 'locationsIndex'])
+    Route::get('/listings/{listing}/locations', [ListingContentController::class, 'locationsIndex'])
         ->name('admin.business.locations.index');
-    Route::get('/listings/{listing}/locations/create', [BusinessContentController::class, 'locationsCreate'])
+    Route::get('/listings/{listing}/locations/create', [ListingContentController::class, 'locationsCreate'])
         ->name('admin.business.locations.create');
-    Route::post('/listings/{listing}/locations', [BusinessContentController::class, 'locationsStore'])
+    Route::post('/listings/{listing}/locations', [ListingContentController::class, 'locationsStore'])
         ->name('admin.business.locations.store');
-    Route::get('/listings/{listing}/locations/{location}/edit', [BusinessContentController::class, 'locationsEdit'])
+    Route::get('/listings/{listing}/locations/{location}/edit', [ListingContentController::class, 'locationsEdit'])
         ->name('admin.business.locations.edit');
-    Route::put('/listings/{listing}/locations/{location}', [BusinessContentController::class, 'locationsUpdate'])
+    Route::put('/listings/{listing}/locations/{location}', [ListingContentController::class, 'locationsUpdate'])
         ->name('admin.business.locations.update');
-    Route::delete('/listings/{listing}/locations/{location}', [BusinessContentController::class, 'locationsDestroy'])
+    Route::delete('/listings/{listing}/locations/{location}', [ListingContentController::class, 'locationsDestroy'])
         ->name('admin.business.locations.destroy');
 
-    Route::get('/listings/{listing}/services', [BusinessContentController::class, 'servicesIndex'])
+    Route::get('/listings/{listing}/services', [ListingContentController::class, 'servicesIndex'])
         ->name('admin.business.services.index');
-    Route::get('/listings/{listing}/services/create', [BusinessContentController::class, 'servicesCreate'])
+    Route::get('/listings/{listing}/services/create', [ListingContentController::class, 'servicesCreate'])
         ->name('admin.business.services.create');
-    Route::post('/listings/{listing}/services', [BusinessContentController::class, 'servicesStore'])
+    Route::post('/listings/{listing}/services', [ListingContentController::class, 'servicesStore'])
         ->name('admin.business.services.store');
-    Route::get('/listings/{listing}/services/{service}/edit', [BusinessContentController::class, 'servicesEdit'])
+    Route::get('/listings/{listing}/services/{service}/edit', [ListingContentController::class, 'servicesEdit'])
         ->name('admin.business.services.edit');
-    Route::put('/listings/{listing}/services/{service}', [BusinessContentController::class, 'servicesUpdate'])
+    Route::put('/listings/{listing}/services/{service}', [ListingContentController::class, 'servicesUpdate'])
         ->name('admin.business.services.update');
-    Route::delete('/listings/{listing}/services/{service}', [BusinessContentController::class, 'servicesDestroy'])
+    Route::delete('/listings/{listing}/services/{service}', [ListingContentController::class, 'servicesDestroy'])
         ->name('admin.business.services.destroy');
 
-    Route::get('/listings/{listing}/faqs', [BusinessContentController::class, 'faqsIndex'])
+    Route::get('/listings/{listing}/faqs', [ListingContentController::class, 'faqsIndex'])
         ->name('admin.business.faqs.index');
-    Route::get('/listings/{listing}/faqs/create', [BusinessContentController::class, 'faqsCreate'])
+    Route::get('/listings/{listing}/faqs/create', [ListingContentController::class, 'faqsCreate'])
         ->name('admin.business.faqs.create');
-    Route::post('/listings/{listing}/faqs', [BusinessContentController::class, 'faqsStore'])
+    Route::post('/listings/{listing}/faqs', [ListingContentController::class, 'faqsStore'])
         ->name('admin.business.faqs.store');
-    Route::get('/listings/{listing}/faqs/{faq}/edit', [BusinessContentController::class, 'faqsEdit'])
+    Route::get('/listings/{listing}/faqs/{faq}/edit', [ListingContentController::class, 'faqsEdit'])
         ->name('admin.business.faqs.edit');
-    Route::put('/listings/{listing}/faqs/{faq}', [BusinessContentController::class, 'faqsUpdate'])
+    Route::put('/listings/{listing}/faqs/{faq}', [ListingContentController::class, 'faqsUpdate'])
         ->name('admin.business.faqs.update');
-    Route::delete('/listings/{listing}/faqs/{faq}', [BusinessContentController::class, 'faqsDestroy'])
+    Route::delete('/listings/{listing}/faqs/{faq}', [ListingContentController::class, 'faqsDestroy'])
         ->name('admin.business.faqs.destroy');
 
-    Route::get('/listings/{listing}/faq-categories', [BusinessContentController::class, 'faqCategoriesIndex'])
+    Route::get('/listings/{listing}/faq-categories', [ListingContentController::class, 'faqCategoriesIndex'])
         ->name('admin.business.faq-categories.index');
-    Route::post('/listings/{listing}/faq-categories', [BusinessContentController::class, 'faqCategoriesStore'])
+    Route::post('/listings/{listing}/faq-categories', [ListingContentController::class, 'faqCategoriesStore'])
         ->name('admin.business.faq-categories.store');
-    Route::put('/listings/{listing}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesUpdate'])
+    Route::put('/listings/{listing}/faq-categories/{category}', [ListingContentController::class, 'faqCategoriesUpdate'])
         ->name('admin.business.faq-categories.update');
-    Route::delete('/listings/{listing}/faq-categories/{category}', [BusinessContentController::class, 'faqCategoriesDestroy'])
+    Route::delete('/listings/{listing}/faq-categories/{category}', [ListingContentController::class, 'faqCategoriesDestroy'])
         ->name('admin.business.faq-categories.destroy');
 
-    Route::get('/listings/{listing}/products', [BusinessContentController::class, 'productsIndex'])
+    Route::get('/listings/{listing}/products', [ListingContentController::class, 'productsIndex'])
         ->name('admin.business.products.index');
-    Route::get('/listings/{listing}/products/create', [BusinessContentController::class, 'productsCreate'])
+    Route::get('/listings/{listing}/products/create', [ListingContentController::class, 'productsCreate'])
         ->name('admin.business.products.create');
-    Route::post('/listings/{listing}/products', [BusinessContentController::class, 'productsStore'])
+    Route::post('/listings/{listing}/products', [ListingContentController::class, 'productsStore'])
         ->name('admin.business.products.store');
-    Route::get('/listings/{listing}/products/{product}/edit', [BusinessContentController::class, 'productsEdit'])
+    Route::get('/listings/{listing}/products/{product}/edit', [ListingContentController::class, 'productsEdit'])
         ->name('admin.business.products.edit');
-    Route::put('/listings/{listing}/products/{product}', [BusinessContentController::class, 'productsUpdate'])
+    Route::put('/listings/{listing}/products/{product}', [ListingContentController::class, 'productsUpdate'])
         ->name('admin.business.products.update');
-    Route::delete('/listings/{listing}/products/{product}', [BusinessContentController::class, 'productsDestroy'])
+    Route::delete('/listings/{listing}/products/{product}', [ListingContentController::class, 'productsDestroy'])
         ->name('admin.business.products.destroy');
 
-    Route::get('/listings/{listing}/galleries', [BusinessContentController::class, 'galleriesIndex'])
+    Route::get('/listings/{listing}/galleries', [ListingContentController::class, 'galleriesIndex'])
         ->name('admin.business.galleries.index');
-    Route::get('/listings/{listing}/galleries/create', [BusinessContentController::class, 'galleriesCreate'])
+    Route::get('/listings/{listing}/galleries/create', [ListingContentController::class, 'galleriesCreate'])
         ->name('admin.business.galleries.create');
-    Route::post('/listings/{listing}/galleries', [BusinessContentController::class, 'galleriesStore'])
+    Route::post('/listings/{listing}/galleries', [ListingContentController::class, 'galleriesStore'])
         ->name('admin.business.galleries.store');
-    Route::get('/listings/{listing}/galleries/{gallery}/edit', [BusinessContentController::class, 'galleriesEdit'])
+    Route::get('/listings/{listing}/galleries/{gallery}/edit', [ListingContentController::class, 'galleriesEdit'])
         ->name('admin.business.galleries.edit');
-    Route::put('/listings/{listing}/galleries/{gallery}', [BusinessContentController::class, 'galleriesUpdate'])
+    Route::put('/listings/{listing}/galleries/{gallery}', [ListingContentController::class, 'galleriesUpdate'])
         ->name('admin.business.galleries.update');
-    Route::delete('/listings/{listing}/galleries/{gallery}', [BusinessContentController::class, 'galleriesDestroy'])
+    Route::delete('/listings/{listing}/galleries/{gallery}', [ListingContentController::class, 'galleriesDestroy'])
         ->name('admin.business.galleries.destroy');
-    Route::post('/listings/{listing}/galleries/{gallery}/set-primary', [BusinessContentController::class, 'galleriesSetPrimary'])
+    Route::post('/listings/{listing}/galleries/{gallery}/set-primary', [ListingContentController::class, 'galleriesSetPrimary'])
         ->name('admin.business.galleries.set-primary');
 
-    Route::get('/listings/{listing}/gallery', [BusinessContentController::class, 'galleryIndex'])
+    Route::get('/listings/{listing}/gallery', [ListingContentController::class, 'galleryIndex'])
         ->name('admin.business.gallery.index');
-    Route::get('/listings/{listing}/gallery/{gallery}', [BusinessContentController::class, 'galleryIndex'])
+    Route::get('/listings/{listing}/gallery/{gallery}', [ListingContentController::class, 'galleryIndex'])
         ->where('gallery', '[0-9]+')
         ->name('admin.business.gallery.show');
-    Route::post('/listings/{listing}/gallery', [BusinessContentController::class, 'galleryStore'])
+    Route::post('/listings/{listing}/gallery', [ListingContentController::class, 'galleryStore'])
         ->name('admin.business.gallery.store');
-    Route::put('/listings/{listing}/gallery/{image}', [BusinessContentController::class, 'galleryUpdate'])
+    Route::put('/listings/{listing}/gallery/{image}', [ListingContentController::class, 'galleryUpdate'])
         ->name('admin.business.gallery.update');
-    Route::delete('/listings/{listing}/gallery/{image}', [BusinessContentController::class, 'galleryDestroy'])
+    Route::delete('/listings/{listing}/gallery/{image}', [ListingContentController::class, 'galleryDestroy'])
         ->name('admin.business.gallery.destroy');
 
-    Route::get('/listings/{listing}/appointments', [BusinessContentController::class, 'appointmentsIndex'])
+    Route::get('/listings/{listing}/appointments', [ListingContentController::class, 'appointmentsIndex'])
         ->name('admin.business.appointments.index');
-    Route::get('/listings/{listing}/appointments/create', [BusinessContentController::class, 'appointmentsCreate'])
+    Route::get('/listings/{listing}/appointments/create', [ListingContentController::class, 'appointmentsCreate'])
         ->name('admin.business.appointments.create');
-    Route::post('/listings/{listing}/appointments', [BusinessContentController::class, 'appointmentsStore'])
+    Route::post('/listings/{listing}/appointments', [ListingContentController::class, 'appointmentsStore'])
         ->name('admin.business.appointments.store');
-    Route::get('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsShow'])
+    Route::get('/listings/{listing}/appointments/{appointment}', [ListingContentController::class, 'appointmentsShow'])
         ->name('admin.business.appointments.show');
-    Route::get('/listings/{listing}/appointments/{appointment}/edit', [BusinessContentController::class, 'appointmentsEdit'])
+    Route::get('/listings/{listing}/appointments/{appointment}/edit', [ListingContentController::class, 'appointmentsEdit'])
         ->name('admin.business.appointments.edit');
-    Route::put('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsUpdate'])
+    Route::put('/listings/{listing}/appointments/{appointment}', [ListingContentController::class, 'appointmentsUpdate'])
         ->name('admin.business.appointments.update');
-    Route::delete('/listings/{listing}/appointments/{appointment}', [BusinessContentController::class, 'appointmentsDestroy'])
+    Route::delete('/listings/{listing}/appointments/{appointment}', [ListingContentController::class, 'appointmentsDestroy'])
         ->name('admin.business.appointments.destroy');
-    Route::post('/listings/{listing}/appointments/{appointment}/cancel', [BusinessContentController::class, 'appointmentsCancel'])
+    Route::post('/listings/{listing}/appointments/{appointment}/cancel', [ListingContentController::class, 'appointmentsCancel'])
         ->name('admin.business.appointments.cancel');
 
     Route::get('/listings/{listing}/slots', [AdminSlotController::class, 'index'])
@@ -1335,25 +1333,25 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::delete('/listings/{listing}/slots/{slot}', [AdminSlotController::class, 'destroy'])
         ->name('admin.business.slots.destroy');
 
-    Route::get('/listings/{listing}/leads', [BusinessLeadsController::class, 'index'])
+    Route::get('/listings/{listing}/leads', [ListingLeadsController::class, 'index'])
         ->name('admin.business.leads.index');
-    Route::get('/listings/{listing}/leads/create', [BusinessLeadsController::class, 'create'])
+    Route::get('/listings/{listing}/leads/create', [ListingLeadsController::class, 'create'])
         ->name('admin.business.leads.create');
-    Route::post('/listings/{listing}/leads', [BusinessLeadsController::class, 'store'])
+    Route::post('/listings/{listing}/leads', [ListingLeadsController::class, 'store'])
         ->name('admin.business.leads.store');
-    Route::get('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'show'])
+    Route::get('/listings/{listing}/leads/{lead}', [ListingLeadsController::class, 'show'])
         ->name('admin.business.leads.show');
-    Route::get('/listings/{listing}/leads/{lead}/edit', [BusinessLeadsController::class, 'edit'])
+    Route::get('/listings/{listing}/leads/{lead}/edit', [ListingLeadsController::class, 'edit'])
         ->name('admin.business.leads.edit');
-    Route::put('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'update'])
+    Route::put('/listings/{listing}/leads/{lead}', [ListingLeadsController::class, 'update'])
         ->name('admin.business.leads.update');
-    Route::delete('/listings/{listing}/leads/{lead}', [BusinessLeadsController::class, 'destroy'])
+    Route::delete('/listings/{listing}/leads/{lead}', [ListingLeadsController::class, 'destroy'])
         ->name('admin.business.leads.destroy');
 
-    Route::get('/listings/{listing}/contact-form/submissions', [BusinessContactFormController::class, 'submissions'])
+    Route::get('/listings/{listing}/contact-form/submissions', [ListingContactFormController::class, 'submissions'])
         ->name('admin.business.contact-form.submissions');
 
-    Route::get('/listings/{listing}/ai-chatbot', [BusinessAiChatbotController::class, 'index'])
+    Route::get('/listings/{listing}/ai-chatbot', [ListingAiChatbotController::class, 'index'])
         ->name('admin.business.ai-chatbot.index');
 
     Route::get('/modules/ai_chatbot/settings', [AiChatbotSettingsController::class, 'show'])
@@ -1403,30 +1401,30 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         return redirect()->route('admin.modules.ai-chatbot.personalities.create');
     });
 
-    Route::get('/listings/{listing}/reviews', [BusinessReviewController::class, 'index'])
+    Route::get('/listings/{listing}/reviews', [ListingReviewController::class, 'index'])
         ->name('admin.business.reviews.index');
-    Route::get('/listings/{listing}/reviews/create', [BusinessReviewController::class, 'create'])
+    Route::get('/listings/{listing}/reviews/create', [ListingReviewController::class, 'create'])
         ->name('admin.business.reviews.create');
-    Route::post('/listings/{listing}/reviews', [BusinessReviewController::class, 'store'])
+    Route::post('/listings/{listing}/reviews', [ListingReviewController::class, 'store'])
         ->name('admin.business.reviews.store');
-    Route::get('/listings/{listing}/reviews/{review}/edit', [BusinessReviewController::class, 'edit'])
+    Route::get('/listings/{listing}/reviews/{review}/edit', [ListingReviewController::class, 'edit'])
         ->name('admin.business.reviews.edit');
-    Route::put('/listings/{listing}/reviews/{review}', [BusinessReviewController::class, 'update'])
+    Route::put('/listings/{listing}/reviews/{review}', [ListingReviewController::class, 'update'])
         ->name('admin.business.reviews.update');
-    Route::delete('/listings/{listing}/reviews/{review}', [BusinessReviewController::class, 'destroy'])
+    Route::delete('/listings/{listing}/reviews/{review}', [ListingReviewController::class, 'destroy'])
         ->name('admin.business.reviews.destroy');
 
-    Route::get('/listings/{listing}/promotions', [BusinessPromotionController::class, 'index'])
+    Route::get('/listings/{listing}/promotions', [ListingPromotionController::class, 'index'])
         ->name('admin.business.promotions.index');
-    Route::get('/listings/{listing}/promotions/create', [BusinessPromotionController::class, 'create'])
+    Route::get('/listings/{listing}/promotions/create', [ListingPromotionController::class, 'create'])
         ->name('admin.business.promotions.create');
-    Route::post('/listings/{listing}/promotions', [BusinessPromotionController::class, 'store'])
+    Route::post('/listings/{listing}/promotions', [ListingPromotionController::class, 'store'])
         ->name('admin.business.promotions.store');
-    Route::get('/listings/{listing}/promotions/{promotion}/edit', [BusinessPromotionController::class, 'edit'])
+    Route::get('/listings/{listing}/promotions/{promotion}/edit', [ListingPromotionController::class, 'edit'])
         ->name('admin.business.promotions.edit');
-    Route::put('/listings/{listing}/promotions/{promotion}', [BusinessPromotionController::class, 'update'])
+    Route::put('/listings/{listing}/promotions/{promotion}', [ListingPromotionController::class, 'update'])
         ->name('admin.business.promotions.update');
-    Route::delete('/listings/{listing}/promotions/{promotion}', [BusinessPromotionController::class, 'destroy'])
+    Route::delete('/listings/{listing}/promotions/{promotion}', [ListingPromotionController::class, 'destroy'])
         ->name('admin.business.promotions.destroy');
 
     Route::get('/listings/{listing}/menu-categories', [MenuCategoryController::class, 'index'])
@@ -1712,48 +1710,29 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->middleware(['permission_or_user:subscriptions.view,1', 'module:billing'])
         ->name('admin.subscriptions.index');
 
-    Route::get('/business-module-definitions', [BusinessModuleDefinitionController::class, 'index'])
+    Route::get('/business-module-definitions', [ModuleDefinitionController::class, 'index'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.index');
-    Route::get('/business-module-definitions/create', [BusinessModuleDefinitionController::class, 'create'])
+    Route::get('/business-module-definitions/create', [ModuleDefinitionController::class, 'create'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.create');
-    Route::post('/business-module-definitions', [BusinessModuleDefinitionController::class, 'store'])
+    Route::post('/business-module-definitions', [ModuleDefinitionController::class, 'store'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.store');
-    Route::get('/business-module-definitions/{definition}/edit', [BusinessModuleDefinitionController::class, 'edit'])
+    Route::get('/business-module-definitions/{definition}/edit', [ModuleDefinitionController::class, 'edit'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.edit');
-    Route::put('/business-module-definitions/{definition}', [BusinessModuleDefinitionController::class, 'update'])
+    Route::put('/business-module-definitions/{definition}', [ModuleDefinitionController::class, 'update'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.update');
-    Route::delete('/business-module-definitions/{definition}', [BusinessModuleDefinitionController::class, 'destroy'])
+    Route::delete('/business-module-definitions/{definition}', [ModuleDefinitionController::class, 'destroy'])
         ->middleware(['auth', 'admin_or_user:1'])
         ->name('admin.business-module-definitions.destroy');
 
-    Route::get('/listings/{listing}/minisite', [AdminMinisiteController::class, 'index'])
+    Route::get('/listings/{listing}/minisite', [AdminListingMinisiteController::class, 'index'])
         ->name('admin.business.minisite.index');
-    Route::post('/listings/{listing}/minisite', [AdminMinisiteController::class, 'update'])
+    Route::post('/listings/{listing}/minisite', [AdminListingMinisiteController::class, 'update'])
         ->name('admin.business.minisite.update');
-
-    Route::get('/industries', [IndustryController::class, 'index'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.index');
-    Route::get('/industries/create', [IndustryController::class, 'create'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.create');
-    Route::post('/industries', [IndustryController::class, 'store'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.store');
-    Route::get('/industries/{industry}/edit', [IndustryController::class, 'edit'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.edit');
-    Route::put('/industries/{industry}', [IndustryController::class, 'update'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.update');
-    Route::delete('/industries/{industry}', [IndustryController::class, 'destroy'])
-        ->middleware(['auth', 'admin_or_user:1'])
-        ->name('admin.industries.destroy');
 
     Route::get('/modules/{moduleKey}/settings', [ModuleSettingsController::class, 'show'])
         ->middleware(['auth', 'admin_or_user:1'])

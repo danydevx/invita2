@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Appointments\Models\BusinessAppointment;
+use Modules\ListingAppointments\Models\ListingAppointment;
 use Modules\Listings\Enums\ListingType;
 use Modules\Listings\Models\Listing;
-use Modules\Leads\Models\BusinessLead;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Services\Models\BusinessService;
+use Modules\ListingLeads\Models\ListingLead;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingServices\Models\ListingService;
 
 class DirectoryController extends Controller
 {
@@ -92,7 +92,7 @@ class DirectoryController extends Controller
 
         if ($request->filled('type')) {
             $type = $request->input('type');
-            $query->where('business_type', $type);
+            $query->where('listing_type', $type);
         }
 
         if ($request->filled('location')) {
@@ -136,7 +136,7 @@ class DirectoryController extends Controller
                     'id' => $business->id,
                     'name' => $business->name,
                     'slug' => $business->slug,
-                    'type' => $business->business_type->label(),
+                    'type' => $business->listing_type->label(),
                     'latitude' => $location->latitude,
                     'longitude' => $location->longitude,
                     'address' => $location->address_line_1.', '.$location->city,
@@ -223,8 +223,8 @@ class DirectoryController extends Controller
             ->firstOrFail();
 
         $data = $request->validate([
-            'service_id' => ['required', 'exists:business_services,id'],
-            'location_id' => ['required', 'exists:business_locations,id'],
+            'service_id' => ['required', 'exists:listing_services,id'],
+            'location_id' => ['required', 'exists:listing_locations,id'],
             'appointment_date' => ['required', 'date', 'after_or_equal:today'],
             'start_time' => ['required'],
             'customer_name' => ['required', 'string', 'max:150'],
@@ -233,12 +233,12 @@ class DirectoryController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
-        $service = BusinessService::findOrFail($data['service_id']);
-        $location = BusinessLocation::findOrFail($data['location_id']);
+        $service = ListingService::findOrFail($data['service_id']);
+        $location = ListingLocation::findOrFail($data['location_id']);
 
         $endTime = date('H:i', strtotime($data['start_time'].' + '.$service->duration_minutes.' minutes'));
 
-        $appointment = BusinessAppointment::create([
+        $appointment = ListingAppointment::create([
             'listing_id' => $business->id,
             'business_location_id' => $location->id,
             'business_service_id' => $service->id,
@@ -268,7 +268,7 @@ class DirectoryController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
-        $lead = BusinessLead::create([
+        $lead = ListingLead::create([
             'listing_id' => $business->id,
             'name' => $data['name'],
             'email' => $data['email'],

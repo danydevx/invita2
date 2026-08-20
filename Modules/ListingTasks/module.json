@@ -1,0 +1,11 @@
+{
+    "name": "ListingTasks",
+    "alias": "listingtasks",
+    "description": "Tasks module for business management",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingTasks\\Providers\\ListingTasksServiceProvider"
+    ],
+    "files": []
+}

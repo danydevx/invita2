@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Faqs\Models\BusinessFaqCategory;
+use Modules\ListingFaqs\Models\ListingFaqCategory;
 use Illuminate\Support\Facades\Auth;
 
 class FaqCategoryController extends Controller
@@ -19,7 +19,7 @@ class FaqCategoryController extends Controller
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
 
-        $query = BusinessFaqCategory::where('listing_id', $business->id)
+        $query = ListingFaqCategory::where('listing_id', $business->id)
             ->with('faqs')
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
@@ -50,7 +50,7 @@ class FaqCategoryController extends Controller
             'to' => $categories->lastItem(),
         ];
 
-        $allCategories = BusinessFaqCategory::where('listing_id', $business->id)
+        $allCategories = ListingFaqCategory::where('listing_id', $business->id)
             ->orderBy('name')
             ->get();
 
@@ -77,14 +77,14 @@ class FaqCategoryController extends Controller
         ]);
 
         $validated['listing_id'] = $business->id;
-        $validated['slug'] = BusinessFaqCategory::generateUniqueSlug($business->id, $validated['name']);
+        $validated['slug'] = ListingFaqCategory::generateUniqueSlug($business->id, $validated['name']);
 
-        BusinessFaqCategory::create($validated);
+        ListingFaqCategory::create($validated);
 
         return redirect()->back()->with('success', 'Categoría creada exitosamente.');
     }
 
-    public function update(Request $request, Listing $business, BusinessFaqCategory $category)
+    public function update(Request $request, Listing $business, ListingFaqCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);
@@ -102,7 +102,7 @@ class FaqCategoryController extends Controller
         return redirect()->back()->with('success', 'Categoría actualizada exitosamente.');
     }
 
-    public function destroy(Listing $business, BusinessFaqCategory $category)
+    public function destroy(Listing $business, ListingFaqCategory $category)
     {
         $user = Auth::user();
         abort_unless($business->user_id === $user->id, 403);

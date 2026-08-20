@@ -7,7 +7,7 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Modules\About\Models\BusinessAbout;
+use Modules\ListingAbout\Models\ListingAbout;
 use Modules\Listings\Models\Listing;
 
 class AboutController extends Controller
@@ -17,7 +17,7 @@ class AboutController extends Controller
 
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessAbout::class, $business]);
+        $this->authorize('viewAny', [ListingAbout::class, $business]);
 
         $about = $business->about;
 
@@ -53,7 +53,7 @@ class AboutController extends Controller
             'logo.mimetypes' => 'Solo se permiten imágenes (JPEG, PNG, WebP, GIF).',
         ]);
 
-        $about = BusinessAbout::updateOrCreate(
+        $about = ListingAbout::updateOrCreate(
             ['listing_id' => $business->id],
             [
                 'title' => $data['title'] ?? null,
@@ -91,14 +91,14 @@ class AboutController extends Controller
         return redirect()->back()->with('success', 'About actualizado correctamente.');
     }
 
-    private function saveImage(BusinessAbout $about, $file, string $field): void
+    private function saveImage(ListingAbout $about, $file, string $field): void
     {
         $disk = 'public';
         $path = $file->store('about/' . $about->listing_id, ['disk' => $disk]);
         $about->update([$field => Storage::disk($disk)->url($path)]);
     }
 
-    private function deleteImage(BusinessAbout $about, string $field): void
+    private function deleteImage(ListingAbout $about, string $field): void
     {
         if ($about->$field) {
             $path = str_replace(url('/') . '/storage/', '', $about->$field);

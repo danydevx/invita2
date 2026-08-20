@@ -7,15 +7,15 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Faqs\Models\BusinessFaq;
-use Modules\Faqs\Models\BusinessFaqCategory;
+use Modules\ListingFaqs\Models\ListingFaq;
+use Modules\ListingFaqs\Models\ListingFaqCategory;
 use Illuminate\Support\Facades\Storage;
 
 class FaqController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessFaq::class, $business]);
+        $this->authorize('viewAny', [ListingFaq::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -45,7 +45,7 @@ class FaqController extends Controller
 
         $faqs = $query->paginate($perPage);
 
-        $categories = BusinessFaqCategory::where('listing_id', $business->id)
+        $categories = ListingFaqCategory::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -89,9 +89,9 @@ class FaqController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessFaq::class, $business]);
+        $this->authorize('create', [ListingFaq::class, $business]);
 
-        $categories = BusinessFaqCategory::where('listing_id', $business->id)
+        $categories = ListingFaqCategory::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -107,12 +107,12 @@ class FaqController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessFaq::class, $business]);
+        $this->authorize('create', [ListingFaq::class, $business]);
 
         $data = $request->validate([
             'question' => ['required', 'string', 'max:255'],
             'answer' => ['required', 'string'],
-            'category_id' => ['nullable', 'exists:business_faq_categories,id'],
+            'category_id' => ['nullable', 'exists:listing_faq_categories,id'],
             'image' => ['nullable', 'file', 'mimes:jpeg,png,webp', 'max:10240'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
@@ -125,7 +125,7 @@ class FaqController extends Controller
             $data['image'] = Storage::disk('public')->url($path);
         }
 
-        $faq = BusinessFaq::create($data);
+        $faq = ListingFaq::create($data);
 
         $activity->log('faq_created', [
             'actor' => $request->user(),
@@ -138,11 +138,11 @@ class FaqController extends Controller
             ->with('success', 'Pregunta frecuente creada correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessFaq $faq)
+    public function edit(Request $request, Listing $business, ListingFaq $faq)
     {
-        $this->authorize('update', [BusinessFaq::class, $faq]);
+        $this->authorize('update', [ListingFaq::class, $faq]);
 
-        $categories = BusinessFaqCategory::where('listing_id', $business->id)
+        $categories = ListingFaqCategory::where('listing_id', $business->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -165,14 +165,14 @@ class FaqController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessFaq $faq, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingFaq $faq, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessFaq::class, $faq]);
+        $this->authorize('update', [ListingFaq::class, $faq]);
 
         $data = $request->validate([
             'question' => ['required', 'string', 'max:255'],
             'answer' => ['required', 'string'],
-            'category_id' => ['nullable', 'exists:business_faq_categories,id'],
+            'category_id' => ['nullable', 'exists:listing_faq_categories,id'],
             'image' => ['nullable', 'file', 'mimes:jpeg,png,webp', 'max:10240'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
@@ -202,9 +202,9 @@ class FaqController extends Controller
             ->with('success', 'Pregunta frecuente actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessFaq $faq, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingFaq $faq, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessFaq::class, $faq]);
+        $this->authorize('delete', [ListingFaq::class, $faq]);
 
         if ($faq->image) {
             $oldPath = str_replace(url('/') . '/storage/', '', $faq->image);
@@ -223,13 +223,13 @@ class FaqController extends Controller
             ->with('success', 'Pregunta frecuente eliminada correctamente.');
     }
 
-    public function clone(Request $request, Listing $business, BusinessFaq $faq, ActivityService $activity)
+    public function clone(Request $request, Listing $business, ListingFaq $faq, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessFaq::class, $business]);
+        $this->authorize('create', [ListingFaq::class, $business]);
 
-        $maxSortOrder = BusinessFaq::where('listing_id', $business->id)->max('sort_order') ?? 0;
+        $maxSortOrder = ListingFaq::where('listing_id', $business->id)->max('sort_order') ?? 0;
 
-        $clonedFaq = BusinessFaq::create([
+        $clonedFaq = ListingFaq::create([
             'listing_id' => $business->id,
             'question' => $faq->question . ' (copia)',
             'answer' => $faq->answer,
@@ -250,14 +250,14 @@ class FaqController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [\Modules\Faqs\Models\BusinessFaq::class, $business]);
+        $this->authorize('deleteAny', [\Modules\ListingFaqs\Models\ListingFaq::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_faqs', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $count = \Modules\Faqs\Models\BusinessFaq::where('listing_id', $business->id)
+        $count = \Modules\ListingFaqs\Models\ListingFaq::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->delete();
 
@@ -287,7 +287,7 @@ class FaqController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\Faqs\Models\BusinessFaq::where('id', $id)
+                \Modules\ListingFaqs\Models\ListingFaq::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }

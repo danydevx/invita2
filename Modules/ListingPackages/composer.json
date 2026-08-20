@@ -1,0 +1,24 @@
+{
+    "name": "nwidart/listingpackages",
+    "description": "Packages module for managing business packages with features",
+    "type": "laravel-module",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingPackages\\": "app/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

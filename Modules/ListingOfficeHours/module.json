@@ -1,0 +1,11 @@
+{
+    "name": "ListingOfficeHours",
+    "alias": "listingofficehours",
+    "description": "Office hours module for business locations",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingOfficeHours\\Providers\\ListingOfficeHoursServiceProvider"
+    ],
+    "files": []
+}

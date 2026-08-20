@@ -1,0 +1,11 @@
+{
+    "name": "ListingFeatures",
+    "alias": "listingfeatures",
+    "description": "Modulo de caracteristicas/amenities para negocios",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingFeatures\\Providers\\FeaturesServiceProvider"
+    ],
+    "files": []
+}

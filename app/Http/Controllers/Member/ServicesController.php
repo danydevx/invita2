@@ -7,13 +7,13 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Services\Models\BusinessService;
+use Modules\ListingServices\Models\ListingService;
 
 class ServicesController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessService::class, $business]);
+        $this->authorize('viewAny', [ListingService::class, $business]);
 
         $services = $business->services()->orderBy('sort_order')->get();
 
@@ -28,7 +28,7 @@ class ServicesController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessService::class, $business]);
+        $this->authorize('create', [ListingService::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -46,7 +46,7 @@ class ServicesController extends Controller
         $data['listing_id'] = $business->id;
         $data['slug'] = \Illuminate\Support\Str::slug($data['name']) . '-' . $business->id;
 
-        $service = BusinessService::create($data);
+        $service = ListingService::create($data);
 
         $activity->log('service_created', [
             'actor' => $request->user(),
@@ -58,7 +58,7 @@ class ServicesController extends Controller
         return redirect()->back()->with('success', 'Servicio creado correctamente.');
     }
 
-    public function update(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingService $service, ActivityService $activity)
     {
         $this->authorize('update', $service);
 
@@ -87,7 +87,7 @@ class ServicesController extends Controller
         return redirect()->back()->with('success', 'Servicio actualizado correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessService $service, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingService $service, ActivityService $activity)
     {
         $this->authorize('delete', $service);
 

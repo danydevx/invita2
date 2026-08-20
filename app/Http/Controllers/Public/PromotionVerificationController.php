@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Promotions\Models\BusinessPromotion;
+use Modules\ListingPromotions\Models\ListingPromotion;
 
 class PromotionVerificationController extends Controller
 {
@@ -17,7 +17,7 @@ class PromotionVerificationController extends Controller
             ->where('is_published', true)
             ->firstOrFail();
 
-        $promotion = BusinessPromotion::where('listing_id', $business->id)
+        $promotion = ListingPromotion::where('listing_id', $business->id)
             ->where('id', $promotionId)
             ->first();
 
@@ -44,7 +44,7 @@ class PromotionVerificationController extends Controller
         return $this->renderResult(true, '¡Cupón válido!', $business, $promotion);
     }
 
-    private function renderResult(bool $valid, string $message, Listing $business, ?BusinessPromotion $promotion)
+    private function renderResult(bool $valid, string $message, Listing $business, ?ListingPromotion $promotion)
     {
         $promotionData = null;
         if ($promotion) {

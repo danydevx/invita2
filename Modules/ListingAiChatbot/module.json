@@ -1,0 +1,11 @@
+{
+    "name": "ListingAiChatbot",
+    "alias": "listingaichatbot",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ListingAiChatbot\\Providers\\ListingAiChatbotServiceProvider"
+    ],
+    "files": []
+}

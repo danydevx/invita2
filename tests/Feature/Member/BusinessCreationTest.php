@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Member;
 
-use App\Models\Industry;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -11,22 +10,12 @@ use App\Services\PlanLimits;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Mockery;
-use Modules\Listings\Enums\ListingType;
 use Modules\Listings\Models\Listing;
 use Tests\TestCase;
 
 class BusinessCreationTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_industry_derives_the_expected_business_type(): void
-    {
-        $barberIndustry = new Industry(['slug' => 'barberia']);
-        $unknownIndustry = new Industry(['slug' => 'future-industry']);
-
-        $this->assertSame(ListingType::BARBER_SHOP, $barberIndustry->businessType());
-        $this->assertSame(ListingType::GENERIC, $unknownIndustry->businessType());
-    }
 
     public function test_plan_limits_uses_active_subscription(): void
     {

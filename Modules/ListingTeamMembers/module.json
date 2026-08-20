@@ -1,0 +1,6 @@
+{
+    "name": "Listing Team Members",
+    "alias": "listingteam",
+    "description": "Module for managing team members and positions",
+    "version": "1.0.0"
+}

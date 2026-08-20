@@ -8,14 +8,9 @@
           <h1 class="h4 mb-0">{{ business?.name || 'Cargando...' }}</h1>
           <small class="text-muted">Modulos del minisite</small>
         </div>
-        <Link href="/admin/business-modules" class="btn btn-outline-secondary">
+        <Link href="/admin/listings" class="btn btn-outline-secondary">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
-      </div>
-
-      <div v-if="business?.user?.plan_name" class="alert alert-info mb-4">
-        <strong>Plan del usuario:</strong> {{ business.user.plan_name }}
-        <br><small>Solo puedes activar modulos incluidos en el plan.</small>
       </div>
 
       <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -43,10 +38,6 @@
                 </span>
               </div>
 
-              <div v-if="!module.allowed_by_plan" class="alert alert-warning py-2 small mb-3">
-                <i class="bi bi-lock me-1"></i>No disponible en el plan (requiere upgrade)
-              </div>
-
               <div v-if="!module.is_active_globally" class="alert alert-secondary py-2 small mb-3">
                 <i class="bi bi-exclamation-triangle me-1"></i>Modulo desactivado globalmente
               </div>
@@ -65,7 +56,6 @@
                   type="button"
                   class="btn btn-sm"
                   :class="module.is_enabled ? 'btn-outline-danger' : 'btn-success'"
-                  :disabled="!module.allowed_by_plan && module.is_active_globally"
                   @click="toggleModule(module)"
                 >
                   <i :class="module.is_enabled ? 'bi bi-x-lg me-1' : 'bi bi-check-lg me-1'"></i>
@@ -103,7 +93,6 @@ const form = reactive({
     is_active_globally: m.is_active_globally,
     has_settings: m.has_settings,
     settings_url: m.settings_url,
-    allowed_by_plan: m.allowed_by_plan,
   })) || [],
 })
 

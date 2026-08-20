@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuCategory;
-use Modules\RestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuCategory;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
 
 class MenuController extends Controller
 {

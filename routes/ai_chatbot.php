@@ -1,14 +1,14 @@
 <?php
 
-use Modules\AiChatbot\Http\Controllers\Member\AiChatbotController;
-use Modules\AiChatbot\Http\Controllers\Member\ConversationHistoryController;
-use Modules\AiChatbot\Http\Controllers\Member\ChatbotAnalyticsController;
-use Modules\AiChatbot\Http\Controllers\Member\ChatbotPresetsController;
+use Modules\ListingAiChatbot\Http\Controllers\Member\AiChatbotController;
+use Modules\ListingAiChatbot\Http\Controllers\Member\ConversationHistoryController;
+use Modules\ListingAiChatbot\Http\Controllers\Member\ChatbotAnalyticsController;
+use Modules\ListingAiChatbot\Http\Controllers\Member\ChatbotPresetsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'active', 'role:member'])
     ->prefix('member/businesses/{listing}/ai-chatbot')
-    ->name('member.business.ai-chatbot.')
+    ->name('member.business.listing-aichatbot.')
     ->group(function () {
         Route::get('/', [AiChatbotController::class, 'index'])->name('index');
         Route::post('/settings', [AiChatbotController::class, 'saveSettings'])->name('settings');
@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])
 
 Route::middleware(['auth', 'verified', 'active', 'role:member'])
     ->prefix('member/listings/{listing}/ai-chatbot')
-    ->name('member.business.ai-chatbot.')
+    ->name('member.business.listing-aichatbot.')
     ->group(function () {
         Route::get('/', [AiChatbotController::class, 'index'])->name('index');
         Route::post('/settings', [AiChatbotController::class, 'saveSettings'])->name('settings');

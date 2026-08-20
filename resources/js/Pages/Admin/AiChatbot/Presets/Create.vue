@@ -46,9 +46,9 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Tipo de Negocio</label>
-                    <select v-model="form.business_type" class="form-select">
+                    <select v-model="form.listing_type" class="form-select">
                       <option :value="null">Todos los tipos</option>
-                      <option v-for="type in businessTypes" :key="type" :value="type">
+                      <option v-for="type in listingTypes" :key="type" :value="type">
                         {{ type }}
                       </option>
                     </select>
@@ -241,7 +241,7 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const page = usePage()
-const businessTypes = page.props.businessTypes || []
+const listingTypes = page.props.listingTypes || []
 const personalities = page.props.personalities || ['professional', 'friendly', 'formal', 'casual']
 const languages = page.props.languages || ['es', 'en', 'pt', 'fr']
 
@@ -251,7 +251,7 @@ const form = reactive({
   name: '',
   slug: '',
   description: '',
-  business_type: null,
+  listing_type: null,
   personality: 'friendly',
   language: 'es',
   chatbot_name_template: '',

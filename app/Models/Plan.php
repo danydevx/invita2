@@ -42,11 +42,6 @@ class Plan extends Model
         return $this->hasMany(PlanFeatureFlag::class);
     }
 
-    public function planBusinessModules(): HasMany
-    {
-        return $this->hasMany(PlanBusinessModule::class);
-    }
-
     public function coupons(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Coupon::class)->withTimestamps();

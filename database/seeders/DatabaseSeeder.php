@@ -30,8 +30,7 @@ class DatabaseSeeder extends Seeder
             SystemModuleSeeder::class,
             MessageTemplateSeeder::class,
             AutomationSeeder::class,
-            BusinessModuleDefinitionSeeder::class,
-            PlanBusinessModuleSeeder::class,
+            ModuleDefinitionSeeder::class,
             ContactFormSubmissionSeeder::class,
             \Modules\Properties\Database\Seeders\PropertiesDatabaseSeeder::class,
         ]);

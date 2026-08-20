@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Listings\Models\Listing;
-use Modules\RestaurantMenu\Entities\MenuProduct;
-use Modules\RestaurantMenu\Entities\MenuProductImage;
+use Modules\ListingRestaurantMenu\Entities\MenuProduct;
+use Modules\ListingRestaurantMenu\Entities\MenuProductImage;
 
 class MenuProductImageController extends Controller
 {

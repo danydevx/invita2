@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/listingappointments",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingAppointments\\": "app/",
+            "Modules\\ListingAppointments\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingAppointments\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ListingAppointments\\Tests\\": "tests/"
+        }
+    }
+}

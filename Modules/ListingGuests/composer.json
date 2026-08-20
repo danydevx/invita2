@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingguests",
+    "description": "Guests module",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingGuests\\": "app/",
+            "Modules\\ListingGuests\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingGuests\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

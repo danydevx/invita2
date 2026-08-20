@@ -1,0 +1,22 @@
+{
+    "name": "nwidart/listingsocialmedia",
+    "description": "Social media networks management for business minisites",
+    "authors": [
+        {
+            "name": "Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ListingSocialMedia\\": "app/",
+            "Modules\\ListingSocialMedia\\Database\\Factories\\": "database/factories/",
+            "Modules\\ListingSocialMedia\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

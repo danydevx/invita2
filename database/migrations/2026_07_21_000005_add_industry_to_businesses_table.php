@@ -8,16 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('businesses', function (Blueprint $table) {
-            $table->foreignId('industry_id')->nullable()->after('user_id')->constrained()->nullOnDelete();
-        });
     }
 
     public function down(): void
     {
-        Schema::table('businesses', function (Blueprint $table) {
-            $table->dropForeign(['industry_id']);
-            $table->dropColumn('industry_id');
-        });
     }
 };

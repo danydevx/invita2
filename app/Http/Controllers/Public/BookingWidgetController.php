@@ -7,12 +7,12 @@ use App\Http\Requests\Public\BookAppointmentRequest;
 use App\Services\AvailabilityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Appointments\Enums\AppointmentStatus;
-use Modules\Appointments\Models\BusinessAppointment;
+use Modules\ListingAppointments\Enums\AppointmentStatus;
+use Modules\ListingAppointments\Models\ListingAppointment;
 use Modules\Listings\Models\Listing;
-use Modules\Locations\Models\BusinessLocation;
-use Modules\Packages\Models\BusinessPackage;
-use Modules\Services\Models\BusinessService;
+use Modules\ListingLocations\Models\ListingLocation;
+use Modules\ListingPackages\Models\ListingPackage;
+use Modules\ListingServices\Models\ListingService;
 
 class BookingWidgetController extends Controller
 {
@@ -61,7 +61,7 @@ class BookingWidgetController extends Controller
 
     public function packages(Listing $businessSlug): JsonResponse
     {
-        $packages = BusinessPackage::where('listing_id', $businessSlug->id)
+        $packages = ListingPackage::where('listing_id', $businessSlug->id)
             ->where('is_active', true)
             ->with('features')
             ->orderBy('name')
@@ -85,14 +85,14 @@ class BookingWidgetController extends Controller
     {
         $validated = $request->validate([
             'date' => ['required', 'date', 'after_or_equal:today'],
-            'service_id' => ['nullable', 'integer', 'exists:business_services,id'],
+            'service_id' => ['nullable', 'integer', 'exists:listing_services,id'],
         ]);
 
         $service = null;
         $duration = 30;
 
         if (!empty($validated['service_id'])) {
-            $service = BusinessService::where('listing_id', $businessSlug->id)
+            $service = ListingService::where('listing_id', $businessSlug->id)
                 ->where('id', $validated['service_id'])
                 ->where('is_active', true)
                 ->where('allows_online_booking', true)
@@ -130,7 +130,7 @@ class BookingWidgetController extends Controller
         $serviceDuration = 30;
 
         if (!empty($data['service_id'])) {
-            $service = BusinessService::where('listing_id', $businessSlug->id)
+            $service = ListingService::where('listing_id', $businessSlug->id)
                 ->where('id', $data['service_id'])
                 ->where('is_active', true)
                 ->where('allows_online_booking', true)
@@ -145,7 +145,7 @@ class BookingWidgetController extends Controller
         }
 
         if (!empty($data['location_id'])) {
-            $location = BusinessLocation::where('listing_id', $businessSlug->id)
+            $location = ListingLocation::where('listing_id', $businessSlug->id)
                 ->where('id', $data['location_id'])
                 ->where('is_active', true)
                 ->first();
@@ -173,7 +173,7 @@ class BookingWidgetController extends Controller
 
         $endTime = date('H:i', strtotime($data['start_time'] . ' + ' . $serviceDuration . ' minutes'));
 
-        $appointment = BusinessAppointment::create([
+        $appointment = ListingAppointment::create([
             'listing_id' => $businessSlug->id,
             'business_service_id' => $service?->id,
             'business_location_id' => $data['location_id'] ?? null,

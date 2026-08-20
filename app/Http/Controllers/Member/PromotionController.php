@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Promotions\Models\BusinessPromotion;
+use Modules\ListingPromotions\Models\ListingPromotion;
 
 class PromotionController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessPromotion::class, $business]);
+        $this->authorize('viewAny', [ListingPromotion::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -82,7 +82,7 @@ class PromotionController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessPromotion::class, $business]);
+        $this->authorize('create', [ListingPromotion::class, $business]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -97,7 +97,7 @@ class PromotionController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessPromotion::class, $business]);
+        $this->authorize('create', [ListingPromotion::class, $business]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -108,7 +108,7 @@ class PromotionController extends Controller
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'starts_at' => ['nullable', 'date'],
             'expires_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -134,9 +134,9 @@ class PromotionController extends Controller
             ->with('success', 'Promocion creada correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessPromotion $promotion)
+    public function edit(Request $request, Listing $business, ListingPromotion $promotion)
     {
-        $this->authorize('update', [BusinessPromotion::class, $promotion]);
+        $this->authorize('update', [ListingPromotion::class, $promotion]);
 
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
 
@@ -165,9 +165,9 @@ class PromotionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingPromotion $promotion, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessPromotion::class, $promotion]);
+        $this->authorize('update', [ListingPromotion::class, $promotion]);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
@@ -179,7 +179,7 @@ class PromotionController extends Controller
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'starts_at' => ['nullable', 'date'],
             'expires_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -214,9 +214,9 @@ class PromotionController extends Controller
             ->with('success', 'Promocion actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingPromotion $promotion, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessPromotion::class, $promotion]);
+        $this->authorize('delete', [ListingPromotion::class, $promotion]);
 
         $this->deletePromotionImage($promotion);
 
@@ -244,7 +244,7 @@ class PromotionController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_promotions', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -255,7 +255,7 @@ class PromotionController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\Promotions\Models\BusinessPromotion::where('id', $id)
+                \Modules\ListingPromotions\Models\ListingPromotion::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
@@ -266,14 +266,14 @@ class PromotionController extends Controller
 
     public function bulkDelete(Request $request, Listing $business)
     {
-        $this->authorize('deleteAny', [BusinessPromotion::class, $business]);
+        $this->authorize('deleteAny', [ListingPromotion::class, $business]);
 
         $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_promotions', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_promotions', 'id')->where('listing_id', $business->id)],
         ]);
 
-        $promotions = \Modules\Promotions\Models\BusinessPromotion::where('listing_id', $business->id)
+        $promotions = \Modules\ListingPromotions\Models\ListingPromotion::where('listing_id', $business->id)
             ->whereIn('id', $request->ids)
             ->get();
 
@@ -288,9 +288,9 @@ class PromotionController extends Controller
         return redirect()->back()->with('success', count($promotions) . ' promocion(es) eliminada(s).');
     }
 
-    public function regenerateQrCode(Request $request, Listing $business, BusinessPromotion $promotion)
+    public function regenerateQrCode(Request $request, Listing $business, ListingPromotion $promotion)
     {
-        $this->authorize('update', [BusinessPromotion::class, $promotion]);
+        $this->authorize('update', [ListingPromotion::class, $promotion]);
 
         if (!$promotion->coupon_code) {
             return redirect()->route('member.businesses.promotions.edit', [$business->id, $promotion->id])
@@ -303,9 +303,9 @@ class PromotionController extends Controller
             ->with('success', 'Código QR regenerado correctamente.');
     }
 
-    public function clone(Request $request, Listing $business, BusinessPromotion $promotion, ActivityService $activity)
+    public function clone(Request $request, Listing $business, ListingPromotion $promotion, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessPromotion::class, $business]);
+        $this->authorize('create', [ListingPromotion::class, $business]);
 
         $maxOrder = $business->promotions()->max('sort_order') ?? 0;
 

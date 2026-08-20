@@ -7,13 +7,13 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
-use Modules\Reviews\Models\BusinessReview;
+use Modules\ListingReviews\Models\ListingReview;
 
 class ReviewController extends Controller
 {
     public function index(Request $request, Listing $business)
     {
-        $this->authorize('viewAny', [BusinessReview::class, $business]);
+        $this->authorize('viewAny', [ListingReview::class, $business]);
 
         $perPage = min((int) $request->get('per_page', 10), 100);
         $search = $request->get('search', '');
@@ -76,7 +76,7 @@ class ReviewController extends Controller
 
     public function create(Request $request, Listing $business)
     {
-        $this->authorize('create', [BusinessReview::class, $business]);
+        $this->authorize('create', [ListingReview::class, $business]);
 
         return Inertia::render('Member/Reviews/Create', [
             'business' => [
@@ -88,7 +88,7 @@ class ReviewController extends Controller
 
     public function store(Request $request, Listing $business, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessReview::class, $business]);
+        $this->authorize('create', [ListingReview::class, $business]);
 
         $data = $request->validate([
             'client_name' => ['required', 'string', 'max:150'],
@@ -96,7 +96,7 @@ class ReviewController extends Controller
             'comment' => ['nullable', 'string'],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'google_link' => ['nullable', 'url', 'max:500'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -116,9 +116,9 @@ class ReviewController extends Controller
             ->with('success', 'Resena creada correctamente.');
     }
 
-    public function edit(Request $request, Listing $business, BusinessReview $review)
+    public function edit(Request $request, Listing $business, ListingReview $review)
     {
-        $this->authorize('update', [BusinessReview::class, $review]);
+        $this->authorize('update', [ListingReview::class, $review]);
 
         return Inertia::render('Member/Reviews/Edit', [
             'business' => [
@@ -139,9 +139,9 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function update(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
+    public function update(Request $request, Listing $business, ListingReview $review, ActivityService $activity)
     {
-        $this->authorize('update', [BusinessReview::class, $review]);
+        $this->authorize('update', [ListingReview::class, $review]);
 
         $data = $request->validate([
             'client_name' => ['required', 'string', 'max:150'],
@@ -149,7 +149,7 @@ class ReviewController extends Controller
             'comment' => ['nullable', 'string'],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'google_link' => ['nullable', 'url', 'max:500'],
-            'business_location_id' => ['nullable', 'exists:business_locations,id'],
+            'business_location_id' => ['nullable', 'exists:listing_locations,id'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -167,9 +167,9 @@ class ReviewController extends Controller
             ->with('success', 'Resena actualizada correctamente.');
     }
 
-    public function destroy(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
+    public function destroy(Request $request, Listing $business, ListingReview $review, ActivityService $activity)
     {
-        $this->authorize('delete', [BusinessReview::class, $review]);
+        $this->authorize('delete', [ListingReview::class, $review]);
 
         $activity->log('review_deleted', [
             'actor' => $request->user(),
@@ -192,7 +192,7 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_reviews', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_reviews', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -203,7 +203,7 @@ class ReviewController extends Controller
 
         \DB::transaction(function () use ($data, $business, $start) {
             foreach ($data['ids'] as $index => $id) {
-                \Modules\Reviews\Models\BusinessReview::where('id', $id)
+                \Modules\ListingReviews\Models\ListingReview::where('id', $id)
                     ->where('listing_id', $business->id)
                     ->update(['sort_order' => $start + $index]);
             }
@@ -240,9 +240,9 @@ class ReviewController extends Controller
             ->with('success', $message);
     }
 
-    public function clone(Request $request, Listing $business, BusinessReview $review, ActivityService $activity)
+    public function clone(Request $request, Listing $business, ListingReview $review, ActivityService $activity)
     {
-        $this->authorize('create', [BusinessReview::class, $business]);
+        $this->authorize('create', [ListingReview::class, $business]);
 
         $maxOrder = $business->reviews()->max('sort_order') ?? 0;
 
