@@ -609,12 +609,12 @@
             </div>
           </div>
 
-          <div class="mt-4">
-            <button type="submit" class="btn btn-primary me-2" :disabled="sending">
-              <i class="bi bi-check-lg me-1"></i>
-              {{ sending ? 'Guardando...' : 'Guardar' }}
-            </button>
-          </div>
+          <FormActions
+            :submitText="'Guardar'"
+            :submittingText="'Guardando...'"
+            :cancelHref="`/member/listings/${listing?.id}/minisite/sections`"
+            :sending="sending"
+          />
         </form>
       </div>
     </div>
@@ -631,6 +631,7 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

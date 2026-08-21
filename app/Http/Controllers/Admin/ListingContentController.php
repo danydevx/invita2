@@ -18,7 +18,9 @@ use Modules\ListingGallery\Models\ListingGallery;
 use Modules\ListingGallery\Models\ListingGalleryImage;
 use Modules\ListingLocations\Models\ListingLocation;
 use Modules\ListingProducts\Models\ListingProduct;
+use Modules\ListingProducts\Models\ListingProductCategory;
 use Modules\ListingServices\Models\ListingService;
+use Modules\ListingServices\Models\ListingServiceCategory;
 
 class ListingContentController extends Controller
 {
@@ -179,6 +181,10 @@ class ListingContentController extends Controller
     public function servicesCreate(Request $request, Listing $business)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingServiceCategory::where('listing_id', $business->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ServicesCreate', [
             'listing' => [
@@ -186,6 +192,7 @@ class ListingContentController extends Controller
                 'name' => $business->name,
             ],
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -193,21 +200,39 @@ class ListingContentController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
+            'slug' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'deposit_required' => ['boolean'],
             'deposit_amount' => ['nullable', 'numeric', 'min:0'],
             'allows_online_booking' => ['boolean'],
-            'whatsapp_contact' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_service_categories,id'],
         ]);
 
         $data['listing_id'] = $business->id;
-        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        if (empty($data['slug'])) {
+            $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        }
+
+        if (isset($data['business_location_id']) && $data['business_location_id'] === '') {
+            $data['business_location_id'] = null;
+        }
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('services', 'public');
+            $data['image'] = $path;
+        } else {
+            unset($data['image']);
+        }
 
         $service = $business->services()->create($data);
 
@@ -225,6 +250,11 @@ class ListingContentController extends Controller
     public function servicesEdit(Request $request, Listing $business, ListingService $service)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingServiceCategory::where('listing_id', $business->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        $serviceImages = $service->images()->orderBy('sort_order')->get(['id', 'path', 'filename', 'is_primary']);
 
         return Inertia::render('Admin/BusinessContent/ServicesEdit', [
             'listing' => [
@@ -236,7 +266,7 @@ class ListingContentController extends Controller
                 'name' => $service->name,
                 'slug' => $service->slug,
                 'description' => $service->description,
-                'image' => $service->image,
+                'image' => $this->sanitizeServiceImage($service->image),
                 'duration_minutes' => $service->duration_minutes,
                 'price' => $service->price,
                 'deposit_required' => $service->deposit_required,
@@ -246,8 +276,16 @@ class ListingContentController extends Controller
                 'is_active' => $service->is_active,
                 'sort_order' => $service->sort_order,
                 'business_location_id' => $service->business_location_id,
+                'category_id' => $service->category_id,
             ],
             'locations' => $locations,
+            'categories' => $categories,
+            'serviceImages' => $serviceImages->map(fn($img) => [
+                'id' => $img->id,
+                'url' => $img->path ? "/storage/{$img->path}" : null,
+                'filename' => $img->filename,
+                'is_primary' => $img->is_primary,
+            ]),
         ]);
     }
 
@@ -255,18 +293,36 @@ class ListingContentController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
+            'slug' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg', 'max:2048'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'deposit_required' => ['boolean'],
             'deposit_amount' => ['nullable', 'numeric', 'min:0'],
             'allows_online_booking' => ['boolean'],
-            'whatsapp_contact' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'is_active' => ['boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_service_categories,id'],
         ]);
+
+        if (isset($data['business_location_id']) && $data['business_location_id'] === '') {
+            $data['business_location_id'] = null;
+        }
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('services', 'public');
+            $data['image'] = $path;
+        } elseif ($request->input('_remove_image')) {
+            $data['image'] = null;
+        } else {
+            unset($data['image']);
+        }
 
         $service->update($data);
 
@@ -475,6 +531,134 @@ class ListingContentController extends Controller
             ->with('success', 'Categoria eliminada. Las preguntas fueron desvinculadas.');
     }
 
+    public function productCategoriesIndex(Request $request, Listing $business)
+    {
+        $categories = ListingProductCategory::where('listing_id', $business->id)
+            ->with('products')
+            ->orderBy('sort_order')
+            ->get();
+
+        return Inertia::render('Admin/BusinessContent/ProductCategoriesIndex', [
+            'listing' => [
+                'id' => $business->id,
+                'name' => $business->name,
+                'slug' => $business->slug,
+            ],
+            'categories' => $categories,
+        ]);
+    }
+
+    public function productCategoriesStore(Request $request, Listing $business)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $data['listing_id'] = $business->id;
+        $data['slug'] = ListingProductCategory::generateUniqueSlug($business->id, $data['name']);
+
+        ListingProductCategory::create($data);
+
+        return redirect()->back()
+            ->with('success', 'Categoria creada correctamente.');
+    }
+
+    public function productCategoriesUpdate(Request $request, Listing $business, ListingProductCategory $category)
+    {
+        abort_unless($category->listing_id === $business->id, 404);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $category->update($data);
+
+        return redirect()->back()
+            ->with('success', 'Categoria actualizada correctamente.');
+    }
+
+    public function productCategoriesDestroy(Request $request, Listing $business, ListingProductCategory $category)
+    {
+        abort_unless($category->listing_id === $business->id, 404);
+
+        $category->products()->update(['category_id' => null]);
+
+        $category->delete();
+
+        return redirect()->back()
+            ->with('success', 'Categoria eliminada. Los productos fueron desvinculados.');
+    }
+
+    public function serviceCategoriesIndex(Request $request, Listing $business)
+    {
+        $categories = ListingServiceCategory::where('listing_id', $business->id)
+            ->with('services')
+            ->orderBy('sort_order')
+            ->get();
+
+        return Inertia::render('Admin/BusinessContent/ServiceCategoriesIndex', [
+            'listing' => [
+                'id' => $business->id,
+                'name' => $business->name,
+                'slug' => $business->slug,
+            ],
+            'categories' => $categories,
+        ]);
+    }
+
+    public function serviceCategoriesStore(Request $request, Listing $business)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $data['listing_id'] = $business->id;
+        $data['slug'] = ListingServiceCategory::generateUniqueSlug($business->id, $data['name']);
+
+        ListingServiceCategory::create($data);
+
+        return redirect()->back()
+            ->with('success', 'Categoria creada correctamente.');
+    }
+
+    public function serviceCategoriesUpdate(Request $request, Listing $business, ListingServiceCategory $category)
+    {
+        abort_unless($category->listing_id === $business->id, 404);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $category->update($data);
+
+        return redirect()->back()
+            ->with('success', 'Categoria actualizada correctamente.');
+    }
+
+    public function serviceCategoriesDestroy(Request $request, Listing $business, ListingServiceCategory $category)
+    {
+        abort_unless($category->listing_id === $business->id, 404);
+
+        $category->services()->update(['category_id' => null]);
+
+        $category->delete();
+
+        return redirect()->back()
+            ->with('success', 'Categoria eliminada. Los servicios fueron desvinculados.');
+    }
+
     public function productsIndex(Request $request, Listing $business)
     {
         $products = $business->products()
@@ -496,6 +680,10 @@ class ListingContentController extends Controller
     public function productsCreate(Request $request, Listing $business)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingProductCategory::where('listing_id', $business->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ProductsCreate', [
             'listing' => [
@@ -503,6 +691,7 @@ class ListingContentController extends Controller
                 'name' => $business->name,
             ],
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -510,21 +699,33 @@ class ListingContentController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
+            'slug' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
             'price' => ['nullable', 'numeric', 'min:0'],
+            'show_price' => ['boolean'],
             'compare_at_price' => ['nullable', 'numeric', 'min:0'],
             'sku' => ['nullable', 'string', 'max:100'],
             'barcode' => ['nullable', 'string', 'max:100'],
             'quantity' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
-            'whatsapp_contact' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_product_categories,id'],
         ]);
 
         $data['listing_id'] = $business->id;
-        $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        if (empty($data['slug'])) {
+            $data['slug'] = \Illuminate\Support\Str::slug($data['name']);
+        }
+
+        if (isset($data['business_location_id']) && $data['business_location_id'] === '') {
+            $data['business_location_id'] = null;
+        }
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
+        }
 
         $product = $business->products()->create($data);
 
@@ -542,6 +743,10 @@ class ListingContentController extends Controller
     public function productsEdit(Request $request, Listing $business, ListingProduct $product)
     {
         $locations = $business->locations()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $categories = ListingProductCategory::where('listing_id', $business->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Admin/BusinessContent/ProductsEdit', [
             'listing' => [
@@ -554,6 +759,7 @@ class ListingContentController extends Controller
                 'slug' => $product->slug,
                 'description' => $product->description,
                 'price' => $product->price,
+                'show_price' => $product->show_price,
                 'compare_at_price' => $product->compare_at_price,
                 'sku' => $product->sku,
                 'barcode' => $product->barcode,
@@ -563,8 +769,10 @@ class ListingContentController extends Controller
                 'whatsapp_contact' => $product->whatsapp_contact,
                 'sort_order' => $product->sort_order,
                 'business_location_id' => $product->business_location_id,
+                'category_id' => $product->category_id,
             ],
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -572,18 +780,28 @@ class ListingContentController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
+            'slug' => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
             'price' => ['nullable', 'numeric', 'min:0'],
+            'show_price' => ['boolean'],
             'compare_at_price' => ['nullable', 'numeric', 'min:0'],
             'sku' => ['nullable', 'string', 'max:100'],
             'barcode' => ['nullable', 'string', 'max:100'],
             'quantity' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
-            'whatsapp_contact' => ['boolean'],
+            'whatsapp_contact' => ['nullable', 'string', 'max:50'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'business_location_id' => ['nullable', 'exists:listing_locations,id'],
+            'category_id' => ['nullable', 'exists:listing_product_categories,id'],
         ]);
+
+        if (isset($data['business_location_id']) && $data['business_location_id'] === '') {
+            $data['business_location_id'] = null;
+        }
+        if (isset($data['category_id']) && $data['category_id'] === '') {
+            $data['category_id'] = null;
+        }
 
         $product->update($data);
 
@@ -618,6 +836,7 @@ class ListingContentController extends Controller
             ->orderByDesc('is_primary')
             ->orderBy('sort_order')
             ->orderBy('id')
+            ->withCount('images')
             ->get(['id', 'name', 'is_primary', 'is_active']);
 
         if (! $gallery) {
@@ -1139,5 +1358,16 @@ class ListingContentController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Cita cancelada correctamente.');
+    }
+
+    private function sanitizeServiceImage(?string $image): ?string
+    {
+        if ($image === null) {
+            return null;
+        }
+        if (str_starts_with($image, 'data:')) {
+            return null;
+        }
+        return $image;
     }
 }

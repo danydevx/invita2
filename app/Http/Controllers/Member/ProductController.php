@@ -237,6 +237,11 @@ class ProductController extends Controller
             }
             $path = $request->file('image')->store('products', 'public');
             $data['image'] = $path;
+        } elseif ($request->input('_remove_image')) {
+            if ($product->image) {
+                \Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = null;
         }
 
         $product->update($data);

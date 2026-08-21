@@ -57,10 +57,29 @@ class ScheduleController extends Controller
     {
         $this->authorize('viewAny', [ListingSchedule::class, $listing]);
 
-        $schedules = $location->schedules()
-            ->orderBy('is_active', 'desc')
-            ->orderBy('name')
-            ->get();
+        $perPage = $request->input('per_page', 10);
+        $sort = $request->input('sort', 'name');
+        $direction = $request->input('direction', 'asc');
+        $search = $request->input('search', '');
+
+        $query = $location->schedules()
+            ->when($search, function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy($sort, $direction)
+            ->orderBy('name');
+
+        $schedules = $query->paginate($perPage);
+
+        $dataTable = [
+            'data' => $schedules->items(),
+            'current_page' => $schedules->currentPage(),
+            'last_page' => $schedules->lastPage(),
+            'per_page' => $schedules->perPage(),
+            'total' => $schedules->total(),
+            'from' => $schedules->firstItem(),
+            'to' => $schedules->lastItem(),
+        ];
 
         return Inertia::render('Member/OfficeHours/Index', [
             'listing' => [
@@ -71,7 +90,7 @@ class ScheduleController extends Controller
                 'id' => $location->id,
                 'name' => $location->name,
             ],
-            'schedules' => $schedules,
+            'dataTable' => $dataTable,
         ]);
     }
 

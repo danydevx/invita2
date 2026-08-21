@@ -120,9 +120,9 @@
                 />
               </div>
 
-              <div v-if="error" class="alert alert-danger mt-3 mb-0">
+              <div v-if="formError" class="alert alert-danger mt-3 mb-0">
                 <i class="bi bi-exclamation-triangle me-2"></i>
-                {{ error }}
+                {{ formError }}
               </div>
             </div>
             <div class="modal-footer">
@@ -174,6 +174,10 @@ const props = defineProps({
   label: {
     type: String,
     default: 'Galería de imágenes',
+  },
+  context: {
+    type: String,
+    default: 'member',
   },
 })
 
@@ -274,7 +278,7 @@ const startUpload = () => {
     formData.append(`images[${index}]`, item.file)
   })
 
-  router.post(`/member/listings/${props.businessId}/services/${props.serviceId}/images`, formData, {
+  router.post(`/${props.context}/listings/${props.businessId}/services/${props.serviceId}/images`, formData, {
     preserveScroll: true,
     onSuccess: () => {
       files.value = []
@@ -294,7 +298,7 @@ const deleteImage = (imageId) => {
   if (!confirm('¿Eliminar esta imagen?')) return
 
   deletingId.value = imageId
-  router.delete(`/member/listings/${props.businessId}/services/${props.serviceId}/images/${imageId}`, {
+  router.delete(`/${props.context}/listings/${props.businessId}/services/${props.serviceId}/images/${imageId}`, {
     preserveScroll: true,
     onSuccess: () => {
       emit('updated')

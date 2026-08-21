@@ -160,12 +160,12 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Creando...' : 'Crear Servicio' }}
-            </button>
-            <Link :href="`/member/listings/${listing.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
-          </div>
+          <FormActions
+            submitText="Crear Servicio"
+            submittingText="Creando..."
+            cancelHref={`/member/listings/${listing.id}/services`}
+            :sending="sending"
+          />
         </form>
       </div>
     </div>
@@ -185,6 +185,7 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
   listing: { type: Object, required: true },

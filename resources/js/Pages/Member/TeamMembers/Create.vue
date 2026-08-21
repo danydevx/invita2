@@ -91,15 +91,7 @@
                 <div class="form-text">Los miembros inactivos no aparecerán en el minisite.</div>
               </div>
 
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary" :disabled="form.processing">
-                  <i class="bi bi-check me-1"></i>
-                  {{ form.processing ? 'Guardando...' : 'Guardar' }}
-                </button>
-                <Link :href="`/member/listings/${listing?.id}/team-members`" class="btn btn-outline-secondary">
-                  Cancelar
-                </Link>
-              </div>
+              <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/team-members`" :sending="form.processing" />
             </form>
           </div>
         </div>
@@ -119,6 +111,7 @@ import FieldEmail from '@/Components/Fields/FieldEmail.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

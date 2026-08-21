@@ -46,7 +46,7 @@ export default {
     required: { type: Boolean, default: false },
     showValidation: { type: Boolean, default: false },
     formError: { type: String, default: "" },
-    rows: { type: Number, default: 5 },
+    rows: { type: [Number, String], default: 5 },
     height: { type: [Number, String], default: null },
     validateFunction: { type: Function, default: null },
     classObject: { type: String, default: "" },

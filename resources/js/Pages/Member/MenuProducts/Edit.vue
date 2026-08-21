@@ -167,14 +167,10 @@
               </div>
             </div>
 
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary flex-grow-1" :disabled="sending">
-                {{ sending ? 'Guardando...' : 'Guardar cambios' }}
-              </button>
+            <FormActions :submitText="'Guardar cambios'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
               <button type="button" class="btn btn-outline-danger" @click="deleteProduct">
                 <i class="bi bi-trash"></i>
               </button>
-            </div>
           </div>
         </div>
       </form>
@@ -196,6 +192,7 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

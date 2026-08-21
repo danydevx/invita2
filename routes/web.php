@@ -1281,6 +1281,19 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->name('admin.business.services.update');
     Route::delete('/listings/{listing}/services/{service}', [ListingContentController::class, 'servicesDestroy'])
         ->name('admin.business.services.destroy');
+    Route::post('/listings/{listing}/services/{service}/images', [ServiceImageController::class, 'store'])
+        ->name('admin.business.services.images.store');
+    Route::delete('/listings/{listing}/services/{service}/images/{image}', [ServiceImageController::class, 'destroy'])
+        ->name('admin.business.services.images.destroy');
+
+    Route::get('/listings/{listing}/service-categories', [ListingContentController::class, 'serviceCategoriesIndex'])
+        ->name('admin.business.service-categories.index');
+    Route::post('/listings/{listing}/service-categories', [ListingContentController::class, 'serviceCategoriesStore'])
+        ->name('admin.business.service-categories.store');
+    Route::put('/listings/{listing}/service-categories/{category}', [ListingContentController::class, 'serviceCategoriesUpdate'])
+        ->name('admin.business.service-categories.update');
+    Route::delete('/listings/{listing}/service-categories/{category}', [ListingContentController::class, 'serviceCategoriesDestroy'])
+        ->name('admin.business.service-categories.destroy');
 
     Route::get('/listings/{listing}/faqs', [ListingContentController::class, 'faqsIndex'])
         ->name('admin.business.faqs.index');
@@ -1316,6 +1329,15 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->name('admin.business.products.update');
     Route::delete('/listings/{listing}/products/{product}', [ListingContentController::class, 'productsDestroy'])
         ->name('admin.business.products.destroy');
+
+    Route::get('/listings/{listing}/product-categories', [ListingContentController::class, 'productCategoriesIndex'])
+        ->name('admin.business.product-categories.index');
+    Route::post('/listings/{listing}/product-categories', [ListingContentController::class, 'productCategoriesStore'])
+        ->name('admin.business.product-categories.store');
+    Route::put('/listings/{listing}/product-categories/{category}', [ListingContentController::class, 'productCategoriesUpdate'])
+        ->name('admin.business.product-categories.update');
+    Route::delete('/listings/{listing}/product-categories/{category}', [ListingContentController::class, 'productCategoriesDestroy'])
+        ->name('admin.business.product-categories.destroy');
 
     Route::get('/listings/{listing}/galleries', [ListingContentController::class, 'galleriesIndex'])
         ->name('admin.business.galleries.index');

@@ -32,7 +32,7 @@ class ListingSocialNetworkPolicy
             return true;
         }
 
-        return $user->id === $socialNetwork->business->user_id;
+        return $socialNetwork->business && $user->id === $socialNetwork->business->user_id;
     }
 
     public function delete(User $user, ListingSocialNetwork $socialNetwork): bool
@@ -41,6 +41,6 @@ class ListingSocialNetworkPolicy
             return true;
         }
 
-        return $user->id === $socialNetwork->business->user_id;
+        return $socialNetwork->business && $user->id === $socialNetwork->business->user_id;
     }
 }

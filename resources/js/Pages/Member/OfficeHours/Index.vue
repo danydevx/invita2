@@ -3,117 +3,90 @@
     <Head :title="`Horarios - ${location.name}`" />
 
     <PageHeader
-      :title="'Horarios de Atención'"
+      title="Horarios de Atención"
       :breadcrumbs="breadcrumbs"
       :backHref="`/member/listings/${listing.id}/locations/${location.id}/edit`"
-    />
+    >
+      <template #actions>
+        <Link
+          :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/create`"
+          class="btn btn-primary btn-sm"
+        >
+          <i class="bi bi-plus-lg me-1"></i>
+          Nuevo Horario
+        </Link>
+      </template>
+    </PageHeader>
 
-    <div v-if="flashSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ flashSuccess }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    <BaseDataTable
+      ref="dataTableRef"
+      :endpoint="`/member/listings/${listing?.id}/locations/${location?.id}/schedules`"
+      :columns="columns"
+      :initial-data="dataTable"
+      :initial-per-page="perPage"
+      search-placeholder="Buscar horarios..."
+      empty-title="No hay horarios"
+      empty-text="Comienza creando tu primer horario."
+      @updated="onDataTableUpdated"
+    >
+      <template #cell-name="{ row }">
+        <strong>{{ row.name }}</strong>
+      </template>
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-      <div>
-        <p class="text-muted mb-0">
-          {{ schedules.length }} horario(s) configurado(s) para esta ubicación.
-        </p>
-      </div>
-      <Link
-        :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/create`"
-        class="btn btn-primary btn-sm"
-      >
-        <i class="bi bi-plus-lg me-1"></i>
-        Nuevo Horario
-      </Link>
-    </div>
+      <template #cell-days_display="{ row }">
+        {{ row.days_display }}
+      </template>
 
-    <div class="card border-0 shadow-sm">
-      <div class="card-body p-0">
-        <div v-if="schedules.length === 0" class="text-center py-5">
-          <i class="bi bi-clock text-muted" style="font-size: 3rem;"></i>
-          <p class="text-muted mt-3">No hay horarios configurados.</p>
-          <Link
-            :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/create`"
-            class="btn btn-primary btn-sm"
+      <template #cell-time_display="{ row }">
+        <small>{{ row.time_display }}</small>
+      </template>
+
+      <template #cell-is_active="{ row }">
+        <span :class="row.is_active ? 'badge bg-success' : 'badge bg-secondary'">
+          {{ row.is_active ? 'Activo' : 'Inactivo' }}
+        </span>
+      </template>
+
+      <template #cell-actions="{ row }">
+        <div class="actions">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="cloneSchedule(row.id)"
+            :disabled="cloning === row.id"
+            title="Clonar"
           >
-            <i class="bi bi-plus-lg me-1"></i>
-            Crear primer horario
+            <i class="bi bi-copy"></i>
+          </button>
+          <Link
+            :href="`/member/listings/${listing?.id}/locations/${location?.id}/schedules/${row.id}/edit`"
+            class="btn btn-sm btn-outline-primary"
+          >
+            <i class="bi bi-pencil"></i>
           </Link>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            @click="deleteSchedule(row)"
+            :disabled="deleting === row.id"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
-
-        <div v-else class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Nombre</th>
-                <th>Días</th>
-                <th>Horario</th>
-                <th>Estado</th>
-                <th class="text-end">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="schedule in schedules" :key="schedule.id">
-                <td>
-                  <strong>{{ schedule.name }}</strong>
-                </td>
-                <td>{{ schedule.days_display }}</td>
-                <td>
-                  <small>{{ schedule.time_display }}</small>
-                </td>
-                <td>
-                  <span v-if="schedule.is_active" class="badge bg-success">Activo</span>
-                  <span v-else class="badge bg-secondary">Inactivo</span>
-                </td>
-                <td class="text-end">
-                  <div class="btn-group btn-group-sm">
-                    <Link
-                      :href="`/member/listings/${listing.id}/locations/${location.id}/schedules/${schedule.id}/edit`"
-                      class="btn btn-outline-secondary"
-                      title="Editar"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </Link>
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      title="Clonar"
-                      @click="cloneSchedule(schedule.id)"
-                    >
-                      <i class="bi bi-copy"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger"
-                      title="Eliminar"
-                      @click="deleteSchedule(schedule.id)"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      </template>
+    </BaseDataTable>
   </MemberLayout>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
+import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const location = computed(() => page.props.location)
-const schedules = computed(() => page.props.schedules || [])
-
-const flashSuccess = computed(() => page.props.flash?.success || null)
+const dataTable = computed(() => page.props.dataTable)
 
 const businessMenu = computed(() => page.props.listingMenu || [])
 
@@ -128,15 +101,50 @@ const breadcrumbs = computed(() => {
   ]
 })
 
+const columns = [
+  { key: 'name', label: 'Nombre', sortable: true },
+  { key: 'days_display', label: 'Dias', sortable: false },
+  { key: 'time_display', label: 'Horario', sortable: false },
+  { key: 'is_active', label: 'Estado', sortable: true },
+  { key: 'actions', label: 'Acciones', sortable: false },
+]
+
+const dataTableRef = ref(null)
+const deleting = ref(null)
+const cloning = ref(null)
+const perPage = ref(10)
+
+const onDataTableUpdated = (data) => {
+  perPage.value = data.per_page
+}
+
 const cloneSchedule = (scheduleId) => {
   if (confirm('¿Clonar este horario?')) {
-    router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${scheduleId}/clone`)
+    cloning.value = scheduleId
+    router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${scheduleId}/clone`, {}, {
+      preserveScroll: true,
+      onFinish: () => {
+        cloning.value = null
+        if (dataTableRef.value) {
+          dataTableRef.value.reload()
+        }
+      },
+    })
   }
 }
 
-const deleteSchedule = (scheduleId) => {
+const deleteSchedule = (schedule) => {
   if (confirm('¿Eliminar este horario? Esta acción no se puede deshacer.')) {
-    router.delete(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${scheduleId}`)
+    deleting.value = schedule.id
+    router.delete(`/member/listings/${listing.value.id}/locations/${location.value.id}/schedules/${schedule.id}`, {
+      preserveScroll: true,
+      onFinish: () => {
+        deleting.value = null
+        if (dataTableRef.value) {
+          dataTableRef.value.reload()
+        }
+      },
+    })
   }
 }
 </script>

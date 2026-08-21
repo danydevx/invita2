@@ -82,15 +82,12 @@
                 <strong>Código público:</strong> {{ card.public_code }}
               </div>
 
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm" :disabled="form.processing">
-                  <i class="bi bi-check me-1"></i>
-                  {{ form.processing ? 'Guardando...' : 'Guardar' }}
-                </button>
-                <Link :href="`/member/listings/${listing?.id}/fidelity-cards`" class="btn btn-outline-secondary btn-sm">
-                  Cancelar
-                </Link>
-              </div>
+              <FormActions
+                :submitText="'Guardar'"
+                :submittingText="'Guardando...'"
+                :cancelHref="`/member/listings/${listing?.id}/fidelity-cards`"
+                :sending="form.processing"
+              />
             </form>
           </div>
         </div>
@@ -110,6 +107,7 @@ import FieldEmail from '@/Components/Fields/FieldEmail.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
@@ -148,6 +146,7 @@ const breadcrumbs = computed(() => {
 })
 
 const form = useForm({
+  _method: 'PUT',
   client_name: card.value?.client_name || '',
   client_email: card.value?.client_email || '',
   client_phone: card.value?.client_phone || '',

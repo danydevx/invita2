@@ -155,7 +155,7 @@ class ServiceController extends Controller
                 'name' => $service->name,
                 'slug' => $service->slug,
                 'description' => $service->description,
-                'image' => $service->image,
+                'image' => $this->sanitizeServiceImage($service->image),
                 'duration_minutes' => $service->duration_minutes,
                 'price' => $service->price,
                 'deposit_required' => $service->deposit_required,
@@ -205,6 +205,8 @@ class ServiceController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('services', 'public');
             $data['image'] = $path;
+        } elseif ($request->input('_remove_image')) {
+            $data['image'] = null;
         } else {
             unset($data['image']);
         }
@@ -285,5 +287,16 @@ class ServiceController extends Controller
         });
 
         return back(303);
+    }
+
+    private function sanitizeServiceImage(?string $image): ?string
+    {
+        if ($image === null) {
+            return null;
+        }
+        if (str_starts_with($image, 'data:')) {
+            return null;
+        }
+        return $image;
     }
 }

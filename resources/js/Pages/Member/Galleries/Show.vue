@@ -22,9 +22,12 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li v-for="gallery in galleries" :key="gallery.id">
-              <Link class="dropdown-item" :href="`/member/listings/${listing?.id}/gallery/${gallery.id}`">
-                {{ gallery.name }}
-                <i v-if="gallery.is_primary" class="bi bi-star-fill text-warning ms-1"></i>
+              <Link class="dropdown-item d-flex justify-content-between align-items-center" :href="`/member/listings/${listing?.id}/gallery/${gallery.id}`">
+                <span>
+                  {{ gallery.name }}
+                  <i v-if="gallery.is_primary" class="bi bi-star-fill text-warning ms-1"></i>
+                </span>
+                <span class="badge bg-secondary ms-2">{{ gallery.images_count || 0 }}</span>
               </Link>
             </li>
           </ul>

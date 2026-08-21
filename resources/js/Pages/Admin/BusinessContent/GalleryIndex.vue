@@ -1,19 +1,63 @@
 <template>
   <AdminLayout>
-    <Head :title="`Galeria - ${listing.name}`" />
+    <Head :title="`Galeria - ${listing?.name || ''}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
         <Link href="/admin/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Negocios
         </Link>
-        <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Galeria</h1>
+        <h1 class="h4 mb-1 mt-1">{{ listing?.name || 'Cargando...' }} - Galeria</h1>
       </div>
       <div>
         <button class="btn btn-primary btn-sm" @click="openUploadModal">
           <i class="bi bi-plus-lg me-1"></i>
           Subir imagen
         </button>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="mb-0">Galerias</h5>
+        </div>
+        <div v-if="galleries.length === 0" class="text-center text-muted py-3">
+          No hay galerias creadas.
+        </div>
+        <div v-else class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Imagenes</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="gallery in galleries" :key="gallery.id" :class="{ 'table-active': gallery.id === currentGalleryId }">
+                <td>
+                  <strong>{{ gallery.name }}</strong>
+                  <span v-if="gallery.is_primary" class="badge bg-primary ms-2">Principal</span>
+                </td>
+                <td>
+                  <span v-if="gallery.is_active" class="badge bg-success">Activa</span>
+                  <span v-else class="badge bg-secondary">Inactiva</span>
+                </td>
+                <td>{{ gallery.images_count || 0 }}</td>
+                <td>
+                  <Link
+                    :href="`/admin/listings/${listing.id}/gallery/${gallery.id}`"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    <i class="bi bi-images me-1"></i>Ver imagenes
+                  </Link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -210,9 +254,11 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Pagination from '@/Components/Admin/Pagination.vue'
 
 const page = usePage()
-const listing = computed(() => page.props.listing)
+const listing = computed(() => page.props.listing || { id: 0, name: '' })
 const images = computed(() => page.props.images || { data: [], links: [] })
 const locations = computed(() => page.props.locations || [])
+const galleries = computed(() => page.props.galleries || [])
+const currentGalleryId = computed(() => page.props.currentGalleryId)
 
 const showUploadModal = ref(false)
 const showEditModal = ref(false)

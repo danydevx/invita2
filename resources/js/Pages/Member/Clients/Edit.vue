@@ -140,14 +140,7 @@
             />
           </div>
 
-          <div class="col-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
-            <Link :href="`/member/listings/${listing.id}/clients`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Guardar Cambios'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing.id}/clients`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -165,6 +158,7 @@ import FieldEmail from '@/Components/Fields/FieldEmail.vue'
 import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import LocationSelector from '@/Components/LocationSelector.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
   listing: {

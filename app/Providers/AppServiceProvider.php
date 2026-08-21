@@ -154,6 +154,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\Modules\Properties\Models\PropertyType::class, \App\Policies\PropertyTypePolicy::class);
         Gate::policy(ListingSchedule::class, ListingSchedulePolicy::class);
         Gate::policy(\Modules\ListingTeamMembers\Models\ListingTeamMember::class, ListingTeamMemberPolicy::class);
+        Gate::policy(\Modules\ListingTeamMembers\Models\TeamMemberPosition::class, ListingTeamMemberPolicy::class);
         Gate::policy(\Modules\ListingPackages\Models\ListingPackage::class, ListingPackagePolicy::class);
 
         PropertyType::observe(PropertyTypeObserver::class);

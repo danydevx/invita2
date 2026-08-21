@@ -105,7 +105,7 @@ class TeamMemberPositionController extends Controller
 
     public function edit(Request $request, Listing $business, TeamMemberPosition $position)
     {
-        $this->authorize('update', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
+        $this->authorize('updatePosition', [TeamMemberPosition::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 
@@ -135,7 +135,7 @@ class TeamMemberPositionController extends Controller
 
     public function update(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
-        $this->authorize('update', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
+        $this->authorize('updatePosition', [TeamMemberPosition::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 
@@ -172,7 +172,7 @@ class TeamMemberPositionController extends Controller
 
     public function destroy(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)
     {
-        $this->authorize('delete', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $position]);
+        $this->authorize('deletePosition', [TeamMemberPosition::class, $position]);
 
         abort_unless($position->listing_id === $business->id, 404);
 

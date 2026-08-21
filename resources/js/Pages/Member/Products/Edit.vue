@@ -158,6 +158,7 @@
                 :maxFiles="1"
                 :maxSizeMb="2"
                 accept="image/jpeg"
+                @update:keep="onImageKeepChange"
               />
               <small class="text-muted">JPG, max 2MB</small>
             </div>
@@ -175,14 +176,7 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id}/products`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/products`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -203,6 +197,7 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 import ProductImageUpload from '@/Components/Fields/ProductImageUpload.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
@@ -266,8 +261,13 @@ const validateForm = () => {
 const sending = ref(false)
 const businessMenu = computed(() => page.props.listingMenu || [])
 const productImages = ref([])
+const keepProductImage = ref(true)
 const initialPreview = computed(() => product.value.image ? `/storage/${product.value.image}` : '')
 const productImagesList = computed(() => page.props.productImages || [])
+
+const onImageKeepChange = (value) => {
+  keepProductImage.value = value
+}
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -329,6 +329,8 @@ const submit = () => {
   })
   if (productImages.value instanceof File) {
     formData.append('image', productImages.value)
+  } else if (!keepProductImage.value && product.value?.image) {
+    formData.append('_remove_image', '1')
   }
   router.post(`/member/listings/${listing.value.id}/products/${product.value.id}`, formData, {
     preserveScroll: true,

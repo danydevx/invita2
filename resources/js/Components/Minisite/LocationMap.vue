@@ -1,9 +1,9 @@
 <template>
-  <div v-if="lat && lng" class="location-map">
+  <div v-if="latNum && lngNum" class="location-map">
     <l-map
       ref="map"
       :zoom="14"
-      :center="[lat, lng]"
+      :center="[latNum, lngNum]"
       :options="{ scrollWheelZoom: false, zoomControl: true }"
       style="height: 200px; width: 100%; border-radius: 8px;"
     >
@@ -13,7 +13,7 @@
         name="OpenStreetMap"
         attribution="&copy; OpenStreetMap contributors"
       />
-      <l-marker :lat-lng="[lat, lng]" />
+      <l-marker :lat-lng="[latNum, lngNum]" />
     </l-map>
   </div>
   <div v-else-if="address" class="location-map-placeholder">
@@ -29,16 +29,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const props = defineProps({
   lat: {
-    type: Number,
+    type: [Number, String],
     default: null,
   },
   lng: {
-    type: Number,
+    type: [Number, String],
     default: null,
   },
   address: {
@@ -46,6 +47,9 @@ const props = defineProps({
     default: '',
   },
 })
+
+const latNum = computed(() => props.lat != null ? Number(props.lat) : null)
+const lngNum = computed(() => props.lng != null ? Number(props.lng) : null)
 </script>
 
 <style lang="less">

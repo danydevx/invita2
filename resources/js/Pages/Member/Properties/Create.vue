@@ -226,14 +226,7 @@
             La galería de imágenes estará disponible después de crear la propiedad.
           </div>
 
-          <div class="col-12 d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Creando...' : 'Crear Propiedad' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id}/properties`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Crear'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/properties`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -261,6 +254,7 @@ import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 import FieldFile from '@/Components/Fields/FieldFile.vue'
 import PropertyLocationSection from '@/Components/Properties/PropertyLocationSection.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

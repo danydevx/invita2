@@ -150,6 +150,7 @@
                 :maxFiles="1"
                 :maxSizeMb="2"
                 accept="image/jpeg"
+                @update:keep="onImageKeepChange"
               />
               <small class="text-muted">JPG, max 2MB</small>
             </div>
@@ -167,12 +168,12 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Actualizando...' : 'Actualizar Servicio' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id}/services`" class="btn btn-outline-secondary">Cancelar</Link>
-          </div>
+          <FormActions
+            submitText="Actualizar Servicio"
+            submittingText="Actualizando..."
+            :cancelHref="`/member/listings/${listing?.id}/services`"
+            :sending="sending"
+          />
         </form>
       </div>
     </div>
@@ -231,6 +232,7 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
 import ServiceImageUpload from '@/Components/Fields/ServiceImageUpload.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
   listing: { type: Object, required: true },
@@ -246,7 +248,12 @@ const service = computed(() => props.service)
 
 const sending = ref(false)
 const mainImage = ref(null)
+const keepImage = ref(true)
 const initialPreview = computed(() => service.value?.image ? `/storage/${service.value.image}` : '')
+
+const onImageKeepChange = (value) => {
+  keepImage.value = value
+}
 
 const locationOptions = computed(() => [
   { value: '', label: 'Todas las ubicaciones' },
@@ -433,6 +440,8 @@ const submit = () => {
 
   if (mainImage.value instanceof File) {
     formData.append('image', mainImage.value)
+  } else if (!keepImage.value && service.value?.image) {
+    formData.append('_remove_image', '1')
   }
 
   router.post(`/member/listings/${listing.value.id}/services/${service.value.id}`, formData, {

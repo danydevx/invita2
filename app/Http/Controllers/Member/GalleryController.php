@@ -329,6 +329,7 @@ class GalleryController extends Controller
             ->orderByDesc('is_primary')
             ->orderBy('sort_order')
             ->orderBy('id')
+            ->withCount('images')
             ->get(['id', 'name', 'is_primary', 'is_active']);
     }
 }

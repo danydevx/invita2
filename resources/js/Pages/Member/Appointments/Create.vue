@@ -103,14 +103,7 @@
               />
             </div>
 
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary" :disabled="sending">
-                {{ sending ? 'Guardando...' : 'Crear Cita' }}
-              </button>
-              <Link :href="`/member/listings/${listing.id}/appointments`" class="btn btn-outline-secondary ms-2">
-                Cancelar
-              </Link>
-            </div>
+            <FormActions :submitText="'Crear Cita'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing.id}/appointments`" :sending="sending" />
           </div>
         </form>
       </div>
@@ -131,6 +124,7 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldDate from '@/Components/Fields/FieldDate.vue'
 import FieldTime from '@/Components/Fields/FieldTime.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

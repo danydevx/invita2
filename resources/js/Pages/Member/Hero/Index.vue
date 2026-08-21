@@ -223,12 +223,12 @@
             </div>
           </div>
 
-          <div class="mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              <span v-if="sending">Guardando...</span>
-              <span v-else>Guardar cambios</span>
-            </button>
-          </div>
+          <FormActions
+            :submitText="'Guardar cambios'"
+            :submittingText="'Guardando...'"
+            :cancelHref="'/member/business-modules'"
+            :sending="sending"
+          />
         </form>
       </div>
     </div>
@@ -245,6 +245,7 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
   listing: Object,

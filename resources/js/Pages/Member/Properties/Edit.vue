@@ -105,14 +105,7 @@
 
           </div>
 
-          <div class="property-form-actions">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id}/properties`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/properties`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -143,6 +136,7 @@ import PropertyLocationSection from '@/Components/Properties/PropertyLocationSec
 import FormSection from '@/Components/Properties/FormSection.vue'
 import PropertyImageUpload from '@/Components/Fields/PropertyImageUpload.vue'
 import PropertyAmenityPicker from '@/Components/Fields/PropertyAmenityPicker.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

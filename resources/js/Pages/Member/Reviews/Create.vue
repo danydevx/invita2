@@ -75,14 +75,7 @@
               />
             </div>
 
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary" :disabled="sending">
-                {{ sending ? 'Guardando...' : 'Guardar' }}
-              </button>
-              <Link :href="`/member/listings/${listing.id}/reviews`" class="btn btn-outline-secondary ms-2">
-                Cancelar
-              </Link>
-            </div>
+            <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing.id}/reviews`" :sending="sending" />
           </div>
         </form>
       </div>
@@ -101,6 +94,7 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

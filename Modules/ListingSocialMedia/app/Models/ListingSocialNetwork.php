@@ -105,7 +105,7 @@ class ListingSocialNetwork extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Listings\Models\Listing::class);
+        return $this->belongsTo(\Modules\Listings\Models\Listing::class, 'listing_id');
     }
 
     public function getIconAttribute(): string

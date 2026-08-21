@@ -277,7 +277,7 @@ const openEditModal = (network) => {
 const submitNetwork = () => {
   sending.value = true
   if (editingNetwork.value) {
-    router.put(`/member/listings/${listing.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
+    router.post(`/member/listings/${listing.value.id}/social-networks/${editingNetwork.value.id}`, form.data(), {
       preserveScroll: true,
       onSuccess: () => {
         sending.value = false

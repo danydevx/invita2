@@ -164,14 +164,7 @@
               </div>
             </div>
 
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary flex-grow-1" :disabled="sending">
-                {{ sending ? 'Creando...' : 'Crear Producto' }}
-              </button>
-                <Link :href="`/member/listings/${listing?.id}/menu-products`" class="btn btn-outline-secondary">
-                Cancelar
-              </Link>
-            </div>
+            <FormActions :submitText="'Crear Producto'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
           </div>
         </div>
       </form>
@@ -192,6 +185,7 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FieldImage from '@/Components/Fields/FieldImage.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

@@ -412,12 +412,13 @@
             </div>
           </div>
 
-          <div class="mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="!form.section_type || sending">
-              <i class="bi bi-plus-lg me-1"></i>
-              {{ sending ? 'Creando...' : 'Crear Sección' }}
-            </button>
-          </div>
+          <FormActions
+            :submitText="'Crear Sección'"
+            :submittingText="'Creando...'"
+            :cancelHref="`/member/listings/${listing?.id}/minisite/sections`"
+            :sending="sending"
+            :disabled="!form.section_type"
+          />
         </form>
       </div>
     </div>
@@ -434,6 +435,7 @@ import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

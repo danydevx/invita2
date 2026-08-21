@@ -1,10 +1,10 @@
 <template>
   <AdminLayout>
-    <Head :title="`Nuevo Servicio - ${listing.name}`" />
+    <Head :title="`Nuevo Servicio - ${listing?.name || ''}`" />
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link :href="`/admin/listings/${listing.id}/services`" class="text-decoration-none text-muted small">
+        <Link :href="`/admin/listings/${listing?.id}/services`" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
         <h1 class="h4 mb-1 mt-1">Nuevo Servicio</h1>
@@ -14,86 +14,157 @@
     <div class="card border-0 shadow-sm">
       <div class="card-body">
         <form @submit.prevent="submit">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Nombre *</label>
-              <input type="text" v-model="form.name" class="form-control" required />
-              <div v-if="errors.name" class="text-danger small">{{ errors.name }}</div>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">Ubicacion</label>
-              <select v-model="form.business_location_id" class="form-select">
-                <option :value="null">General (sin ubicacion)</option>
-                <option v-for="loc in locations" :key="loc.id" :value="loc.id">{{ loc.name }}</option>
-              </select>
-            </div>
-
-            <div class="col-12">
-              <label class="form-label">Descripcion</label>
-              <textarea v-model="form.description" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="col-12">
-              <label class="form-label">Imagen del servicio</label>
-              <input
-                ref="imageInput"
-                type="file"
-                accept="image/*"
-                class="form-control"
-                @change="handleImageChange"
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-8">
+              <FieldText
+                id="service-name"
+                label="Nombre"
+                v-model="form.name"
+                :formError="errors.name"
+                placeholder="Nombre del servicio"
+                required
               />
-              <div v-if="imagePreview" class="mt-2">
-                <img :src="imagePreview" class="img-thumbnail" style="max-height: 150px;" alt="Preview" />
-              </div>
-              <div class="text-muted small mt-1"> JPG, PNG o WebP, max 2MB</div>
             </div>
 
-            <div class="col-md-4">
-              <label class="form-label">Duracion (minutos) *</label>
-              <input type="number" v-model="form.duration_minutes" class="form-control" required min="1" />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Precio</label>
-              <input type="number" v-model="form.price" class="form-control" min="0" step="0.01" />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Orden</label>
-              <input type="number" v-model="form.sort_order" class="form-control" min="0" />
+            <div class="col-12 col-md-4">
+              <FieldText
+                id="service-slug"
+                label="Slug"
+                v-model="form.slug"
+                :formError="errors.slug"
+                placeholder="nombre-servicio"
+              />
+              <small class="text-muted">Se genera automaticamente si se deja vacio.</small>
             </div>
 
             <div class="col-12">
-              <div class="form-check">
-                <input type="checkbox" v-model="form.allows_online_booking" class="form-check-input" id="allows_online_booking" />
-                <label class="form-check-label" for="allows_online_booking">Permite reserva online</label>
-              </div>
+              <FieldTextarea
+                id="service-description"
+                label="Descripcion"
+                v-model="form.description"
+                :formError="errors.description"
+                :rows="3"
+              />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <FieldSelect
+                id="service-location"
+                label="Ubicacion"
+                v-model="form.business_location_id"
+                :formError="errors.business_location_id"
+              >
+                <option value="">Todas las ubicaciones</option>
+                <option v-for="loc in locations" :key="loc.id" :value="loc.id">{{ loc.name }}</option>
+              </FieldSelect>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <FieldSelect
+                id="service-category"
+                label="Categoria"
+                v-model="form.category_id"
+                :formError="errors.category_id"
+              >
+                <option value="">Sin categoria</option>
+                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+              </FieldSelect>
+            </div>
+
+            <div class="col-12 col-md-3">
+              <FieldNumber
+                id="service-duration"
+                label="Duracion (minutos)"
+                v-model="form.duration_minutes"
+                :formError="errors.duration_minutes"
+                placeholder="30"
+                required
+              />
+            </div>
+
+            <div class="col-12 col-md-3">
+              <FieldNumber
+                id="service-price"
+                label="Precio"
+                v-model="form.price"
+                :formError="errors.price"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <FieldSwitch
+                id="service-deposit-required"
+                label="Requiere deposito"
+                v-model="form.deposit_required"
+              />
+            </div>
+
+            <div v-if="form.deposit_required" class="col-12 col-md-4">
+              <FieldNumber
+                id="service-deposit-amount"
+                label="Monto deposito"
+                v-model="form.deposit_amount"
+                :formError="errors.deposit_amount"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <FieldSwitch
+                id="service-online-booking"
+                label="Permite reserva online"
+                v-model="form.allows_online_booking"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <FieldPhone
+                id="service-whatsapp"
+                label="WhatsApp"
+                v-model="form.whatsapp_contact"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <FieldSwitch
+                id="service-active"
+                label="Servicio activo"
+                v-model="form.is_active"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <FieldNumber
+                id="service-sort-order"
+                label="Orden"
+                placeholder="0"
+                v-model="form.sort_order"
+                :formError="errors.sort_order"
+              />
+              <small class="text-muted">Menor numero aparece primero.</small>
             </div>
 
             <div class="col-12">
-              <div class="form-check">
-                <input type="checkbox" v-model="form.whatsapp_contact" class="form-check-input" id="whatsapp_contact" />
-                <label class="form-check-label" for="whatsapp_contact">Contactar por WhatsApp</label>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <div class="form-check">
-                <input type="checkbox" v-model="form.is_active" class="form-check-input" id="is_active" />
-                <label class="form-check-label" for="is_active">Activo</label>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary" :disabled="sending">
-                {{ sending ? 'Guardando...' : 'Guardar' }}
-              </button>
-              <Link :href="`/admin/listings/${listing.id}/services`" class="btn btn-outline-secondary ms-2">
-                Cancelar
-              </Link>
+              <FieldImage
+                id="service-image"
+                label="Imagen principal"
+                v-model="mainImage"
+                :initialPreview="''"
+                :maxFiles="1"
+                :maxSizeMb="2"
+                accept="image/jpeg"
+              />
+              <small class="text-muted">JPG, max 2MB</small>
             </div>
           </div>
+
+          <FormActions
+            :submitText="'Guardar'"
+            :submittingText="'Guardando...'"
+            :cancelHref="`/admin/listings/${listing?.id}/services`"
+            :sending="sending"
+          />
         </form>
       </div>
     </div>
@@ -104,41 +175,87 @@
 import { computed, reactive, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import FieldText from '@/Components/Fields/FieldText.vue'
+import FieldNumber from '@/Components/Fields/FieldNumber.vue'
+import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
+import FieldSelect from '@/Components/Fields/FieldSelect.vue'
+import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FieldPhone from '@/Components/Fields/FieldPhone.vue'
+import FieldImage from '@/Components/Fields/FieldImage.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const locations = computed(() => page.props.locations || [])
-const errors = computed(() => page.props.errors || {})
-const sending = computed(() => false)
+const categories = computed(() => page.props.categories || [])
 
-const imagePreview = ref(null)
+const errors = reactive({
+  name: '',
+  slug: '',
+  description: '',
+  duration_minutes: '',
+  price: '',
+  deposit_amount: '',
+  whatsapp_contact: '',
+  business_location_id: '',
+  category_id: '',
+  sort_order: '',
+})
+
+const sending = ref(false)
+const mainImage = ref(null)
 
 const form = reactive({
   name: '',
+  slug: '',
   description: '',
-  image: '',
   duration_minutes: 30,
   price: '',
-  business_location_id: null,
+  deposit_required: false,
+  deposit_amount: '',
   allows_online_booking: true,
-  whatsapp_contact: false,
+  whatsapp_contact: '',
   is_active: true,
   sort_order: 0,
+  business_location_id: '',
+  category_id: '',
 })
 
-const handleImageChange = (e) => {
-  const file = e.target.files[0]
-  if (file) {
-    imagePreview.value = URL.createObjectURL(file)
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      form.image = e.target.result
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
 const submit = () => {
-  router.post(`/admin/listings/${listing.value.id}/services`, form)
+  sending.value = true
+  const formData = new FormData()
+
+  Object.keys(form).forEach(key => {
+    const val = form[key]
+    if (val !== null && val !== '') {
+      if (typeof val === 'boolean') {
+        formData.append(key, val ? '1' : '0')
+      } else {
+        formData.append(key, val)
+      }
+    }
+  })
+
+  if (mainImage.value instanceof File) {
+    formData.append('image', mainImage.value)
+  }
+
+  router.post(`/admin/listings/${listing.value.id}/services`, formData, {
+    preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+    },
+    onFinish: () => {
+      sending.value = false
+    },
+  })
 }
 </script>

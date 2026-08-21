@@ -7,6 +7,7 @@
         v-model="inputValue"
         class="form-control"
         :class="{ 'is-invalid': (showValidation && validationMessage) || formError }"
+        :min="minDate"
         @blur="onBlur"
         :readonly="readonly"
         :disabled="readonly"
@@ -30,26 +31,37 @@ export default {
     formError: { type: String, default: '' },
     validateFunction: { type: Function, default: null },
     classObject: { type: String, default: '' },
-    readonly: { type: Boolean, default: false }, // <--- NUEVO
+    readonly: { type: Boolean, default: false },
+    setDefaultToday: { type: Boolean, default: true },
   },
   emits: ['update:modelValue', 'blur'],
   computed: {
+    minDate() {
+      const today = new Date()
+      return today.toISOString().split('T')[0]
+    },
     inputValue: {
       get() {
-        return this.modelValue;
+        if (!this.modelValue && this.setDefaultToday) {
+          const today = new Date()
+          const dateStr = today.toISOString().split('T')[0]
+          this.$emit('update:modelValue', dateStr)
+          return dateStr
+        }
+        return this.modelValue
       },
       set(val) {
-        this.$emit('update:modelValue', val);
+        this.$emit('update:modelValue', val)
       }
     },
     validationMessage() {
-      return this.validateFunction ? this.validateFunction() : '';
+      return this.validateFunction ? this.validateFunction() : ''
     }
   },
   methods: {
     onBlur() {
-      this.$emit('blur');
+      this.$emit('blur')
     }
   }
-};
+}
 </script>

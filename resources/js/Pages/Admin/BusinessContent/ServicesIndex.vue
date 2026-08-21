@@ -9,10 +9,16 @@
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Servicios</h1>
       </div>
-      <Link :href="`/admin/listings/${listing.id}/services/create`" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg me-1"></i>
-        Nuevo Servicio
-      </Link>
+      <div class="d-flex gap-2">
+        <Link :href="`/admin/listings/${listing.id}/service-categories`" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-folder me-1"></i>
+          Categorias
+        </Link>
+        <Link :href="`/admin/listings/${listing.id}/services/create`" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-lg me-1"></i>
+          Nuevo Servicio
+        </Link>
+      </div>
     </div>
 
     <div class="card border-0 shadow-sm">

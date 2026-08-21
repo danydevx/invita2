@@ -90,14 +90,7 @@
             </div>
           </div>
 
-          <div class="d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Creando...' : 'Crear Formulario' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id}/contact-forms`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Crear Formulario'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/contact-forms`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -109,6 +102,7 @@ import { computed, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
   listing: Object,

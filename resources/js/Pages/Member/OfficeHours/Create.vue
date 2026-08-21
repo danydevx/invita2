@@ -131,17 +131,7 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-primary" :disabled="sending">
-              {{ sending ? 'Guardando...' : 'Guardar Horario' }}
-            </button>
-            <Link
-              :href="`/member/listings/${listing.id}/locations/${location.id}/schedules`"
-              class="btn btn-outline-secondary"
-            >
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing.id}/locations/${location.id}/schedules`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -153,6 +143,7 @@ import { computed, reactive, ref } from 'vue'
 import { Head, Link, usePage, router } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)

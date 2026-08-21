@@ -167,10 +167,12 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100" :disabled="saving">
-              <span v-if="saving">Guardando...</span>
-              <span v-else>Crear Preset</span>
-            </button>
+            <FormActions
+              :submitText="'Crear Preset'"
+              :submittingText="'Guardando...'"
+              :cancelHref="`/member/listings/${listing.id}/ai-chatbot/presets`"
+              :sending="saving"
+            />
           </div>
         </div>
       </form>
@@ -182,6 +184,7 @@ import { computed, reactive, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = page.props.listing
