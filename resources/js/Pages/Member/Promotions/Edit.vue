@@ -186,17 +186,16 @@ import FormActions from '@/Components/FormActions.vue'
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const promotion = computed(() => page.props.promotion)
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Promociones', href: `/member/listings/${biz.id}/promotions` },
         { label: 'Editar Promocion', active: true },
@@ -204,7 +203,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Editar Promocion', active: true },
   ]
 })

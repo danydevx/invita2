@@ -193,7 +193,6 @@ const languages = page.props.languages || ['es', 'en', 'pt', 'fr']
 const contexts = page.props.contexts || []
 
 const breadcrumbs = computed(() => [
-  { label: 'Mis Negocios', href: '/member/business-modules' },
    { label: listing?.name || 'Negocio', href: `/member/listings/${listing?.id}/edit` },
    { label: 'AI Chatbot', href: `/member/listings/${listing?.id}/ai-chatbot` },
    { label: 'Presets', href: `/member/listings/${listing?.id}/ai-chatbot/presets` },

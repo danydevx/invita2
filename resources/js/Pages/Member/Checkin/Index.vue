@@ -98,10 +98,9 @@ const props = defineProps({
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => [
-  { label: 'Dashboard', href: '/member/dashboard' },
   { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
   { label: 'Check-in', active: true },
 ])

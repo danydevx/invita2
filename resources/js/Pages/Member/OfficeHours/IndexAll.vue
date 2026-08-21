@@ -98,7 +98,6 @@ const businessesWithLocations = computed(() => {
 })
 
 const breadcrumbs = [
-  { label: 'Mis Negocios', href: '/member/business-modules' },
   { label: 'Horarios', active: true },
 ]
 </script>

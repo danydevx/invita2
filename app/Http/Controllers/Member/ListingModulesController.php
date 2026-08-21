@@ -13,6 +13,11 @@ class ListingModulesController extends Controller
     public function show(Request $request, Listing $business)
     {
         $user = $request->user();
+
+        if ($user->hasRole('member') && ! $user->hasAnyRole(['superadmin', 'admin'])) {
+            abort(403, 'No tienes permiso para acceder a esta pagina.');
+        }
+
         abort_unless($user->id === $business->user_id || $user->hasAnyRole(['superadmin', 'admin']), 403);
 
         $bizId = $business->id;

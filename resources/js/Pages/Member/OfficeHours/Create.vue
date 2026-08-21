@@ -178,12 +178,11 @@ const form = reactive({
   is_active: true,
 })
 
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const biz = businessMenu.value.find(b => b.id === listing.value.id)
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: biz?.name || '', href: `/member/listings/${listing.value.id}/edit` },
     { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
     { label: location.value.name, href: `/member/listings/${listing.value.id}/locations/${location.value.id}/edit` },

@@ -137,7 +137,7 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 const positions = computed(() => page.props.positions || [])
 const dataTable = computed(() => page.props.dataTable || { data: [] })
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const filters = computed(() => page.props.filters || {})
 const getInitialPosition = () => {
@@ -152,20 +152,18 @@ watch(filters, (newFilters) => {
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Dashboard', href: '/member/dashboard' },
         { label: biz.name, href: `/member/listings/${biz.id}/modules` },
         { label: 'Mi Equipo', active: true },
       ]
     }
   }
   return [
-    { label: 'Dashboard', href: '/member/dashboard' },
     { label: 'Mi Equipo', active: true },
   ]
 })

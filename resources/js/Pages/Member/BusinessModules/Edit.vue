@@ -11,7 +11,7 @@
         <Link :href="`/member/listings/${listing.id}/edit`" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-pencil me-1"></i>Editar negocio
         </Link>
-        <Link href="/member/business-modules" class="btn btn-outline-secondary btn-sm">
+        <Link href="/member/listings" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left me-1"></i>Volver
         </Link>
       </div>
@@ -64,7 +64,7 @@
         <i class="bi bi-grid display-1 text-muted"></i>
         <h3 class="h5 mt-3">No hay modulos activos</h3>
         <p class="text-muted">Este negocio no tiene modulos activos disponibles.</p>
-        <Link href="/member/business-modules" class="btn btn-outline-secondary">
+        <Link href="/member/listings" class="btn btn-outline-secondary">
           <i class="bi bi-arrow-left me-1"></i>Volver a negocios
         </Link>
       </div>

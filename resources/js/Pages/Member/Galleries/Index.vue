@@ -85,24 +85,22 @@ import PageHeader from '@/Components/Admin/PageHeader.vue'
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const galleries = computed(() => page.props.galleries || [])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const match = path.match(/^\/member\/businesses\/(\d+)/)
+  const match = path.match(/^\/member\/listings\/(\d+)/)
   if (match) {
     const bizId = parseInt(match[1])
     const biz = businessMenu.value.find((b) => b.id === bizId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/listings' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Galerías', active: true },
       ]
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/listings' },
     { label: 'Galerías', active: true },
   ]
 })

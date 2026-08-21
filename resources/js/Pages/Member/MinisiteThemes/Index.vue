@@ -4,7 +4,7 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
       <div>
-        <Link href="/member/business-modules" class="text-decoration-none text-muted small">
+        <Link href="/member/listings" class="text-decoration-none text-muted small">
           <i class="bi bi-arrow-left me-1"></i>Mis Negocios
         </Link>
         <h1 class="h4 mb-1 mt-1">{{ listing.name }} - Theme del Minisite</h1>

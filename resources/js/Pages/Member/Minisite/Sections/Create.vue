@@ -442,17 +442,16 @@ const listing = computed(() => page.props.listing)
 const sectionTypes = computed(() => page.props.sectionTypes || {})
 const galleries = computed(() => page.props.galleries || [])
 const forms = computed(() => page.props.forms || [])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const match = path.match(/^\/member\/businesses\/(\d+)/)
+  const match = path.match(/^\/member\/listings\/(\d+)/)
   if (match) {
     const bizId = parseInt(match[1])
     const biz = businessMenu.value.find(b => b.id === bizId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Minisite', href: `/member/listings/${biz.id}/minisite` },
         { label: 'Secciones', href: `/member/listings/${biz.id}/minisite/sections` },
@@ -461,7 +460,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Minisite', href: `/member/listings/${listing.value?.id}/minisite` },
     { label: 'Secciones', href: `/member/listings/${listing.value?.id}/minisite/sections` },
     { label: 'Nueva', active: true },

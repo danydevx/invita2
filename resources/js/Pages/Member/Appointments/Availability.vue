@@ -140,7 +140,6 @@ const exceptionModalRef = ref(null)
 
 const breadcrumbs = computed(() => {
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: listing.value?.name || '', href: `/member/listings/${listing.value?.id}/edit` },
     { label: 'Citas', href: `/member/listings/${listing.value?.id}/appointments` },
     { label: 'Disponibilidad', active: true },

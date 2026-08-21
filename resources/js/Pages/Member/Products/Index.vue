@@ -5,7 +5,7 @@
     <PageHeader
       title="Productos"
       :breadcrumbs="breadcrumbs"
-      :backHref="'/member/business-modules'"
+      :backHref="'/member/listings'"
     >
       <template #actions>
         <button
@@ -159,24 +159,22 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const categories = computed(() => page.props.categories || [])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Productos', active: true },
       ]
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Productos', active: true },
   ]
 })

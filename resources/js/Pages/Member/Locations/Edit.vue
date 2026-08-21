@@ -264,17 +264,16 @@ const form = reactive({
   is_active: !!location.value.is_active,
 })
 
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Ubicaciones', href: `/member/listings/${biz.id}/locations` },
         { label: 'Editar Ubicacion', active: true },
@@ -282,7 +281,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Editar Ubicacion', active: true },
   ]
 })

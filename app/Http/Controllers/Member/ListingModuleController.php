@@ -48,6 +48,10 @@ class ListingModuleController extends Controller
     {
         $user = $request->user();
 
+        if ($user->hasRole('member') && ! $user->hasAnyRole(['superadmin', 'admin'])) {
+            abort(403, 'No tienes permiso para acceder a esta pagina.');
+        }
+
         if ($business->user_id !== $user->id) {
             abort(403, 'No tienes permiso para gestionar este negocio.');
         }

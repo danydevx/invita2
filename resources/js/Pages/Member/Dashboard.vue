@@ -16,22 +16,29 @@
       </div>
     </div>
 
-    <div class="row g-3 mb-4">
-      <div v-for="stat in statCards" :key="stat.key" class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body text-center">
-            <div :class="`d-inline-flex align-items-center justify-content-center rounded-circle mb-2 bg-${stat.tone}-subtle text-${stat.tone}`" style="width: 48px; height: 48px;">
-              <i :class="`bi ${stat.icon}`" style="font-size: 1.5rem;"></i>
+    <div v-if="moduleStats.length > 0" class="mb-4">
+      <h2 class="h6 text-muted mb-3">Módulos de contenido</h2>
+      <div class="row g-2">
+        <div v-for="stat in moduleStats" :key="stat.key" class="col-6 col-md-4 col-lg-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body py-2 px-3">
+              <div class="d-flex align-items-center gap-2">
+                <div :class="`rounded bg-${stat.tone}-subtle text-${stat.tone} d-flex align-items-center justify-content-center`" style="width: 32px; height: 32px;">
+                  <i :class="`bi ${stat.icon}`" style="font-size: 1rem;"></i>
+                </div>
+                <div class="flex-grow-1 min-w-0">
+                  <div class="small text-muted text-truncate">{{ stat.label }}</div>
+                  <div class="fw-semibold">{{ stat.count }}</div>
+                </div>
+              </div>
             </div>
-            <h2 class="h6 text-muted text-uppercase small mb-1">{{ stat.label }}</h2>
-            <p class="display-6 fw-bold mb-0">{{ stat.count }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="row g-3">
-      <div class="col-12 col-md-6 col-lg-4">
+      <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body d-flex flex-column">
             <h2 class="h6 mb-1">Mi cuenta</h2>
@@ -43,7 +50,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-4">
+      <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body d-flex flex-column">
             <h2 class="h6 mb-1">Soporte</h2>
@@ -65,19 +72,33 @@ import MemberLayout from '@/Layouts/MemberLayout.vue'
 
 const page = usePage()
 const userName = computed(() => page.props.auth?.user?.name || 'Usuario')
-const stats = computed(() => page.props.stats || {})
 const listings = computed(() => page.props.listings || [])
+const moduleStats = computed(() => page.props.moduleStats || [])
+
+const toneMap = {
+  'bi-briefcase': 'primary',
+  'bi-cart': 'success',
+  'bi-images': 'info',
+  'bi-people': 'warning',
+  'bi-calendar-event': 'danger',
+  'bi-megaphone': 'dark',
+  'bi-star': 'warning',
+  'bi-person-badge': 'primary',
+  'bi-box-seam': 'secondary',
+  'bi-cup-hot': 'danger',
+  'bi-house': 'info',
+}
+
+const normalizedStats = computed(() => {
+  return moduleStats.value.map(stat => ({
+    ...stat,
+    tone: toneMap[stat.icon] || 'primary',
+  }))
+})
 
 const hasPendingBusiness = computed(() => {
   return listings.value.some(biz => !biz.is_published)
 })
 
 const emailVerified = computed(() => page.props.auth?.user?.email_verified_at !== null)
-
-const statCards = computed(() => [
-  { key: 'leads', label: 'Leads', count: Number(stats.value.leads ?? 0), icon: 'bi-people', tone: 'primary' },
-  { key: 'appointments', label: 'Citas', count: Number(stats.value.appointments ?? 0), icon: 'bi-calendar-event', tone: 'success' },
-  { key: 'promotions', label: 'Promociones', count: Number(stats.value.promotions ?? 0), icon: 'bi-megaphone', tone: 'warning' },
-  { key: 'reviews', label: 'Reseñas', count: Number(stats.value.reviews ?? 0), icon: 'bi-star', tone: 'info' },
-])
 </script>

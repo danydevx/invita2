@@ -157,7 +157,6 @@ const globalPresets = page.props.globalPresets || []
 const businessPresets = page.props.listingPresets || []
 
 const breadcrumbs = computed(() => [
-  { label: 'Mis Negocios', href: '/member/business-modules' },
    { label: listing?.name || 'Negocio', href: `/member/listings/${listing?.id}/edit` },
    { label: 'AI Chatbot', href: `/member/listings/${listing?.id}/ai-chatbot` },
   { label: 'Presets', active: true },

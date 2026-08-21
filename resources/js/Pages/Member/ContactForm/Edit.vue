@@ -193,7 +193,7 @@ const showFieldModal = ref(false)
 const editingField = ref(null)
 const isActive = ref(props.form?.is_active || false)
 const localFields = ref([...props.fields])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 watch(() => props.fields, (newFields) => {
   localFields.value = [...newFields]
@@ -201,13 +201,12 @@ watch(() => props.fields, (newFields) => {
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Formularios', href: `/member/listings/${biz.id}/contact-forms` },
         { label: 'Editar Formulario', active: true },
@@ -215,7 +214,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Formularios', active: true },
   ]
 })

@@ -184,11 +184,11 @@ const localErrors = reactive({})
 const mergedErrors = computed(() => {
   return { ...serverErrors.value, ...localErrors }
 })
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
@@ -197,7 +197,6 @@ const breadcrumbs = computed(() => {
     const typeHref = pt ? `/member/listings/${businessId}/properties?property_type_id=${pt.id}` : null
     if (biz) {
       const items = [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Propiedades', href: `/member/listings/${biz.id}/properties` },
       ]
@@ -207,8 +206,7 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
-    { label: 'Propiedades', href: '/member/business-modules/properties' },
+    { label: 'Propiedades', href: '/member/listings/properties' },
     { label: 'Editar Propiedad', active: true },
   ]
 })

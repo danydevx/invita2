@@ -198,7 +198,7 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 const product = computed(() => page.props.product)
 const categories = computed(() => page.props.categories || [])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const errors = reactive({
   title: '',
@@ -235,13 +235,12 @@ const validateForm = () => {
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/edit` },
         { label: 'Menu del Restaurant', href: `/member/listings/${biz.id}/menu-products` },
         { label: 'Editar Producto', active: true },
@@ -249,7 +248,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Menu del Restaurant', active: true },
     { label: 'Editar Producto', active: true },
   ]

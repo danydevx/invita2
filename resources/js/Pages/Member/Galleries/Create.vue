@@ -85,20 +85,18 @@ import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const biz = businessMenu.value.find((b) => b.id === listing.value?.id)
   if (biz) {
     return [
-      { label: 'Mis Negocios', href: '/member/listings' },
       { label: biz.name, href: `/member/listings/${biz.id}/edit` },
       { label: 'Galerías', href: `/member/listings/${biz.id}/galleries` },
       { label: 'Nueva galería', active: true },
     ]
   }
   return [
-    { label: 'Mis Negocios', href: '/member/listings' },
     { label: 'Galerías', href: `/member/listings/${listing.value?.id}/galleries` },
     { label: 'Nueva galería', active: true },
   ]

@@ -142,24 +142,22 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 const setting = computed(() => page.props.setting)
 const heroLayouts = computed(() => page.props.heroLayouts || {})
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const match = path.match(/^\/member\/businesses\/(\d+)/)
+  const match = path.match(/^\/member\/listings\/(\d+)/)
   if (match) {
     const bizId = parseInt(match[1])
     const biz = businessMenu.value.find(b => b.id === bizId)
     if (biz) {
       return [
-        { label: 'Mis Negocios', href: '/member/business-modules' },
         { label: biz.name, href: `/member/listings/${biz.id}/minisite/sections` },
         { label: 'Configuración', active: true },
       ]
     }
   }
   return [
-    { label: 'Mis Negocios', href: '/member/business-modules' },
     { label: 'Minisite', active: true },
   ]
 })

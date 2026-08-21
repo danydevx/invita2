@@ -129,7 +129,7 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 const member = computed(() => page.props.member)
 const positions = computed(() => page.props.positions || [])
-const businessMenu = computed(() => page.props.listingMenu || [])
+const businessMenu = computed(() => page.props.businessMenu || [])
 
 const positionOptions = computed(() => {
   return [
@@ -145,13 +145,12 @@ const imagePreview = ref(null)
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/businesses\/(\d+)/)
+  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: 'Dashboard', href: '/member/dashboard' },
         { label: biz.name, href: `/member/listings/${biz.id}/modules` },
         { label: 'Mi Equipo', href: `/member/listings/${biz.id}/team-members` },
         { label: member.value?.name || 'Editar', active: true },
@@ -159,7 +158,6 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Dashboard', href: '/member/dashboard' },
     { label: 'Mi Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
     { label: member.value?.name || 'Editar', active: true },
   ]

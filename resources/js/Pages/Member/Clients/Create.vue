@@ -182,7 +182,6 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 
 const breadcrumbs = computed(() => [
-  { label: 'Mis Negocios', href: '/member/listings' },
   { label: listing.value.name, href: `/member/listings/${listing.value.id}/edit` },
   { label: 'Clientes', href: `/member/listings/${listing.value.id}/clients` },
   { label: 'Nuevo Cliente', active: true },
