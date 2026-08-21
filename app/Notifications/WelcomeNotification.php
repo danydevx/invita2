@@ -23,16 +23,16 @@ class WelcomeNotification extends Notification implements ShouldQueue
         $variables = [
             'user_name' => (string) ($notifiable->name ?? ''),
             'user_email' => (string) ($notifiable->email ?? ''),
-            'app_name' => (string) config('app.name'),
+            'app_name' => (string) app_name(),
             'support_email' => (string) (config('mail.from.address') ?? ''),
             'date' => now()->toDateString(),
         ];
 
-        $subject = $templates->renderSubject('user_welcome', $variables, 'Bienvenido a '.config('app.name'));
+        $subject = $templates->renderSubject('user_welcome', $variables, 'Bienvenido a '.app_name());
         $lines = $templates->renderLines('user_welcome', $variables);
 
         $mail = new MailMessage;
-        $mail->subject($subject ?? 'Bienvenido a '.config('app.name'));
+        $mail->subject($subject ?? 'Bienvenido a '.app_name());
 
         if ($lines) {
             foreach ($lines as $line) {

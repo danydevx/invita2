@@ -111,7 +111,7 @@
 import { ref, onMounted } from 'vue'
 
 const props = defineProps({
-  listing: Object,
+  business: Object,
 })
 
 const conversations = ref([])
@@ -122,7 +122,7 @@ const detailLoading = ref(false)
 
 const loadConversations = () => {
   loading.value = true
-  fetch(`/member/listings/${props.listing.id}/ai-chatbot/history-json`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/history-json`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -145,7 +145,7 @@ const viewConversation = (conv) => {
   detailMessages.value = []
   detailLoading.value = true
 
-  fetch(`/member/listings/${props.listing.id}/ai-chatbot/history-json/${conv.session_id}`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/history-json/${conv.session_id}`, {
     method: 'GET',
     credentials: 'include',
     headers: {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Modules\ListingAppointments\Models\ListingAppointment;
 use Modules\Listings\Models\Listing;
@@ -17,14 +18,27 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        if ($user->hasVerifiedEmail() && $user->listings()->doesntExist()) {
+            $slug = $this->generateUniqueSlug();
+            Listing::create([
+                'user_id' => $user->id,
+                'name' => substr($slug, 0, 12),
+                'slug' => $slug,
+                'listing_type' => 'generic',
+                'is_active' => true,
+                'is_published' => false,
+            ]);
+        }
+
         $listings = $user->listings()
-            ->select('id', 'name', 'description')
+            ->select('id', 'name', 'description', 'is_published')
             ->orderBy('name')
             ->get()
             ->map(fn ($biz) => [
                 'id' => $biz->id,
                 'name' => $biz->name,
                 'description' => $biz->description,
+                'is_published' => $biz->is_published,
             ]);
 
         $businessIds = $listings->pluck('id');
@@ -51,5 +65,14 @@ class DashboardController extends Controller
             'stats' => $counts,
             'listings' => $listings,
         ]);
+    }
+
+    private function generateUniqueSlug(): string
+    {
+        do {
+            $slug = substr(hash('sha256', Str::random(16)), 0, 12);
+        } while (Listing::where('slug', $slug)->exists());
+
+        return $slug;
     }
 }

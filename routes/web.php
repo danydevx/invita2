@@ -22,7 +22,6 @@ use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\FeatureFlagController;
 use App\Http\Controllers\Admin\HelpArticleController;
 
-use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\Admin\InvoiceController as AdminInvoiceController;
 use App\Http\Controllers\Admin\LegalDocumentController;
 use Modules\Locations\Http\Controllers\Admin\LocationController as AdminLocationController;
@@ -46,6 +45,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SlotController as AdminSlotController;
 use App\Http\Controllers\Admin\SupportTicketController as AdminSupportTicketController;
+use App\Http\Controllers\Admin\SupportDepartmentController;
 use App\Http\Controllers\Admin\SystemAnnouncementController as AdminSystemAnnouncementController;
 use App\Http\Controllers\Admin\SystemErrorController;
 use App\Http\Controllers\Admin\SystemModuleController;
@@ -55,7 +55,6 @@ use App\Http\Controllers\Admin\UserSubscriptionController;
 use App\Http\Controllers\Admin\UserProfileController;
 use App\Http\Controllers\Admin\WebhookController as AdminWebhookController;
 use App\Http\Controllers\Auth\EmailVerificationController;
-use App\Http\Controllers\Auth\InvitationAcceptController;
 use App\Http\Controllers\Auth\LegalAcceptanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -189,9 +188,6 @@ Route::get('/dev/booking-test', function () {
 Route::get('/register', [RegisterController::class, 'showRegister'])
     ->middleware('guest')
     ->name('register');
-
-Route::get('/invite/{token}', [InvitationAcceptController::class, 'show'])->name('invite.show');
-Route::post('/invite/{token}/accept', [InvitationAcceptController::class, 'accept'])->name('invite.accept');
 
 Route::get('/legal/accept', [LegalAcceptanceController::class, 'show'])
     ->middleware('auth')
@@ -1519,7 +1515,7 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::get('/settings', [SettingController::class, 'index'])
         ->middleware('permission_or_user:settings.view,1')
         ->name('admin.settings.index');
-    Route::put('/settings', [SettingController::class, 'update'])
+    Route::post('/settings', [SettingController::class, 'update'])
         ->middleware('permission_or_user:settings.update,1')
         ->name('admin.settings.update');
 
@@ -1576,25 +1572,6 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
         ->middleware('permission_or_user:users.edit,1')
         ->name('admin.users.subscriptions.destroy');
 
-    Route::get('/invitations', [InvitationController::class, 'index'])
-        ->middleware(['permission_or_user:invitations.view,1', 'module:invitations'])
-        ->name('admin.invitations.index');
-    Route::get('/invitations/create', [InvitationController::class, 'create'])
-        ->middleware(['permission_or_user:invitations.create,1', 'module:invitations'])
-        ->name('admin.invitations.create');
-    Route::post('/invitations', [InvitationController::class, 'store'])
-        ->middleware(['permission_or_user:invitations.create,1', 'module:invitations'])
-        ->name('admin.invitations.store');
-    Route::get('/invitations/{invitation}', [InvitationController::class, 'show'])
-        ->middleware(['permission_or_user:invitations.view,1', 'module:invitations'])
-        ->name('admin.invitations.show');
-    Route::put('/invitations/{invitation}/revoke', [InvitationController::class, 'revoke'])
-        ->middleware(['permission_or_user:invitations.revoke,1', 'module:invitations'])
-        ->name('admin.invitations.revoke');
-    Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])
-        ->middleware(['permission_or_user:invitations.update,1', 'module:invitations'])
-        ->name('admin.invitations.resend');
-
     Route::get('/legal-documents', [LegalDocumentController::class, 'index'])
         ->middleware(['permission_or_user:legal-documents.view,1', 'module:legal'])
         ->name('admin.legal-documents.index');
@@ -1613,6 +1590,9 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::put('/legal-documents/{document}', [LegalDocumentController::class, 'update'])
         ->middleware(['permission_or_user:legal-documents.update,1', 'module:legal'])
         ->name('admin.legal-documents.update');
+    Route::delete('/legal-documents/{document}', [LegalDocumentController::class, 'destroy'])
+        ->middleware(['permission_or_user:legal-documents.delete,1', 'module:legal'])
+        ->name('admin.legal-documents.destroy');
 
     Route::get('/roles', [RoleController::class, 'index'])->name('admin.roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('admin.roles.create');
@@ -1857,6 +1837,19 @@ Route::prefix('admin')->middleware(['auth', 'admin_or_user:1'])->group(function 
     Route::put('/support/{ticket}', [AdminSupportTicketController::class, 'update'])
         ->middleware(['permission_or_user:support.update,1', 'module:support'])
         ->name('admin.support.update');
+
+    Route::get('/support/departments', [SupportDepartmentController::class, 'index'])
+        ->middleware(['permission_or_user:support.view,1', 'module:support'])
+        ->name('admin.support.departments.index');
+    Route::post('/support/departments', [SupportDepartmentController::class, 'store'])
+        ->middleware(['permission_or_user:support.update,1', 'module:support'])
+        ->name('admin.support.departments.store');
+    Route::put('/support/departments/{department}', [SupportDepartmentController::class, 'update'])
+        ->middleware(['permission_or_user:support.update,1', 'module:support'])
+        ->name('admin.support.departments.update');
+    Route::delete('/support/departments/{department}', [SupportDepartmentController::class, 'destroy'])
+        ->middleware(['permission_or_user:support.delete,1', 'module:support'])
+        ->name('admin.support.departments.destroy');
 
     Route::get('/help', [HelpArticleController::class, 'index'])
         ->middleware(['permission_or_user:help.view,1', 'module:support'])

@@ -8,10 +8,10 @@
       :backHref="'/member/business-modules'"
     >
       <template #actions>
-        <button class="btn btn-outline-primary" @click="openImportModal">
+        <button class="btn btn-outline-primary btn-sm" @click="openImportModal">
           <i class="bi bi-download me-1"></i>Importar
         </button>
-        <button class="btn btn-primary" @click="openCreateModal">
+        <button class="btn btn-primary btn-sm" @click="openCreateModal">
           <i class="bi bi-plus me-1"></i>Nuevo
         </button>
       </template>
@@ -24,10 +24,10 @@
           <p class="text-muted mt-3">No hay caracteristicas configuradas.</p>
           <p class="text-muted small">Puedes importar caracteristicas predefinidas o crear las tuyas propias.</p>
           <div class="d-flex gap-2 justify-content-center">
-            <button class="btn btn-outline-primary" @click="showImportModal = true">
+            <button class="btn btn-outline-primary btn-sm" @click="showImportModal = true">
               <i class="bi bi-download me-1"></i>Importar predefinidas
             </button>
-            <button class="btn btn-primary" @click="openCreateModal">
+            <button class="btn btn-primary btn-sm" @click="openCreateModal">
               <i class="bi bi-plus me-1"></i>Crear caracteristica
             </button>
           </div>
@@ -115,10 +115,7 @@
           </nav>
         </div>
 
-        <div class="text-center mt-4">
-          <button class="btn btn-outline-primary" @click="openImportModal" v-if="availableFeaturesCount > 0">
-          </button>
-        </div>
+
       </div>
     </div>
 

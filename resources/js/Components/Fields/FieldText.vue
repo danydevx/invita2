@@ -3,11 +3,11 @@
     <div class="form-floating">
       <input
         :id="id"
-        type="text"
+        :type="type"
         v-model="inputValue"
         class="form-control"
         :readonly="readonly"
-        autocomplete="off"
+        :autocomplete="autocomplete"
         :placeholder="placeholder"
         :class="{ 'is-invalid': (showValidation && validationMessage) || formError }"
         @blur="onBlur"
@@ -36,6 +36,8 @@ const props = defineProps({
   validateFunction: Function,
   classObject: [String, Object, Array],
   readonly: { type: Boolean, default: false },
+  type: { type: String, default: 'text' },
+  autocomplete: { type: String, default: 'off' },
 })
 
 const emit = defineEmits(['update:modelValue', 'blur'])

@@ -166,4 +166,20 @@ class LegalDocumentController extends Controller
 
         return redirect()->route('admin.legal-documents.index');
     }
+
+    public function destroy(Request $request, LegalDocument $document, ActivityService $activity)
+    {
+        $activity->log('legal_document_deleted', [
+            'actor' => $request->user(),
+            'subject' => $document,
+            'description' => 'Documento legal eliminado',
+            'request' => $request,
+        ]);
+
+        $document->acceptances()->delete();
+        $document->delete();
+
+        return redirect()->route('admin.legal-documents.index')
+            ->with('success', 'Documento eliminado correctamente.');
+    }
 }

@@ -1,24 +1,22 @@
 <template>
-  <MemberLayout>
-    <Head title="Estadísticas del Chatbot" />
-    <PageHeader
-      title="Estadísticas del Chatbot"
-      :breadcrumbs="breadcrumbs"
-    >
-      <template #actions>
-        <div class="btn-group">
-          <button
-            v-for="p in periods"
-            :key="p.value"
-            class="btn"
-            :class="period === p.value ? 'btn-primary' : 'btn-outline-primary'"
-            @click="changePeriod(p.value)"
-          >
-            {{ p.label }}
-          </button>
-        </div>
-      </template>
-    </PageHeader>
+  <div>
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+      <div>
+        <h1 class="h4 mb-1">Estadísticas del Chatbot</h1>
+        <p class="text-muted mb-0">Analiza el rendimiento de tu chatbot.</p>
+      </div>
+      <div class="btn-group">
+        <button
+          v-for="p in periods"
+          :key="p.value"
+          class="btn"
+          :class="period === p.value ? 'btn-primary' : 'btn-outline-primary'"
+          @click="changePeriod(p.value)"
+        >
+          {{ p.label }}
+        </button>
+      </div>
+    </div>
 
     <div class="row g-4 mb-4">
       <div class="col-6 col-md-3">
@@ -190,18 +188,14 @@
         </div>
       </div>
     </div>
-  </MemberLayout>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
-import { Head, usePage } from '@inertiajs/vue3'
-import MemberLayout from '@/Layouts/MemberLayout.vue'
-import PageHeader from '@/Components/Admin/PageHeader.vue'
 
-const page = usePage()
 const props = defineProps({
-  listing: Object,
+  business: Object,
   totals: Object,
   dailyStats: Array,
   topQuestions: Array,
@@ -210,13 +204,6 @@ const props = defineProps({
   dailyConversations: Array,
   period: String,
 })
-
-const breadcrumbs = computed(() => [
-  { label: 'Mis Negocios', href: '/member/business-modules' },
-  { label: props.listing?.name || 'Negocio', href: `/member/listings/${props.listing?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/listings/${props.listing?.id}/ai-chatbot` },
-  { label: 'Estadísticas', active: true },
-])
 
 const emit = defineEmits(['period-change'])
 

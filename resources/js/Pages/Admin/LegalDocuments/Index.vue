@@ -55,12 +55,15 @@
               </td>
               <td class="text-muted">{{ doc.acceptances_count }}</td>
               <td class="text-end">
-                <Link :href="`/admin/legal-documents/${doc.id}`" class="btn btn-sm btn-outline-secondary me-2">
+                <Link :href="`/admin/legal-documents/${doc.id}`" class="btn btn-sm btn-outline-secondary me-1">
                   Ver
                 </Link>
-                <Link :href="`/admin/legal-documents/${doc.id}/edit`" class="btn btn-sm btn-outline-primary">
+                <Link :href="`/admin/legal-documents/${doc.id}/edit`" class="btn btn-sm btn-outline-primary me-1">
                   Editar
                 </Link>
+                <button class="btn btn-sm btn-outline-danger" @click="deleteDoc(doc.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -106,5 +109,13 @@ const submitSearch = () => {
 const clearFilters = () => {
   search.value = ''
   submitSearch()
+}
+
+const deleteDoc = (id) => {
+  if (confirm('¿Estás seguro de eliminar este documento?')) {
+    router.delete(`/admin/legal-documents/${id}`, {
+      preserveScroll: true,
+    })
+  }
 }
 </script>

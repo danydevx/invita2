@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
             $variables = [
                 'user_name' => (string) ($user->name ?? ''),
                 'user_email' => (string) ($user->email ?? ''),
-                'app_name' => (string) config('app.name'),
+                'app_name' => (string) app_name(),
                 'support_email' => (string) (config('mail.from.address') ?? ''),
                 'date' => now()->toDateString(),
             ];

@@ -106,7 +106,7 @@ import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
-  listing: Object,
+  business: Object,
   settings: Object,
   embeddingCounts: Object,
 })
@@ -140,7 +140,7 @@ const viewContent = (type, label) => {
   showModal.value = true
   loadingModal.value = true
 
-  fetch(`/member/listings/${props.listing.id}/ai-chatbot/embeddings-json?type=${type}`, {
+  fetch(`/member/listings/${props.business.id}/ai-chatbot/embeddings-json?type=${type}`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -169,7 +169,7 @@ const reindex = () => {
   reindexing.value = true
   reindexResult.value = null
 
-  router.post(`/member/listings/${props.listing.id}/ai-chatbot/reindex`, {}, {
+  router.post(`/member/listings/${props.business.id}/ai-chatbot/reindex`, {}, {
     preserveScroll: true,
     onSuccess: (page) => {
       if (page.props.reindexResult) {

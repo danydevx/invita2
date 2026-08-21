@@ -2,7 +2,13 @@
   <AdminLayout>
     <Head title="Soporte" />
 
-    <PageHeader :title="'Soporte'" :breadcrumbs="breadcrumbs" backHref="/dashboard" />
+    <PageHeader :title="'Soporte'" :breadcrumbs="breadcrumbs" backHref="/dashboard">
+      <template #actions>
+        <Link href="/admin/support/departments" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-diagram-3 me-1"></i>Departamentos
+        </Link>
+      </template>
+    </PageHeader>
 
     <div class="card border-0 shadow-sm mb-3">
       <div class="card-body">

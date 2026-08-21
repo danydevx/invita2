@@ -39,7 +39,7 @@ class ListingGalleryImage extends Model
 
     public function gallery(): BelongsTo
     {
-        return $this->belongsTo(ListingGallery::class, 'listing_gallery_id');
+        return $this->belongsTo(ListingGallery::class, 'business_gallery_id');
     }
 
     public function location(): BelongsTo

@@ -16,7 +16,7 @@ class BrandingService
         ]);
 
         return [
-            'name' => config('app.name', 'SaaS'),
+            'name' => app_name(),
             'email' => $values['app.email'] ?? config('mail.from.address'),
             'website' => $values['app.website'] ?? config('app.url'),
             'logo' => $values['branding.logo'] ?? null,

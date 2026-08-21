@@ -2,7 +2,7 @@
     @php
         $coverImage = $business->cover_image_path ?? ($business->logo_path ?? 'https://picsum.photos/seed/'.$business->id.'/400/300');
         $logoImage = $business->logo_path ?? 'https://picsum.photos/seed/logo'.$business->id.'/100/100';
-        $categoryName = $business->listing_type->label() ?? 'Negocio';
+        $categoryName = $business->listing_type?->label() ?? 'Negocio';
         $city = $business->locations->first()?->city ?? 'Ciudad';
         $state = $business->locations->first()?->state ?? '';
         $rating = round($business->reviews_avg_rating ?? $business->rating ?? 0, 1);

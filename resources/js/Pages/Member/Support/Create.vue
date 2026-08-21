@@ -24,11 +24,12 @@
           </div>
 
           <div class="col-12 col-md-6">
-            <FieldText
-              id="ticket-category"
+            <FieldSelect
+              id="ticket-department"
               label="Categoria"
-              v-model="form.category"
-              :formError="form.errors.category"
+              v-model="form.department_id"
+              :options="departmentOptions"
+              :formError="form.errors.department_id"
             />
           </div>
 
@@ -73,10 +74,22 @@ import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 
 const form = useForm({
   subject: '',
-  category: '',
+  department_id: '',
   priority: '',
   message: '',
 })
+
+const props = defineProps({
+  departments: {
+    type: Array,
+    default: () => [],
+  },
+})
+
+const departmentOptions = [
+  { value: '', label: 'Sin categoria' },
+  ...props.departments,
+]
 
 const priorityOptions = [
   { value: '', label: 'Sin prioridad' },

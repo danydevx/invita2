@@ -23,7 +23,7 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
         $variables = [
             'user_name' => (string) ($notifiable->name ?? ''),
             'user_email' => (string) ($notifiable->email ?? ''),
-            'app_name' => (string) config('app.name'),
+            'app_name' => (string) app_name(),
             'support_email' => (string) (config('mail.from.address') ?? ''),
             'date' => now()->toDateString(),
         ];

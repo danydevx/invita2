@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invitation;
+use App\Jobs\SendVerificationEmailJob;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -56,19 +56,11 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/', 'confirmed'],
-            'invite' => ['nullable', 'string', 'max:255'],
-            'company' => ['nullable', 'string', 'max:0'],
             'form_started_at' => ['required', 'integer', 'min:0'],
         ], [
             'password.regex' => 'Minimo 8 caracteres, con letras y numeros.',
             'email.unique' => 'Este correo ya esta registrado.',
         ]);
-
-        if (! empty($data['company'])) {
-            throw ValidationException::withMessages([
-                'register' => 'No se pudo completar el registro.',
-            ]);
-        }
 
         if (now()->timestamp - (int) $data['form_started_at'] < 3) {
             throw ValidationException::withMessages([
@@ -81,8 +73,10 @@ class RegisterController extends Controller
             'email' => strtolower(trim($data['email'])),
             'password' => Hash::make($data['password']),
             'is_active' => true,
-            'email_verified_at' => now(),
+            'email_verified_at' => null,
         ]);
+
+        SendVerificationEmailJob::dispatch($user->id);
 
         UserProfile::create([
             'user_id' => $user->id,
@@ -114,37 +108,6 @@ class RegisterController extends Controller
                 'starts_at' => now(),
                 'ends_at' => null,
             ]);
-        }
-
-        if (! empty($data['invite'])) {
-            $invitation = Invitation::query()
-                ->where('token', hash('sha256', $data['invite']))
-                ->first();
-
-            if ($invitation && $invitation->status === 'pending') {
-                if ($invitation->isExpired()) {
-                    $invitation->update(['status' => 'expired']);
-                } elseif (strtolower($invitation->email) === strtolower($user->email)) {
-                    $invitation->update([
-                        'status' => 'accepted',
-                        'accepted_at' => now(),
-                    ]);
-
-                    if ($invitation->role_name) {
-                        $invitedRole = Role::query()->where('name', $invitation->role_name)->first();
-                        if ($invitedRole && ! in_array($invitedRole->name, ['admin', 'superadmin'], true)) {
-                            $user->assignRole($invitedRole);
-                        }
-                    }
-
-                    $activity->log('invitation_accepted', [
-                        'actor' => $user,
-                        'subject' => $invitation,
-                        'description' => 'Invitacion aceptada',
-                        'request' => $request,
-                    ]);
-                }
-            }
         }
 
         Auth::login($user);

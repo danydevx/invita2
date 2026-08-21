@@ -24,3 +24,24 @@ Schedule::job(new RunWebhookFailureAutomationsJob)->hourly();
 Schedule::job(new RunTrialEndingAutomationsJob)->daily();
 Schedule::job(new RunSubscriptionExpiredAutomationsJob)->daily();
 Schedule::job(new RunProfileIncompleteAutomationsJob)->daily();
+
+Artisan::command('users:clean-unverified', function () {
+    $days = 7;
+    $cutoff = now()->subDays($days);
+
+    $count = \App\Models\User::query()
+        ->whereNull('email_verified_at')
+        ->where('created_at', '<', $cutoff)
+        ->whereDoesntHave('listings')
+        ->count();
+
+    if ($count > 0) {
+        \App\Models\User::query()
+            ->whereNull('email_verified_at')
+            ->where('created_at', '<', $cutoff)
+            ->whereDoesntHave('listings')
+            ->delete();
+    }
+
+    $this->info("Cleaned {$count} unverified users.");
+})->daily();

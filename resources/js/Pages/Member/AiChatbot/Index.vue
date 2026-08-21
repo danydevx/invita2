@@ -153,8 +153,8 @@ import HistoryTab from './HistoryTab.vue'
 import AnalyticsTab from './AnalyticsTab.vue'
 
 const page = usePage()
-const listing = computed(() => page.props.listing)
-const businessMenu = computed(() => page.props.listingMenu || [])
+const listing = computed(() => page.props.business)
+const businessMenu = computed(() => page.props.businessMenu || [])
 const settings = computed(() => page.props.settings)
 const presets = computed(() => page.props.presets || [])
 const contexts = computed(() => page.props.contexts || [])

@@ -79,7 +79,7 @@ class BusinessController extends Controller
             $gallery = $primary
                 ? $business->galleryImages()
                     ->where('is_active', true)
-                    ->where('listing_gallery_id', $primary->id)
+                    ->where('business_gallery_id', $primary->id)
                     ->orderBy('sort_order')
                     ->limit(12)
                     ->get()

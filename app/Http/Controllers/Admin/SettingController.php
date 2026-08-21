@@ -7,6 +7,7 @@ use App\Models\Plan;
 use App\Services\ActivityService;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class SettingController extends Controller
@@ -28,9 +29,6 @@ class SettingController extends Controller
             'branding.footer_text' => '',
             'branding.auth_image' => '',
             'branding.system_tagline' => '',
-            'regional.timezone' => config('app.timezone'),
-            'regional.locale' => config('app.locale'),
-            'regional.currency' => 'USD',
             'auth.allow_registration' => '0',
             'auth.require_email_verification' => '1',
             'auth.require_admin_approval' => '0',
@@ -38,6 +36,10 @@ class SettingController extends Controller
             'auth.password_min_length' => '8',
             'auth.password_require_letters' => '1',
             'auth.password_require_numbers' => '1',
+            'auth.openai_key' => '',
+            'auth.minimax_key' => '',
+            'auth.claude_key' => '',
+            'auth.gemini_key' => '',
             'system.default_pagination' => '10',
             'system.maintenance_mode' => '0',
             'system.maintenance_message' => '',
@@ -46,10 +48,23 @@ class SettingController extends Controller
             'system.enable_internal_notifications' => '1',
             'billing.enabled' => '1',
             'billing.default_plan_id' => '',
-            'billing.currency' => 'USD',
             'billing.trial_days' => '0',
             'billing.allow_plan_changes' => '1',
             'billing.allow_cancellations' => '1',
+            'billing.stripe_enabled' => '0',
+            'billing.stripe_key' => '',
+            'billing.stripe_secret' => '',
+            'billing.stripe_mode' => 'sandbox',
+            'billing.paypal_enabled' => '0',
+            'billing.paypal_client_id' => '',
+            'billing.paypal_secret' => '',
+            'billing.paypal_mode' => 'sandbox',
+            'billing.mercadopago_enabled' => '0',
+            'billing.mercadopago_public_key' => '',
+            'billing.mercadopago_access_token' => '',
+            'billing.mercadopago_mode' => 'sandbox',
+            'billing.manual_enabled' => '0',
+            'billing.manual_payment_guide' => '',
             'features.api_enabled' => '1',
             'features.webhooks_enabled' => '1',
             'features.support_enabled' => '1',
@@ -60,6 +75,12 @@ class SettingController extends Controller
             'mail.from_address' => config('mail.from.address'),
             'mail.reply_to_address' => '',
             'mail.footer_signature' => '',
+            'mail.protocol' => 'smtp',
+            'mail.encryption' => 'tls',
+            'mail.host' => '',
+            'mail.port' => '587',
+            'mail.username' => '',
+            'mail.password' => '',
         ];
 
         $stored = $settings->getMany(array_keys($defaults));
@@ -83,11 +104,6 @@ class SettingController extends Controller
                 'auth_image' => $stored['branding.auth_image'] ?? $defaults['branding.auth_image'],
                 'system_tagline' => $stored['branding.system_tagline'] ?? $defaults['branding.system_tagline'],
             ],
-            'regional' => [
-                'timezone' => $stored['regional.timezone'] ?? $defaults['regional.timezone'],
-                'locale' => $stored['regional.locale'] ?? $defaults['regional.locale'],
-                'currency' => $stored['regional.currency'] ?? $defaults['regional.currency'],
-            ],
             'auth' => [
                 'allow_registration' => $this->toBool($stored['auth.allow_registration'] ?? $defaults['auth.allow_registration']),
                 'require_email_verification' => $this->toBool($stored['auth.require_email_verification'] ?? $defaults['auth.require_email_verification']),
@@ -96,6 +112,10 @@ class SettingController extends Controller
                 'password_min_length' => (int) ($stored['auth.password_min_length'] ?? $defaults['auth.password_min_length']),
                 'password_require_letters' => $this->toBool($stored['auth.password_require_letters'] ?? $defaults['auth.password_require_letters']),
                 'password_require_numbers' => $this->toBool($stored['auth.password_require_numbers'] ?? $defaults['auth.password_require_numbers']),
+                'openai_key' => $this->decryptValue($stored['auth.openai_key'] ?? ''),
+                'minimax_key' => $this->decryptValue($stored['auth.minimax_key'] ?? ''),
+                'claude_key' => $this->decryptValue($stored['auth.claude_key'] ?? ''),
+                'gemini_key' => $this->decryptValue($stored['auth.gemini_key'] ?? ''),
             ],
             'system' => [
                 'default_pagination' => (int) ($stored['system.default_pagination'] ?? $defaults['system.default_pagination']),
@@ -108,10 +128,23 @@ class SettingController extends Controller
             'billing' => [
                 'enabled' => $this->toBool($stored['billing.enabled'] ?? $defaults['billing.enabled']),
                 'default_plan_id' => $stored['billing.default_plan_id'] ?? $defaults['billing.default_plan_id'],
-                'currency' => $stored['billing.currency'] ?? $defaults['billing.currency'],
                 'trial_days' => (int) ($stored['billing.trial_days'] ?? $defaults['billing.trial_days']),
                 'allow_plan_changes' => $this->toBool($stored['billing.allow_plan_changes'] ?? $defaults['billing.allow_plan_changes']),
                 'allow_cancellations' => $this->toBool($stored['billing.allow_cancellations'] ?? $defaults['billing.allow_cancellations']),
+                'stripe_enabled' => $this->toBool($stored['billing.stripe_enabled'] ?? $defaults['billing.stripe_enabled']),
+                'stripe_key' => $this->decryptValue($stored['billing.stripe_key'] ?? ''),
+                'stripe_secret' => $this->decryptValue($stored['billing.stripe_secret'] ?? ''),
+                'stripe_mode' => $stored['billing.stripe_mode'] ?? $defaults['billing.stripe_mode'],
+                'paypal_enabled' => $this->toBool($stored['billing.paypal_enabled'] ?? $defaults['billing.paypal_enabled']),
+                'paypal_client_id' => $this->decryptValue($stored['billing.paypal_client_id'] ?? ''),
+                'paypal_secret' => $this->decryptValue($stored['billing.paypal_secret'] ?? ''),
+                'paypal_mode' => $stored['billing.paypal_mode'] ?? $defaults['billing.paypal_mode'],
+                'mercadopago_enabled' => $this->toBool($stored['billing.mercadopago_enabled'] ?? $defaults['billing.mercadopago_enabled']),
+                'mercadopago_public_key' => $this->decryptValue($stored['billing.mercadopago_public_key'] ?? ''),
+                'mercadopago_access_token' => $this->decryptValue($stored['billing.mercadopago_access_token'] ?? ''),
+                'mercadopago_mode' => $stored['billing.mercadopago_mode'] ?? $defaults['billing.mercadopago_mode'],
+                'manual_enabled' => $this->toBool($stored['billing.manual_enabled'] ?? $defaults['billing.manual_enabled']),
+                'manual_payment_guide' => $stored['billing.manual_payment_guide'] ?? $defaults['billing.manual_payment_guide'],
             ],
             'features' => [
                 'api_enabled' => $this->toBool($stored['features.api_enabled'] ?? $defaults['features.api_enabled']),
@@ -126,6 +159,12 @@ class SettingController extends Controller
                 'from_address' => $stored['mail.from_address'] ?? $defaults['mail.from_address'],
                 'reply_to_address' => $stored['mail.reply_to_address'] ?? $defaults['mail.reply_to_address'],
                 'footer_signature' => $stored['mail.footer_signature'] ?? $defaults['mail.footer_signature'],
+                'protocol' => $stored['mail.protocol'] ?? $defaults['mail.protocol'],
+                'encryption' => $stored['mail.encryption'] ?? $defaults['mail.encryption'],
+                'host' => $stored['mail.host'] ?? $defaults['mail.host'],
+                'port' => (int) ($stored['mail.port'] ?? $defaults['mail.port']),
+                'username' => $stored['mail.username'] ?? $defaults['mail.username'],
+                'password' => $this->decryptValue($stored['mail.password'] ?? ''),
             ],
         ];
 
@@ -155,15 +194,13 @@ class SettingController extends Controller
             'app.address' => ['nullable', 'string', 'max:255'],
             'app.description' => ['nullable', 'string', 'max:500'],
             'branding.logo' => ['nullable', 'string', 'max:255'],
+            'branding.logo_file' => ['nullable', 'file', 'image', 'max:2048'],
             'branding.favicon' => ['nullable', 'string', 'max:255'],
             'branding.primary_color' => ['nullable', 'string', 'max:20'],
             'branding.secondary_color' => ['nullable', 'string', 'max:20'],
             'branding.footer_text' => ['nullable', 'string', 'max:255'],
             'branding.auth_image' => ['nullable', 'string', 'max:255'],
             'branding.system_tagline' => ['nullable', 'string', 'max:255'],
-            'regional.timezone' => ['required', 'string', 'max:100'],
-            'regional.locale' => ['required', 'string', 'max:10'],
-            'regional.currency' => ['required', 'string', 'max:10'],
             'auth.allow_registration' => ['boolean'],
             'auth.require_email_verification' => ['boolean'],
             'auth.require_admin_approval' => ['boolean'],
@@ -171,6 +208,10 @@ class SettingController extends Controller
             'auth.password_min_length' => ['required', 'integer', 'min:6', 'max:32'],
             'auth.password_require_letters' => ['boolean'],
             'auth.password_require_numbers' => ['boolean'],
+            'auth.openai_key' => ['nullable', 'string', 'max:500'],
+            'auth.minimax_key' => ['nullable', 'string', 'max:500'],
+            'auth.claude_key' => ['nullable', 'string', 'max:500'],
+            'auth.gemini_key' => ['nullable', 'string', 'max:500'],
             'system.default_pagination' => ['required', 'integer', 'min:5', 'max:100'],
             'system.maintenance_mode' => ['boolean'],
             'system.maintenance_message' => ['nullable', 'string', 'max:500'],
@@ -179,10 +220,23 @@ class SettingController extends Controller
             'system.enable_internal_notifications' => ['boolean'],
             'billing.enabled' => ['boolean'],
             'billing.default_plan_id' => ['nullable', 'exists:plans,id'],
-            'billing.currency' => ['nullable', 'string', 'max:10'],
             'billing.trial_days' => ['nullable', 'integer', 'min:0', 'max:365'],
             'billing.allow_plan_changes' => ['boolean'],
             'billing.allow_cancellations' => ['boolean'],
+            'billing.stripe_enabled' => ['boolean'],
+            'billing.stripe_key' => ['nullable', 'string', 'max:255'],
+            'billing.stripe_secret' => ['nullable', 'string', 'max:255'],
+            'billing.stripe_mode' => ['nullable', 'string', 'max:20'],
+            'billing.paypal_enabled' => ['boolean'],
+            'billing.paypal_client_id' => ['nullable', 'string', 'max:255'],
+            'billing.paypal_secret' => ['nullable', 'string', 'max:255'],
+            'billing.paypal_mode' => ['nullable', 'string', 'max:20'],
+            'billing.mercadopago_enabled' => ['boolean'],
+            'billing.mercadopago_public_key' => ['nullable', 'string', 'max:255'],
+            'billing.mercadopago_access_token' => ['nullable', 'string', 'max:255'],
+            'billing.mercadopago_mode' => ['nullable', 'string', 'max:20'],
+            'billing.manual_enabled' => ['boolean'],
+            'billing.manual_payment_guide' => ['nullable', 'string'],
             'features.api_enabled' => ['boolean'],
             'features.webhooks_enabled' => ['boolean'],
             'features.support_enabled' => ['boolean'],
@@ -193,6 +247,12 @@ class SettingController extends Controller
             'mail.from_address' => ['nullable', 'email', 'max:150'],
             'mail.reply_to_address' => ['nullable', 'email', 'max:150'],
             'mail.footer_signature' => ['nullable', 'string', 'max:255'],
+            'mail.protocol' => ['nullable', 'string', 'max:20'],
+            'mail.encryption' => ['nullable', 'string', 'max:10'],
+            'mail.host' => ['nullable', 'string', 'max:255'],
+            'mail.port' => ['nullable', 'integer', 'min:1', 'max:65535'],
+            'mail.username' => ['nullable', 'string', 'max:150'],
+            'mail.password' => ['nullable', 'string', 'max:500'],
         ]);
 
         $settings->set('app.name', $data['app']['name']);
@@ -204,16 +264,23 @@ class SettingController extends Controller
         $settings->set('app.description', $data['app']['description'] ?? '');
 
         $settings->set('branding.logo', $data['branding']['logo'] ?? '');
+
+        if ($request->hasFile('branding.logo_file')) {
+            $file = $data['branding']['logo_file'];
+            $path = $file->store('branding', 'public');
+            $oldLogo = $settings->get('branding.logo');
+            if ($oldLogo) {
+                Storage::disk('public')->delete($oldLogo);
+            }
+            $settings->set('branding.logo', $path);
+        }
+
         $settings->set('branding.favicon', $data['branding']['favicon'] ?? '');
         $settings->set('branding.primary_color', $data['branding']['primary_color'] ?? '');
         $settings->set('branding.secondary_color', $data['branding']['secondary_color'] ?? '');
         $settings->set('branding.footer_text', $data['branding']['footer_text'] ?? '');
         $settings->set('branding.auth_image', $data['branding']['auth_image'] ?? '');
         $settings->set('branding.system_tagline', $data['branding']['system_tagline'] ?? '');
-
-        $settings->set('regional.timezone', $data['regional']['timezone']);
-        $settings->set('regional.locale', $data['regional']['locale']);
-        $settings->set('regional.currency', $data['regional']['currency']);
 
         $settings->set('auth.allow_registration', $this->boolToString($data['auth']['allow_registration'] ?? false));
         $settings->set('auth.require_email_verification', $this->boolToString($data['auth']['require_email_verification'] ?? true));
@@ -222,6 +289,10 @@ class SettingController extends Controller
         $settings->set('auth.password_min_length', (string) $data['auth']['password_min_length']);
         $settings->set('auth.password_require_letters', $this->boolToString($data['auth']['password_require_letters'] ?? true));
         $settings->set('auth.password_require_numbers', $this->boolToString($data['auth']['password_require_numbers'] ?? true));
+        $settings->set('auth.openai_key', $this->encryptValue($data['auth']['openai_key'] ?? ''));
+        $settings->set('auth.minimax_key', $this->encryptValue($data['auth']['minimax_key'] ?? ''));
+        $settings->set('auth.claude_key', $this->encryptValue($data['auth']['claude_key'] ?? ''));
+        $settings->set('auth.gemini_key', $this->encryptValue($data['auth']['gemini_key'] ?? ''));
 
         $settings->set('system.default_pagination', (string) $data['system']['default_pagination']);
         $settings->set('system.maintenance_mode', $this->boolToString($data['system']['maintenance_mode'] ?? false));
@@ -232,10 +303,23 @@ class SettingController extends Controller
 
         $settings->set('billing.enabled', $this->boolToString($data['billing']['enabled'] ?? true));
         $settings->set('billing.default_plan_id', $data['billing']['default_plan_id'] ?? '');
-        $settings->set('billing.currency', $data['billing']['currency'] ?? '');
         $settings->set('billing.trial_days', (string) ($data['billing']['trial_days'] ?? 0));
         $settings->set('billing.allow_plan_changes', $this->boolToString($data['billing']['allow_plan_changes'] ?? true));
         $settings->set('billing.allow_cancellations', $this->boolToString($data['billing']['allow_cancellations'] ?? true));
+        $settings->set('billing.stripe_enabled', $this->boolToString($data['billing']['stripe_enabled'] ?? false));
+        $settings->set('billing.stripe_key', $this->encryptValue($data['billing']['stripe_key'] ?? ''));
+        $settings->set('billing.stripe_secret', $this->encryptValue($data['billing']['stripe_secret'] ?? ''));
+        $settings->set('billing.stripe_mode', $data['billing']['stripe_mode'] ?? 'sandbox');
+        $settings->set('billing.paypal_enabled', $this->boolToString($data['billing']['paypal_enabled'] ?? false));
+        $settings->set('billing.paypal_client_id', $this->encryptValue($data['billing']['paypal_client_id'] ?? ''));
+        $settings->set('billing.paypal_secret', $this->encryptValue($data['billing']['paypal_secret'] ?? ''));
+        $settings->set('billing.paypal_mode', $data['billing']['paypal_mode'] ?? 'sandbox');
+        $settings->set('billing.mercadopago_enabled', $this->boolToString($data['billing']['mercadopago_enabled'] ?? false));
+        $settings->set('billing.mercadopago_public_key', $this->encryptValue($data['billing']['mercadopago_public_key'] ?? ''));
+        $settings->set('billing.mercadopago_access_token', $this->encryptValue($data['billing']['mercadopago_access_token'] ?? ''));
+        $settings->set('billing.mercadopago_mode', $data['billing']['mercadopago_mode'] ?? 'sandbox');
+        $settings->set('billing.manual_enabled', $this->boolToString($data['billing']['manual_enabled'] ?? false));
+        $settings->set('billing.manual_payment_guide', $data['billing']['manual_payment_guide'] ?? '');
 
         $settings->set('features.api_enabled', $this->boolToString($data['features']['api_enabled'] ?? true));
         $settings->set('features.webhooks_enabled', $this->boolToString($data['features']['webhooks_enabled'] ?? true));
@@ -248,6 +332,12 @@ class SettingController extends Controller
         $settings->set('mail.from_address', $data['mail']['from_address'] ?? '');
         $settings->set('mail.reply_to_address', $data['mail']['reply_to_address'] ?? '');
         $settings->set('mail.footer_signature', $data['mail']['footer_signature'] ?? '');
+        $settings->set('mail.protocol', $data['mail']['protocol'] ?? 'smtp');
+        $settings->set('mail.encryption', $data['mail']['encryption'] ?? 'tls');
+        $settings->set('mail.host', $data['mail']['host'] ?? '');
+        $settings->set('mail.port', (string) ($data['mail']['port'] ?? 587));
+        $settings->set('mail.username', $data['mail']['username'] ?? '');
+        $settings->set('mail.password', $this->encryptValue($data['mail']['password'] ?? ''));
 
         // compatibilidad con keys antiguas
         $settings->set('system.allow_registration', $this->boolToString($data['auth']['allow_registration'] ?? false));
@@ -286,5 +376,25 @@ class SettingController extends Controller
     private function boolToString(bool $value): string
     {
         return $value ? '1' : '0';
+    }
+
+    private function decryptValue(string $value): string
+    {
+        if (empty($value)) {
+            return '';
+        }
+        try {
+            return decrypt($value);
+        } catch (\Exception $e) {
+            return $value;
+        }
+    }
+
+    private function encryptValue(string $value): string
+    {
+        if (empty($value)) {
+            return '';
+        }
+        return encrypt($value);
     }
 }

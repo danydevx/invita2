@@ -1,4 +1,4 @@
-@php($name = $brand['name'] ?? config('app.name'))
+@php($name = $brand['name'] ?? app_name())
 @php($logo = $brand['logo'] ?? null)
 
 <div style="text-align: center; margin-bottom: 24px;">

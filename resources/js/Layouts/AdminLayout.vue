@@ -52,6 +52,11 @@
                 <i class="bi bi-grid me-1"></i>Modulos
               </Link>
             </li>
+            <li class="nav-item">
+              <Link href="/admin/features" class="nav-link" prefetch="hover">
+                <i class="bi bi-sliders me-1"></i>Settings
+              </Link>
+            </li>
             <li v-if="showBillingMenu" class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 Comercial

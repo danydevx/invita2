@@ -15,6 +15,7 @@ class SupportTicket extends Model
         'status',
         'priority',
         'category',
+        'department_id',
         'last_reply_at',
         'closed_at',
     ];
@@ -27,6 +28,11 @@ class SupportTicket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(SupportDepartment::class, 'department_id');
     }
 
     public function messages(): HasMany

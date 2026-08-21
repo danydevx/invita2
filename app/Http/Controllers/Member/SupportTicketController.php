@@ -18,8 +18,22 @@ class SupportTicketController extends Controller
     use AuthorizesRequests;
     public function index(Request $request)
     {
-        $tickets = SupportTicket::query()
-            ->where('user_id', $request->user()->id)
+        $query = SupportTicket::query()
+            ->where('user_id', $request->user()->id);
+
+        if ($request->filled('search')) {
+            $query->where('subject', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        $tickets = $query
             ->orderByDesc('last_reply_at')
             ->orderByDesc('id')
             ->paginate(10)
@@ -36,6 +50,7 @@ class SupportTicketController extends Controller
 
         return Inertia::render('Member/Support/Index', [
             'tickets' => $tickets,
+            'filters' => $request->only(['search', 'status', 'priority']),
         ]);
     }
 
@@ -45,7 +60,17 @@ class SupportTicketController extends Controller
             return redirect('/member')->with('error', 'El modulo de soporte no esta habilitado.');
         }
 
-        return Inertia::render('Member/Support/Create');
+        $departments = \App\Models\SupportDepartment::active()
+            ->ordered()
+            ->get()
+            ->map(fn ($dept) => [
+                'value' => $dept->id,
+                'label' => $dept->name,
+            ]);
+
+        return Inertia::render('Member/Support/Create', [
+            'departments' => $departments,
+        ]);
     }
 
     public function store(Request $request, ActivityService $activity, UserNotificationService $notifications, WebhookService $webhooks, FeatureService $features)
@@ -55,10 +80,12 @@ class SupportTicketController extends Controller
         }
         $data = $request->validate([
             'subject' => ['required', 'string', 'max:150'],
-            'category' => ['nullable', 'string', 'max:100'],
+            'department_id' => ['nullable', 'integer', 'exists:support_departments,id'],
             'priority' => ['nullable', 'string', 'in:low,medium,high'],
             'message' => ['required', 'string', 'max:5000'],
         ]);
+
+        $department = isset($data['department_id']) ? \App\Models\SupportDepartment::find($data['department_id']) : null;
 
         $ticket = SupportTicket::create([
             'user_id' => $request->user()->id,
@@ -66,7 +93,7 @@ class SupportTicketController extends Controller
             'message' => $data['message'],
             'status' => 'open',
             'priority' => $data['priority'] ?? null,
-            'category' => $data['category'] ?? null,
+            'department_id' => $data['department_id'] ?? null,
             'last_reply_at' => now(),
         ]);
 
@@ -106,7 +133,7 @@ class SupportTicketController extends Controller
     {
         $this->authorize('view', $ticket);
 
-        $ticket->load(['messages.user:id,name,email']);
+        $ticket->load(['messages.user:id,name,email', 'department']);
 
         return Inertia::render('Member/Support/Show', [
             'ticket' => [
@@ -114,10 +141,10 @@ class SupportTicketController extends Controller
                 'subject' => $ticket->subject,
                 'status' => $ticket->status,
                 'priority' => $ticket->priority,
-                'category' => $ticket->category,
+                'department' => $ticket->department?->name,
                 'last_reply_at' => $ticket->last_reply_at?->toDateTimeString(),
-                'created_at' => $ticket->created_at?->toDateTimeString(),
-                'closed_at' => $ticket->closed_at?->toDateTimeString(),
+                'created_at' => $ticket->created_at?->toDateString(),
+                'closed_at' => $ticket->closed_at?->toDateString(),
                 'messages' => $ticket->messages->map(fn ($message) => [
                     'id' => $message->id,
                     'message' => $message->message,

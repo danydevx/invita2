@@ -14,21 +14,21 @@
       <div class="card-body">
         <form class="row g-3" @submit.prevent="submit">
           <div class="col-12 col-md-6">
-            <FieldText
+            <FieldSelect
               id="pref-locale"
               label="Idioma"
               v-model="form.locale"
+              :options="localeOptions"
               :formError="form.errors.locale"
-              placeholder="es"
             />
           </div>
           <div class="col-12 col-md-6">
-            <FieldText
+            <FieldSelect
               id="pref-timezone"
               label="Zona horaria"
               v-model="form.timezone"
+              :options="timezoneOptions"
               :formError="form.errors.timezone"
-              placeholder="America/Mexico_City"
             />
           </div>
 
@@ -69,7 +69,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
-import FieldText from '@/Components/Fields/FieldText.vue'
+import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 
 const props = defineProps({
@@ -90,4 +90,22 @@ const form = useForm({
 const submit = () => {
   form.put('/member/preferences')
 }
+
+const localeOptions = [
+  { value: 'es', label: 'Espanol' },
+  { value: 'en', label: 'English' },
+]
+
+const timezoneOptions = [
+  { value: 'America/Mexico_City', label: 'Ciudad de Mexico' },
+  { value: 'America/Tijuana', label: 'Tijuana' },
+  { value: 'America/Hermosillo', label: 'Hermosillo' },
+  { value: 'America/Mazatlan', label: 'Mazatlan' },
+  { value: 'America/Chihuahua', label: 'Chihuahua' },
+  { value: 'America/Ojinaga', label: 'Ojinaga' },
+  { value: 'America/Ciudad_Juarez', label: 'Ciudad Juarez' },
+  { value: 'America/Monterrey', label: 'Monterrey' },
+  { value: 'America/Merida', label: 'Merida' },
+  { value: 'America/Cancun', label: 'Cancun' },
+]
 </script>

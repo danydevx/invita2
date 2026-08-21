@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Modules\ListingAiChatbot\Models\ListingAiSetting;
 use Modules\ListingAiChatbot\Models\AiContext;
 use Modules\ListingAiChatbot\Models\ChatbotPreset;
@@ -102,10 +103,10 @@ class AiChatbotController extends Controller
         abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
 
         $data = $request->validate([
-            'provider' => 'required|in:openai,minimax',
-            'api_key' => 'required|string|max:500',
-            'model' => 'required|string|max:100',
-            'embedding_model' => 'required|string|max:100',
+            'provider' => 'nullable|in:openai,minimax',
+            'api_key' => 'nullable|string|max:500',
+            'model' => 'nullable|string|max:100',
+            'embedding_model' => 'nullable|string|max:100',
             'system_prompt' => 'nullable|string',
             'chatbot_name' => 'nullable|string|max:100',
             'chatbot_avatar' => 'nullable|image|max:1024|mimes:jpg,jpeg,png',
@@ -116,24 +117,24 @@ class AiChatbotController extends Controller
             'response_length' => 'nullable|in:short,medium,long',
             'expandable_responses' => 'boolean',
             'show_citations' => 'boolean',
-            'max_conversations_month' => 'required|integer|min:1|max:10000',
-            'max_messages_conversation' => 'required|integer|min:1|max:500',
-            'max_tokens_response' => 'required|integer|min:100|max:4000',
-            'widget_color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
-            'widget_theme' => 'required|in:light,dark',
+            'max_conversations_month' => 'nullable|integer|min:1|max:10000',
+            'max_messages_conversation' => 'nullable|integer|min:1|max:500',
+            'max_tokens_response' => 'nullable|integer|min:100|max:4000',
+            'widget_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'widget_theme' => 'nullable|in:light,dark',
             'is_enabled' => 'boolean',
             'allow_reset_chat' => 'boolean',
-            'url_import_max_chars' => 'required|integer|min:100|max:50000',
-            'rag_min_similarity' => 'required|numeric|min:0|max:1',
-            'rag_max_results' => 'required|integer|min:1|max:20',
+            'url_import_max_chars' => 'nullable|integer|min:100|max:50000',
+            'rag_min_similarity' => 'nullable|numeric|min:0|max:1',
+            'rag_max_results' => 'nullable|integer|min:1|max:20',
             'cta_settings' => 'nullable|string',
             'lead_capture_settings' => 'nullable|string',
         ]);
 
         $updateData = [
-            'provider' => $data['provider'],
-            'model' => $data['model'],
-            'embedding_model' => $data['embedding_model'],
+            'provider' => $data['provider'] ?? 'openai',
+            'model' => $data['model'] ?? 'gpt-4o-mini',
+            'embedding_model' => $data['embedding_model'] ?? 'text-embedding-3-small',
             'system_prompt' => $data['system_prompt'] ?? null,
             'chatbot_name' => $data['chatbot_name'] ?? null,
             'preset_id' => $data['preset_id'] ?? null,
@@ -142,16 +143,16 @@ class AiChatbotController extends Controller
             'response_length' => $data['response_length'] ?? 'medium',
             'expandable_responses' => $data['expandable_responses'] ?? true,
             'show_citations' => $data['show_citations'] ?? true,
-            'max_conversations_month' => $data['max_conversations_month'],
-            'max_messages_conversation' => $data['max_messages_conversation'],
-            'max_tokens_response' => $data['max_tokens_response'],
-            'widget_color' => $data['widget_color'],
-            'widget_theme' => $data['widget_theme'],
+            'max_conversations_month' => $data['max_conversations_month'] ?? 500,
+            'max_messages_conversation' => $data['max_messages_conversation'] ?? 50,
+            'max_tokens_response' => $data['max_tokens_response'] ?? 500,
+            'widget_color' => $data['widget_color'] ?? '#3B82F6',
+            'widget_theme' => $data['widget_theme'] ?? 'light',
             'is_enabled' => $data['is_enabled'] ?? false,
             'allow_reset_chat' => $data['allow_reset_chat'] ?? false,
-            'url_import_max_chars' => $data['url_import_max_chars'],
-            'rag_min_similarity' => (float) $data['rag_min_similarity'],
-            'rag_max_results' => (int) $data['rag_max_results'],
+            'url_import_max_chars' => $data['url_import_max_chars'] ?? 5000,
+            'rag_min_similarity' => (float) ($data['rag_min_similarity'] ?? 0.25),
+            'rag_max_results' => (int) ($data['rag_max_results'] ?? 5),
         ];
 
         if (!empty($data['cta_settings'])) {
@@ -180,7 +181,7 @@ class AiChatbotController extends Controller
         }
 
         if (!empty($data['api_key']) && $data['api_key'] !== '********') {
-            $updateData['api_key'] = $data['api_key'];
+            $updateData['api_key'] = Crypt::encryptString($data['api_key']);
         }
 
         $settings = ListingAiSetting::updateOrCreate(
@@ -380,6 +381,24 @@ class AiChatbotController extends Controller
         return response()->json([
             'success' => true,
             'widget' => $widget,
+        ]);
+    }
+
+    public function historyJson(Request $request, \Modules\Listings\Models\Listing $business)
+    {
+        abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
+
+        return response()->json([
+            'conversations' => [],
+        ]);
+    }
+
+    public function historyDetailJson(Request $request, \Modules\Listings\Models\Listing $business, $sessionId)
+    {
+        abort_unless($business->user_id === Auth::id() || Auth::user()->hasRole('superadmin'), 403);
+
+        return response()->json([
+            'messages' => [],
         ]);
     }
 }

@@ -17,4 +17,6 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])
         Route::get('/widget/settings', [AiChatbotController::class, 'widgetSettings'])->name('widget.settings');
         Route::post('/widget/settings', [AiChatbotController::class, 'saveWidgetSettings'])->name('widget.settings.save');
         Route::post('/widget/regenerate', [AiChatbotController::class, 'regenerateWidgetKey'])->name('widget.regenerate');
+        Route::get('/history-json', [AiChatbotController::class, 'historyJson'])->name('history.json');
+        Route::get('/history-json/{sessionId}', [AiChatbotController::class, 'historyDetailJson'])->name('history.detail.json');
     });

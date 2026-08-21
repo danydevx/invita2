@@ -6,7 +6,7 @@
         <div class="wizard-logo">
             <i class="bi bi-shop"></i>
         </div>
-        <h1 class="wizard-title">{{ config('app.name') }}</h1>
+        <h1 class="wizard-title">{{ app_name() }}</h1>
         <p class="wizard-subtitle">Configura tu negocio para comenzar</p>
     </div>
 

@@ -79,6 +79,16 @@ class ListingAiSetting extends Model
 
     public function setApiKeyAttribute($value): void
     {
+        if (empty($value)) {
+            $this->attributes['api_key'] = null;
+            return;
+        }
+
+        if (str_contains($value, '::')) {
+            $this->attributes['api_key'] = $value;
+            return;
+        }
+
         $this->attributes['api_key'] = Crypt::encryptString($value);
     }
 
