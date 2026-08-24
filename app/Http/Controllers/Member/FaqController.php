@@ -276,7 +276,7 @@ class FaqController extends Controller
 
         $data = $request->validate([
             'ids' => ['required', 'array'],
-            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('business_faqs', 'id')->where('listing_id', $business->id)],
+            'ids.*' => ['integer', \Illuminate\Validation\Rule::exists('listing_faqs', 'id')->where('listing_id', $business->id)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],
         ]);
