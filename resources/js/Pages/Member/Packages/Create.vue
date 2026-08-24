@@ -57,6 +57,7 @@
                     type="number"
                     step="0.01"
                     min="0"
+                    max="999999999.99"
                   />
                 </div>
                 <div class="col-md-6">
@@ -69,6 +70,7 @@
                     type="number"
                     step="0.01"
                     min="0"
+                    max="999999999.99"
                   />
                 </div>
               </div>
