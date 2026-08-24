@@ -2,60 +2,61 @@
   <MemberLayout>
     <Head title="Mis pagos" />
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-      <div>
-        <h1 class="h4 mb-1">Mis pagos</h1>
-        <p class="text-muted mb-0">Resumen basico de tus cobros registrados.</p>
-      </div>
-      <div class="d-flex flex-wrap gap-2">
-        <Link href="/member/account" class="btn btn-outline-secondary btn-sm">Ver cuenta</Link>
-        <Link href="/member/invoices" class="btn btn-outline-secondary btn-sm">Comprobantes</Link>
-      </div>
-    </div>
+    <PageHeader
+      title="Mis pagos"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <Link href="/member/account" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-wallet2 me-1"></i>Ver cuenta
+        </Link>
+        <Link href="/member/invoices" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-receipt me-1"></i>Comprobantes
+        </Link>
+      </template>
+    </PageHeader>
 
-    <div class="card border-0 shadow-sm">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th scope="col">Fecha</th>
-              <th scope="col">Plan</th>
-              <th scope="col">Monto</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Referencia</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="payments.data.length === 0">
-              <td colspan="5" class="text-center text-muted py-4">No hay pagos registrados.</td>
-            </tr>
-            <tr v-for="payment in payments.data" :key="payment.id">
-              <td class="text-muted">{{ payment.paid_at || payment.created_at }}</td>
-              <td>{{ payment.plan?.name || '-' }}</td>
-              <td class="fw-semibold">{{ formatAmount(payment.amount, payment.currency) }}</td>
-              <td>
-                <span class="badge" :class="statusClass(payment.status)">{{ payment.status }}</span>
-              </td>
-              <td class="text-muted">{{ payment.provider_reference || '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <BaseDataTable
+      ref="dataTableRef"
+      endpoint="/member/payments"
+      :columns="columns"
+      :initial-data="payments"
+      search-placeholder="Buscar pagos..."
+      empty-title="No hay pagos"
+      empty-text="Resumen básico de tus cobros registrados."
+      @updated="onDataTableUpdated"
+    >
+      <template #cell-paid_at="{ row }">
+        <span class="text-muted">{{ row.paid_at || row.created_at }}</span>
+      </template>
 
-      <div class="card-footer d-flex flex-wrap gap-2 align-items-center justify-content-between">
-        <div class="text-muted small">
-          Mostrando {{ payments.data.length }} de {{ payments.total }} registros
-        </div>
-        <Pagination :links="payments.links" />
-      </div>
-    </div>
+      <template #cell-plan="{ row }">
+        <span>{{ row.plan?.name || '-' }}</span>
+      </template>
+
+      <template #cell-amount="{ row }">
+        <span class="fw-semibold">{{ formatAmount(row.amount, row.currency) }}</span>
+      </template>
+
+      <template #cell-status="{ row }">
+        <span class="badge" :class="statusClass(row.status)">
+          {{ statusLabel(row.status) }}
+        </span>
+      </template>
+
+      <template #cell-provider_reference="{ row }">
+        <span class="text-muted font-monospace small">{{ row.provider_reference || '-' }}</span>
+      </template>
+    </BaseDataTable>
   </MemberLayout>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
-import Pagination from '@/Components/Member/Pagination.vue'
+import PageHeader from '@/Components/Admin/PageHeader.vue'
+import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 
 const props = defineProps({
   payments: {
@@ -63,6 +64,22 @@ const props = defineProps({
     required: true,
   },
 })
+
+const dataTableRef = ref(null)
+
+const breadcrumbs = computed(() => [
+  { label: 'Pagos', active: true },
+])
+
+const columns = [
+  { key: 'paid_at', label: 'Fecha', sortable: true },
+  { key: 'plan', label: 'Plan', sortable: false },
+  { key: 'amount', label: 'Monto', sortable: true },
+  { key: 'status', label: 'Estado', sortable: true },
+  { key: 'provider_reference', label: 'Referencia', sortable: false },
+]
+
+const onDataTableUpdated = () => {}
 
 const formatAmount = (amount, currency) => {
   if (amount === null || amount === undefined) return '-'
@@ -73,11 +90,22 @@ const formatAmount = (amount, currency) => {
 }
 
 const statusClass = (value) => {
-  if (value === 'paid') return 'text-bg-success'
-  if (value === 'pending') return 'text-bg-warning'
-  if (value === 'failed') return 'text-bg-danger'
-  if (value === 'refunded') return 'text-bg-secondary'
-  if (value === 'canceled') return 'text-bg-light border'
-  return 'text-bg-secondary'
+  if (value === 'paid') return 'bg-success-subtle text-success'
+  if (value === 'pending') return 'bg-warning-subtle text-warning'
+  if (value === 'failed') return 'bg-danger-subtle text-danger'
+  if (value === 'refunded') return 'bg-secondary-subtle text-secondary'
+  if (value === 'canceled') return 'bg-light text-muted border'
+  return 'bg-secondary-subtle text-secondary'
+}
+
+const statusLabel = (value) => {
+  const labels = {
+    paid: 'Pagado',
+    pending: 'Pendiente',
+    failed: 'Fallido',
+    refunded: 'Reembolsado',
+    canceled: 'Cancelado',
+  }
+  return labels[value] || value
 }
 </script>

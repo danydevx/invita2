@@ -20,7 +20,7 @@
                     label="Nombre completo"
                     placeholder="Ej: Juan Pérez"
                     v-model="form.name"
-                    :formError="form.errors.name"
+                    :formError="errors.name"
                     required
                   />
                 </div>
@@ -30,7 +30,7 @@
                     label="Puesto"
                     v-model="form.position_id"
                     :options="positionOptions"
-                    :formError="form.errors.position_id"
+                    :formError="errors.position_id"
                   />
                 </div>
               </div>
@@ -42,7 +42,8 @@
                     label="Correo electrónico (opcional)"
                     placeholder="juan@ejemplo.com"
                     v-model="form.email"
-                    :formError="form.errors.email"
+                    :formError="errors.email"
+                    autocomplete="email"
                   />
                 </div>
                 <div class="col-md-6">
@@ -51,7 +52,8 @@
                     label="Teléfono (opcional)"
                     placeholder="+52 555 123 4567"
                     v-model="form.phone"
-                    :formError="form.errors.phone"
+                    :formError="errors.phone"
+                    autocomplete="tel"
                   />
                 </div>
               </div>
@@ -62,7 +64,7 @@
                   label="Biografía (opcional)"
                   placeholder="Cuéntanos sobre este miembro del equipo"
                   v-model="form.bio"
-                  :formError="form.errors.bio"
+                  :formError="errors.bio"
                   :rows="3"
                 />
               </div>
@@ -75,7 +77,6 @@
                   accept="image/jpeg,image/png"
                   @change="handleImageChange"
                 />
-                <div v-if="form.errors.image" class="text-danger small mt-1">{{ form.errors.image }}</div>
                 <div v-if="imagePreview" class="mt-2">
                   <img :src="imagePreview" class="rounded" style="width: 80px; height: 80px; object-fit: cover;" />
                 </div>
@@ -86,12 +87,11 @@
                   id="member-active"
                   label="Activo"
                   v-model="form.is_active"
-                  :formError="form.errors.is_active"
                 />
                 <div class="form-text">Los miembros inactivos no aparecerán en el minisite.</div>
               </div>
 
-              <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/team-members`" :sending="form.processing" />
+              <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/team-members`" :sending="sending" />
             </form>
           </div>
         </div>

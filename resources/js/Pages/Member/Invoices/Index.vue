@@ -2,61 +2,62 @@
   <MemberLayout>
     <Head title="Mis comprobantes" />
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-      <div>
-        <h1 class="h4 mb-1">Mis comprobantes</h1>
-        <p class="text-muted mb-0">Consulta tus comprobantes de pago.</p>
-      </div>
-      <Link href="/member/payments" class="btn btn-outline-secondary btn-sm">Ver pagos</Link>
-    </div>
+    <PageHeader
+      title="Mis comprobantes"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <Link href="/member/payments" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-credit-card me-1"></i>Ver pagos
+        </Link>
+      </template>
+    </PageHeader>
 
-    <div class="card border-0 shadow-sm">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th scope="col">Numero</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Monto</th>
-              <th scope="col">Estado</th>
-              <th scope="col" class="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="invoices.data.length === 0">
-              <td colspan="5" class="text-center text-muted py-4">No hay comprobantes registrados.</td>
-            </tr>
-            <tr v-for="invoice in invoices.data" :key="invoice.id">
-              <td class="fw-semibold">{{ invoice.number || invoice.id }}</td>
-              <td class="text-muted">{{ invoice.issued_at || invoice.paid_at || '-' }}</td>
-              <td class="fw-semibold">{{ formatAmount(invoice.amount, invoice.currency) }}</td>
-              <td>
-                <span class="badge" :class="statusClass(invoice.status)">{{ invoice.status }}</span>
-              </td>
-              <td class="text-end">
-                <Link :href="`/member/invoices/${invoice.id}`" class="btn btn-sm btn-outline-primary">
-                  Ver
-                </Link>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <BaseDataTable
+      ref="dataTableRef"
+      endpoint="/member/invoices"
+      :columns="columns"
+      :initial-data="invoices"
+      search-placeholder="Buscar comprobantes..."
+      empty-title="No hay comprobantes"
+      empty-text="Consulta tus comprobantes de pago."
+      @updated="onDataTableUpdated"
+    >
+      <template #cell-number="{ row }">
+        <strong>{{ row.number || row.id }}</strong>
+      </template>
 
-      <div class="card-footer d-flex flex-wrap gap-2 align-items-center justify-content-between">
-        <div class="text-muted small">
-          Mostrando {{ invoices.data.length }} de {{ invoices.total }} registros
+      <template #cell-issued_at="{ row }">
+        <span class="text-muted">{{ row.issued_at || row.paid_at || '-' }}</span>
+      </template>
+
+      <template #cell-amount="{ row }">
+        <span class="fw-semibold">{{ formatAmount(row.amount, row.currency) }}</span>
+      </template>
+
+      <template #cell-status="{ row }">
+        <span class="badge" :class="statusClass(row.status)">
+          {{ statusLabel(row.status) }}
+        </span>
+      </template>
+
+      <template #cell-actions="{ row }">
+        <div class="actions">
+          <Link :href="`/member/invoices/${row.id}`" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-eye"></i>
+          </Link>
         </div>
-        <Pagination :links="invoices.links" />
-      </div>
-    </div>
+      </template>
+    </BaseDataTable>
   </MemberLayout>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
-import Pagination from '@/Components/Member/Pagination.vue'
+import PageHeader from '@/Components/Admin/PageHeader.vue'
+import BaseDataTable from '@/Components/DataTable/BaseDataTable.vue'
 
 const props = defineProps({
   invoices: {
@@ -64,6 +65,22 @@ const props = defineProps({
     required: true,
   },
 })
+
+const dataTableRef = ref(null)
+
+const breadcrumbs = computed(() => [
+  { label: 'Comprobantes', active: true },
+])
+
+const columns = [
+  { key: 'number', label: 'Número', sortable: true },
+  { key: 'issued_at', label: 'Fecha', sortable: true },
+  { key: 'amount', label: 'Monto', sortable: true },
+  { key: 'status', label: 'Estado', sortable: true },
+  { key: 'actions', label: 'Acciones', sortable: false, class: 'text-end' },
+]
+
+const onDataTableUpdated = () => {}
 
 const formatAmount = (amount, currency) => {
   if (amount === null || amount === undefined) return '-'
@@ -74,10 +91,20 @@ const formatAmount = (amount, currency) => {
 }
 
 const statusClass = (value) => {
-  if (value === 'paid') return 'text-bg-success'
-  if (value === 'issued') return 'text-bg-primary'
-  if (value === 'pending') return 'text-bg-warning'
-  if (value === 'canceled') return 'text-bg-secondary'
-  return 'text-bg-secondary'
+  if (value === 'paid') return 'bg-success-subtle text-success'
+  if (value === 'issued') return 'bg-primary-subtle text-primary'
+  if (value === 'pending') return 'bg-warning-subtle text-warning'
+  if (value === 'canceled') return 'bg-secondary-subtle text-secondary'
+  return 'bg-secondary-subtle text-secondary'
+}
+
+const statusLabel = (value) => {
+  const labels = {
+    paid: 'Pagado',
+    issued: 'Emitido',
+    pending: 'Pendiente',
+    canceled: 'Cancelado',
+  }
+  return labels[value] || value
 }
 </script>
