@@ -18,17 +18,18 @@
       </template>
     </PageHeader>
 
-    <BaseDataTable
-      ref="dataTableRef"
-      :endpoint="`/member/listings/${listing?.id}/locations/${location?.id}/schedules`"
-      :columns="columns"
-      :initial-data="dataTable"
-      :initial-per-page="perPage"
-      search-placeholder="Buscar horarios..."
-      empty-title="No hay horarios"
-      empty-text="Comienza creando tu primer horario."
-      @updated="onDataTableUpdated"
-    >
+    <div class="container-fluid py-4">
+      <BaseDataTable
+        ref="dataTableRef"
+        :endpoint="`/member/listings/${listing?.id}/locations/${location?.id}/schedules`"
+        :columns="columns"
+        :initial-data="dataTable"
+        :initial-per-page="perPage"
+        search-placeholder="Buscar horarios..."
+        empty-title="No hay horarios"
+        empty-text="Comienza creando tu primer horario."
+        @updated="onDataTableUpdated"
+      >
       <template #cell-name="{ row }">
         <span class="schedule-name">{{ row.name }}</span>
       </template>
@@ -74,6 +75,7 @@
         </div>
       </template>
     </BaseDataTable>
+    </div>
   </MemberLayout>
 </template>
 

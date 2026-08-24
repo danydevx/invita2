@@ -30,6 +30,19 @@
     <div v-else class="row g-3">
       <div v-for="gallery in galleries" :key="gallery.id" class="col-12 col-md-6 col-lg-4">
         <div class="card border-0 shadow-sm h-100">
+          <div v-if="gallery.thumbnails && gallery.thumbnails.length > 0" class="card-img-top d-flex gap-1 p-2" style="background: #f8f9fa;">
+            <img
+              v-for="thumb in gallery.thumbnails"
+              :key="thumb.id"
+              :src="thumb.path"
+              class="rounded object-fit-cover"
+              style="width: 80px; height: 80px;"
+              :alt="gallery.name"
+            />
+            <span v-if="gallery.images_count > 4" class="d-flex align-items-center justify-content-center text-muted small bg-light rounded" style="width: 80px; height: 80px;">
+              +{{ gallery.images_count - 4 }}
+            </span>
+          </div>
           <div class="card-body d-flex flex-column">
             <div class="d-flex align-items-start justify-content-between mb-2">
               <div>

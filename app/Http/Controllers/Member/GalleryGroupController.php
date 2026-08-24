@@ -18,6 +18,7 @@ class GalleryGroupController extends Controller
 
         $galleries = $business->galleries()
             ->withCount('images')
+            ->with(['images' => fn ($q) => $q->limit(4)->orderBy('sort_order')])
             ->orderByDesc('is_primary')
             ->orderBy('sort_order')
             ->orderBy('id')
@@ -30,6 +31,10 @@ class GalleryGroupController extends Controller
                 'is_active' => (bool) $gallery->is_active,
                 'sort_order' => (int) $gallery->sort_order,
                 'images_count' => (int) $gallery->images_count,
+                'thumbnails' => $gallery->images->map(fn ($img) => [
+                    'id' => $img->id,
+                    'path' => $img->path,
+                ]),
             ]);
 
         return Inertia::render('Member/Galleries/Index', [

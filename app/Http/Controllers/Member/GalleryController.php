@@ -229,7 +229,7 @@ class GalleryController extends Controller
             'ids' => ['required', 'array'],
             'ids.*' => [
                 'integer',
-                Rule::exists('business_gallery_images', 'id')->where('listing_id', $business->id),
+                Rule::exists('listing_gallery_images', 'id')->where('listing_id', $business->id),
             ],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:1'],

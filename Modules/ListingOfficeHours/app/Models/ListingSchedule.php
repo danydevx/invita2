@@ -27,6 +27,8 @@ class ListingSchedule extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $appends = ['days_display', 'time_display'];
+
     public const DAY_NAMES = [
         0 => 'Domingo',
         1 => 'Lunes',
