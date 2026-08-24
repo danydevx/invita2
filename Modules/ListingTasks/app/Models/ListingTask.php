@@ -17,11 +17,13 @@ class ListingTask extends Model
         'status',
         'sort_order',
         'completed_at',
+        'archived_at',
     ];
 
     protected $casts = [
         'sort_order' => 'integer',
         'completed_at' => 'datetime',
+        'archived_at' => 'datetime',
     ];
 
     public function listing(): BelongsTo
