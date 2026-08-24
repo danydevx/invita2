@@ -37,6 +37,9 @@
       <div class="row g-3">
         <div v-for="category in categories" :key="category.id" class="col-12 col-md-6 col-lg-4">
           <div class="card h-100">
+            <div v-if="category.images && category.images.length > 0" class="card-img-top overflow-hidden" style="max-height: 150px;">
+              <img :src="category.images[0].path" class="w-100 h-100 object-fit-cover" :alt="category.title" style="min-height: 150px;" />
+            </div>
             <div class="card-header d-flex justify-content-between align-items-center">
               <div>
                 <span :class="{ 'text-muted': !category.active }">

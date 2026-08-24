@@ -166,12 +166,14 @@
                 </div>
               </div>
             </div>
-
-            <FormActions :submitText="'Guardar cambios'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
-              <button type="button" class="btn btn-outline-danger" @click="deleteProduct">
-                <i class="bi bi-trash"></i>
-              </button>
           </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <FormActions :submitText="'Guardar cambios'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
+          <button type="button" class="btn btn-outline-danger" @click="deleteProduct">
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
       </form>
     </div>

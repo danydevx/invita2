@@ -161,11 +161,12 @@
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
-
-            <FormActions :submitText="'Crear Producto'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
           </div>
+        </div>
+
+        <div class="mt-4">
+          <FormActions :submitText="'Crear Producto'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/menu-products`" :sending="sending" />
         </div>
       </form>
     </div>
