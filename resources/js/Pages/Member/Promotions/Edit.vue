@@ -148,20 +148,22 @@
             </div>
           </div>
 
-          <FormActions
-            :submitText="'Guardar'"
-            :submittingText="'Guardando...'"
-            :cancelHref="`/member/listings/${listing.id}/promotions`"
-            :sending="sending"
-          />
-          <button
-            type="button"
-            class="btn btn-outline-danger ms-auto"
-            @click="deletePromotion"
-          >
-            <i class="bi bi-trash me-1"></i>
-            Eliminar
-          </button>
+          <div class="d-flex gap-2">
+            <FormActions
+              :submitText="'Guardar'"
+              :submittingText="'Guardando...'"
+              :cancelHref="`/member/listings/${listing.id}/promotions`"
+              :sending="sending"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              @click="deletePromotion"
+            >
+              <i class="bi bi-trash me-1"></i>
+              Eliminar
+            </button>
+          </div>
         </form>
       </div>
     </div>

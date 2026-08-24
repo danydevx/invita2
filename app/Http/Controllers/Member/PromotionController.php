@@ -232,6 +232,30 @@ class PromotionController extends Controller
             ->with('success', 'Promocion eliminada correctamente.');
     }
 
+    private function deletePromotionImage(ListingPromotion $promotion): void
+    {
+        if ($promotion->image) {
+            $path = $promotion->image;
+            if (str_starts_with($path, '/storage/')) {
+                $path = substr($path, 9);
+            }
+            Storage::disk('public')->delete($path);
+        }
+
+        if ($promotion->qr_code_path) {
+            $path = $promotion->qr_code_path;
+            if (str_starts_with($path, '/storage/')) {
+                $path = substr($path, 9);
+            }
+            Storage::disk('public')->delete($path);
+        }
+
+        foreach ($promotion->images as $image) {
+            Storage::disk('public')->delete($image->path);
+        }
+        $promotion->images()->delete();
+    }
+
     public function reorder(Request $request, Listing $business)
     {
         $user = $request->user();
@@ -313,7 +337,7 @@ class PromotionController extends Controller
             'name' => $promotion->name . ' (copia)',
             'slug' => \Illuminate\Support\Str::slug($promotion->name) . '-copia-' . time(),
             'description' => $promotion->description,
-            'image' => $promotion->image,
+            'image' => $promotion->getAttributes()['image'] ?? null,
             'regular_price' => $promotion->regular_price,
             'promotion_price' => $promotion->promotion_price,
             'coupon_code' => $promotion->coupon_code ? $promotion->coupon_code . '-COPY' : null,

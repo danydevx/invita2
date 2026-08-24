@@ -110,9 +110,9 @@
                 v-model="form.is_active"
               />
             </div>
-
-            <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing.id}/promotions`" :sending="sending" />
           </div>
+
+          <FormActions :submitText="'Crear Promocion'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing.id}/promotions`" :sending="sending" />
         </form>
       </div>
     </div>

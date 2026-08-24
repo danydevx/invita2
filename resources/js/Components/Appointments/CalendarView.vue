@@ -254,4 +254,14 @@ const calendarConfig = {
   color: #fff !important;
   border-left: 3px solid #bb2d3b !important;
 }
+
+:deep(.qalendar__day__content--has-events) {
+  background-color: rgba(13, 110, 253, 0.08) !important;
+  border-radius: 4px;
+}
+
+:deep(.qalendar__day--selected .qalendar__day__content--has-events),
+:deep(.qalendar__day--focused .qalendar__day__content--has-events) {
+  background-color: rgba(13, 110, 253, 0.15) !important;
+}
 </style>
