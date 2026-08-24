@@ -15,11 +15,6 @@
       </template>
     </PageHeader>
 
-    <div v-if="$page.props.flash?.success" class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ $page.props.flash.success }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
     <ul class="nav nav-tabs mb-3">
       <li class="nav-item">
         <button class="nav-link" :class="{ active: activeTab === 'board' }" @click="activeTab = 'board'">
@@ -100,6 +95,37 @@
         </div>
 
         <div class="kanban-column">
+          <div class="kanban-column-header bg-warning text-dark">
+            <i class="bi bi-eye me-2"></i>Revision
+            <span class="badge bg-light text-warning ms-2">{{ columns.revision.length }}</span>
+          </div>
+          <draggable
+            v-model="columns.revision"
+            group="tasks"
+            item-key="id"
+            class="kanban-cards"
+            :animation="200"
+            @end="onDragEnd"
+          >
+            <template #item="{ element }">
+              <div class="kanban-card revision" @click="openEditModal(element)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <h6 class="mb-1 text-truncate">{{ element.title }}</h6>
+                  <button class="btn btn-sm text-danger p-0" @click.stop="deleteTask(element)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+                <p v-if="element.description" class="text-muted small mb-2">{{ element.description.substring(0, 60) }}{{ element.description.length > 60 ? '...' : '' }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">#{{ element.id }}</small>
+                  <span class="badge bg-warning text-dark">Revision</span>
+                </div>
+              </div>
+            </template>
+          </draggable>
+        </div>
+
+        <div class="kanban-column">
           <div class="kanban-column-header bg-success text-white">
             <i class="bi bi-check-circle me-2"></i>Hecho
             <span class="badge bg-light text-success ms-2">{{ columns.done.length }}</span>
@@ -116,9 +142,14 @@
               <div class="kanban-card done" @click="openEditModal(element)">
                 <div class="d-flex justify-content-between align-items-start">
                   <h6 class="mb-1 text-truncate text-muted">{{ element.title }}</h6>
-                  <button class="btn btn-sm text-danger p-0" @click.stop="deleteTask(element)">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm text-secondary p-0" @click.stop="archiveTask(element)" title="Archivar">
+                      <i class="bi bi-box"></i>
+                    </button>
+                    <button class="btn btn-sm text-danger p-0" @click.stop="deleteTask(element)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
                 </div>
                 <p v-if="element.description" class="text-muted small mb-2">{{ element.description.substring(0, 60) }}{{ element.description.length > 60 ? '...' : '' }}</p>
                 <div class="d-flex justify-content-between align-items-center">
@@ -147,6 +178,7 @@
               <th>Tarea</th>
               <th>Descripcion</th>
               <th>Completada el</th>
+              <th>Estado</th>
               <th></th>
             </tr>
           </thead>
@@ -160,6 +192,14 @@
               </td>
               <td>
                 <small class="text-muted">{{ formatDate(task.completed_at) }}</small>
+              </td>
+              <td>
+                <span v-if="task.archived_at" class="badge bg-secondary">
+                  <i class="bi bi-box me-1"></i>Archivada
+                </span>
+                <span v-else class="badge bg-success">
+                  <i class="bi bi-check-circle me-1"></i>Completada
+                </span>
               </td>
               <td>
                 <button class="btn btn-sm btn-outline-danger" @click="deleteTask(task)">
@@ -200,6 +240,7 @@
               >
                 <option value="todo">Por hacer</option>
                 <option value="in_progress">En progreso</option>
+                <option value="revision">Revision</option>
                 <option value="done">Hecho</option>
               </FieldSelect>
             </div>
@@ -259,6 +300,7 @@ const activeTab = ref('board')
 const columns = reactive({
   todo: [...(props.tasks?.todo || [])],
   in_progress: [...(props.tasks?.in_progress || [])],
+  revision: [...(props.tasks?.revision || [])],
   done: [...(props.tasks?.done || [])],
 })
 
@@ -348,14 +390,17 @@ const deleteTask = (task) => {
   }
 }
 
+const archiveTask = (task) => {
+  const taskId = task.id
+  columns.done = columns.done.filter(t => t.id !== taskId)
+  router.post(`/member/listings/${listing.value.id}/tasks/${taskId}/archive`, {}, {
+    preserveScroll: true,
+  })
+}
+
 const refreshTasks = () => {
-  router.get(`/member/listings/${listing.value.id}/tasks`, {}, {
-    preserveState: true,
-    onSuccess: (page) => {
-      columns.todo = [...(page.props.tasks?.todo || [])]
-      columns.in_progress = [...(page.props.tasks?.in_progress || [])]
-      columns.done = [...(page.props.tasks?.done || [])]
-    },
+  router.visit(`/member/listings/${listing.value.id}/tasks`, {
+    preserveScroll: true,
   })
 }
 
@@ -367,6 +412,9 @@ const onDragEnd = () => {
   })
   columns.in_progress.forEach((task, index) => {
     items.push({ id: task.id, status: 'in_progress', sort_order: index })
+  })
+  columns.revision.forEach((task, index) => {
+    items.push({ id: task.id, status: 'revision', sort_order: index })
   })
   columns.done.forEach((task, index) => {
     items.push({ id: task.id, status: 'done', sort_order: index })
@@ -432,6 +480,11 @@ onMounted(() => {
 
 .kanban-card.in-progress {
   border-left-color: #0d6efd;
+}
+
+.kanban-card.revision {
+  border-left-color: #ffc107;
+  background: #fffdf0;
 }
 
 .kanban-card.done {

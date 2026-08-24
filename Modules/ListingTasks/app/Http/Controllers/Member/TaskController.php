@@ -15,6 +15,7 @@ class TaskController extends Controller
         $this->authorize('viewAny', [ListingTask::class, $business]);
 
         $tasks = $business->tasks()
+            ->whereNull('archived_at')
             ->orderBy('status')
             ->orderBy('sort_order')
             ->orderByDesc('id')
@@ -23,19 +24,21 @@ class TaskController extends Controller
         $groupedTasks = [
             'todo' => $tasks->where('status', 'todo')->values(),
             'in_progress' => $tasks->where('status', 'in_progress')->values(),
+            'revision' => $tasks->where('status', 'revision')->values(),
             'done' => $tasks->where('status', 'done')->values(),
         ];
 
         $completedTasks = $business->tasks()
             ->where('status', 'done')
             ->orderByDesc('completed_at')
-            ->limit(20)
+            ->limit(50)
             ->get()
             ->map(fn ($t) => [
                 'id' => $t->id,
                 'title' => $t->title,
                 'description' => $t->description,
                 'completed_at' => $t->completed_at?->toIso8601String(),
+                'archived_at' => $t->archived_at?->toIso8601String(),
                 'created_at' => $t->created_at->toIso8601String(),
             ]);
 
@@ -56,7 +59,7 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:todo,in_progress,done'],
+            'status' => ['required', 'in:todo,in_progress,revision,done'],
         ]);
 
         $maxOrder = $business->tasks()->where('status', $data['status'])->max('sort_order') ?? 0;
@@ -84,7 +87,7 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:todo,in_progress,done'],
+            'status' => ['required', 'in:todo,in_progress,revision,done'],
         ]);
 
         $oldStatus = $task->status;
@@ -104,6 +107,15 @@ class TaskController extends Controller
         $task->update($data);
 
         return redirect()->back()->with('success', 'Tarea actualizada correctamente.');
+    }
+
+    public function archive(Request $request, Listing $business, ListingTask $task)
+    {
+        $this->authorize('update', [ListingTask::class, $task]);
+
+        $task->update(['archived_at' => now()]);
+
+        return redirect()->back()->with('success', 'Tarea archivada.');
     }
 
     public function destroy(Request $request, Listing $business, ListingTask $task)
@@ -126,16 +138,19 @@ class TaskController extends Controller
 
         $data = $request->validate([
             'items' => ['required', 'array'],
-            'items.*.id' => ['integer', \Illuminate\Validation\Rule::exists('listing_tasks', 'id')->where('listing_id', $business->id)],
-            'items.*.status' => ['required', 'in:todo,in_progress,done'],
+            'items.*.id' => ['integer', \Illuminate\Validation\Rule::exists('listing_tasks', 'id')->where('listing_id', $business->id)->whereNull('archived_at')],
+            'items.*.status' => ['required', 'string', 'in:todo,in_progress,revision,done'],
             'items.*.sort_order' => ['required', 'integer', 'min:0'],
         ]);
 
-        \DB::transaction(function () use ($data) {
+        $allowedStatuses = ['todo', 'in_progress', 'revision', 'done'];
+
+        \DB::transaction(function () use ($data, $allowedStatuses) {
             foreach ($data['items'] as $item) {
+                $status = in_array($item['status'], $allowedStatuses) ? $item['status'] : 'todo';
                 $updateData = [
-                    'status' => $item['status'],
-                    'sort_order' => $item['sort_order'],
+                    'status' => $status,
+                    'sort_order' => (int) $item['sort_order'],
                 ];
 
                 if ($item['status'] === 'done') {
@@ -144,7 +159,7 @@ class TaskController extends Controller
                     $updateData['completed_at'] = null;
                 }
 
-                ListingTask::where('id', $item['id'])->update($updateData);
+                ListingTask::where('id', (int) $item['id'])->update($updateData);
             }
         });
 

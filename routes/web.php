@@ -573,6 +573,9 @@ Route::put('/member/listings/{listing}/tasks/{task}', [TaskController::class, 'u
 Route::delete('/member/listings/{listing}/tasks/{task}', [TaskController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.tasks.destroy');
+Route::post('/member/listings/{listing}/tasks/{task}/archive', [TaskController::class, 'archive'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.tasks.archive');
 Route::post('/member/listings/{listing}/tasks/reorder', [TaskController::class, 'reorder'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.tasks.reorder');
