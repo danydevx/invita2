@@ -149,6 +149,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { router } from '@inertiajs/vue3'
+import axios from 'axios'
 import Sortable from 'sortablejs'
 import { toast } from 'vue3-toastify'
 
@@ -329,24 +330,21 @@ const onDragEnd = (tbody) => {
 
   savingOrder.value = true
 
-  router.post(props.reorderEndpoint, {
+  axios.post(props.reorderEndpoint, {
     ids,
     page: currentPage.value,
     perPage: perPage.value,
-  }, {
-    preserveScroll: true,
-    preserveState: true,
-    onSuccess: () => {
-      emit('reordered', ids)
-      toast.success('Orden actualizado correctamente.')
-    },
-    onError: (errors) => {
-      console.error('Error saving order:', errors)
-      toast.error('Error al actualizar el orden.')
-    },
-    onFinish: () => {
-      savingOrder.value = false
-    },
+  })
+  .then(() => {
+    emit('reordered', ids)
+    toast.success('Orden actualizado correctamente.')
+  })
+  .catch((error) => {
+    console.error('Error saving order:', error)
+    toast.error('Error al actualizar el orden.')
+  })
+  .finally(() => {
+    savingOrder.value = false
   })
 }
 

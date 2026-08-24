@@ -15,35 +15,64 @@ class TeamMemberPositionController extends Controller
     {
         $this->authorize('viewAny', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $business]);
 
-        $positions = TeamMemberPosition::where('listing_id', $business->id)
+        $perPage = min((int) $request->get('per_page', 10), 100);
+        $search = $request->get('search', '');
+        $sort = $request->get('sort', 'sort_order');
+        $direction = $request->get('direction', 'asc');
+
+        $allowedSorts = ['name', 'is_active', 'sort_order', 'created_at'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'sort_order';
+        }
+        $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+        $query = TeamMemberPosition::where('listing_id', $business->id)
             ->with('parent:id,name')
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get()
-            ->map(function ($position) {
-                return [
-                    'id' => $position->id,
-                    'name' => $position->name,
-                    'slug' => $position->slug,
-                    'description' => $position->description,
-                    'parent_id' => $position->parent_id,
-                    'parent' => $position->parent ? [
-                        'id' => $position->parent->id,
-                        'name' => $position->parent->name,
-                    ] : null,
-                    'is_active' => $position->is_active,
-                    'sort_order' => $position->sort_order,
-                    'children_count' => $position->children()->count(),
-                    'members_count' => $position->teamMembers()->count(),
-                ];
-            });
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy($sort, $direction)
+            ->orderBy('name');
+
+        $positions = $query->paginate($perPage);
+
+        $positions->getCollection()->transform(function ($position) {
+            return [
+                'id' => $position->id,
+                'name' => $position->name,
+                'slug' => $position->slug,
+                'description' => $position->description,
+                'parent_id' => $position->parent_id,
+                'parent' => $position->parent ? [
+                    'id' => $position->parent->id,
+                    'name' => $position->parent->name,
+                ] : null,
+                'is_active' => $position->is_active,
+                'sort_order' => $position->sort_order,
+                'children_count' => $position->children()->count(),
+                'members_count' => $position->teamMembers()->count(),
+            ];
+        });
+
+        $dataTable = [
+            'data' => $positions->items(),
+            'current_page' => $positions->currentPage(),
+            'last_page' => $positions->lastPage(),
+            'per_page' => $positions->perPage(),
+            'total' => $positions->total(),
+            'from' => $positions->firstItem(),
+            'to' => $positions->lastItem(),
+        ];
 
         return Inertia::render('Member/TeamMemberPositions/Index', [
             'listing' => [
                 'id' => $business->id,
                 'name' => $business->name,
             ],
-            'positions' => $positions,
+            'dataTable' => $dataTable,
         ]);
     }
 
@@ -168,6 +197,28 @@ class TeamMemberPositionController extends Controller
 
         return redirect()->route('member.listings.team-member-positions.index', $business->id)
             ->with('success', 'Puesto actualizado correctamente.');
+    }
+
+    public function reorder(Request $request, Listing $business)
+    {
+        try {
+            $this->authorize('viewAny', [\Modules\ListingTeamMembers\Models\ListingTeamMember::class, $business]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'integer', 'exists:team_member_positions,id'],
+        ]);
+
+        foreach ($validated['ids'] as $order => $id) {
+            TeamMemberPosition::where('id', $id)
+                ->where('listing_id', $business->id)
+                ->update(['sort_order' => $order]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function destroy(Request $request, Listing $business, TeamMemberPosition $position, ActivityService $activity)

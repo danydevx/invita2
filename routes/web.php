@@ -403,6 +403,9 @@ Route::get('/member/listings/{listing}/team-member-positions/create', [TeamMembe
 Route::post('/member/listings/{listing}/team-member-positions', [TeamMemberPositionController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.team-member-positions.store');
+Route::post('/member/listings/{listing}/team-member-positions/reorder', [TeamMemberPositionController::class, 'reorder'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.team-member-positions.reorder');
 Route::get('/member/listings/{listing}/team-member-positions/{position}/edit', [TeamMemberPositionController::class, 'edit'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.team-member-positions.edit');
