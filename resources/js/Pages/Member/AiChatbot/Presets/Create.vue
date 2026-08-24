@@ -12,12 +12,6 @@
       </template>
     </PageHeader>
 
-      <div v-if="$page.props.errors && Object.keys($page.props.errors).length" class="alert alert-danger">
-        <ul class="mb-0">
-          <li v-for="(error, key) in $page.props.errors" :key="key">{{ error }}</li>
-        </ul>
-      </div>
-
       <form @submit.prevent="submit">
         <div class="row g-4">
           <div class="col-lg-8">
@@ -28,7 +22,8 @@
               <div class="card-body">
                 <div class="mb-3">
                   <label class="form-label">Nombre del Preset *</label>
-                  <input v-model="form.name" type="text" class="form-control" required />
+                  <input v-model="form.name" type="text" class="form-control" :class="{ 'is-invalid': errors.name }" />
+                  <div v-if="errors.name" class="invalid-feedback">{{ errors.name }}</div>
                 </div>
 
                 <div class="mb-3">
@@ -39,19 +34,21 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Personalidad *</label>
-                    <select v-model="form.personality" class="form-select" required>
+                    <select v-model="form.personality" class="form-select" :class="{ 'is-invalid': errors.personality }">
                       <option v-for="p in personalities" :key="p.key" :value="p.key">
                         {{ p.display_name }}
                       </option>
                     </select>
+                    <div v-if="errors.personality" class="invalid-feedback">{{ errors.personality }}</div>
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Idioma *</label>
-                    <select v-model="form.language" class="form-select" required>
+                    <select v-model="form.language" class="form-select" :class="{ 'is-invalid': errors.language }">
                       <option v-for="lang in languages" :key="lang" :value="lang">
                         {{ lang.toUpperCase() }}
                       </option>
                     </select>
+                    <div v-if="errors.language" class="invalid-feedback">{{ errors.language }}</div>
                   </div>
                 </div>
               </div>
@@ -86,7 +83,8 @@
               <div class="card-body">
                 <div class="mb-3">
                   <label class="form-label">Plantilla de System Prompt *</label>
-                  <textarea v-model="form.system_prompt_template" class="form-control" rows="8" required></textarea>
+                  <textarea v-model="form.system_prompt_template" class="form-control" rows="8" :class="{ 'is-invalid': errors.system_prompt_template }"></textarea>
+                  <div v-if="errors.system_prompt_template" class="invalid-feedback">{{ errors.system_prompt_template }}</div>
                   <small class="text-muted">
                     Usa {business_name} como placeholder para el nombre del negocio.
                   </small>
@@ -182,6 +180,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FormActions from '@/Components/FormActions.vue'
@@ -215,6 +214,47 @@ const form = reactive({
   is_active: true,
 })
 
+const errors = reactive({
+  name: '',
+  personality: '',
+  language: '',
+  system_prompt_template: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.personality = ''
+  errors.language = ''
+  errors.system_prompt_template = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 100) {
+    errors.name = 'El nombre no puede tener más de 100 caracteres.'
+    isValid = false
+  }
+
+  if (!form.personality) {
+    errors.personality = 'La personalidad es obligatoria.'
+    isValid = false
+  }
+
+  if (!form.language) {
+    errors.language = 'El idioma es obligatorio.'
+    isValid = false
+  }
+
+  if (!form.system_prompt_template || form.system_prompt_template.trim() === '') {
+    errors.system_prompt_template = 'El system prompt es obligatorio.'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const addSuggestion = () => {
   form.initial_suggestions.push('')
 }
@@ -224,6 +264,11 @@ const removeSuggestion = (index) => {
 }
 
 const submit = () => {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
   saving.value = true
 
   const data = {
@@ -232,6 +277,19 @@ const submit = () => {
   }
 
   router.post(`/member/listings/${listing.id}/ai-chatbot/presets`, data, {
+    preserveScroll: true,
+    onSuccess: () => {
+      saving.value = false
+    },
+    onError: (errs) => {
+      saving.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
     onFinish: () => {
       saving.value = false
     },

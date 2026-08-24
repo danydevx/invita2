@@ -89,6 +89,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
 import FieldEmail from '@/Components/Fields/FieldEmail.vue'
@@ -101,7 +102,6 @@ import FormActions from '@/Components/FormActions.vue'
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const locations = computed(() => page.props.locations || [])
-const errors = computed(() => page.props.errors || {})
 const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => {
@@ -119,7 +119,7 @@ const breadcrumbs = computed(() => {
     }
   }
   return [
-    { label: 'Nuevo Lead', active: true },
+    { label: 'Leads', active: true },
   ]
 })
 
@@ -134,10 +134,64 @@ const form = reactive({
   source: '',
 })
 
+const errors = reactive({
+  name: '',
+  email: '',
+  phone: '',
+  notes: '',
+  business_location_id: '',
+  source: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.email = ''
+  errors.phone = ''
+  errors.business_location_id = ''
+  errors.source = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 150) {
+    errors.name = 'El nombre no puede tener más de 150 caracteres.'
+    isValid = false
+  }
+
+  if (!form.email || form.email.trim() === '') {
+    errors.email = 'El email es obligatorio.'
+    isValid = false
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    errors.email = 'El email no es válido.'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const submit = () => {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
   sending.value = true
   router.post(`/member/listings/${listing.value.id}/leads`, form, {
     preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
     onFinish: () => {
       sending.value = false
     },

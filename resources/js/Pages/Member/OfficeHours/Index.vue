@@ -30,19 +30,20 @@
       @updated="onDataTableUpdated"
     >
       <template #cell-name="{ row }">
-        <strong>{{ row.name }}</strong>
+        <span class="schedule-name">{{ row.name }}</span>
       </template>
 
       <template #cell-days_display="{ row }">
-        {{ row.days_display }}
+        <span class="badge bg-light text-dark border">{{ row.days_display }}</span>
       </template>
 
       <template #cell-time_display="{ row }">
-        <small>{{ row.time_display }}</small>
+        <span class="schedule-time">{{ row.time_display }}</span>
       </template>
 
       <template #cell-is_active="{ row }">
-        <span :class="row.is_active ? 'badge bg-success' : 'badge bg-secondary'">
+        <span :class="row.is_active ? 'badge bg-success-subtle text-success' : 'badge bg-secondary-subtle text-secondary'">
+          <i :class="row.is_active ? 'bi bi-check-circle me-1' : 'bi bi-x-circle me-1'"></i>
           {{ row.is_active ? 'Activo' : 'Inactivo' }}
         </span>
       </template>
@@ -101,11 +102,11 @@ const breadcrumbs = computed(() => {
 })
 
 const columns = [
-  { key: 'name', label: 'Nombre', sortable: true },
-  { key: 'days_display', label: 'Dias', sortable: false },
+  { key: 'name', label: 'Nombre', sortable: true, class: 'fw-semibold' },
+  { key: 'days_display', label: 'Días', sortable: false },
   { key: 'time_display', label: 'Horario', sortable: false },
   { key: 'is_active', label: 'Estado', sortable: true },
-  { key: 'actions', label: 'Acciones', sortable: false },
+  { key: 'actions', label: 'Acciones', sortable: false, class: 'text-end' },
 ]
 
 const dataTableRef = ref(null)
@@ -147,3 +148,21 @@ const deleteSchedule = (schedule) => {
   }
 }
 </script>
+
+<style scoped>
+.schedule-name {
+  color: var(--bs-dark);
+}
+.schedule-time {
+  font-family: monospace;
+  background: var(--bs-light);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+.actions {
+  display: flex;
+  gap: 0.375rem;
+  justify-content: flex-end;
+}
+</style>

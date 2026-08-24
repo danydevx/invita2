@@ -21,7 +21,7 @@
                     label="Nombre del cliente"
                     placeholder="Ej: María García"
                     v-model="form.client_name"
-                    :formError="form.errors.client_name"
+                    :formError="errors.client_name"
                     required
                   />
                 </div>
@@ -31,7 +31,7 @@
                     label="Correo electrónico (opcional)"
                     placeholder="maria@ejemplo.com"
                     v-model="form.client_email"
-                    :formError="form.errors.client_email"
+                    :formError="errors.client_email"
                   />
                 </div>
               </div>
@@ -43,7 +43,7 @@
                     label="Teléfono (opcional)"
                     placeholder="+52 555 123 4567"
                     v-model="form.client_phone"
-                    :formError="form.errors.client_phone"
+                    :formError="errors.client_phone"
                   />
                 </div>
                 <div class="col-md-6">
@@ -52,7 +52,7 @@
                     label="Número de visitas"
                     v-model="form.max_visits"
                     :options="visitOptions"
-                    :formError="form.errors.max_visits"
+                    :formError="errors.max_visits"
                   />
                 </div>
               </div>
@@ -63,7 +63,7 @@
                   label="Descripción (opcional)"
                   placeholder="Ej: 10% de descuento en la próxima visita"
                   v-model="form.description"
-                  :formError="form.errors.description"
+                  :formError="errors.description"
                   rows="3"
                 />
               </div>
@@ -72,7 +72,7 @@
                 :submitText="'Guardar'"
                 :submittingText="'Guardando...'"
                 :cancelHref="`/member/listings/${listing?.id}/fidelity-cards`"
-                :sending="form.processing"
+                :sending="sending"
               />
             </form>
           </div>
@@ -83,9 +83,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Head, Link, usePage } from '@inertiajs/vue3'
-import { useForm } from '@inertiajs/vue3'
+import { computed, reactive, ref } from 'vue'
+import { Head, Link, usePage, router } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
@@ -127,7 +127,9 @@ const breadcrumbs = computed(() => {
   ]
 })
 
-const form = useForm({
+const sending = ref(false)
+
+const form = reactive({
   client_name: '',
   client_email: '',
   client_phone: '',
@@ -135,9 +137,63 @@ const form = useForm({
   description: '',
 })
 
+const errors = reactive({
+  client_name: '',
+  client_email: '',
+  client_phone: '',
+  max_visits: '',
+  description: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.client_name = ''
+  errors.client_email = ''
+  errors.client_phone = ''
+  errors.max_visits = ''
+  errors.description = ''
+
+  if (!form.client_name || form.client_name.trim() === '') {
+    errors.client_name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.client_name.length > 150) {
+    errors.client_name = 'El nombre no puede tener más de 150 caracteres.'
+    isValid = false
+  }
+
+  if (form.client_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.client_email)) {
+    errors.client_email = 'El email no es válido.'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const submit = () => {
-  form.post(`/member/listings/${listing.value.id}/fidelity-cards`, {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
+  sending.value = true
+  router.post(`/member/listings/${listing.value.id}/fidelity-cards`, form, {
     preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
+    onFinish: () => {
+      sending.value = false
+    },
   })
 }
 </script>

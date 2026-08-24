@@ -17,7 +17,7 @@
               label="Nombre"
               placeholder="Galería del local"
               v-model="form.name"
-              :formError="form.errors.name"
+              :formError="errors.name"
               required
             />
           </div>
@@ -36,7 +36,7 @@
               id="gallery-description"
               label="Descripción"
               v-model="form.description"
-              :formError="form.errors.description"
+              :formError="errors.description"
               :rows="2"
             />
           </div>
@@ -54,19 +54,12 @@
               id="gallery-sort"
               label="Orden"
               v-model="form.sort_order"
-              :formError="form.errors.sort_order"
+              :formError="errors.sort_order"
               :min="0"
             />
           </div>
 
-          <div class="col-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" :disabled="form.processing">
-              {{ form.processing ? 'Guardando...' : 'Crear galería' }}
-            </button>
-            <Link :href="`/member/listings/${listing?.id || ''}/galleries`" class="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
+          <FormActions :submitText="'Crear galería'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id || ''}/galleries`" :sending="sending" />
         </form>
       </div>
     </div>
@@ -74,14 +67,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
+import { computed, reactive, ref } from 'vue'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldNumber from '@/Components/Fields/FieldNumber.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
@@ -102,7 +97,9 @@ const breadcrumbs = computed(() => {
   ]
 })
 
-const form = useForm({
+const sending = ref(false)
+
+const form = reactive({
   name: '',
   description: '',
   is_primary: false,
@@ -110,7 +107,59 @@ const form = useForm({
   sort_order: 0,
 })
 
+const errors = reactive({
+  name: '',
+  description: '',
+  sort_order: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.description = ''
+  errors.sort_order = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 150) {
+    errors.name = 'El nombre no puede tener más de 150 caracteres.'
+    isValid = false
+  }
+
+  if (form.sort_order && isNaN(parseInt(form.sort_order))) {
+    errors.sort_order = 'El orden debe ser un número.'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const submit = () => {
-  form.post(`/member/listings/${listing.value.id}/galleries`)
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
+  sending.value = true
+  router.post(`/member/listings/${listing.value.id}/galleries`, form, {
+    preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
+    onFinish: () => {
+      sending.value = false
+    },
+  })
 }
 </script>

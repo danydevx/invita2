@@ -101,9 +101,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Head, Link, usePage } from '@inertiajs/vue3'
-import { useForm } from '@inertiajs/vue3'
+import { ref, computed, reactive } from 'vue'
+import { Head, Link, usePage, router } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
@@ -129,6 +129,7 @@ const positionOptions = computed(() => {
 })
 
 const imagePreview = ref(null)
+const sending = ref(false)
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -150,7 +151,7 @@ const breadcrumbs = computed(() => {
   ]
 })
 
-const form = useForm({
+const form = reactive({
   name: '',
   email: '',
   phone: '',
@@ -159,6 +160,39 @@ const form = useForm({
   image: null,
   is_active: true,
 })
+
+const errors = reactive({
+  name: '',
+  email: '',
+  phone: '',
+  bio: '',
+  position_id: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.email = ''
+  errors.phone = ''
+  errors.bio = ''
+  errors.position_id = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 150) {
+    errors.name = 'El nombre no puede tener más de 150 caracteres.'
+    isValid = false
+  }
+
+  if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    errors.email = 'El email no es válido.'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const handleImageChange = (e) => {
   const file = e.target.files[0]
@@ -169,8 +203,41 @@ const handleImageChange = (e) => {
 }
 
 const submit = () => {
-  form.post(`/member/listings/${listing.value.id}/team-members`, {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
+  sending.value = true
+  const formData = new FormData()
+  formData.append('name', form.name)
+  formData.append('email', form.email || '')
+  formData.append('phone', form.phone || '')
+  formData.append('bio', form.bio || '')
+  formData.append('position_id', form.position_id || '')
+  formData.append('is_active', form.is_active ? '1' : '0')
+
+  if (form.image instanceof File) {
+    formData.append('image', form.image)
+  }
+
+  router.post(`/member/listings/${listing.value.id}/team-members`, formData, {
     preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
+    onFinish: () => {
+      sending.value = false
+    },
   })
 }
 </script>

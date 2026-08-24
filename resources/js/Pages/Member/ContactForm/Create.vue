@@ -1,6 +1,6 @@
 <template>
   <MemberLayout>
-    <Head :title="`Crear Formulario - ${listing?.name || ''}`" />
+    <Head title="Crear Formulario" />
 
     <PageHeader
       title="Nuevo Formulario"
@@ -12,82 +12,66 @@
       <div class="card-body">
         <form @submit.prevent="submit">
           <div class="mb-3">
-            <label class="form-label">Nombre del Formulario <span class="text-danger">*</span></label>
-            <input
+            <FieldText
+              id="form-name"
+              label="Nombre del Formulario"
+              placeholder="Ej: Contacto General, Solicitud de Cotización"
               v-model="form.name"
-              type="text"
-              class="form-control"
-              placeholder="Ej: Contacto General, Solicitud de Cotizacion"
+              :formError="errors.name"
               required
             />
             <small class="text-muted">Nombre interno para identificar el formulario.</small>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Descripcion</label>
-            <textarea
+            <FieldTextarea
+              id="form-description"
+              label="Descripción"
               v-model="form.description"
-              class="form-control"
-              rows="2"
-              placeholder="Descripcion opcional del formulario..."
-            ></textarea>
+              :formError="errors.description"
+              :rows="2"
+              placeholder="Descripción opcional del formulario..."
+            />
           </div>
 
           <div class="mb-3">
-            <div class="form-check">
-              <input
-                v-model="form.is_active"
-                type="checkbox"
-                class="form-check-input"
-                id="isActive"
-              />
-              <label class="form-check-label" for="isActive">
-                Formulario activo
-              </label>
-            </div>
+            <FieldSwitch
+              id="form-active"
+              label="Formulario activo"
+              v-model="form.is_active"
+            />
             <small class="text-muted">Solo un formulario puede estar activo a la vez.</small>
           </div>
 
           <hr class="my-4" />
 
-          <h5 class="mb-3">Configuracion del Formulario</h5>
+          <h5 class="mb-3">Configuración del Formulario</h5>
 
           <div class="mb-3">
-            <label class="form-label">Mensaje de exito</label>
-            <textarea
+            <FieldTextarea
+              id="form-success-message"
+              label="Mensaje de éxito"
               v-model="form.success_message"
-              class="form-control"
-              rows="2"
+              :formError="errors.success_message"
+              :rows="2"
               placeholder="Mensaje que se muestra al enviar el formulario..."
-            ></textarea>
+            />
           </div>
 
           <div class="mb-3">
-            <div class="form-check">
-              <input
-                v-model="form.show_phone"
-                type="checkbox"
-                class="form-check-input"
-                id="showPhone"
-              />
-              <label class="form-check-label" for="showPhone">
-                Mostrar telefono del negocio
-              </label>
-            </div>
+            <FieldSwitch
+              id="form-show-phone"
+              label="Mostrar teléfono del negocio"
+              v-model="form.show_phone"
+            />
           </div>
 
           <div class="mb-3">
-            <div class="form-check">
-              <input
-                v-model="form.show_email"
-                type="checkbox"
-                class="form-check-input"
-                id="showEmail"
-              />
-              <label class="form-check-label" for="showEmail">
-                Mostrar email del negocio
-              </label>
-            </div>
+            <FieldSwitch
+              id="form-show-email"
+              label="Mostrar email del negocio"
+              v-model="form.show_email"
+            />
           </div>
 
           <FormActions :submitText="'Crear Formulario'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/contact-forms`" :sending="sending" />
@@ -98,10 +82,14 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
+import FieldText from '@/Components/Fields/FieldText.vue'
+import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
+import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
 import FormActions from '@/Components/FormActions.vue'
 
 const props = defineProps({
@@ -113,7 +101,7 @@ const listing = computed(() => page.props.listing)
 const sending = ref(false)
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const form = ref({
+const form = reactive({
   name: '',
   description: '',
   is_active: false,
@@ -121,6 +109,30 @@ const form = ref({
   show_phone: true,
   show_email: true,
 })
+
+const errors = reactive({
+  name: '',
+  description: '',
+  success_message: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.description = ''
+  errors.success_message = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 150) {
+    errors.name = 'El nombre no puede tener más de 150 caracteres.'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const breadcrumbs = computed(() => {
   const path = window.location.pathname
@@ -142,8 +154,26 @@ const breadcrumbs = computed(() => {
 })
 
 const submit = () => {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
   sending.value = true
-  router.post(`/member/listings/${listing.value.id}/contact-forms`, form.value, {
+  router.post(`/member/listings/${listing.value.id}/contact-forms`, form, {
+    preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
     onFinish: () => {
       sending.value = false
     },

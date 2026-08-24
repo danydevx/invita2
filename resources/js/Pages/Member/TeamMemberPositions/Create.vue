@@ -19,7 +19,7 @@
                   label="Nombre del puesto"
                   placeholder="Ej: Recepcionista"
                   v-model="form.name"
-                  :formError="form.errors.name"
+                  :formError="errors.name"
                   required
                 />
               </div>
@@ -30,7 +30,7 @@
                   label="Puesto padre (opcional)"
                   v-model="form.parent_id"
                   :options="parentPositionOptions"
-                  :formError="form.errors.parent_id"
+                  :formError="errors.parent_id"
                 />
               </div>
 
@@ -40,7 +40,7 @@
                   label="Descripción (opcional)"
                   placeholder="Describe las responsabilidades del puesto"
                   v-model="form.description"
-                  :formError="form.errors.description"
+                  :formError="errors.description"
                   rows="3"
                 />
               </div>
@@ -50,20 +50,11 @@
                   id="position-active"
                   label="Activo"
                   v-model="form.is_active"
-                  :formError="form.errors.is_active"
                 />
                 <div class="form-text">Los puestos inactivos no aparecerán en las opciones de filtro.</div>
               </div>
 
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary" :disabled="form.processing">
-                  <i class="bi bi-check me-1"></i>
-                  {{ form.processing ? 'Guardando...' : 'Guardar' }}
-                </button>
-                <Link :href="`/member/listings/${listing?.id}/team-member-positions`" class="btn btn-outline-secondary">
-                  Cancelar
-                </Link>
-              </div>
+              <FormActions :submitText="'Guardar'" :submittingText="'Guardando...'" :cancelHref="`/member/listings/${listing?.id}/team-member-positions`" :sending="sending" />
             </form>
           </div>
         </div>
@@ -73,15 +64,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Head, Link, usePage } from '@inertiajs/vue3'
-import { useForm } from '@inertiajs/vue3'
+import { computed, reactive, ref } from 'vue'
+import { Head, Link, usePage, router } from '@inertiajs/vue3'
+import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
 import PageHeader from '@/Components/Admin/PageHeader.vue'
 import FieldText from '@/Components/Fields/FieldText.vue'
 import FieldTextarea from '@/Components/Fields/FieldTextarea.vue'
 import FieldSelect from '@/Components/Fields/FieldSelect.vue'
 import FieldSwitch from '@/Components/Fields/FieldSwitch.vue'
+import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
@@ -119,16 +111,63 @@ const breadcrumbs = computed(() => {
   ]
 })
 
-const form = useForm({
+const sending = ref(false)
+
+const form = reactive({
   name: '',
   parent_id: null,
   description: '',
   is_active: true,
 })
 
+const errors = reactive({
+  name: '',
+  parent_id: '',
+  description: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.name = ''
+  errors.parent_id = ''
+  errors.description = ''
+
+  if (!form.name || form.name.trim() === '') {
+    errors.name = 'El nombre es obligatorio.'
+    isValid = false
+  } else if (form.name.length > 100) {
+    errors.name = 'El nombre no puede tener más de 100 caracteres.'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const submit = () => {
-  form.post(`/member/listings/${listing.value.id}/team-member-positions`, {
+  if (!validateForm()) {
+    toast.warning('Por favor completa los campos requeridos')
+    return
+  }
+
+  sending.value = true
+  router.post(`/member/listings/${listing.value.id}/team-member-positions`, form, {
     preserveScroll: true,
+    onSuccess: () => {
+      sending.value = false
+    },
+    onError: (errs) => {
+      sending.value = false
+      Object.keys(errs).forEach(key => {
+        if (key in errors) {
+          errors[key] = errs[key]
+        }
+      })
+      toast.warning('Por favor completa los campos requeridos')
+    },
+    onFinish: () => {
+      sending.value = false
+    },
   })
 }
 </script>
