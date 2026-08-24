@@ -551,15 +551,15 @@ Route::get('/member/listings/{listing}/social-networks', [SocialNetworkControlle
 Route::post('/member/listings/{listing}/social-networks', [SocialNetworkController::class, 'store'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.social-networks.store');
+Route::post('/member/listings/{listing}/social-networks/reorder', [SocialNetworkController::class, 'reorder'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.social-networks.reorder');
 Route::post('/member/listings/{listing}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'update'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.social-networks.update');
 Route::delete('/member/listings/{listing}/social-networks/{socialNetwork}', [SocialNetworkController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.social-networks.destroy');
-Route::post('/member/listings/{listing}/social-networks/reorder', [SocialNetworkController::class, 'reorder'])
-    ->middleware(['auth', 'verified', 'active', 'role:member'])
-    ->name('member.listings.social-networks.reorder');
 
 Route::get('/member/listings/{listing}/tasks', [TaskController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
