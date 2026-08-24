@@ -248,13 +248,26 @@ class ServiceController extends Controller
     {
         $this->authorize('create', [\Modules\ListingServices\Models\ListingService::class, $business]);
 
-        $this->authorize('deleteAny', [\Modules\ListingServices\Models\ListingService::class, $business]);
+        $maxOrder = $business->services()->max('sort_order') ?? 0;
 
-        $count = \Modules\ListingServices\Models\ListingService::where('listing_id', $business->id)
-            ->whereIn('id', $request->ids)
-            ->delete();
+        $cloned = $business->services()->create([
+            'name' => $service->name . ' (copia)',
+            'slug' => \Illuminate\Support\Str::slug($service->name) . '-copy-' . time(),
+            'description' => $service->description,
+            'image' => $service->image,
+            'duration_minutes' => $service->duration_minutes,
+            'price' => $service->price,
+            'deposit_required' => $service->deposit_required,
+            'deposit_amount' => $service->deposit_amount,
+            'allows_online_booking' => $service->allows_online_booking,
+            'whatsapp_contact' => $service->whatsapp_contact,
+            'is_active' => false,
+            'sort_order' => $maxOrder + 1,
+            'business_location_id' => $service->business_location_id,
+            'category_id' => $service->category_id,
+        ]);
 
-        return redirect()->back()->with('success', $count . ' servicio(s) eliminado(s).');
+        return redirect()->route('member.listings.services.edit', [$business->id, $cloned->id]);
     }
 
     public function reorder(Request $request, Listing $business)
