@@ -10,6 +10,8 @@ use Modules\Listings\Models\Listing;
 use Modules\ClientFidelity\Http\Requests\CreateClientFidelityCardRequest;
 use Modules\ClientFidelity\Http\Requests\UpdateClientFidelityCardRequest;
 use Modules\ClientFidelity\Models\ClientFidelityCard;
+use Modules\ClientFidelity\Models\FidelityCardCompletion;
+use Modules\ClientFidelity\Models\FidelityReward;
 use Modules\ClientFidelity\Notifications\FidelityCardCompletedNotification;
 
 class ClientFidelityCardController extends Controller
@@ -94,8 +96,11 @@ class ClientFidelityCardController extends Controller
     {
         abort_unless($listing->user_id === Auth::id(), 403);
 
+        $rewards = FidelityReward::where('listing_id', $listing->id)->active()->sorted()->get(['id', 'title', 'max_visits']);
+
         return Inertia::render('Member/ClientFidelity/Create', [
             'listing' => $listing,
+            'rewards' => $rewards,
         ]);
     }
 
@@ -105,14 +110,24 @@ class ClientFidelityCardController extends Controller
 
         $validated = $request->validated();
 
+        $reward = null;
+        $maxVisits = $validated['max_visits'];
+        if (!empty($validated['fidelity_reward_id'])) {
+            $reward = FidelityReward::where('listing_id', $listing->id)->find($validated['fidelity_reward_id']);
+            if ($reward) {
+                $maxVisits = $reward->max_visits;
+            }
+        }
+
         $card = ClientFidelityCard::create([
             'listing_id' => $listing->id,
+            'fidelity_reward_id' => $validated['fidelity_reward_id'] ?? null,
             'client_name' => $validated['client_name'],
             'client_email' => $validated['client_email'] ?? null,
             'client_phone' => $validated['client_phone'] ?? null,
             'description' => $validated['description'] ?? null,
-            'max_visits' => $validated['max_visits'],
-            'current_visits' => $validated['max_visits'],
+            'max_visits' => $maxVisits,
+            'current_visits' => $maxVisits,
             'public_code' => ClientFidelityCard::generatePublicCode(),
             'is_active' => true,
         ]);
@@ -139,9 +154,12 @@ class ClientFidelityCardController extends Controller
         abort_unless($listing->user_id === Auth::id(), 403);
         abort_unless($card->listing_id === $listing->id, 403);
 
+        $rewards = FidelityReward::where('listing_id', $listing->id)->active()->sorted()->get(['id', 'title', 'max_visits']);
+
         return Inertia::render('Member/ClientFidelity/Edit', [
             'listing' => $listing,
             'card' => $card,
+            'rewards' => $rewards,
         ]);
     }
 
@@ -152,14 +170,26 @@ class ClientFidelityCardController extends Controller
 
         $validated = $request->validated();
 
-        $card->update([
+        $updateData = [
             'client_name' => $validated['client_name'],
             'client_email' => $validated['client_email'] ?? null,
             'client_phone' => $validated['client_phone'] ?? null,
             'description' => $validated['description'] ?? null,
-            'max_visits' => $validated['max_visits'],
             'is_active' => $validated['is_active'] ?? true,
-        ]);
+        ];
+
+        if (isset($validated['fidelity_reward_id'])) {
+            $updateData['fidelity_reward_id'] = $validated['fidelity_reward_id'];
+            $reward = FidelityReward::where('listing_id', $listing->id)->find($validated['fidelity_reward_id']);
+            if ($reward) {
+                $updateData['max_visits'] = $reward->max_visits;
+                if ($card->current_visits > $reward->max_visits) {
+                    $updateData['current_visits'] = $reward->max_visits;
+                }
+            }
+        }
+
+        $card->update($updateData);
 
         if ($card->current_visits > $card->max_visits) {
             $card->update(['current_visits' => $card->max_visits]);
@@ -188,11 +218,11 @@ class ClientFidelityCardController extends Controller
             return redirect()->back()->with('error', 'Esta tarjeta ya esta completada.');
         }
 
-        $card->decrementVisit();
+        $wasCompleted = $card->decrementVisit(Auth::id());
 
-        if ($card->current_visits <= 0) {
+        if ($wasCompleted && $card->current_visits <= 0) {
             $owner = $listing->user;
-            $owner->notify(new FidelityCardCompletedNotification($card, $business));
+            $owner->notify(new FidelityCardCompletedNotification($card, $listing));
 
             return redirect()->back()->with('success', "¡Tarjeta completada! El cliente {$card->client_name} ha ganado su premio.");
         }
@@ -205,7 +235,7 @@ class ClientFidelityCardController extends Controller
         abort_unless($listing->user_id === Auth::id(), 403);
         abort_unless($card->listing_id === $listing->id, 403);
 
-        $card->reset();
+        $card->reset(Auth::id());
 
         return redirect()->back()->with('success', 'Tarjeta reseteada correctamente.');
     }
@@ -250,7 +280,7 @@ class ClientFidelityCardController extends Controller
 
         if ($card->current_visits <= 0) {
             $owner = $listing->user;
-            $owner->notify(new FidelityCardCompletedNotification($card, $business));
+            $owner->notify(new FidelityCardCompletedNotification($card, $listing));
 
             return redirect()->back()->with('success', "¡Tarjeta completada! El cliente {$card->client_name} ha ganado su premio.");
         }
@@ -264,6 +294,92 @@ class ClientFidelityCardController extends Controller
 
         return Inertia::render('Member/ClientFidelity/Scan', [
             'listing' => $listing,
+        ]);
+    }
+
+    public function history(Request $request, Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $perPage = min((int) $request->get('per_page', 25), 100);
+        $search = $request->get('search', '');
+        $rewardId = $request->get('reward_id');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
+
+        $query = FidelityCardCompletion::whereHas('card', function ($q) use ($listing) {
+            $q->where('listing_id', $listing->id);
+        })
+            ->with(['card', 'reward', 'completedBy'])
+            ->when($search, function ($q) use ($search) {
+                $q->where('client_name', 'like', "%{$search}%");
+            })
+            ->when($rewardId, function ($q) use ($rewardId) {
+                $q->where('fidelity_reward_id', $rewardId);
+            })
+            ->when($dateFrom, function ($q) use ($dateFrom) {
+                $q->whereDate('created_at', '>=', $dateFrom);
+            })
+            ->when($dateTo, function ($q) use ($dateTo) {
+                $q->whereDate('created_at', '<=', $dateTo);
+            })
+            ->orderBy('created_at', 'desc');
+
+        $completions = $query->paginate($perPage);
+
+        $rewards = FidelityReward::where('listing_id', $listing->id)->active()->sorted()->get(['id', 'title', 'max_visits']);
+
+        $groupedByClient = FidelityCardCompletion::whereHas('card', function ($q) use ($listing) {
+                $q->where('listing_id', $listing->id);
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where('client_name', 'like', "%{$search}%");
+            })
+            ->when($rewardId, function ($q) use ($rewardId) {
+                $q->where('fidelity_reward_id', $rewardId);
+            })
+            ->when($dateFrom, function ($q) use ($dateFrom) {
+                $q->whereDate('created_at', '>=', $dateFrom);
+            })
+            ->when($dateTo, function ($q) use ($dateTo) {
+                $q->whereDate('created_at', '<=', $dateTo);
+            })
+            ->selectRaw('client_name, COUNT(*) as total_completions, MAX(created_at) as last_completion')
+            ->groupBy('client_name')
+            ->orderByDesc('total_completions')
+            ->get();
+
+        $stats = [
+            'total_completions' => $completions->total(),
+            'unique_clients' => $groupedByClient->count(),
+            'top_client' => $groupedByClient->first()?->client_name ?? '-',
+            'top_client_count' => $groupedByClient->first()?->total_completions ?? 0,
+            'most_popular_reward' => FidelityCardCompletion::whereHas('card', function ($q) use ($listing) {
+                    $q->where('listing_id', $listing->id);
+                })
+                ->selectRaw('fidelity_reward_id, COUNT(*) as count')
+                ->groupBy('fidelity_reward_id')
+                ->orderByDesc('count')
+                ->first()?->fidelity_reward_id,
+        ];
+
+        if ($stats['most_popular_reward']) {
+            $reward = FidelityReward::find($stats['most_popular_reward']);
+            $stats['most_popular_reward'] = $reward ? $reward->title : '-';
+        }
+
+        return Inertia::render('Member/ClientFidelity/History', [
+            'listing' => $listing,
+            'completions' => $completions,
+            'groupedByClient' => $groupedByClient,
+            'rewards' => $rewards,
+            'stats' => $stats,
+            'filters' => [
+                'search' => $search,
+                'reward_id' => $rewardId,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ],
         ]);
     }
 }

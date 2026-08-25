@@ -197,6 +197,44 @@
                 <span>{{ mod.title }}</span>
               </Link>
             </template>
+
+            <a
+              v-if="hasRealListing"
+              href="#"
+              class="sidebar-link"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards`) || isActive(`/member/listings/${primaryBusiness.id}/fidelity-rewards`) || isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards/history`) }"
+              @click.prevent="fidelitySubmenuOpen = !fidelitySubmenuOpen"
+            >
+              <i class="bi bi-heart"></i>
+              <span>Fidelización</span>
+              <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': fidelitySubmenuOpen }"></i>
+            </a>
+            <div v-show="fidelitySubmenuOpen" class="sidebar-submenu">
+              <Link
+                :href="`/member/listings/${primaryBusiness.id}/fidelity-cards`"
+                class="sidebar-link sidebar-link-sub"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards`) && !isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards/history`) && !isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards/create`)}"
+              >
+                <i class="bi bi-card-text"></i>
+                <span>Tarjetas</span>
+              </Link>
+              <Link
+                :href="`/member/listings/${primaryBusiness.id}/fidelity-rewards`"
+                class="sidebar-link sidebar-link-sub"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/fidelity-rewards`) }"
+              >
+                <i class="bi bi-gift"></i>
+                <span>Recompensas</span>
+              </Link>
+              <Link
+                :href="`/member/listings/${primaryBusiness.id}/fidelity-cards/history`"
+                class="sidebar-link sidebar-link-sub"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/fidelity-cards/history`) }"
+              >
+                <i class="bi bi-clock-history"></i>
+                <span>Historial</span>
+              </Link>
+            </div>
           </template>
           
           <div v-else class="sidebar-link text-muted">
@@ -514,6 +552,7 @@ const teamSubmenuOpen = ref(false)
 const productsSubmenuOpen = ref(false)
 const menuSubmenuOpen = ref(false)
 const servicesSubmenuOpen = ref(false)
+const fidelitySubmenuOpen = ref(false)
 
 const checkAndOpenSubmenu = (path) => {
   if (!primaryBusiness.value) return
@@ -534,6 +573,11 @@ const checkAndOpenSubmenu = (path) => {
   if (path.startsWith(`/member/listings/${bizId}/services`) ||
       path.startsWith(`/member/listings/${bizId}/service-categories`)) {
     servicesSubmenuOpen.value = true
+  }
+  if (path.startsWith(`/member/listings/${bizId}/fidelity-cards`) ||
+      path.startsWith(`/member/listings/${bizId}/fidelity-rewards`) ||
+      path.startsWith(`/member/listings/${bizId}/client-fidelity`)) {
+    fidelitySubmenuOpen.value = true
   }
 }
 
@@ -574,7 +618,7 @@ const hasRealListing = computed(() => {
 })
 
 const primaryBusinessModules = computed(() => {
-  const excludeKeys = ['team_members', 'packages', 'products', 'restaurant_menu', 'services']
+  const excludeKeys = ['team_members', 'packages', 'products', 'restaurant_menu', 'services', 'fidelity_cards', 'fidelity_rewards', 'client_fidelity', 'client-fidelity']
   return (primaryBusiness.value?.modules || []).filter(m => !excludeKeys.includes(m.key))
 })
 

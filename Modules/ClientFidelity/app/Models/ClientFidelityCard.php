@@ -13,6 +13,7 @@ class ClientFidelityCard extends Model
 
     protected $fillable = [
         'listing_id',
+        'fidelity_reward_id',
         'client_name',
         'client_email',
         'client_phone',
@@ -44,6 +45,16 @@ class ClientFidelityCard extends Model
         return $this->belongsTo(\Modules\Listings\Models\Listing::class);
     }
 
+    public function reward(): BelongsTo
+    {
+        return $this->belongsTo(FidelityReward::class, 'fidelity_reward_id');
+    }
+
+    public function completions(): HasMany
+    {
+        return $this->hasMany(FidelityCardCompletion::class);
+    }
+
     public static function generatePublicCode(): string
     {
         $chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -60,7 +71,7 @@ class ClientFidelityCard extends Model
         return $code;
     }
 
-    public function decrementVisit(): bool
+    public function decrementVisit(?int $completedByUserId = null): bool
     {
         if ($this->current_visits <= 0) {
             return false;
@@ -69,22 +80,43 @@ class ClientFidelityCard extends Model
         $this->decrement('current_visits');
 
         if ($this->current_visits <= 0) {
-            $this->complete();
+            $this->complete($completedByUserId);
         }
 
         return true;
     }
 
-    public function complete(): void
+    public function complete(?int $completedByUserId = null): void
     {
         $this->update([
             'completed_at' => now(),
             'is_active' => false,
         ]);
+
+        FidelityCardCompletion::create([
+            'client_fidelity_card_id' => $this->id,
+            'fidelity_reward_id' => $this->fidelity_reward_id,
+            'client_name' => $this->client_name,
+            'client_email' => $this->client_email,
+            'client_phone' => $this->client_phone,
+            'visits_completed' => $this->max_visits,
+            'completed_by_user_id' => $completedByUserId,
+        ]);
     }
 
-    public function reset(): void
+    public function reset(?int $completedByUserId = null): void
     {
+        FidelityCardCompletion::create([
+            'client_fidelity_card_id' => $this->id,
+            'fidelity_reward_id' => $this->fidelity_reward_id,
+            'client_name' => $this->client_name,
+            'client_email' => $this->client_email,
+            'client_phone' => $this->client_phone,
+            'visits_completed' => $this->max_visits - $this->current_visits,
+            'completed_by_user_id' => $completedByUserId,
+            'notes' => 'Reset #' . ($this->reset_count + 1),
+        ]);
+
         $this->update([
             'current_visits' => $this->max_visits,
             'completed_at' => null,

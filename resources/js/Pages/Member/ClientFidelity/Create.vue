@@ -48,6 +48,15 @@
                 </div>
                 <div class="col-md-6">
                   <FieldSelect
+                    id="card-reward"
+                    label="Recompensa (opcional)"
+                    v-model="form.fidelity_reward_id"
+                    :options="rewardOptions"
+                    :formError="errors.fidelity_reward_id"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <FieldSelect
                     id="card-max-visits"
                     label="Número de visitas"
                     v-model="form.max_visits"
@@ -83,7 +92,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { Head, Link, usePage, router } from '@inertiajs/vue3'
 import { toast } from 'vue3-toastify'
 import MemberLayout from '@/Layouts/MemberLayout.vue'
@@ -97,6 +106,12 @@ import FormActions from '@/Components/FormActions.vue'
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const businessMenu = computed(() => page.props.businessMenu || [])
+const rewards = computed(() => page.props.rewards || [])
+
+const rewardOptions = computed(() => [
+  { value: '', label: 'Sin recompensa' },
+  ...rewards.value.map(r => ({ value: r.id, label: `${r.title} (${r.max_visits} visitas)` })),
+])
 
 const visitOptions = [
   { value: 5, label: '5 visitas' },
@@ -133,14 +148,25 @@ const form = reactive({
   client_name: '',
   client_email: '',
   client_phone: '',
+  fidelity_reward_id: '',
   max_visits: 10,
   description: '',
+})
+
+watch(() => form.fidelity_reward_id, (newRewardId) => {
+  if (newRewardId) {
+    const selectedReward = rewards.value.find(r => r.id === newRewardId)
+    if (selectedReward) {
+      form.max_visits = selectedReward.max_visits
+    }
+  }
 })
 
 const errors = reactive({
   client_name: '',
   client_email: '',
   client_phone: '',
+  fidelity_reward_id: '',
   max_visits: '',
   description: '',
 })
