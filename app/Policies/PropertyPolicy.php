@@ -23,16 +23,16 @@ class PropertyPolicy
             return true;
         }
 
-        return $user->id === $property->business->user_id;
+        return $property->listing && $user->id === $property->listing->user_id;
     }
 
-    public function create(User $user, Listing $business): bool
+    public function create(User $user, Listing $listing): bool
     {
         if ($user->hasAnyRole(['superadmin', 'admin'])) {
             return true;
         }
 
-        return $user->id === $business->user_id;
+        return $user->id === $listing->user_id;
     }
 
     public function update(User $user, Property $property): bool
@@ -41,7 +41,7 @@ class PropertyPolicy
             return true;
         }
 
-        return $user->id === $property->business->user_id;
+        return $property->listing && $user->id === $property->listing->user_id;
     }
 
     public function delete(User $user, Property $property): bool
@@ -50,7 +50,7 @@ class PropertyPolicy
             return true;
         }
 
-        return $user->id === $property->business->user_id;
+        return $property->listing && $user->id === $property->listing->user_id;
     }
 
     public function deleteAny(User $user, Listing $business): bool

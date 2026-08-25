@@ -8,6 +8,7 @@
       <div class="row g-3">
         <div class="col-12 col-md-6">
           <FieldSelect
+            id="property-country"
             label="País"
             v-model="form.country"
             :formError="errors.country"
@@ -19,6 +20,7 @@
 
         <div class="col-12 col-md-6">
           <FieldSelect
+            id="property-state"
             label="Estado"
             v-model="form.state"
             :formError="errors.state"
@@ -31,6 +33,7 @@
 
         <div class="col-12 col-md-6">
           <FieldText
+            id="property-city"
             label="Ciudad"
             v-model="form.city"
             placeholder="Nombre de la ciudad"
@@ -40,6 +43,7 @@
 
         <div class="col-12 col-md-6">
           <FieldSelect
+            id="property-municipality"
             label="Municipio"
             v-model="form.municipality"
             :formError="errors.municipality"
@@ -52,6 +56,7 @@
 
         <div class="col-12 col-md-4">
           <FieldText
+            id="property-colony"
             label="Colonia"
             v-model="form.colony"
             placeholder="Nombre de la colonia"
@@ -60,6 +65,7 @@
 
         <div class="col-12 col-md-4">
           <FieldText
+            id="property-postal-code"
             label="Código Postal"
             v-model="form.postal_code"
             placeholder="00000"
@@ -68,6 +74,7 @@
 
         <div class="col-12 col-md-4">
           <FieldText
+            id="property-street"
             label="Calle"
             v-model="form.street"
             placeholder="Nombre de la calle"
@@ -76,6 +83,7 @@
 
         <div class="col-12 col-md-6">
           <FieldText
+            id="property-exterior-number"
             label="Número Exterior"
             v-model="form.exterior_number"
             placeholder="S/N"
@@ -84,6 +92,7 @@
 
         <div class="col-12 col-md-6">
           <FieldText
+            id="property-interior-number"
             label="Número Interior"
             v-model="form.interior_number"
             placeholder="(Opcional)"
@@ -92,6 +101,7 @@
 
         <div class="col-12">
           <FieldTextarea
+            id="property-references"
             label="Referencias"
             v-model="form.references"
             placeholder="Indicaciones para llegar, puntos de referencia..."
@@ -101,6 +111,7 @@
 
         <div class="col-12 col-md-4">
           <FieldText
+            id="property-latitude"
             label="Latitud"
             v-model="form.latitude"
             placeholder="19.4326"
@@ -110,6 +121,7 @@
 
         <div class="col-12 col-md-4">
           <FieldText
+            id="property-longitude"
             label="Longitud"
             v-model="form.longitude"
             placeholder="-99.1332"
@@ -119,6 +131,7 @@
 
         <div class="col-12 col-md-4">
           <FieldSwitch
+            id="property-show-exact-location"
             label="Precisión del mapa"
             v-model="form.show_exact_location"
           />

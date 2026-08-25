@@ -3,6 +3,7 @@
 namespace Modules\Properties\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\Properties\Console\Commands\SetupBaseFields;
 
 class PropertiesServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,7 @@ class PropertiesServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->commands([SetupBaseFields::class]);
     }
 
     protected function registerTranslations(): void

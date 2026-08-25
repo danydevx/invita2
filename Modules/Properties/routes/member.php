@@ -16,6 +16,6 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])
         Route::post('/reorder', [PropertyController::class, 'reorder'])->name('reorder');
         Route::post('/bulk-delete', [PropertyController::class, 'bulkDelete'])->name('bulk-delete');
         Route::post('/{property}/duplicate', [PropertyController::class, 'duplicate'])->name('duplicate');
-        Route::post('/{property}/change-status', [PropertyController::class, 'change-status'])->name('change-status');
+        Route::post('/{property}/change-status', [PropertyController::class, 'changeStatus'])->name('change-status');
         Route::get('/get-form-schema', [PropertyController::class, 'getFormSchema'])->name('get-form-schema');
     });

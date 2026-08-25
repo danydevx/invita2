@@ -6,8 +6,10 @@ use App\Services\ActivityService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Modules\Properties\Models\Property;
 use Modules\Properties\Models\PropertyField;
+use Modules\Properties\Models\PropertyImage;
 use Modules\Properties\Models\PropertyValue;
 use Modules\Properties\Models\PropertyAmenityProperty;
 
@@ -109,7 +111,7 @@ class PropertyService
             $propertyData = $this->extractMainFields($data);
 
             if (isset($data['title']) && $data['title'] !== $property->title) {
-                $propertyData['slug'] = $this->generateUniqueSlug($property->business, $data['title'], $property->id);
+                $propertyData['slug'] = $this->generateUniqueSlug($property->listing, $data['title'], $property->id);
             }
 
             if (isset($data['remove_main_image']) && $data['remove_main_image']) {
@@ -175,7 +177,8 @@ class PropertyService
         return DB::transaction(function () use ($property) {
             $newProperty = $property->replicate();
             $newProperty->title = $property->title . ' (Copia)';
-            $newProperty->slug = $this->generateUniqueSlug($property->business, $property->title . '-copy');
+            $newProperty->slug = $this->generateUniqueSlug($property->listing, $property->title . '-copy');
+            $newProperty->property_code = $this->generateUniquePropertyCode();
             $newProperty->status = 'draft';
             $newProperty->is_public = false;
             $newProperty->published_at = null;
@@ -185,6 +188,29 @@ class PropertyService
                 $newValue = $value->replicate();
                 $newValue->property_id = $newProperty->id;
                 $newValue->save();
+            }
+
+            foreach ($property->amenities as $amenity) {
+                PropertyAmenityProperty::create([
+                    'property_id' => $newProperty->id,
+                    'property_amenity_id' => $amenity->property_amenity_id,
+                    'value' => $amenity->value,
+                ]);
+            }
+
+            foreach ($property->images as $image) {
+                $newImage = $image->replicate();
+                $newImage->property_id = $newProperty->id;
+                $newImage->save();
+
+                if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
+                    $directory = dirname($image->image_path);
+                    $extension = pathinfo($image->image_path, PATHINFO_EXTENSION);
+                    $filename = 'property_' . now()->format('YmdHis') . '_' . Str::random(8) . '.' . $extension;
+                    $newPath = $directory . '/' . $filename;
+                    Storage::disk('public')->copy($image->image_path, $newPath);
+                    $newImage->update(['image_path' => $newPath]);
+                }
             }
 
             return $newProperty;

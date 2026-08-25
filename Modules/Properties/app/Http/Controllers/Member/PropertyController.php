@@ -137,11 +137,23 @@ class PropertyController extends Controller
 
         $selectedTypeId = $request->get('type');
         $formSchema = null;
+        $typeAmenities = [];
+        $selectedAmenityIds = [];
 
         if ($selectedTypeId) {
             $propertyType = PropertyType::find($selectedTypeId);
             if ($propertyType) {
                 $formSchema = $this->formSchemaService->getFormSchema($propertyType);
+                $typeAmenities = $propertyType->amenities()
+                    ->active()
+                    ->sorted()
+                    ->get()
+                    ->map(fn($a) => [
+                        'id' => $a->id,
+                        'key' => $a->key,
+                        'name' => $a->name,
+                        'icon' => $a->icon,
+                    ]);
             }
         }
 
@@ -154,6 +166,8 @@ class PropertyController extends Controller
             'selectedTypeId' => $selectedTypeId,
             'formSchema' => $formSchema,
             'limitInfo' => $limitCheck,
+            'amenities' => $typeAmenities,
+            'selectedAmenityIds' => $selectedAmenityIds,
         ]);
     }
 
@@ -184,6 +198,7 @@ class PropertyController extends Controller
 
     public function edit(Request $request, Listing $listing, Property $property)
     {
+        $property->load('listing');
         $this->authorize('update', [Property::class, $property]);
 
         $propertyType = $property->propertyType;
@@ -207,6 +222,7 @@ class PropertyController extends Controller
             'id' => $img->id,
             'url' => $img->image_path ? "/storage/{$img->image_path}" : '',
             'filename' => basename($img->image_path ?? ''),
+            'is_main' => $img->is_main,
         ])->toArray();
 
         $typeAmenities = $propertyType->amenities()
@@ -275,6 +291,7 @@ class PropertyController extends Controller
 
     public function update(UpdatePropertyRequest $request, Listing $listing, Property $property, ActivityService $activity)
     {
+        $property->load('listing');
         $this->authorize('update', [Property::class, $property]);
 
         $data = $request->validated();
@@ -294,6 +311,7 @@ class PropertyController extends Controller
 
     public function destroy(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
+        $property->load('listing');
         $this->authorize('delete', [Property::class, $property]);
 
         $this->propertyService->deleteProperty($property);
@@ -310,6 +328,7 @@ class PropertyController extends Controller
 
     public function duplicate(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
+        $property->load('listing');
         $this->authorize('update', [Property::class, $property]);
 
         $limitCheck = (new PropertyLimitService())->forBusiness($listing)->canCreateProperty();
@@ -332,6 +351,7 @@ class PropertyController extends Controller
 
     public function changeStatus(Request $request, Listing $listing, Property $property, ActivityService $activity)
     {
+        $property->load('listing');
         $this->authorize('update', [Property::class, $property]);
 
         $data = $request->validate([

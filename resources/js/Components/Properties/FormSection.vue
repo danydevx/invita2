@@ -57,12 +57,9 @@
           :formError="errors[field.field_key]"
           :helpText="field.help_text"
           :required="field.is_required"
-        >
-          <option value="">Selecciona una opción</option>
-          <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
-            {{ opt.label }}
-          </option>
-        </FieldSelect>
+          :options="field.options"
+          placeholder="Selecciona una opción"
+        />
 
         <FieldRadio
           v-else-if="field.field_type === 'radio'"

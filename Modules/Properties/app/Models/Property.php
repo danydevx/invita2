@@ -107,7 +107,12 @@ class Property extends Model
 
     public function business(): BelongsTo
     {
-        return $this->belongsTo(Listing::class);
+        return $this->belongsTo(Listing::class, 'listing_id');
+    }
+
+    public function listing(): BelongsTo
+    {
+        return $this->belongsTo(Listing::class, 'listing_id');
     }
 
     public function propertyType(): BelongsTo

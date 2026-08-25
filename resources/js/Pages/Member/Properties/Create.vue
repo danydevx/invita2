@@ -47,81 +47,56 @@
           </div>
 
           <div class="row g-3">
-            <PropertyLocationSection
-              v-model="locationData"
-              :errors="mergedErrors"
-            />
-
             <template v-if="formSchema">
               <template v-for="section in filteredSections" :key="section.id">
                 <fieldset class="col-12">
                   <legend class="border-bottom pb-2 mb-3">{{ section.name }}</legend>
-                  <div class="row g-3">
 
-                  <template v-for="field in section.fields.filter(f => f.field_type !== 'gallery')" :key="field.id">
-                    <div class="col-12" :class="getFieldColClass(field.field_type)">
-                    <FieldText
-                      v-if="field.field_type === 'text'"
-                      :id="`field-${field.field_key}`"
-                      :label="field.label"
-                      v-model="form[field.field_key]"
-                      :formError="mergedErrors[field.field_key]"
-                      :placeholder="field.placeholder"
-                      :helpText="field.help_text"
-                      :required="field.is_required"
-                    />
-
-                  <FieldTextarea
-                    v-else-if="field.field_type === 'textarea'"
-                    :id="`field-${field.field_key}`"
-                    :label="field.label"
-                    v-model="form[field.field_key]"
-                    :formError="mergedErrors[field.field_key]"
-                    :placeholder="field.placeholder"
-                    :helpText="field.help_text"
-                    :required="field.is_required"
-                    :rows="4"
+                  <LocationFields
+                    v-if="section.general_field_section_slug === 'ubicacion'"
+                    v-model="locationData"
+                    :errors="mergedErrors"
                   />
 
-                  <FieldNumber
-                    v-else-if="field.field_type === 'number' || field.field_type === 'decimal'"
-                    :id="`field-${field.field_key}`"
-                    :label="field.label"
-                    v-model="form[field.field_key]"
-                    :formError="mergedErrors[field.field_key]"
-                    :placeholder="field.placeholder"
-                    :helpText="field.help_text"
-                    :required="field.is_required"
-                  />
+                  <div v-else class="row g-3">
+                    <template v-for="field in section.fields.filter(f => f.field_type !== 'gallery')" :key="field.id">
+                      <div class="col-12" :class="getFieldColClass(field.field_type)">
+                      <FieldText
+                        v-if="field.field_type === 'text'"
+                        :id="`field-${field.field_key}`"
+                        :label="field.label"
+                        v-model="form[field.field_key]"
+                        :formError="mergedErrors[field.field_key]"
+                        :placeholder="field.placeholder"
+                        :helpText="field.help_text"
+                        :required="field.is_required"
+                      />
 
-                  <FieldPrice
-                    v-else-if="field.field_type === 'price'"
-                    :id="`field-${field.field_key}`"
-                    :label="field.label"
-                    v-model="form[field.field_key]"
-                    :formError="mergedErrors[field.field_key]"
-                    :placeholder="field.placeholder"
-                    :helpText="field.help_text"
-                    :required="field.is_required"
-                    currencyLabel="Monto"
-                  />
+                      <FieldTextarea
+                        v-else-if="field.field_type === 'textarea'"
+                        :id="`field-${field.field_key}`"
+                        :label="field.label"
+                        v-model="form[field.field_key]"
+                        :formError="mergedErrors[field.field_key]"
+                        :placeholder="field.placeholder"
+                        :helpText="field.help_text"
+                        :required="field.is_required"
+                        :rows="5"
+                      />
 
-                  <FieldSelect
-                    v-else-if="field.field_type === 'select'"
-                    :id="`field-${field.field_key}`"
-                    :label="field.label"
-                    v-model="form[field.field_key]"
-                    :formError="mergedErrors[field.field_key]"
-                    :helpText="field.help_text"
-                    :required="field.is_required"
-                  >
-                    <option value="">Selecciona una opción</option>
-                    <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
-                      {{ opt.label }}
-                    </option>
-                  </FieldSelect>
+                      <FieldSelect
+                        v-else-if="field.field_type === 'select'"
+                        :id="`field-${field.field_key}`"
+                        :label="field.label"
+                        v-model="form[field.field_key]"
+                        :formError="mergedErrors[field.field_key]"
+                        :helpText="field.help_text"
+                        :required="field.is_required"
+                        :options="field.options"
+                        placeholder="Selecciona una opción"
+                      />
 
-                  <FieldRadio
+                      <FieldRadio
                     v-else-if="field.field_type === 'radio'"
                     :id="`field-${field.field_key}`"
                     :label="field.label"
@@ -139,6 +114,18 @@
                     v-model="form[field.field_key]"
                     :formError="mergedErrors[field.field_key]"
                     :helpText="field.help_text"
+                  />
+
+                  <FieldPrice
+                    v-else-if="field.field_type === 'price'"
+                    :id="`field-${field.field_key}`"
+                    :label="field.label"
+                    v-model="form[field.field_key]"
+                    :formError="mergedErrors[field.field_key]"
+                    :placeholder="field.placeholder"
+                    :helpText="field.help_text"
+                    :required="field.is_required"
+                    currencyLabel="Monto"
                   />
 
                   <FieldDate
@@ -213,18 +200,39 @@
                     :required="field.is_required"
                     accept=".pdf,.doc,.docx,.xls,.xlsx"
                   />
-                </div>
-              </template>
+                  </div>
+                </template>
                   </div>
                 </fieldset>
+              </template>
             </template>
-          </template>
           </div>
 
           <div v-if="hasGalleryFields" class="alert alert-info mt-4">
             <i class="bi bi-info-circle me-2"></i>
             La galería de imágenes estará disponible después de crear la propiedad.
           </div>
+
+          <fieldset v-if="amenities.length > 0" class="col-12 mt-4">
+            <legend class="border-bottom pb-2 mb-3">Amenidades</legend>
+            <div class="row g-3">
+              <div v-for="amenity in amenities" :key="amenity.id" class="col-6 col-md-4 col-lg-3">
+                <div class="form-check">
+                  <input
+                    :id="`amenity-${amenity.id}`"
+                    v-model="form.amenity_ids"
+                    type="checkbox"
+                    :value="amenity.id"
+                    class="form-check-input"
+                  >
+                  <label :for="`amenity-${amenity.id}`" class="form-check-label d-flex align-items-center gap-2">
+                    <i :class="amenity.icon || 'bi bi-star'" style="font-size: 1rem;"></i>
+                    {{ amenity.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
 
           <FormActions :submitText="'Crear'" :submittingText="'Creando...'" :cancelHref="`/member/listings/${listing?.id}/properties`" :sending="sending" />
         </form>
@@ -253,13 +261,16 @@ import FieldEmail from '@/Components/Fields/FieldEmail.vue'
 import FieldPhone from '@/Components/Fields/FieldPhone.vue'
 import FieldUrl from '@/Components/Fields/FieldUrl.vue'
 import FieldFile from '@/Components/Fields/FieldFile.vue'
-import PropertyLocationSection from '@/Components/Properties/PropertyLocationSection.vue'
+import LocationFields from '@/Components/Properties/LocationFields.vue'
 import FormActions from '@/Components/FormActions.vue'
 
 const page = usePage()
 const listing = computed(() => page.props.listing)
 const propertyTypes = computed(() => page.props.propertyTypes || [])
 const formSchema = computed(() => page.props.formSchema)
+const amenities = computed(() => page.props.amenities || [])
+const selectedAmenityIds = computed(() => page.props.selectedAmenityIds || [])
+
 const hasGalleryFields = computed(() => {
   if (!formSchema.value?.sections) return false
   return formSchema.value.sections.some(section =>
@@ -267,15 +278,13 @@ const hasGalleryFields = computed(() => {
   )
 })
 
-const SECTIONS_TO_SKIP = ['seo', 'contacto', 'extras', 'multimedia']
-
 const filteredSections = computed(() => {
   if (!formSchema.value?.sections) return []
   return formSchema.value.sections.filter(section => {
-    const slug = section.general_field_section_slug
-    return !slug || !SECTIONS_TO_SKIP.includes(slug)
+    return section.is_locked === true
   })
 })
+
 const selectedTypeId = computed(() => page.props.selectedTypeId)
 const limitInfo = computed(() => page.props.limitInfo)
 const serverErrors = computed(() => {
@@ -317,32 +326,73 @@ const breadcrumbs = computed(() => {
 
 const sending = ref(false)
 const mainImageFile = ref(null)
+
+const form = reactive({
+  property_type_id: selectedTypeId.value,
+  operation_type: '',
+  price: '',
+  currency: 'MXN',
+  price_period: 'monthly',
+  amenity_ids: [...selectedAmenityIds.value],
+})
+
 const locationData = ref({})
 
 watch(locationData, (val) => {
   Object.assign(form, val)
 }, { deep: true })
 
-const form = reactive({
-  property_type_id: selectedTypeId.value,
-})
+const LOCATION_FIELDS = ['country', 'state', 'state_code', 'city', 'municipality', 'colony', 'postal_code', 'street', 'exterior_number', 'interior_number', 'references', 'latitude', 'longitude', 'show_exact_location']
 
-if (formSchema.value?.sections) {
-  for (const section of formSchema.value.sections) {
-    for (const field of section.fields || []) {
-      if (field.field_type === 'gallery') continue
-      if (form[field.field_key] === undefined) {
-        if (field.field_type === 'boolean') {
-          form[field.field_key] = ['1', 'true', true].includes(field.default_value)
-        } else if (field.default_value !== null && field.default_value !== '') {
-          form[field.field_key] = field.default_value
-        } else {
+watch(form, (val) => {
+  const locationUpdates = {}
+  for (const key of LOCATION_FIELDS) {
+    if (val[key] !== undefined) {
+      locationUpdates[key] = val[key]
+    }
+  }
+  if (Object.keys(locationUpdates).length > 0) {
+    Object.assign(locationData.value, locationUpdates)
+  }
+}, { deep: true })
+
+watch(formSchema, (schema) => {
+  if (schema?.sections) {
+    for (const section of schema.sections) {
+      for (const field of section.fields || []) {
+        if (field.field_type === 'gallery') continue
+        if (field.default_value !== null && field.default_value !== '') {
+          form[field.field_key] = field.field_type === 'boolean'
+            ? ['1', 'true', true].includes(field.default_value)
+            : field.default_value
+        } else if (form[field.field_key] === undefined) {
           form[field.field_key] = ''
         }
       }
     }
   }
+}, { immediate: true })
+
+const populateFormFromSchema = () => {
+  if (formSchema.value?.sections) {
+    for (const section of formSchema.value.sections) {
+      for (const field of section.fields || []) {
+        if (field.field_type === 'gallery') continue
+        if (form[field.field_key] === undefined) {
+          if (field.field_type === 'boolean') {
+            form[field.field_key] = ['1', 'true', true].includes(field.default_value)
+          } else if (field.default_value !== null && field.default_value !== '') {
+            form[field.field_key] = field.default_value
+          } else {
+            form[field.field_key] = ''
+          }
+        }
+      }
+    }
+  }
 }
+
+populateFormFromSchema()
 
 const selectType = (typeId) => {
   window.location.href = `/member/listings/${listing.value.id}/properties/create?type=${typeId}`
@@ -365,29 +415,27 @@ const getFieldColClass = (fieldType) => {
 const validateForm = () => {
   Object.keys(localErrors).forEach(key => delete localErrors[key])
 
-  const requiredFields = ['title', 'operation_type', 'price', 'state', 'city']
-
-  for (const fieldKey of requiredFields) {
-    const val = form[fieldKey]
-    if (!val || (typeof val === 'string' && val.trim() === '')) {
-      localErrors[fieldKey] = `El campo ${fieldKey} es obligatorio.`
-    }
+  if (form.operation_type === 'rent' && !form.price_period) {
+    localErrors.price_period = 'La periodicidad es obligatoria para rentas.'
   }
+
+  let hasErrors = false
 
   if (formSchema.value?.sections) {
     for (const section of formSchema.value.sections) {
       for (const field of section.fields || []) {
-        if (field.is_required && field.field_type !== 'gallery') {
+        if (field.is_required && field.field_type !== 'gallery' && field.field_type !== 'image') {
           const val = form[field.field_key]
-          if (!val || (typeof val === 'string' && val.trim() === '')) {
+          if (val === undefined || val === '' || (typeof val === 'string' && val.trim() === '')) {
             localErrors[field.field_key] = `El campo ${field.label} es obligatorio.`
+            hasErrors = true
           }
         }
       }
     }
   }
 
-  if (Object.keys(localErrors).length > 0) {
+  if (hasErrors || Object.keys(localErrors).length > 0) {
     toast.warning('Por favor completa los campos requeridos')
     return false
   }
@@ -430,6 +478,12 @@ const submit = () => {
 
   if (Object.keys(dynamicValues).length > 0) {
     formData.append('dynamic_values', JSON.stringify(dynamicValues))
+  }
+
+  if (form.amenity_ids && form.amenity_ids.length > 0) {
+    form.amenity_ids.forEach(id => {
+      formData.append('amenity_ids[]', id)
+    })
   }
 
   if (mainImageFile.value instanceof File) {

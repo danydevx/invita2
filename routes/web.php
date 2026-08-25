@@ -368,6 +368,9 @@ Route::post('/member/listings/{listing}/properties/{property}/images', [Property
 Route::delete('/member/listings/{listing}/properties/{property}/images/{image}', [PropertyImageController::class, 'destroy'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])
     ->name('member.listings.properties.images.destroy');
+Route::put('/member/listings/{listing}/properties/{property}/images/{image}/set-main', [PropertyImageController::class, 'setMain'])
+    ->middleware(['auth', 'verified', 'active', 'role:member'])
+    ->name('member.listings.properties.images.set-main');
 
 Route::get('/member/listings/{listing}/team-members', [TeamMemberController::class, 'index'])
     ->middleware(['auth', 'verified', 'active', 'role:member'])

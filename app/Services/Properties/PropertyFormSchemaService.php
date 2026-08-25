@@ -53,29 +53,13 @@ class PropertyFormSchemaService
 
         $sections = [];
 
-        if (!empty($lockedSectionsData)) {
-            $mergedLockedFields = collect($lockedSectionsData)
-                ->sortBy('sort_order')
-                ->pluck('fields')
-                ->flatten(1)
-                ->values()
-                ->all();
-
-            $sections[] = [
-                'id' => 'locked-merged',
-                'name' => 'Información del inmueble',
-                'description' => null,
-                'sort_order' => 1,
-                'is_general' => true,
-                'is_locked' => true,
-                'general_field_section_id' => null,
-                'general_field_section_slug' => null,
-                'fields' => $mergedLockedFields,
-            ];
+        foreach ($lockedSectionsData as $section) {
+            $section['sort_order'] = count($sections) + 1;
+            $sections[] = $section;
         }
 
         foreach ($regularSections as $section) {
-            $section['sort_order'] = $section['sort_order'] + 1;
+            $section['sort_order'] = count($sections) + 1;
             $sections[] = $section;
         }
 

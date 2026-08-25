@@ -24,68 +24,101 @@
       </template>
     </PageHeader>
 
-    <div class="row mb-4 align-items-center">
-      <div class="col-md-2">
-        <select v-model="filters.property_type_id" class="form-select" @change="filterProperties">
-          <option :value="null">Todos los tipos</option>
-          <option v-for="type in propertyTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select v-model="filters.operation_type" class="form-select" @change="filterProperties">
-          <option :value="null">Todas las operaciones</option>
-          <option v-for="op in operationOptions" :key="op" :value="op">{{ getOperationLabel(op) }}</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select v-model="filters.status" class="form-select" @change="filterProperties">
-          <option :value="null">Todos los estados</option>
-          <option v-for="st in statusOptions" :key="st" :value="st">{{ getStatusLabel(st) }}</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select v-model="filters.state" class="form-select" @change="onStateChange">
-          <option :value="null">Todos los estados</option>
-          <option v-for="state in availableStates" :key="state" :value="state">{{ state }}</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select v-model="filters.city" class="form-select" @change="filterProperties" :disabled="!filters.state">
-          <option :value="null">Todas las ciudades</option>
-          <option v-for="city in availableCities" :key="city" :value="city">{{ city }}</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <BulkSelect
-          v-model:selectedIds="selectedIds"
-          :current-page-ids="currentPageIds"
-          :delete-endpoint="`/member/listings/${listing?.id}/properties/bulk-delete`"
-          item-name="propiedades"
-          @deleted="onBulkDeleted"
-        />
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body py-3">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-3">
+            <label class="form-label small text-muted mb-1">Buscar</label>
+            <div class="input-group">
+              <input
+                type="text"
+                v-model="searchQuery"
+                class="form-control"
+                placeholder="Titulo, descripcion..."
+                @keyup.enter="filterProperties"
+              />
+              <button class="btn btn-outline-secondary" @click="filterProperties" type="button">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Tipo</label>
+            <select v-model="filters.property_type_id" class="form-select form-select-sm" @change="filterProperties">
+              <option :value="null">Todos</option>
+              <option v-for="type in propertyTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Operacion</label>
+            <select v-model="filters.operation_type" class="form-select form-select-sm" @change="filterProperties">
+              <option :value="null">Todas</option>
+              <option v-for="op in operationOptions" :key="op" :value="op">{{ getOperationLabel(op) }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Estado</label>
+            <select v-model="filters.status" class="form-select form-select-sm" @change="filterProperties">
+              <option :value="null">Todos</option>
+              <option v-for="st in statusOptions" :key="st" :value="st">{{ getStatusLabel(st) }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Ubicacion</label>
+            <select v-model="filters.state" class="form-select form-select-sm" @change="onStateChange">
+              <option :value="null">Estado</option>
+              <option v-for="state in availableStates" :key="state" :value="state">{{ state }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <select v-model="filters.city" class="form-select form-select-sm" @change="filterProperties" :disabled="!filters.state">
+              <option :value="null">Ciudad</option>
+              <option v-for="city in availableCities" :key="city" :value="city">{{ city }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <button v-if="hasActiveFilters" type="button" class="btn btn-outline-secondary btn-sm w-100" @click="clearFilters">
+              <i class="bi bi-x-lg me-1"></i>Limpiar
+            </button>
+          </div>
+        </div>
+
+        <div v-if="hasActiveFilters" class="mt-3 d-flex flex-wrap gap-2">
+          <span class="badge bg-light text-dark border" v-if="filters.property_type_id">
+            Tipo: {{ getPropertyTypeName(filters.property_type_id) }}
+            <button class="btn-close btn-close-sm ms-1" @click="filters.property_type_id = null; filterProperties()"></button>
+          </span>
+          <span class="badge bg-light text-dark border" v-if="filters.operation_type">
+            {{ getOperationLabel(filters.operation_type) }}
+            <button class="btn-close btn-close-sm ms-1" @click="filters.operation_type = null; filterProperties()"></button>
+          </span>
+          <span class="badge bg-light text-dark border" v-if="filters.status">
+            {{ getStatusLabel(filters.status) }}
+            <button class="btn-close btn-close-sm ms-1" @click="filters.status = null; filterProperties()"></button>
+          </span>
+          <span class="badge bg-light text-dark border" v-if="filters.state">
+            {{ filters.state }}
+            <button class="btn-close btn-close-sm ms-1" @click="filters.state = null; filters.city = null; filterProperties()"></button>
+          </span>
+          <span class="badge bg-light text-dark border" v-if="searchQuery">
+            "{{ searchQuery }}"
+            <button class="btn-close btn-close-sm ms-1" @click="searchQuery = ''; filterProperties()"></button>
+          </span>
+        </div>
       </div>
     </div>
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <div class="input-group">
-          <input
-            type="text"
-            v-model="searchQuery"
-            class="form-control"
-            placeholder="Buscar propiedades..."
-            @keyup.enter="searchProperties"
-          />
-          <button class="btn btn-outline-secondary" @click="searchProperties">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="text-muted small">
+        {{ dataTable?.total || 0 }} propiedades
       </div>
-      <div class="col-md-3">
-        <button v-if="hasActiveFilters" type="button" class="btn btn-outline-secondary" @click="clearFilters">
-          <i class="bi bi-x-lg me-1"></i>Limpiar filtros
-        </button>
-      </div>
+      <BulkSelect
+        v-model:selectedIds="selectedIds"
+        :current-page-ids="currentPageIds"
+        :delete-endpoint="`/member/listings/${listing?.id}/properties/bulk-delete`"
+        item-name="propiedades"
+        @deleted="onBulkDeleted"
+      />
     </div>
 
     <BaseDataTable
@@ -378,6 +411,11 @@ const getStatusLabel = (st) => {
     archived: 'Archivada',
   }
   return labels[st] || st
+}
+
+const getPropertyTypeName = (id) => {
+  const type = props.propertyTypes.find(t => t.id === id)
+  return type ? type.name : id
 }
 
 const formatDate = (date) => {

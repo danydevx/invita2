@@ -26,6 +26,7 @@ class SetupBaseFields extends Command
                 'description' => 'Datos básicos de la propiedad',
                 'sort_order' => 1,
                 'is_active' => true,
+                'is_locked' => true,
             ]
         );
 
@@ -37,17 +38,31 @@ class SetupBaseFields extends Command
                 'description' => 'Tipo de operación y precio de venta o renta',
                 'sort_order' => 2,
                 'is_active' => true,
+                'is_locked' => true,
+            ]
+        );
+
+        $locationSection = GeneralFieldSection::updateOrCreate(
+            ['slug' => 'ubicacion'],
+            [
+                'name' => 'Ubicación',
+                'icon' => 'bi bi-geo-alt',
+                'description' => 'Dirección y ubicación de la propiedad',
+                'sort_order' => 3,
+                'is_active' => true,
+                'is_locked' => true,
             ]
         );
 
         $this->createMainFields($mainSection);
         $this->createPriceFields($priceSection);
+        $this->createLocationFields($locationSection);
 
         $this->info('Asignando secciones a tipos de propiedad existentes...');
 
         $types = PropertyType::all();
         foreach ($types as $type) {
-            $this->assignSectionsToType($type, $mainSection, $priceSection);
+            $this->assignSectionsToType($type, $mainSection, $priceSection, $locationSection);
             $this->line("  - Asignado a: {$type->name}");
         }
 
@@ -235,7 +250,165 @@ class SetupBaseFields extends Command
         }
     }
 
-    protected function assignSectionsToType(PropertyType $type, GeneralFieldSection $mainSection, GeneralFieldSection $priceSection): void
+    protected function createLocationFields(GeneralFieldSection $section): void
+    {
+        $fields = [
+            [
+                'field_key' => 'country',
+                'field_type' => 'text',
+                'label' => 'País',
+                'description' => 'País de la propiedad',
+                'help_text' => '',
+                'placeholder' => 'México',
+                'is_required' => false,
+                'sort_order' => 1,
+            ],
+            [
+                'field_key' => 'state',
+                'field_type' => 'text',
+                'label' => 'Estado',
+                'description' => 'Estado o entidad federativa',
+                'help_text' => '',
+                'placeholder' => 'Jalisco',
+                'is_required' => false,
+                'sort_order' => 2,
+            ],
+            [
+                'field_key' => 'state_code',
+                'field_type' => 'text',
+                'label' => 'Código de estado',
+                'description' => 'Código ISO del estado',
+                'help_text' => '',
+                'placeholder' => 'JAL',
+                'is_required' => false,
+                'sort_order' => 3,
+            ],
+            [
+                'field_key' => 'city',
+                'field_type' => 'text',
+                'label' => 'Ciudad',
+                'description' => 'Ciudad o municipio',
+                'help_text' => '',
+                'placeholder' => 'Guadalajara',
+                'is_required' => false,
+                'sort_order' => 4,
+            ],
+            [
+                'field_key' => 'municipality',
+                'field_type' => 'text',
+                'label' => 'Delegación/Municipio',
+                'description' => 'Delegación o municipio',
+                'help_text' => '',
+                'placeholder' => 'Zapopan',
+                'is_required' => false,
+                'sort_order' => 5,
+            ],
+            [
+                'field_key' => 'colony',
+                'field_type' => 'text',
+                'label' => 'Colonia',
+                'description' => 'Colonia o fraccionamiento',
+                'help_text' => '',
+                'placeholder' => 'Chapalita',
+                'is_required' => false,
+                'sort_order' => 6,
+            ],
+            [
+                'field_key' => 'postal_code',
+                'field_type' => 'text',
+                'label' => 'Código postal',
+                'description' => 'Código postal',
+                'help_text' => '',
+                'placeholder' => '45000',
+                'is_required' => false,
+                'sort_order' => 7,
+            ],
+            [
+                'field_key' => 'street',
+                'field_type' => 'text',
+                'label' => 'Calle',
+                'description' => 'Nombre de la calle',
+                'help_text' => '',
+                'placeholder' => 'Av. Vallarta',
+                'is_required' => false,
+                'sort_order' => 8,
+            ],
+            [
+                'field_key' => 'exterior_number',
+                'field_type' => 'text',
+                'label' => 'Número exterior',
+                'description' => 'Número exterior',
+                'help_text' => '',
+                'placeholder' => '1234',
+                'is_required' => false,
+                'sort_order' => 9,
+            ],
+            [
+                'field_key' => 'interior_number',
+                'field_type' => 'text',
+                'label' => 'Número interior',
+                'description' => 'Número interior (opcional)',
+                'help_text' => '',
+                'placeholder' => 'A',
+                'is_required' => false,
+                'sort_order' => 10,
+            ],
+            [
+                'field_key' => 'references',
+                'field_type' => 'textarea',
+                'label' => 'Referencias',
+                'description' => 'Referencias de ubicación',
+                'help_text' => 'Entre calles, puntos de referencia',
+                'placeholder' => 'Entre Av. México y Av. EUA',
+                'is_required' => false,
+                'sort_order' => 11,
+            ],
+            [
+                'field_key' => 'latitude',
+                'field_type' => 'text',
+                'label' => 'Latitud',
+                'description' => 'Coordenada de latitud',
+                'help_text' => '',
+                'placeholder' => '20.659698',
+                'is_required' => false,
+                'sort_order' => 12,
+            ],
+            [
+                'field_key' => 'longitude',
+                'field_type' => 'text',
+                'label' => 'Longitud',
+                'description' => 'Coordenada de longitud',
+                'help_text' => '',
+                'placeholder' => '-103.349609',
+                'is_required' => false,
+                'sort_order' => 13,
+            ],
+            [
+                'field_key' => 'show_exact_location',
+                'field_type' => 'boolean',
+                'label' => 'Mostrar ubicación exacta',
+                'description' => 'Si está activado, se mostrará la ubicación exacta en el mapa público',
+                'help_text' => '',
+                'placeholder' => '',
+                'is_required' => false,
+                'sort_order' => 14,
+            ],
+        ];
+
+        foreach ($fields as $fieldData) {
+            GeneralField::updateOrCreate(
+                [
+                    'general_field_section_id' => $section->id,
+                    'field_key' => $fieldData['field_key'],
+                ],
+                array_merge($fieldData, [
+                    'is_active' => true,
+                ])
+            );
+        }
+    }
+
+    protected function assignSectionsToType(PropertyType $type, GeneralFieldSection $mainSection, GeneralFieldSection $priceSection, GeneralFieldSection $locationSection): void
     {
         $generalFieldService = app(\App\Services\Properties\GeneralFieldService::class);
 
@@ -245,6 +418,10 @@ class SetupBaseFields extends Command
 
         if (!$type->generalFieldSections()->where('general_field_section_id', $priceSection->id)->exists()) {
             $generalFieldService->assignSectionToPropertyType($type, $priceSection);
+        }
+
+        if (!$type->generalFieldSections()->where('general_field_section_id', $locationSection->id)->exists()) {
+            $generalFieldService->assignSectionToPropertyType($type, $locationSection);
         }
     }
 }
