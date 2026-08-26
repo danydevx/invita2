@@ -19,6 +19,10 @@ class HandleInertiaRequests extends Middleware
             return 'minisite.minisite';
         }
 
+        if ($request->is('v/*')) {
+            return 'layouts.vcard.app';
+        }
+
         return 'app';
     }
 

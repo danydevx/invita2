@@ -192,8 +192,7 @@ const heroBannerStyle = computed(() => {
 
 .vcard-hero__banner {
   position: relative;
-  height: clamp(23.75rem, 72vw, 26.875rem);
-  overflow: hidden;
+  height: clamp(12.5rem, 40vw, 13.75rem);
 }
 
 .vcard-hero__banner-image,
@@ -220,14 +219,14 @@ const heroBannerStyle = computed(() => {
 .vcard-hero__profile-wrap {
   position: absolute;
   left: 50%;
-  bottom: 4.5rem;
+  bottom: -2.5rem;
   transform: translateX(-50%);
-  z-index: 3;
+  z-index: 10;
 }
 
 .vcard-hero__profile-frame {
-  width: 8.5rem;
-  height: 8.5rem;
+  width: 11.25rem;
+  height: 11.25rem;
   padding: 0.25rem;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.18);

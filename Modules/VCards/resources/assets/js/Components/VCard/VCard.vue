@@ -29,8 +29,17 @@
         <VCardProducts />
         <VCardTestimonials />
         <VCardBusinessHours />
+        <VCardMenu />
         <VCardContactForm />
-        <VCardMap />
+        <VCardMap
+          :lat="vcard.latitude"
+          :lng="vcard.longitude"
+          :address="vcard.address"
+          :city="vcard.city"
+          :state="vcard.state"
+          :country="vcard.country"
+          :zip="vcard.zip"
+        />
 
         <div class="vcard__qr text-center" v-if="qrCodeUrl">
           <img
@@ -67,6 +76,7 @@ import VCardBusinessHours from './VCardBusinessHours.vue'
 import VCardContactForm from './VCardContactForm.vue'
 import VCardMap from './VCardMap.vue'
 import VCardShare from './VCardShare.vue'
+import VCardMenu from './VCardMenu.vue'
 
 const props = defineProps({
   vcard: {
@@ -163,7 +173,13 @@ const wrapperStyle = computed(() => ({
 }))
 
 const shareUrl = computed(() => {
-  return props.vcardUrl || props.vcard?.public_url || `${window.location.origin}/v/${props.vcard?.slug}`
+  if (props.vcardUrl) return props.vcardUrl
+  if (props.vcard?.public_url) return props.vcard.public_url
+  if (typeof window !== 'undefined' && window.location) {
+    return window.location.href
+  }
+  const slug = props.vcard?.slug || props.vcard?.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown'
+  return `/v/${slug}`
 })
 
 function buildGoogleFontHref(fontName) {

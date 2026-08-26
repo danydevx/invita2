@@ -48,6 +48,17 @@ class VCard extends Model
         'gradient_direction',
         'pattern_key',
         'hero_image_alpha',
+        'body_background_type',
+        'body_primary_color',
+        'body_gradient_direction',
+        'body_pattern_key',
+        'latitude',
+        'longitude',
+        'address',
+        'city',
+        'state',
+        'country',
+        'zip',
     ];
 
     protected $casts = [

@@ -112,4 +112,9 @@ function saveImagePosition({ x, y }) {
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
   padding: 1rem;
 }
+
+.vcard-preview__frame :deep(.vcard) {
+  border-radius: 1rem;
+  overflow: hidden;
+}
 </style>

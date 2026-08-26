@@ -153,189 +153,280 @@
           </div>
 
           <div v-show="activeTab === 'design'">
-            <div class="row g-3">
+            <div class="row g-4">
               <div class="col-12">
-                <label class="form-label">Diseño</label>
-                <div class="row g-2">
-                  <div
-                    v-for="design in designs"
-                    :key="design.value"
-                    class="col-6 col-md-2"
-                  >
-                    <div
-                      class="design-option border rounded p-2 text-center cursor-pointer"
-                      :class="{ 'border-primary': form.design === design.value, 'bg-light': form.design !== design.value }"
-                      @click="form.design = design.value"
-                    >
-                      <div class="design-preview mb-2" :style="{ backgroundColor: form.primary_color + '20' }">
-                        <div class="design-icon" :style="{ color: form.primary_color }">
-                          <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+                <div class="card border">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0">Estilo</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label small text-muted mb-2">Diseño</label>
+                        <div class="row g-2">
+                          <div v-for="design in designs" :key="design.value" class="col-4 col-md-2">
+                            <div
+                              class="design-option border rounded p-2 text-center cursor-pointer"
+                              :class="{ 'border-primary': form.design === design.value, 'bg-light': form.design !== design.value, 'border-2': form.design === design.value }"
+                              @click="form.design = design.value"
+                            >
+                              <div class="design-preview mb-2" :style="{ backgroundColor: form.primary_color + '20' }">
+                                <div class="design-icon" :style="{ color: form.primary_color }">
+                                  <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                              </div>
+                              <small class="fw-medium">{{ design.label }}</small>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <small>{{ design.label }}</small>
+
+                      <div class="col-12 col-md-6">
+                        <label class="form-label small text-muted mb-2">Forma de bordes</label>
+                        <div class="d-flex gap-3">
+                          <div
+                            class="shape-option cursor-pointer p-3 border rounded text-center flex-fill"
+                            :class="{ 'border-primary bg-light': form.shape === 'square', 'bg-white': form.shape !== 'square', 'border-2': form.shape === 'square' }"
+                            @click="form.shape = 'square'"
+                          >
+                            <div class="shape-preview shape-square mx-auto mb-2"></div>
+                            <small class="fw-medium">Cuadrado</small>
+                          </div>
+                          <div
+                            class="shape-option cursor-pointer p-3 border rounded text-center flex-fill"
+                            :class="{ 'border-primary bg-light': form.shape === 'rounded', 'bg-white': form.shape !== 'rounded', 'border-2': form.shape === 'rounded' }"
+                            @click="form.shape = 'rounded'"
+                          >
+                            <div class="shape-preview shape-rounded mx-auto mb-2"></div>
+                            <small class="fw-medium">Redondeado</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-md-6">
+                        <label class="form-label small text-muted mb-2">Color principal</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <div
+                            v-for="color in colors"
+                            :key="color"
+                            class="color-swatch rounded cursor-pointer"
+                            :class="{ 'ring-2 ring-primary': form.primary_color === color }"
+                            :style="{ backgroundColor: color }"
+                            @click="form.primary_color = color"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-md-6">
+                        <FieldSelect
+                          id="vcard-font"
+                          label="Fuente"
+                          v-model="form.font"
+                          :formError="errors.font"
+                        >
+                          <option v-for="font in fonts" :key="font" :value="font">{{ font }}</option>
+                        </FieldSelect>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="col-12">
-                <label class="form-label">Forma de bordes</label>
-                <div class="d-flex gap-3">
-                  <div
-                    class="shape-option cursor-pointer p-3 border rounded text-center"
-                    :class="{ 'border-primary bg-light': form.shape === 'square', 'bg-white': form.shape !== 'square' }"
-                    @click="form.shape = 'square'"
-                  >
-                    <div class="shape-preview shape-square mx-auto mb-2"></div>
-                    <small>Cuadrado</small>
+              <div class="col-12 col-lg-6">
+                <div class="card border h-100">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0">Imágenes</h6>
                   </div>
-                  <div
-                    class="shape-option cursor-pointer p-3 border rounded text-center"
-                    :class="{ 'border-primary bg-light': form.shape === 'rounded', 'bg-white': form.shape !== 'rounded' }"
-                    @click="form.shape = 'rounded'"
-                  >
-                    <div class="shape-preview shape-rounded mx-auto mb-2"></div>
-                    <small>Redondeado</small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">Color principal</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <div
-                    v-for="color in colors"
-                    :key="color"
-                    class="color-swatch rounded cursor-pointer"
-                    :class="{ 'ring-2 ring-primary': form.primary_color === color }"
-                    :style="{ backgroundColor: color }"
-                    @click="form.primary_color = color"
-                  />
-                </div>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">Tipo de fondo del Hero</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <div
-                    class="bg-type-option border rounded p-2 text-center cursor-pointer"
-                    :class="{ 'border-primary bg-light': form.background_type === 'solid', 'bg-white': form.background_type !== 'solid' }"
-                    @click="form.background_type = 'solid'"
-                  >
-                    <i class="bi bi-square d-block mb-1"></i>
-                    <small>Sólido</small>
-                  </div>
-                  <div
-                    class="bg-type-option border rounded p-2 text-center cursor-pointer"
-                    :class="{ 'border-primary bg-light': form.background_type === 'gradient', 'bg-white': form.background_type !== 'gradient' }"
-                    @click="form.background_type = 'gradient'"
-                  >
-                    <i class="bi bi-gradient d-block mb-1"></i>
-                    <small>Degradado</small>
-                  </div>
-                  <div
-                    class="bg-type-option border rounded p-2 text-center cursor-pointer"
-                    :class="{ 'border-primary bg-light': form.background_type === 'pattern', 'bg-white': form.background_type !== 'pattern' }"
-                    @click="form.background_type = 'pattern'"
-                  >
-                    <i class="bi bi-grid-3x3 d-block mb-1"></i>
-                    <small>Patrón</small>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <FieldImage
+                          id="vcard-profile-photo"
+                          label="Foto de perfil"
+                          v-model="profileFile"
+                          :initialPreview="profilePhotoUrl"
+                          :maxSizeMb="5"
+                        />
+                      </div>
+                      <div class="col-12">
+                        <FieldImage
+                          id="vcard-logo"
+                          label="Logo"
+                          v-model="logoFile"
+                          :initialPreview="form.logo ? `/storage/${form.logo}` : null"
+                          :maxSizeMb="5"
+                        />
+                      </div>
+                      <div class="col-12">
+                        <FieldImage
+                          id="vcard-badge"
+                          label="Badge"
+                          v-model="badgeFile"
+                          :initialPreview="form.badge ? `/storage/${form.badge}` : null"
+                          :maxSizeMb="5"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="col-12" v-if="form.background_type === 'gradient'">
-                <label class="form-label">Dirección del degradado</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <div
-                    v-for="dir in gradientDirections"
-                    :key="dir.value"
-                    class="gradient-dir-option border rounded p-2 text-center cursor-pointer"
-                    :class="{ 'border-primary bg-light': form.gradient_direction === dir.value, 'bg-white': form.gradient_direction !== dir.value }"
-                    @click="form.gradient_direction = dir.value"
-                  >
-                    <div class="gradient-preview mx-auto mb-1" :style="{ background: `linear-gradient(${dir.value}, var(--bs-primary), #ccc)` }"></div>
-                    <small>{{ dir.label }}</small>
+              <div class="col-12 col-lg-6">
+                <div class="card border h-100">
+                  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Fondo del Hero</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label small text-muted mb-2">Tipo de fondo</label>
+                        <div class="d-flex gap-2">
+                          <div
+                            v-for="bt in [{v:'solid',i:'bi-square',l:'Sólido'},{v:'gradient',i:'bi-gradient',l:'Degradado'},{v:'pattern',i:'bi-grid-3x3',l:'Patrón'}]"
+                            :key="bt.v"
+                            class="bg-type-option border rounded p-2 text-center cursor-pointer flex-fill"
+                            :class="{ 'border-primary bg-light': form.background_type === bt.v, 'bg-white': form.background_type !== bt.v, 'border-2': form.background_type === bt.v }"
+                            @click="form.background_type = bt.v"
+                          >
+                            <i :class="bt.i + ' d-block mb-1'"></i>
+                            <small class="fw-medium">{{ bt.l }}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12" v-if="form.background_type === 'gradient'">
+                        <label class="form-label small text-muted mb-2">Dirección del degradado</label>
+                        <div class="d-flex gap-2">
+                          <div
+                            v-for="dir in gradientDirections"
+                            :key="dir.value"
+                            class="gradient-dir-option border rounded p-2 text-center cursor-pointer flex-fill"
+                            :class="{ 'border-primary bg-light': form.gradient_direction === dir.value, 'bg-white': form.gradient_direction !== dir.value, 'border-2': form.gradient_direction === dir.value }"
+                            @click="form.gradient_direction = dir.value"
+                          >
+                            <div class="gradient-preview mx-auto mb-1" :style="{ background: `linear-gradient(${dir.value}, ${form.primary_color}, #ccc)` }"></div>
+                            <small class="fw-medium">{{ dir.label }}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12" v-if="form.background_type === 'pattern'">
+                        <label class="form-label small text-muted mb-2">Patrón</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <div
+                            v-for="p in patterns"
+                            :key="p.value"
+                            class="pattern-option border rounded p-2 text-center cursor-pointer"
+                            :class="{ 'border-primary bg-light': form.pattern_key === p.value, 'bg-white': form.pattern_key !== p.value, 'border-2': form.pattern_key === p.value }"
+                            @click="form.pattern_key = p.value"
+                          >
+                            <div class="pattern-preview mx-auto mb-1" :style="{ backgroundImage: p.preview }"></div>
+                            <small class="fw-medium">{{ p.label }}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <FieldImage
+                          id="vcard-hero-background-image"
+                          label="Imagen de fondo"
+                          v-model="heroBackgroundImageFile"
+                          :initialPreview="heroBackgroundImageUrl"
+                          :maxSizeMb="5"
+                        />
+                      </div>
+
+                      <div class="col-12" v-if="form.hero_background_image || heroBackgroundImageFile">
+                        <label class="form-label small text-muted mb-2">Opacidad ({{ form.hero_image_alpha }}%)</label>
+                        <input
+                          type="range"
+                          class="form-range"
+                          min="1"
+                          max="100"
+                          v-model.number="form.hero_image_alpha"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="col-12" v-if="form.background_type === 'pattern'">
-                <label class="form-label">Patrón</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <div
-                    v-for="p in patterns"
-                    :key="p.value"
-                    class="pattern-option border rounded p-2 text-center cursor-pointer"
-                    :class="{ 'border-primary bg-light': form.pattern_key === p.value, 'bg-white': form.pattern_key !== p.value }"
-                    @click="form.pattern_key = p.value"
-                  >
-                    <div class="pattern-preview mx-auto mb-1" :style="{ backgroundImage: p.preview }"></div>
-                    <small>{{ p.label }}</small>
+              <div class="col-12 col-lg-6">
+                <div class="card border h-100">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0">Fondo de página</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label small text-muted mb-2">Tipo de fondo</label>
+                        <div class="d-flex gap-2">
+                          <div
+                            v-for="bt in [{v:'solid',i:'bi-square',l:'Sólido'},{v:'gradient',i:'bi-gradient',l:'Degradado'},{v:'pattern',i:'bi-grid-3x3',l:'Patrón'}]"
+                            :key="bt.v"
+                            class="bg-type-option border rounded p-2 text-center cursor-pointer flex-fill"
+                            :class="{ 'border-primary bg-light': form.body_background_type === bt.v, 'bg-white': form.body_background_type !== bt.v, 'border-2': form.body_background_type === bt.v }"
+                            @click="form.body_background_type = bt.v"
+                          >
+                            <i :class="bt.i + ' d-block mb-1'"></i>
+                            <small class="fw-medium">{{ bt.l }}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <label class="form-label small text-muted mb-2">Color de fondo</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            type="color"
+                            class="form-control form-control-color"
+                            v-model="form.body_primary_color"
+                            title="Elegir color"
+                            style="width: 3rem; height: 2.5rem;"
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            v-model="form.body_primary_color"
+                            placeholder="#ffffff"
+                          >
+                        </div>
+                      </div>
+
+                      <div class="col-12" v-if="form.body_background_type === 'gradient'">
+                        <label class="form-label small text-muted mb-2">Dirección del degradado</label>
+                        <div class="d-flex gap-2">
+                          <div
+                            v-for="dir in gradientDirections"
+                            :key="dir.value"
+                            class="gradient-dir-option border rounded p-2 text-center cursor-pointer flex-fill"
+                            :class="{ 'border-primary bg-light': form.body_gradient_direction === dir.value, 'bg-white': form.body_gradient_direction !== dir.value, 'border-2': form.body_gradient_direction === dir.value }"
+                            @click="form.body_gradient_direction = dir.value"
+                          >
+                            <div class="gradient-preview mx-auto mb-1" :style="{ background: `linear-gradient(${dir.value}, ${form.body_primary_color}, #ccc)` }"></div>
+                            <small class="fw-medium">{{ dir.label }}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12" v-if="form.body_background_type === 'pattern'">
+                        <label class="form-label small text-muted mb-2">Patrón</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <div
+                            v-for="p in patterns"
+                            :key="p.value"
+                            class="pattern-option border rounded p-2 text-center cursor-pointer"
+                            :class="{ 'border-primary bg-light': form.body_pattern_key === p.value, 'bg-white': form.body_pattern_key !== p.value, 'border-2': form.body_pattern_key === p.value }"
+                            @click="form.body_pattern_key = p.value"
+                          >
+                            <div class="pattern-preview mx-auto mb-1" :style="{ backgroundImage: p.preview }"></div>
+                            <small class="fw-medium">{{ p.label }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <FieldSelect
-                  id="vcard-font"
-                  label="Fuente"
-                  v-model="form.font"
-                  :formError="errors.font"
-                >
-                  <option v-for="font in fonts" :key="font" :value="font">{{ font }}</option>
-                </FieldSelect>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <FieldImage
-                  id="vcard-profile-photo"
-                  label="Foto de perfil"
-                  v-model="profileFile"
-                  :initialPreview="profilePhotoUrl"
-                  :maxSizeMb="5"
-                />
-              </div>
-
-              <div class="col-12 col-md-6">
-                <FieldImage
-                  id="vcard-hero-background-image"
-                  label="Hero Background Image"
-                  v-model="heroBackgroundImageFile"
-                  :initialPreview="heroBackgroundImageUrl"
-                  :maxSizeMb="5"
-                />
-              </div>
-
-              <div class="col-12 col-md-6" v-if="form.hero_background_image || heroBackgroundImageFile">
-                <label class="form-label">Opacidad de imagen ({{ form.hero_image_alpha }}%)</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="1"
-                  max="100"
-                  v-model.number="form.hero_image_alpha"
-                />
-              </div>
-
-              <div class="col-12 col-md-6">
-                <FieldImage
-                  id="vcard-logo"
-                  label="Logo"
-                  v-model="logoFile"
-                  :initialPreview="form.logo ? `/storage/${form.logo}` : null"
-                  :maxSizeMb="5"
-                />
-              </div>
-
-              <div class="col-12 col-md-6">
-                <FieldImage
-                  id="vcard-badge"
-                  label="Badge"
-                  v-model="badgeFile"
-                  :initialPreview="form.badge ? `/storage/${form.badge}` : null"
-                  :maxSizeMb="5"
-                />
               </div>
             </div>
           </div>
@@ -925,6 +1016,10 @@ const form = reactive({
   gradient_direction: props.vcard?.gradient_direction || '135deg',
   pattern_key: props.vcard?.pattern_key || 'dots',
   hero_image_alpha: props.vcard?.hero_image_alpha ?? 100,
+  body_background_type: props.vcard?.body_background_type || 'solid',
+  body_primary_color: props.vcard?.body_primary_color || '#ffffff',
+  body_gradient_direction: props.vcard?.body_gradient_direction || '135deg',
+  body_pattern_key: props.vcard?.body_pattern_key || 'dots',
 })
 
 const contactForm = reactive({
@@ -1430,8 +1525,7 @@ function onFieldsDragEnd() {
 }
 
 .bg-type-option {
-  min-width: 70px;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .bg-type-option i {
@@ -1439,26 +1533,33 @@ function onFieldsDragEnd() {
 }
 
 .gradient-dir-option {
-  min-width: 80px;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .gradient-preview {
-  width: 40px;
-  height: 24px;
+  width: 2.5rem;
+  height: 1.5rem;
   border-radius: 4px;
 }
 
 .pattern-option {
-  min-width: 70px;
-  transition: all 0.2s;
+  transition: all 0.15s;
+  min-width: 4.5rem;
 }
 
 .pattern-preview {
-  width: 40px;
-  height: 40px;
-  background-size: 20px 20px;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-size: 1rem 1rem;
   background-color: #f0f0f0;
   border-radius: 4px;
+}
+
+.card {
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
 }
 </style>

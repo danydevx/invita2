@@ -90,16 +90,38 @@ function share(network) {
 }
 
 function copyLink() {
-  const url = props.vcardUrl || window.location.href
-  navigator.clipboard.writeText(url).then(() => {
-    toast.success('Enlace copiado al portapapeles')
-  }).catch(() => {
-    if (urlInput.value) {
-      urlInput.value.select()
-      document.execCommand('copy')
+  const url = props.vcardUrl || (typeof window !== 'undefined' ? window.location.href : '')
+
+  if (!url) {
+    toast.error('No hay URL para copiar')
+    return
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
       toast.success('Enlace copiado al portapapeles')
-    }
-  })
+    }).catch(() => {
+      fallbackCopy(url)
+    })
+  } else {
+    fallbackCopy(url)
+  }
+}
+
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.style.position = 'fixed'
+  textArea.style.left = '-9999px'
+  document.body.appendChild(textArea)
+  textArea.select()
+  try {
+    document.execCommand('copy')
+    toast.success('Enlace copiado al portapapeles')
+  } catch (err) {
+    toast.error('No se pudo copiar')
+  }
+  document.body.removeChild(textArea)
 }
 </script>
 

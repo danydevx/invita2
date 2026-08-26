@@ -249,6 +249,14 @@ class VCardController extends Controller
             'shape' => ['nullable', 'in:circle,rounded'],
             'image_x' => ['nullable', 'numeric'],
             'image_y' => ['nullable', 'numeric'],
+            'background_type' => ['nullable', 'in:solid,gradient,pattern'],
+            'gradient_direction' => ['nullable', 'string', 'max:20'],
+            'pattern_key' => ['nullable', 'string', 'max:50'],
+            'hero_image_alpha' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'body_background_type' => ['nullable', 'in:solid,gradient,pattern'],
+            'body_primary_color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'body_gradient_direction' => ['nullable', 'string', 'max:20'],
+            'body_pattern_key' => ['nullable', 'string', 'max:50'],
         ]);
 
         if (isset($validated['slug']) && $validated['slug'] !== $vcard->slug) {

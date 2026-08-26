@@ -1,10 +1,10 @@
 <template>
-  <section class="vcard-section vcard-services" v-if="displayServices.length > 0">
+  <section class="vcard-section vcard-services" v-if="allServices.length > 0">
     <h2 class="vcard-section__title">Servicios</h2>
 
     <div class="vcard-services__list">
       <article
-        v-for="service in displayServices"
+        v-for="service in visibleServices"
         :key="service.title"
         class="vcard-service card border-0 shadow-sm"
       >
@@ -21,34 +21,60 @@
         </div>
       </article>
     </div>
+
+    <div v-if="hasMore" class="vcard-services__load-more text-center mt-3">
+      <button class="btn btn-outline-primary btn-sm" @click="loadMore">
+        Ver más ({{ remaining }})
+      </button>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   services: {
     type: Array,
     default: () => [],
   },
-  limit: {
+  initialLimit: {
     type: Number,
-    default: 10,
+    default: 4,
   },
 })
 
-const displayServices = computed(() => {
+const visibleCount = ref(props.initialLimit)
+
+const allServices = computed(() => {
   if (props.services && props.services.length > 0) {
-    return props.services.slice(0, props.limit)
+    return props.services
   }
   return [
     { title: 'Consultoría', description: 'Asesoría profesional y acompañamiento.', icon: 'bi bi-chat-dots' },
     { title: 'Diseño', description: 'Soluciones visuales limpias y modernas.', icon: 'bi bi-palette2' },
     { title: 'Implementación', description: 'Ejecución cuidada de principio a fin.', icon: 'bi bi-gear' },
     { title: 'Soporte', description: 'Seguimiento y mantenimiento continuo.', icon: 'bi bi-life-preserver' },
-  ].slice(0, props.limit)
+    { title: 'Capacitación', description: 'Formación para tu equipo de trabajo.', icon: 'bi bi-graduation-cap' },
+    { title: 'Auditoría', description: 'Evaluación y mejora de procesos.', icon: 'bi bi-clipboard-check' },
+  ]
 })
+
+const visibleServices = computed(() => {
+  return allServices.value.slice(0, visibleCount.value)
+})
+
+const hasMore = computed(() => {
+  return visibleCount.value < allServices.value.length
+})
+
+const remaining = computed(() => {
+  return allServices.value.length - visibleCount.value
+})
+
+function loadMore() {
+  visibleCount.value += props.initialLimit
+}
 </script>
 
 <style scoped>
