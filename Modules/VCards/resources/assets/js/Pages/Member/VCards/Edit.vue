@@ -993,7 +993,23 @@
                 <p class="text-muted small mb-3">Activa o desactiva las secciones que aparecen en tu tarjeta digital.</p>
               </div>
               <div class="col-12" v-for="section in sectionsList" :key="section.key">
+                <div v-if="section.key === 'services'" class="d-flex align-items-center gap-2">
+                  <FieldSwitch
+                    :id="`section-${section.key}`"
+                    :label="section.label"
+                    v-model="form.sections[section.key]"
+                  />
+                  <button
+                    v-if="form.sections[section.key]"
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showServicesModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
                 <FieldSwitch
+                  v-else
                   :id="`section-${section.key}`"
                   :label="section.label"
                   v-model="form.sections[section.key]"
@@ -1028,6 +1044,7 @@
               :shape="form.shape"
               :packages="previewPackages"
               :sections="form.sections"
+              :selectedServices="localSelectedServices"
               @change-image-position="updateImagePosition"
             />
           </div>
@@ -1035,6 +1052,15 @@
       </div>
     </div>
   </MemberLayout>
+
+  <ServicesSelectionModal
+    :show="showServicesModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedServices="localSelectedServices"
+    @close="showServicesModal = false"
+    @updated="onServicesUpdated"
+  />
 </template>
 
 <script setup>
@@ -1056,6 +1082,7 @@ import FieldFile from '@/Components/Fields/FieldFile.vue'
 import FormActions from '@/Components/FormActions.vue'
 import QRCode from '@/Components/QRCode/QRCode.vue'
 import VCardPreview from './VCardPreview.vue'
+import ServicesSelectionModal from '../../../Components/VCard/ServicesSelectionModal.vue'
 
 const props = defineProps({
   listing: Object,
@@ -1075,6 +1102,7 @@ const props = defineProps({
 const activeTab = ref('card')
 const sending = ref(false)
 const savingSections = ref(false)
+const showServicesModal = ref(false)
 
 const sectionsList = [
   { key: 'appointments', label: 'Agendar Cita' },
@@ -1126,6 +1154,10 @@ const previewPackages = [
   { id: 3, name: 'Premium', description: 'Plan premium con soporte prioritario', price: 39.99, currency: 'USD', duration_days: 30, active: true },
 ]
 const localFields = ref([...(props.vcard?.fields || [])])
+const localSelectedServices = ref([...(props.vcard?.services || [])])
+
+console.log('Initial props.vcard?.services:', props.vcard?.services)
+console.log('Initial localSelectedServices:', localSelectedServices.value)
 
 watch(() => props.vcard?.contacts, (newContacts) => {
   localContacts.value = [...(newContacts || [])]
@@ -1133,6 +1165,16 @@ watch(() => props.vcard?.contacts, (newContacts) => {
 
 watch(() => props.vcard?.fields, (newFields) => {
   localFields.value = [...(newFields || [])]
+}, { deep: true })
+
+watch(() => props.vcard?.services, (newServices) => {
+  console.log('Watch triggered - props.vcard.services:', newServices)
+  localSelectedServices.value = [...(newServices || [])]
+  console.log('localSelectedServices is now:', localSelectedServices.value)
+}, { deep: true })
+
+watch(localSelectedServices, (newVal) => {
+  console.log('localSelectedServices changed:', newVal)
 }, { deep: true })
 
 const form = reactive({
@@ -1417,6 +1459,12 @@ function saveSections() {
       },
     }
   )
+}
+
+function onServicesUpdated(services) {
+  console.log('onServicesUpdated called with:', services)
+  localSelectedServices.value = [...services]
+  console.log('localSelectedServices.value is now:', localSelectedServices.value)
 }
 
 function selectFieldType(key) {

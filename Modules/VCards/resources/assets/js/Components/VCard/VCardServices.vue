@@ -1,79 +1,42 @@
 <template>
-  <section class="vcard-section vcard-services" v-if="allServices.length > 0">
+  <section class="vcard-section vcard-services" v-if="services.length > 0">
     <h2 class="vcard-section__title">Servicios</h2>
 
     <div class="vcard-services__list">
       <article
-        v-for="service in visibleServices"
-        :key="service.title"
+        v-for="service in services"
+        :key="service.id"
         class="vcard-service card border-0 shadow-sm"
       >
         <div class="card-body d-flex align-items-center gap-3">
           <div class="vcard-service__icon">
-            <i :class="service.icon"></i>
+            <i class="bi bi-briefcase"></i>
           </div>
           <div class="vcard-service__content">
-            <h3 class="vcard-service__title">{{ service.title }}</h3>
+            <h3 class="vcard-service__title">{{ service.name }}</h3>
             <p v-if="service.description" class="vcard-service__text">{{ service.description }}</p>
-            <p v-else-if="service.text" class="vcard-service__text">{{ service.text }}</p>
+            <p v-if="service.duration_minutes" class="vcard-service__duration">{{ service.duration_minutes }} min</p>
           </div>
-          <i class="bi bi-chevron-right vcard-service__arrow"></i>
+          <div class="vcard-service__price" v-if="service.price">
+            {{ formatPrice(service.price) }}
+          </div>
         </div>
       </article>
-    </div>
-
-    <div v-if="hasMore" class="vcard-services__load-more text-center mt-3">
-      <button class="btn btn-outline-primary btn-sm" @click="loadMore">
-        Ver más ({{ remaining }})
-      </button>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
 const props = defineProps({
   services: {
     type: Array,
     default: () => [],
   },
-  initialLimit: {
-    type: Number,
-    default: 4,
-  },
 })
 
-const visibleCount = ref(props.initialLimit)
-
-const allServices = computed(() => {
-  if (props.services && props.services.length > 0) {
-    return props.services
-  }
-  return [
-    { title: 'Consultoría', description: 'Asesoría profesional y acompañamiento.', icon: 'bi bi-chat-dots' },
-    { title: 'Diseño', description: 'Soluciones visuales limpias y modernas.', icon: 'bi bi-palette2' },
-    { title: 'Implementación', description: 'Ejecución cuidada de principio a fin.', icon: 'bi bi-gear' },
-    { title: 'Soporte', description: 'Seguimiento y mantenimiento continuo.', icon: 'bi bi-life-preserver' },
-    { title: 'Capacitación', description: 'Formación para tu equipo de trabajo.', icon: 'bi bi-graduation-cap' },
-    { title: 'Auditoría', description: 'Evaluación y mejora de procesos.', icon: 'bi bi-clipboard-check' },
-  ]
-})
-
-const visibleServices = computed(() => {
-  return allServices.value.slice(0, visibleCount.value)
-})
-
-const hasMore = computed(() => {
-  return visibleCount.value < allServices.value.length
-})
-
-const remaining = computed(() => {
-  return allServices.value.length - visibleCount.value
-})
-
-function loadMore() {
-  visibleCount.value += props.initialLimit
+function formatPrice(price) {
+  if (!price && price !== 0) return ''
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(price)
 }
 </script>
 
@@ -129,13 +92,16 @@ function loadMore() {
   line-height: 1.4;
 }
 
-.vcard-service__arrow {
+.vcard-service__duration {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
   color: var(--vcard-muted);
-  font-size: 1rem;
-  flex-shrink: 0;
 }
 
-.vcard-service:hover .vcard-service__arrow {
+.vcard-service__price {
+  font-size: 0.9375rem;
+  font-weight: 700;
   color: var(--vcard-primary);
+  flex-shrink: 0;
 }
 </style>

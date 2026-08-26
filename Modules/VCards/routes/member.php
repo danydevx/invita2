@@ -103,4 +103,10 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function
         ->name('member.listings.vcards.packages.destroy');
     Route::post('/member/listings/{listing}/vcards/{vcard}/packages/reorder', [VCardPackageController::class, 'reorder'])
         ->name('member.listings.vcards.packages.reorder');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-services', [VCardController::class, 'updateSelectedServices'])
+        ->name('member.listings.vcards.selected-services.update');
+
+    Route::get('/member/listings/{listing}/vcard-services', [VCardController::class, 'getListingServices'])
+        ->name('member.listings.vcard-services');
 });

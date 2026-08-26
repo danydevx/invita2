@@ -67,6 +67,13 @@ class VCardResource extends JsonResource
             'fields' => $this->relationLoaded('fields') ? VCardFieldResource::collection($this->fields)->resolve($request) : [],
             'active_fields' => $this->relationLoaded('activeFields') ? VCardFieldResource::collection($this->activeFields)->resolve($request) : [],
             'sections' => $this->whenLoaded('sections', fn() => $this->sections->pluck('enabled', 'section_key')->toArray(), []),
+            'services' => $this->whenLoaded('selectedServices', fn() => $this->selectedServices->map(fn($s) => [
+                'id' => $s->service?->id,
+                'name' => $s->service?->name,
+                'price' => $s->service?->price,
+                'duration_minutes' => $s->service?->duration_minutes,
+                'description' => $s->service?->description,
+            ])->filter()->values(), []),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -162,6 +162,16 @@ class VCard extends Model
         return $this->hasMany(VCardSection::class, 'vcard_id');
     }
 
+    public function selectedServices(): HasMany
+    {
+        return $this->hasMany(VCardSelectedService::class, 'vcard_id')->orderBy('sort_order');
+    }
+
+    public function getServicesAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedServices->map(fn($s) => $s->service)->filter();
+    }
+
     public function getSectionsConfigAttribute(): array
     {
         $defaults = [

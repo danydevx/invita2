@@ -24,7 +24,7 @@
         <VCardContactList :contacts="contacts" :shape="shape" />
         <VCardFieldList :fields="fields" :shape="shape" />
         <VCardAppointments v-if="sections.appointments === true" :shape="shape" />
-        <VCardServices v-if="sections.services === true" />
+        <VCardServices v-if="sections.services === true" :services="selectedServices" />
         <VCardPackages v-if="sections.packages === true" :packages="packages" />
         <VCardGallery v-if="sections.gallery === true" />
         <VCardProducts v-if="sections.products === true" />
@@ -159,6 +159,10 @@ const props = defineProps({
   sections: {
     type: Object,
     default: () => ({}),
+  },
+  selectedServices: {
+    type: Array,
+    default: () => [],
   },
 })
 

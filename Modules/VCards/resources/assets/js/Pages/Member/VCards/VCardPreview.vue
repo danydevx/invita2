@@ -19,6 +19,7 @@
         :qrCodeUrl="qrCodeUrl"
         :packages="packages"
         :sections="sections"
+        :selectedServices="selectedServices"
         @openImagePosition="openImagePositionModal"
       />
     </div>
@@ -79,6 +80,10 @@ const props = defineProps({
   sections: {
     type: Object,
     default: () => ({}),
+  },
+  selectedServices: {
+    type: Array,
+    default: () => [],
   },
 })
 

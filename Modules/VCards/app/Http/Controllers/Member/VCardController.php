@@ -18,6 +18,7 @@ use Modules\VCards\Models\VCardContact;
 use Modules\VCards\Models\VCardField;
 use Modules\VCards\Models\VCardFieldType;
 use Modules\VCards\Models\VCardSection;
+use Modules\VCards\Models\VCardSelectedService;
 
 class VCardController extends Controller
 {
@@ -201,7 +202,7 @@ class VCardController extends Controller
         abort_unless($listing->user_id === Auth::id(), 403);
         abort_unless($vcard->listing_id === $listing->id, 403);
 
-        $vcard->load(['contacts', 'fields', 'sections']);
+        $vcard->load(['contacts', 'fields', 'sections', 'selectedServices.service']);
 
         $teams = \Modules\VCards\Models\VCardTeam::where('listing_id', $listing->id)
             ->active()
@@ -546,5 +547,40 @@ class VCardController extends Controller
         }
 
         return redirect()->back()->with('success', 'Secciones actualizadas correctamente.');
+    }
+
+    public function updateSelectedServices(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'service_ids' => ['required', 'array'],
+            'service_ids.*' => ['exists:listing_services,id'],
+        ]);
+
+        $vcard->selectedServices()->delete();
+
+        foreach ($validated['service_ids'] as $index => $serviceId) {
+            VCardSelectedService::create([
+                'vcard_id' => $vcard->id,
+                'service_id' => $serviceId,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Servicios actualizados correctamente.']);
+    }
+
+    public function getListingServices(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $services = \Modules\ListingServices\Models\ListingService::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get(['id', 'name', 'price', 'duration_minutes', 'description']);
+
+        return response()->json(['services' => $services]);
     }
 }
