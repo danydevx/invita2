@@ -171,7 +171,7 @@ const fetchData = () => {
     '/admin/api-explorer/fetch',
     {
       path: selectedEndpoint.value.path,
-      business_id: selectedBusinessId.value || null,
+      listing_id: selectedBusinessId.value || null,
       user_id: selectedUserId.value || null,
     },
     {

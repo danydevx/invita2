@@ -124,8 +124,7 @@ const guestForm = reactive({
 })
 
 const breadcrumbs = computed(() => [
-  { label: 'Dashboard', href: '/member/dashboard' },
-  { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Invitados', active: true },
 ])
 

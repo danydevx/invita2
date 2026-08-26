@@ -207,14 +207,16 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Inicio', href: `/member/listings/${biz.id}/modules` },
         { label: 'Formularios', href: `/member/listings/${biz.id}/contact-forms` },
-        { label: 'Editar Formulario', active: true },
+        { label: props.form?.name || 'Editar', active: true },
       ]
     }
   }
   return [
-    { label: 'Formularios', active: true },
+    { label: 'Inicio', href: '/member/dashboard' },
+    { label: 'Formularios', href: `/member/listings/${listing.value?.id}/contact-forms` },
+    { label: props.form?.name || 'Editar', active: true },
   ]
 })
 

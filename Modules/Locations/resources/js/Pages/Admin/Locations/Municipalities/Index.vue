@@ -282,7 +282,7 @@ const filterByState = () => {
   const params = {}
   if (filters.country_id) params.country_id = filters.country_id
   if (filters.state_id) params.state_id = filters.state_id
-  router.get('/admin/locations/municipalities', params)
+  router.get(route('admin.locations.municipalities.index'), params)
 }
 
 const onFormCountryChange = () => {
@@ -306,7 +306,7 @@ watch(editMunicipality, (municipality) => {
 })
 
 const createMunicipality = () => {
-  router.post('/admin/locations/municipalities', form, {
+  router.post(route('admin.locations.municipalities.store'), form, {
     onSuccess: () => {
       showCreateModal.value = false
       form.code = ''
@@ -318,7 +318,7 @@ const createMunicipality = () => {
 }
 
 const updateMunicipality = () => {
-  router.put(`/admin/locations/municipalities/${editMunicipality.value.id}`, editForm, {
+  router.put(route('admin.locations.municipalities.update', { municipality: editMunicipality.value.id }), editForm, {
     onSuccess: () => {
       showEditModal.value = false
     },

@@ -175,9 +175,9 @@ const listing = computed(() => page.props.listing)
 const client = computed(() => page.props.client)
 
 const breadcrumbs = computed(() => [
-  { label: listing.value.name, href: `/member/listings/${listing.value.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Clientes', href: `/member/listings/${listing.value.id}/clients` },
-  { label: client.value.customer_name, active: true },
+  { label: client.value?.customer_name || 'Editar' },
 ])
 
 const locationData = ref({

@@ -138,13 +138,11 @@ const flashError = computed(() => page.props.flash?.error || null)
 const activeTab = ref('weekly')
 const exceptionModalRef = ref(null)
 
-const breadcrumbs = computed(() => {
-  return [
-    { label: listing.value?.name || '', href: `/member/listings/${listing.value?.id}/edit` },
-    { label: 'Citas', href: `/member/listings/${listing.value?.id}/appointments` },
-    { label: 'Disponibilidad', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Citas', href: `/member/listings/${listing.value?.id}/appointments` },
+  { label: 'Disponibilidad' },
+])
 
 const openCreateException = () => {
   if (exceptionModalRef.value) {

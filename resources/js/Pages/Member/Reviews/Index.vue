@@ -118,23 +118,10 @@ const listing = computed(() => page.props.listing)
 const dataTable = computed(() => page.props.dataTable)
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Resenas', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Resenas', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Reseñas' },
+])
 
 const columns = [
   { key: 'checkbox', label: '', sortable: false, width: '40px' },

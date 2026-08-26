@@ -12,13 +12,13 @@ Route::prefix('member/listings/{listing}/fidelity-cards')->middleware(['auth', '
     Route::get('/history', [ClientFidelityCardController::class, 'history'])->name('member.listings.fidelity-cards.history');
     Route::post('/bulk-delete', [ClientFidelityCardController::class, 'bulkDelete'])->name('member.listings.fidelity-cards.bulk-delete');
     Route::post('/scan-by-code', [ClientFidelityCardController::class, 'scanByCode'])->name('member.listings.fidelity-cards.scan-by-code');
+    Route::get('/scan-view', [ClientFidelityCardController::class, 'scanView'])->name('member.listings.fidelity-cards.scan-view');
     Route::get('/{card}', [ClientFidelityCardController::class, 'show'])->name('member.listings.fidelity-cards.show');
     Route::get('/{card}/edit', [ClientFidelityCardController::class, 'edit'])->name('member.listings.fidelity-cards.edit');
     Route::put('/{card}', [ClientFidelityCardController::class, 'update'])->name('member.listings.fidelity-cards.update');
     Route::delete('/{card}', [ClientFidelityCardController::class, 'destroy'])->name('member.listings.fidelity-cards.destroy');
     Route::post('/{card}/scan', [ClientFidelityCardController::class, 'scan'])->name('member.listings.fidelity-cards.scan');
     Route::post('/{card}/reset', [ClientFidelityCardController::class, 'reset'])->name('member.listings.fidelity-cards.reset');
-    Route::get('/{card}/scan-view', [ClientFidelityCardController::class, 'scanView'])->name('member.listings.fidelity-cards.scan-view');
 });
 
 Route::prefix('member/listings/{listing}/fidelity-rewards')->middleware(['auth', 'verified', 'active', 'role:superadmin|admin|member'])->group(function () {

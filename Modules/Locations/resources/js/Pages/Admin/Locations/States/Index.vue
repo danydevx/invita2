@@ -229,11 +229,11 @@ watch(editState, (state) => {
 })
 
 const filterByCountry = () => {
-  router.get('/admin/locations/states', selectedCountry.value ? { country_id: selectedCountry.value } : {})
+  router.get(route('admin.locations.states.index'), selectedCountry.value ? { country_id: selectedCountry.value } : {})
 }
 
 const createState = () => {
-  router.post('/admin/locations/states', form, {
+  router.post(route('admin.locations.states.store'), form, {
     onSuccess: () => {
       showCreateModal.value = false
       form.code = ''
@@ -245,7 +245,7 @@ const createState = () => {
 }
 
 const updateState = () => {
-  router.put(`/admin/locations/states/${editState.value.id}`, editForm, {
+  router.put(route('admin.locations.states.update', { state: editState.value.id }), editForm, {
     onSuccess: () => {
       showEditModal.value = false
     },

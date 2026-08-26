@@ -100,23 +100,10 @@ const listing = computed(() => page.props.listing)
 const galleries = computed(() => page.props.galleries || [])
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const match = path.match(/^\/member\/listings\/(\d+)/)
-  if (match) {
-    const bizId = parseInt(match[1])
-    const biz = businessMenu.value.find((b) => b.id === bizId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Galerías', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Galerías', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Galería' },
+])
 
 const setPrimary = (gallery) => {
   if (confirm(`Marcar "${gallery.name}" como galería principal?`)) {

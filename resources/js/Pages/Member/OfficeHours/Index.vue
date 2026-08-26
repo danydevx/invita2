@@ -93,15 +93,10 @@ const dataTable = computed(() => page.props.dataTable)
 
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find(b => b.id === listing.value.id)
-  return [
-    { label: biz?.name || '', href: `/member/listings/${listing.value.id}/edit` },
-    { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
-    { label: location.value.name, href: `/member/listings/${listing.value.id}/locations/${location.value.id}/edit` },
-    { label: 'Horarios', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Horarios' },
+])
 
 const columns = [
   { key: 'name', label: 'Nombre', sortable: true, class: 'fw-semibold' },

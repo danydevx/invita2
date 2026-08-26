@@ -138,25 +138,11 @@ const visitOptions = [
   { value: 20, label: '20 visitas' },
 ]
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
-        { label: card.value?.client_name || 'Editar', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
-    { label: card.value?.client_name || 'Editar', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
+  { label: card.value?.client_name || 'Editar' },
+])
 
 const form = useForm({
   _method: 'PUT',

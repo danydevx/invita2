@@ -188,16 +188,11 @@ const flashSuccess = computed(() => page.props.flash?.success || null)
 
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find(b => b.id === listing.value.id)
-  return [
-    { label: biz?.name || '', href: `/member/listings/${listing.value.id}/edit` },
-    { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
-    { label: location.value.name, href: `/member/listings/${listing.value.id}/locations/${location.value.id}/edit` },
-    { label: 'Horarios', href: `/member/listings/${listing.value.id}/locations/${location.value.id}/schedules` },
-    { label: 'Editar', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Horarios', href: `/member/listings/${listing.value?.id}/office-hours` },
+  { label: 'Editar' },
+])
 
 const validateForm = () => {
   let isValid = true

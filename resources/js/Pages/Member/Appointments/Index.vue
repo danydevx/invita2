@@ -178,23 +178,10 @@ const calendarAppointments = computed(() => {
   }))
 })
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Citas', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Citas', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Citas' },
+])
 
 const columns = [
   { key: 'checkbox', label: '', sortable: false, width: '40px' },

@@ -94,20 +94,11 @@ const businessMenu = computed(() => page.props.businessMenu || [])
 
 const isPrimary = computed(() => !!gallery.value?.is_primary)
 
-const breadcrumbs = computed(() => {
-  const biz = businessMenu.value.find((b) => b.id === listing.value?.id)
-  if (biz) {
-    return [
-      { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-      { label: 'Galerías', href: `/member/listings/${biz.id}/galleries` },
-      { label: gallery.value?.name || 'Editar', active: true },
-    ]
-  }
-  return [
-    { label: 'Galerías', href: `/member/listings/${listing.value?.id}/galleries` },
-    { label: 'Editar', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Galería', href: `/member/listings/${listing.value?.id}/galleries` },
+  { label: gallery.value?.name || 'Editar' },
+])
 
 const form = useForm({
   name: gallery.value?.name,

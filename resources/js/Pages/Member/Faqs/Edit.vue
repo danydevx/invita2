@@ -191,24 +191,11 @@ const form = ref({
   sort_order: props.faq.sort_order || 0,
 })
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Preguntas Frecuentes', href: `/member/listings/${biz.id}/faqs` },
-        { label: 'Editar Pregunta', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Editar Pregunta', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Preguntas Frecuentes', href: `/member/listings/${listing.id}/faqs` },
+  { label: faq?.question || 'Editar' },
+])
 
 const submit = () => {
   if (!validateForm()) {

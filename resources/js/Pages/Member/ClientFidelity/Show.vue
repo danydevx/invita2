@@ -157,25 +157,11 @@ const qrUrl = computed(() => {
   return `${window.location.origin}/b/${listing.value?.slug}/fidelity/${card.value.public_code}`
 })
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
-        { label: card.value?.client_name || 'Ver', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
-    { label: card.value?.client_name || 'Ver', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
+  { label: card.value?.client_name },
+])
 
 const formatDate = (date) => {
   if (!date) return '-'

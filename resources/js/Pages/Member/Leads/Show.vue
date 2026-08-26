@@ -81,24 +81,11 @@ const listing = computed(() => page.props.listing)
 const lead = computed(() => page.props.lead)
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Leads', href: `/member/listings/${biz.id}/leads` },
-        { label: lead.value.name, active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Detalle del Contacto', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Leads', href: `/member/listings/${listing.value.id}/leads` },
+  { label: lead.value?.name },
+])
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('es-AR', {

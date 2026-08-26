@@ -102,25 +102,11 @@ const scannerError = ref(null)
 const lastScannedCard = ref(null)
 let html5QrCode = null
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
-        { label: 'Fidelidad', href: `/member/listings/${biz.id}/fidelity-cards` },
-        { label: 'Escanear', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Fidelidad', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
-    { label: 'Escanear', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
+  { label: 'Escanear' },
+])
 
 const form = useForm({
   public_code: '',

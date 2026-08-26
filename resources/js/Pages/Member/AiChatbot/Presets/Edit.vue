@@ -199,10 +199,10 @@ const languages = page.props.languages || ['es', 'en', 'pt', 'fr']
 const contexts = page.props.contexts || []
 
 const breadcrumbs = computed(() => [
-   { label: listing?.name || 'Negocio', href: `/member/listings/${listing?.id}/edit` },
-   { label: 'AI Chatbot', href: `/member/listings/${listing?.id}/ai-chatbot` },
-   { label: 'Presets', href: `/member/listings/${listing?.id}/ai-chatbot/presets` },
-  { label: preset.value?.name || 'Editar Preset', active: true },
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Chatbot', href: `/member/listings/${listing?.id}/ai-chatbot` },
+  { label: 'Presets', href: `/member/listings/${listing?.id}/ai-chatbot/presets` },
+  { label: preset.value?.name || 'Editar', active: true },
 ])
 
 const saving = ref(false)

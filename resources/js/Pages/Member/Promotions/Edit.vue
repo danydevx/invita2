@@ -190,24 +190,11 @@ const listing = computed(() => page.props.listing)
 const promotion = computed(() => page.props.promotion)
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Promociones', href: `/member/listings/${biz.id}/promotions` },
-        { label: 'Editar Promocion', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Editar Promocion', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Promociones', href: `/member/listings/${listing.value.id}/promotions` },
+  { label: promotion.value?.name || 'Editar' },
+])
 const locations = computed(() => page.props.locations || [])
 
 const errors = reactive({

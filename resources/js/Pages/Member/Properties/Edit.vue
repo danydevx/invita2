@@ -304,22 +304,18 @@ const breadcrumbs = computed(() => {
   if (businessMatch) {
     const businessId = parseInt(businessMatch[1])
     const biz = businessMenu.value.find(b => b.id === businessId)
-    const pt = propertyType.value
-    const typeLabel = pt ? `${pt.name} (${pt.slug})` : 'Tipo'
-    const typeHref = pt ? `/member/listings/${businessId}/properties?property_type_id=${pt.id}` : null
     if (biz) {
-      const items = [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+      return [
+        { label: 'Inicio', href: `/member/listings/${biz.id}/modules` },
         { label: 'Propiedades', href: `/member/listings/${biz.id}/properties` },
+        { label: property.value?.title || 'Editar', active: true },
       ]
-      if (typeHref) items.push({ label: typeLabel, href: typeHref })
-      items.push({ label: 'Editar Propiedad', active: true })
-      return items
     }
   }
   return [
-    { label: 'Propiedades', href: '/member/listings/properties' },
-    { label: 'Editar Propiedad', active: true },
+    { label: 'Inicio', href: '/member/dashboard' },
+    { label: 'Propiedades', href: `/member/listings/${listing.value?.id}/properties` },
+    { label: property.value?.title || 'Editar', active: true },
   ]
 })
 

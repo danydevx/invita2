@@ -101,7 +101,7 @@ const listing = computed(() => page.props.listing)
 const businessMenu = computed(() => page.props.businessMenu || [])
 
 const breadcrumbs = computed(() => [
-  { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
+  { label: 'Inicio', href: `/member/listings/${listing.value?.id}/modules` },
   { label: 'Check-in', active: true },
 ])
 

@@ -264,12 +264,13 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Inicio', href: `/member/listings/${biz.id}/modules` },
         { label: 'Hero', active: true },
       ]
     }
   }
   return [
+    { label: 'Inicio', href: '/member/dashboard' },
     { label: 'Hero', active: true },
   ]
 })

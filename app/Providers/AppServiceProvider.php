@@ -38,6 +38,8 @@ use App\Policies\ListingSocialNetworkPolicy;
 use App\Policies\ListingTeamMemberPolicy;
 use App\Policies\ListingPackagePolicy;
 use App\Policies\MediaFilePolicy;
+use App\Policies\VCardPolicy;
+use App\Policies\VCardTeamPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\SubscriptionPolicy;
 use App\Policies\SupportTicketPolicy;
@@ -156,6 +158,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\Modules\ListingTeamMembers\Models\ListingTeamMember::class, ListingTeamMemberPolicy::class);
         Gate::policy(\Modules\ListingTeamMembers\Models\TeamMemberPosition::class, ListingTeamMemberPolicy::class);
         Gate::policy(\Modules\ListingPackages\Models\ListingPackage::class, ListingPackagePolicy::class);
+        Gate::policy(\Modules\VCards\Models\VCard::class, VCardPolicy::class);
+        Gate::policy(\Modules\VCards\Models\VCardTeam::class, VCardTeamPolicy::class);
 
         PropertyType::observe(PropertyTypeObserver::class);
 

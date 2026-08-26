@@ -71,8 +71,8 @@ const props = defineProps({
 })
 
 const breadcrumbs = computed(() => [
-  { label: props.listing?.name || 'Negocio', href: `/member/listings/${props.listing?.id}/edit` },
-  { label: 'AI Chatbot', href: `/member/listings/${props.listing?.id}/ai-chatbot` },
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Chatbot', href: `/member/listings/${props.listing?.id}/ai-chatbot` },
   { label: 'Historial', active: true },
 ])
 

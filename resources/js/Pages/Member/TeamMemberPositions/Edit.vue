@@ -97,26 +97,12 @@ const parentPositionOptions = computed(() => {
   return [{ value: '', label: 'Sin puesto padre' }, ...options]
 })
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
-        { label: 'Equipo', href: `/member/listings/${biz.id}/team-members` },
-        { label: 'Puestos', href: `/member/listings/${biz.id}/team-member-positions` },
-        { label: position.value?.name || 'Editar', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Puestos', href: `/member/listings/${listing.value?.id}/team-member-positions` },
-    { label: position.value?.name || 'Editar', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Mi Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
+  { label: 'Puestos', href: `/member/listings/${listing.value?.id}/team-member-positions` },
+  { label: position.value?.name || 'Editar' },
+])
 
 const form = useForm({
   name: position.value?.name || '',

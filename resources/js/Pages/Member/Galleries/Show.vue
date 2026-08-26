@@ -186,25 +186,11 @@ const images = computed(() => page.props.images || { data: [] })
 const dataTable = computed(() => page.props.dataTable || { data: [], total: 0 })
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const match = path.match(/^\/member\/listings\/(\d+)/)
-  if (match) {
-    const bizId = parseInt(match[1])
-    const biz = businessMenu.value.find((b) => b.id === bizId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Galerías', href: `/member/listings/${biz.id}/galleries` },
-        { label: currentGallery.value?.name || 'Galería', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Galerías', href: `/member/listings/${listing.value?.id}/galleries` },
-    { label: currentGallery.value?.name || 'Galería', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Galería', href: `/member/listings/${listing.value?.id}/galleries` },
+  { label: currentGallery.value?.name },
+])
 
 const columns = [
   { key: 'checkbox', label: '', sortable: false, width: '40px' },

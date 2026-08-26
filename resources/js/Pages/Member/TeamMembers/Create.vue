@@ -131,25 +131,11 @@ const positionOptions = computed(() => {
 const imagePreview = ref(null)
 const sending = ref(false)
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/modules` },
-        { label: 'Mi Equipo', href: `/member/listings/${biz.id}/team-members` },
-        { label: 'Nuevo', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Mi Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
-    { label: 'Nuevo', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Mi Equipo', href: `/member/listings/${listing.value?.id}/team-members` },
+  { label: 'Nuevo' },
+])
 
 const form = reactive({
   name: '',

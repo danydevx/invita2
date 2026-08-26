@@ -139,10 +139,10 @@ const sending = ref(false)
 const imagePreview = ref(null)
 
 const breadcrumbs = computed(() => [
-  { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
   { label: 'Recompensas', href: `/member/listings/${listing.value?.id}/fidelity-rewards` },
-  { label: reward.value?.title || 'Editar', active: true },
+  { label: reward.value?.title || 'Editar' },
 ])
 
 const form = ref({

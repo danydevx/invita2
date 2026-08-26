@@ -256,24 +256,11 @@ const sending = ref(false)
 const businessMenu = computed(() => page.props.businessMenu || [])
 const productImages = ref([])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Productos', href: `/member/listings/${biz.id}/products` },
-        { label: 'Nuevo Producto', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Nuevo Producto', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Productos', href: `/member/listings/${listing.value?.id}/products` },
+  { label: 'Nuevo' },
+])
 
 const form = reactive({
   name: '',

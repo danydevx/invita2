@@ -104,24 +104,11 @@ const listing = computed(() => page.props.listing)
 const locations = computed(() => page.props.locations || [])
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Leads', href: `/member/listings/${biz.id}/leads` },
-        { label: 'Nuevo Lead', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Leads', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Leads', href: `/member/listings/${listing.value.id}/leads` },
+  { label: 'Nuevo' },
+])
 
 const sending = ref(false)
 

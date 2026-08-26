@@ -1,0 +1,8 @@
+{
+    "name": "laravel-module/vcards",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite"
+    }
+}

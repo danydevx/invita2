@@ -1,0 +1,11 @@
+{
+    "name": "VCards",
+    "alias": "vcards",
+    "description": "Digital business cards with QR codes and vCard export",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\VCards\\Providers\\VCardsServiceProvider"
+    ],
+    "files": []
+}

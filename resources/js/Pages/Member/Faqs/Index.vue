@@ -152,23 +152,10 @@ watch(filters, (newFilters) => {
   selectedCategory.value = newFilters.category
 })
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Preguntas Frecuentes', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Preguntas Frecuentes', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Preguntas Frecuentes' },
+])
 
 const perPage = ref(10)
 

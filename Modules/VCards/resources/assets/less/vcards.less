@@ -1,0 +1,390 @@
+body {
+  background: #e5e5e5;
+}
+
+a {
+  text-decoration: none;
+}
+
+.vcard,
+.vcard-preview {
+  width: 100%;
+}
+
+.vcard {
+  max-width: 36rem;
+  margin: 0 auto;
+  min-height: 100vh;
+  font-family: var(--vcard-font, Poppins, sans-serif);
+  --vcard-surface: #ffffff;
+  --vcard-surface-2: #f8fafc;
+  --vcard-text: #111827;
+  --vcard-muted: #6b7280;
+  --vcard-border: rgba(15, 23, 42, 0.04);
+  --vcard-shadow: 0 0.625rem 1.75rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard__shell {
+  width: 100%;
+  background: var(--vcard-surface);
+  box-shadow: var(--vcard-shadow);
+  overflow: hidden;
+}
+
+.vcard--classic {
+  background: transparent;
+}
+
+.vcard--classic {
+  --vcard-surface: #ffffff;
+  --vcard-surface-2: #f8fafc;
+  --vcard-text: #111827;
+  --vcard-muted: #6b7280;
+  --vcard-border: rgba(15, 23, 42, 0.04);
+  --vcard-shadow: 0 0.625rem 1.75rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard--flat {
+  --vcard-surface: #fcfcfd;
+  --vcard-surface-2: #f4f6f8;
+  --vcard-text: #0f172a;
+  --vcard-muted: #475569;
+  --vcard-border: rgba(15, 23, 42, 0.06);
+  --vcard-shadow: 0 0.5rem 1.375rem rgba(15, 23, 42, 0.06);
+}
+
+.vcard--modern {
+  --vcard-surface: #ffffff;
+  --vcard-surface-2: #f8fafc;
+  --vcard-text: #0f172a;
+  --vcard-muted: #64748b;
+  --vcard-border: rgba(15, 23, 42, 0.05);
+  --vcard-shadow: 0 1rem 2.125rem rgba(15, 23, 42, 0.1);
+}
+
+.vcard--sleek {
+  --vcard-surface: #0f172a;
+  --vcard-surface-2: #111827;
+  --vcard-text: #f8fafc;
+  --vcard-muted: rgba(248, 250, 252, 0.72);
+  --vcard-border: rgba(255, 255, 255, 0.08);
+  --vcard-shadow: 0 1.125rem 2.75rem rgba(15, 23, 42, 0.22);
+}
+
+.vcard--blend {
+  --vcard-surface: #faf7f2;
+  --vcard-surface-2: #f2ede6;
+  --vcard-text: #1f2937;
+  --vcard-muted: #6b7280;
+  --vcard-border: rgba(15, 23, 42, 0.05);
+  --vcard-shadow: 0 0.875rem 2.125rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard__content {
+  padding: 1.25rem 1rem 1.5rem;
+}
+
+.vcard-section {
+  margin-top: 1.5rem;
+}
+
+.vcard-section :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label, small, strong, b, em, div, li, ul, ol, article, section, form) {
+  font-family: var(--vcard-font, Poppins, sans-serif);
+}
+
+.vcard-section h2,
+.vcard-section h3,
+.vcard-section p,
+.vcard-section span,
+.vcard-section label,
+.vcard-section button,
+.vcard-section input,
+.vcard-section textarea {
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.vcard-section__title {
+  margin: 0 0 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--vcard-text);
+  position: relative;
+  padding-left: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vcard-section__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.25rem;
+  height: 1.1rem;
+  border-radius: 62.4375rem;
+  background: var(--vcard-primary);
+}
+
+.vcard-identity.card,
+.vcard-appointments__card,
+.vcard-service.card,
+.vcard-product.card,
+.vcard-testimonial.card,
+.vcard-hours__item,
+.vcard-contact-form .card,
+.vcard-map .card {
+  border-radius: 1.125rem;
+  overflow: hidden;
+  background: var(--vcard-surface);
+  box-shadow: var(--vcard-shadow);
+  border: 0.0625rem solid var(--vcard-border);
+}
+
+.vcard-identity .card-body {
+  padding: 1.25rem;
+}
+
+.vcard-identity__professional {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vcard-identity__title {
+  font-size: 0.82rem;
+}
+
+.vcard-identity__company {
+  font-size: 0.9rem;
+}
+
+.vcard-identity__headline {
+  font-size: 0.8rem;
+  max-width: 34rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vcard-socials__item {
+  min-height: 4.125rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  background: var(--vcard-surface);
+  color: var(--vcard-text);
+}
+
+.vcard-socials__item span {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.vcard-socials__item:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.12);
+}
+
+.vcard-appointments__card .card-body,
+.vcard-contact-form .card-body {
+  padding: 1.15rem;
+}
+
+.vcard-appointments__slot {
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.vcard-appointments__slot:hover {
+  transform: translateY(-0.0625rem);
+  background: color-mix(in srgb, var(--vcard-primary) 14%, var(--vcard-surface));
+}
+
+.vcard-service .card-body,
+.vcard-product .card-body,
+.vcard-testimonial .card-body {
+  padding: 1.1rem;
+}
+
+.vcard-service__icon {
+  box-shadow: inset 0 0 0 0.0625rem rgba(255, 255, 255, 0.6);
+}
+
+.vcard-service__title,
+.vcard-product__title,
+.vcard-testimonial__name {
+  font-size: 0.82rem;
+}
+
+.vcard-product__price {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: var(--vcard-primary);
+  font-size: 0.82rem;
+}
+
+.vcard-gallery__grid {
+  display: none;
+}
+
+.vcard-testimonial__avatar {
+  box-shadow: 0 0.625rem 1.5rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard-hours__item .card-body {
+  padding: 1rem 1.1rem;
+}
+
+.vcard-hours__item span {
+  font-size: 0.8rem;
+}
+
+.vcard-map__placeholder {
+  min-height: 16.25rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--vcard-primary) 10%, var(--vcard-surface)) 0%, var(--vcard-surface-2) 100%);
+  position: relative;
+}
+
+.vcard-map__placeholder::before {
+  content: 'Mapa';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vcard-muted);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vcard-contact-form .form-control {
+  border-radius: 0.75rem;
+  border-color: var(--vcard-border);
+  background: var(--vcard-surface);
+  color: var(--vcard-text);
+  font-size: 0.82rem;
+}
+
+.vcard-contact-form .form-label,
+.vcard-appointments .form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vcard-muted);
+}
+
+.vcard-contact-form .form-control:focus {
+  border-color: var(--vcard-primary);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--vcard-primary) 18%, white);
+}
+
+.vcard-contact-form .btn-primary,
+.vcard-appointments .btn-primary {
+  background: var(--vcard-primary);
+  border-color: var(--vcard-primary);
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.vcard-contact-form .btn-primary:hover,
+.vcard-appointments .btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.vcard-socials__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.vcard-socials__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.875rem;
+  background: var(--vcard-surface);
+  color: var(--vcard-text);
+  box-shadow: 0 0.375rem 1.125rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard-socials__item i {
+  color: var(--vcard-primary);
+  font-size: 1.1rem;
+}
+
+.vcard-appointments__slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.vcard-appointments__slot {
+  border: 0;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--vcard-primary) 10%, var(--vcard-surface));
+  padding: 0.75rem 0.9rem;
+  font-size: 0.76rem;
+  color: var(--vcard-text);
+}
+
+.vcard-service__text,
+.vcard-product__text,
+.vcard-testimonial__text,
+.vcard-testimonial__role {
+  margin: 0.35rem 0 0;
+  color: var(--vcard-muted);
+  font-size: 0.78rem;
+}
+
+.vcard-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.vcard-hours__grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (max-width: 35.9375rem) {
+  .vcard-socials__grid,
+  .vcard-appointments__slots {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vcard__qr {
+  margin-top: 1.25rem;
+}
+
+.vcard__qr-image {
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.625rem rgba(15, 23, 42, 0.08);
+}
+
+.vcard__qr-text {
+  margin: 0.5rem 0 0;
+}
+
+.vcard-preview {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.vcard-preview__frame {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--vcard-surface-2) 0%, color-mix(in srgb, var(--vcard-primary) 6%, var(--vcard-surface-2)) 100%);
+}
+
+.vcard-share {
+  margin-top: 1.5rem;
+}
+
+.public-vcard-page {
+  min-height: 100vh;
+  background: var(--vcard-surface-2, #e5e5e5);
+}

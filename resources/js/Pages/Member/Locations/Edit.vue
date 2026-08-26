@@ -266,24 +266,11 @@ const form = reactive({
 
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Ubicaciones', href: `/member/listings/${biz.id}/locations` },
-        { label: 'Editar Ubicacion', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Editar Ubicacion', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Ubicaciones', href: `/member/listings/${listing.value.id}/locations` },
+  { label: location.value?.name || 'Editar' },
+])
 
 const onStateChanged = ({ lat, lng }) => {
   if (lat && lng) {
@@ -407,8 +394,10 @@ const submit = () => {
   }
 
   router.post(`/member/listings/${listing.value.id}/locations/${location.value.id}`, formData, {
+    preserveScroll: true,
     onSuccess: () => {
-      window.location.href = `/member/listings/${listing.value.id}/locations?success=updated`
+      toast.success('Ubicacion actualizada correctamente')
+      sending.value = false
     },
     onError: (serverErrors) => {
       sending.value = false

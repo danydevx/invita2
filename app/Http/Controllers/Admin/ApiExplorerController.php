@@ -33,6 +33,9 @@ use Modules\ListingOfficeHours\Models\ListingSchedule;
 use Modules\ListingTeamMembers\Models\ListingTeamMember;
 use Modules\ListingTeamMembers\Models\TeamMemberPosition;
 use Modules\ListingPackages\Models\ListingPackage;
+use Modules\VCards\Models\VCard;
+use Modules\ClientFidelity\Models\ClientFidelityCard;
+use Modules\ClientFidelity\Models\FidelityReward;
 
 class ApiExplorerController extends Controller
 {
@@ -75,8 +78,11 @@ class ApiExplorerController extends Controller
                     ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/menu-products', 'description' => 'Productos menu'],
                     ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/office-hours', 'description' => 'Horarios de oficina'],
                     ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/team-members', 'description' => 'Miembros del equipo'],
-                    ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/team-positions', 'description' => 'Puestos del equipo'],
+                    ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/team-member-positions', 'description' => 'Puestos del equipo'],
                     ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/packages', 'description' => 'Paquetes'],
+                    ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/vcards', 'description' => 'vCards'],
+                    ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/fidelity-cards', 'description' => 'Tarjetas de fidelidad'],
+                    ['method' => 'GET', 'path' => '/api/v1/admin/listings/{id}/fidelity-rewards', 'description' => 'Recompensas de fidelidad'],
                 ],
             ],
             'industries' => [
@@ -117,7 +123,7 @@ class ApiExplorerController extends Controller
     {
         $request->validate([
             'path' => 'required|string',
-            'listing_id' => 'nullable|integer|exists:businesses,id',
+            'listing_id' => 'nullable|integer|exists:listings,id',
             'user_id' => 'nullable|integer|exists:users,id',
         ]);
 
@@ -142,7 +148,7 @@ class ApiExplorerController extends Controller
         $perPage = min((int) request()->get('per_page', 20), 100);
 
         if ($path === '/api/v1/admin/listings') {
-            $businesses = Listing::with(['user:id,name,email', 'user.subscriptions.plan:id,name', 'modules.moduleDefinition', 'industry'])
+            $businesses = Listing::with(['user:id,name,email', 'user.subscriptions.plan:id,name', 'modules.moduleDefinition'])
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
             return [
@@ -157,7 +163,7 @@ class ApiExplorerController extends Controller
         }
 
         if ($path === '/api/v1/admin/listings/' . $businessId) {
-            $business = Listing::with(['user:id,name,email', 'user.subscriptions.plan:id,name,limits', 'modules.moduleDefinition', 'industry'])->findOrFail($businessId);
+            $business = Listing::with(['user:id,name,email', 'user.subscriptions.plan:id,name,limits', 'modules.moduleDefinition'])->findOrFail($businessId);
             return ['data' => new BusinessResource($business)];
         }
 
@@ -202,7 +208,7 @@ class ApiExplorerController extends Controller
             if (!$module || !$module->is_enabled) {
                 return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
             }
-            $faqs = ListingFaq::where('listing_id', $business->id)->with('category:id,name')->orderBy('order', 'asc')->get();
+            $faqs = ListingFaq::where('listing_id', $business->id)->with('category:id,name')->orderBy('sort_order', 'asc')->get();
             return $faqs->isEmpty() ? ['data' => null, 'message' => 'No hay preguntas frecuentes'] : ['data' => $faqs, 'meta' => ['total' => $faqs->count()]];
         }
 
@@ -398,6 +404,18 @@ class ApiExplorerController extends Controller
             return $positions->isEmpty() ? ['data' => null, 'message' => 'No hay puestos'] : ['data' => $positions, 'meta' => ['total' => $positions->count()]];
         }
 
+        if ($path === '/api/v1/admin/listings/' . $businessId . '/team-member-positions') {
+            $business = Listing::findOrFail($businessId);
+            $module = $business->modules()->where('module_key', 'team_members')->first();
+            if (!$module || !$module->is_enabled) {
+                return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
+            }
+            $positions = TeamMemberPosition::where('listing_id', $business->id)
+                ->orderBy('sort_order')
+                ->get();
+            return $positions->isEmpty() ? ['data' => null, 'message' => 'No hay puestos'] : ['data' => $positions, 'meta' => ['total' => $positions->count()]];
+        }
+
         if ($path === '/api/v1/admin/listings/' . $businessId . '/packages') {
             $business = Listing::findOrFail($businessId);
             $module = $business->modules()->where('module_key', 'packages')->first();
@@ -408,6 +426,44 @@ class ApiExplorerController extends Controller
                 ->orderBy('sort_order')
                 ->get();
             return $packages->isEmpty() ? ['data' => null, 'message' => 'No hay paquetes'] : ['data' => $packages, 'meta' => ['total' => $packages->count()]];
+        }
+
+        if ($path === '/api/v1/admin/listings/' . $businessId . '/vcards') {
+            $business = Listing::findOrFail($businessId);
+            $module = $business->modules()->where('module_key', 'vcards')->first();
+            if (!$module || !$module->is_enabled) {
+                return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
+            }
+            $vcards = VCard::where('listing_id', $business->id)
+                ->with(['team:id,name'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return $vcards->isEmpty() ? ['data' => null, 'message' => 'No hay vCards'] : ['data' => $vcards, 'meta' => ['total' => $vcards->count()]];
+        }
+
+        if ($path === '/api/v1/admin/listings/' . $businessId . '/fidelity-cards') {
+            $business = Listing::findOrFail($businessId);
+            $module = $business->modules()->where('module_key', 'client_fidelity')->first();
+            if (!$module || !$module->is_enabled) {
+                return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
+            }
+            $cards = ClientFidelityCard::where('listing_id', $business->id)
+                ->with(['reward:id,name,description'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return $cards->isEmpty() ? ['data' => null, 'message' => 'No hay tarjetas'] : ['data' => $cards, 'meta' => ['total' => $cards->count()]];
+        }
+
+        if ($path === '/api/v1/admin/listings/' . $businessId . '/fidelity-rewards') {
+            $business = Listing::findOrFail($businessId);
+            $module = $business->modules()->where('module_key', 'client_fidelity')->first();
+            if (!$module || !$module->is_enabled) {
+                return ['data' => null, 'message' => 'Modulo no habilitado en el plan'];
+            }
+            $rewards = FidelityReward::where('listing_id', $business->id)
+                ->orderBy('sort_order')
+                ->get();
+            return $rewards->isEmpty() ? ['data' => null, 'message' => 'No hay recompensas'] : ['data' => $rewards, 'meta' => ['total' => $rewards->count()]];
         }
 
         if ($path === '/api/v1/admin/users') {

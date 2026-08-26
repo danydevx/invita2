@@ -108,23 +108,10 @@ const columns = [
   { key: 'actions', label: 'Acciones', sortable: false },
 ]
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Clientes', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Clientes', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Clientes' },
+])
 
 const dataTableRef = ref(null)
 const selectedIds = ref([])

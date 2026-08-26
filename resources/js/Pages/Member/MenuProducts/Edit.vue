@@ -235,25 +235,11 @@ const validateForm = () => {
   return isValid
 }
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Menu del Restaurant', href: `/member/listings/${biz.id}/menu-products` },
-        { label: 'Editar Producto', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Menu del Restaurant', active: true },
-    { label: 'Editar Producto', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Menú', href: `/member/listings/${listing.value?.id}/menu-products` },
+  { label: product.value?.title || 'Editar' },
+])
 
 const productImage = ref(null)
 const variantsList = ref(null)

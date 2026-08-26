@@ -64,8 +64,8 @@ const listing = computed(() => page.props.listing)
 const moduleSummary = computed(() => page.props.moduleSummary || [])
 
 const breadcrumbs = computed(() => [
-  { label: 'Dashboard', href: '/member/dashboard' },
-  { label: listing.value?.name || 'Módulos', active: true },
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Módulos', active: true },
 ])
 </script>
 

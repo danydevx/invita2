@@ -68,6 +68,7 @@ const props = defineProps({
 const dataTableRef = ref(null)
 
 const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Pagos', active: true },
 ])
 

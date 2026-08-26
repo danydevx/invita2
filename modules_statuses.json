@@ -31,5 +31,6 @@
     "ListingTeamMembers": true,
     "ListingRestaurantMenu": true,
     "ListingCheckin": true,
-    "Locations": true
+    "Locations": true,
+    "VCards": true
 }

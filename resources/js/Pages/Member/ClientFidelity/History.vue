@@ -224,9 +224,9 @@ const filters = ref({
 })
 
 const breadcrumbs = computed(() => [
-  { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
-  { label: 'Historial', active: true },
+  { label: 'Historial' },
 ])
 
 const formatDate = (date) => {

@@ -178,7 +178,7 @@ watch(editCountry, (country) => {
 })
 
 const createCountry = () => {
-  router.post('/admin/locations/countries', form, {
+  router.post(route('admin.locations.countries.store'), form, {
     onSuccess: () => {
       showCreateModal.value = false
       form.code = ''
@@ -188,7 +188,7 @@ const createCountry = () => {
 }
 
 const updateCountry = () => {
-  router.put(`/admin/locations/countries/${editCountry.value.id}`, editForm, {
+  router.put(route('admin.locations.countries.update', { country: editCountry.value.id }), editForm, {
     onSuccess: () => {
       showEditModal.value = false
     },

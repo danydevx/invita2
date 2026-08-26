@@ -313,14 +313,16 @@ const breadcrumbs = computed(() => {
     const biz = businessMenu.value.find(b => b.id === businessId)
     if (biz) {
       return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
+        { label: 'Inicio', href: `/member/listings/${biz.id}/modules` },
         { label: 'Propiedades', href: `/member/listings/${biz.id}/properties` },
-        { label: 'Nueva Propiedad', active: true },
+        { label: 'Nueva', active: true },
       ]
     }
   }
   return [
-    { label: 'Nueva Propiedad', active: true },
+    { label: 'Inicio', href: '/member/dashboard' },
+    { label: 'Propiedades', href: `/member/listings/${listing.value?.id}/properties` },
+    { label: 'Nueva', active: true },
   ]
 })
 

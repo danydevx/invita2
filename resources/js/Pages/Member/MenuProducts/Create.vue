@@ -161,6 +161,7 @@
                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
@@ -227,25 +228,11 @@ const validateForm = () => {
 
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Productos', href: `/member/listings/${biz.id}/menu-products` },
-        { label: 'Nuevo Producto', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Menu del Restaurant', active: true },
-    { label: 'Nuevo Producto', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Menú', href: `/member/listings/${listing.value?.id}/menu-products` },
+  { label: 'Nuevo' },
+])
 
 const productImage = ref(null)
 const variantsList = ref(null)

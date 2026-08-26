@@ -129,9 +129,9 @@ const rewards = computed(() => page.props.rewards || { data: [], links: [] })
 const search = ref(page.props.filters?.search || '')
 
 const breadcrumbs = computed(() => [
-  { label: listing.value?.name || 'Negocio', href: `/member/listings/${listing.value?.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Fidelización', href: `/member/listings/${listing.value?.id}/fidelity-cards` },
-  { label: 'Recompensas', active: true },
+  { label: 'Recompensas' },
 ])
 
 const searchRewards = () => {

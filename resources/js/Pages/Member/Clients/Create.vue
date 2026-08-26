@@ -182,9 +182,9 @@ const page = usePage()
 const listing = computed(() => page.props.listing)
 
 const breadcrumbs = computed(() => [
-  { label: listing.value.name, href: `/member/listings/${listing.value.id}/edit` },
+  { label: 'Inicio', href: '/member/dashboard' },
   { label: 'Clientes', href: `/member/listings/${listing.value.id}/clients` },
-  { label: 'Nuevo Cliente', active: true },
+  { label: 'Nuevo' },
 ])
 
 const locationData = ref({ state_code: '', municipality: '' })

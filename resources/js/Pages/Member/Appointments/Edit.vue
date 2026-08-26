@@ -209,24 +209,11 @@ watch(() => errors.appointment_date, (val) => {
 })
 const businessMenu = computed(() => page.props.businessMenu || [])
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Citas', href: `/member/listings/${biz.id}/appointments` },
-        { label: 'Editar Cita', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Editar Cita', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Citas', href: `/member/listings/${listing.value.id}/appointments` },
+  { label: appointment.value?.customer_name || 'Editar' },
+])
 
 const sending = ref(false)
 const showDateValidation = ref(false)

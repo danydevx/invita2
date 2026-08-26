@@ -159,25 +159,11 @@ const businessMenu = computed(() => page.props.businessMenu || [])
 const currentStatus = ref(order.value?.status)
 const updating = ref(false)
 
-const breadcrumbs = computed(() => {
-  const path = window.location.pathname
-  const businessMatch = path.match(/^\/member\/listings\/(\d+)/)
-  if (businessMatch) {
-    const businessId = parseInt(businessMatch[1])
-    const biz = businessMenu.value.find(b => b.id === businessId)
-    if (biz) {
-      return [
-        { label: biz.name, href: `/member/listings/${biz.id}/edit` },
-        { label: 'Pedidos', href: `/member/listings/${biz.id}/orders` },
-        { label: order.value?.order_number || 'Detalle', active: true },
-      ]
-    }
-  }
-  return [
-    { label: 'Pedidos', href: `/member/listings/${listing.value?.id}/orders` },
-    { label: order.value?.order_number || 'Detalle', active: true },
-  ]
-})
+const breadcrumbs = computed(() => [
+  { label: 'Inicio', href: '/member/dashboard' },
+  { label: 'Pedidos', href: `/member/listings/${listing.value?.id}/orders` },
+  { label: order.value?.order_number },
+])
 
 const formatDate = (dateStr) => {
   const date = new Date(dateStr)

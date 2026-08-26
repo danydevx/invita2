@@ -19,6 +19,8 @@ class ModuleDefinitionSeeder extends Seeder
                 'sort_order' => 1,
                 'has_settings' => false,
                 'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'Ubicaciones',
             ],
             [
                 'key' => 'contact_form',
@@ -272,6 +274,17 @@ class ModuleDefinitionSeeder extends Seeder
                 'is_premium' => false,
                 'show_in_menu' => true,
                 'menu_title' => 'Check-in',
+            ],
+            [
+                'key' => 'vcards',
+                'name' => 'vCards',
+                'description' => 'Tarjetas de presentación digitales con QR y vCard',
+                'icon' => 'bi bi-person-vcard',
+                'sort_order' => 27,
+                'has_settings' => false,
+                'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'vCards',
             ],
         ];
 
