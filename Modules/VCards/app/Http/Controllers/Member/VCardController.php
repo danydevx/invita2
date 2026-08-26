@@ -5,6 +5,7 @@ namespace Modules\VCards\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Modules\Listings\Models\Listing;
@@ -16,6 +17,7 @@ use Modules\VCards\Models\VCard;
 use Modules\VCards\Models\VCardContact;
 use Modules\VCards\Models\VCardField;
 use Modules\VCards\Models\VCardFieldType;
+use Modules\VCards\Models\VCardSection;
 
 class VCardController extends Controller
 {
@@ -145,6 +147,10 @@ class VCardController extends Controller
             'shape' => ['nullable', 'in:circle,rounded'],
             'image_x' => ['nullable', 'numeric'],
             'image_y' => ['nullable', 'numeric'],
+            'search_engine_indexing' => ['boolean'],
+            'renew' => ['boolean'],
+            'tracking_code' => ['nullable', 'array'],
+            'paused' => ['boolean'],
         ]);
 
         $slug = $validated['slug'] ?? Str::slug($validated['name']);
@@ -180,6 +186,10 @@ class VCardController extends Controller
             'logo' => $validated['logo'] ?? null,
             'badge' => $validated['badge'] ?? null,
             'hero_background_image' => $validated['hero_background_image'] ?? null,
+            'search_engine_indexing' => $validated['search_engine_indexing'] ?? true,
+            'renew' => $validated['renew'] ?? true,
+            'tracking_code' => $validated['tracking_code'] ?? [],
+            'paused' => $validated['paused'] ?? false,
         ]);
 
         return redirect()->route('member.listings.vcards.edit', [$listing->id, $vcard->id])
@@ -191,7 +201,7 @@ class VCardController extends Controller
         abort_unless($listing->user_id === Auth::id(), 403);
         abort_unless($vcard->listing_id === $listing->id, 403);
 
-        $vcard->load(['contacts', 'fields']);
+        $vcard->load(['contacts', 'fields', 'sections']);
 
         $teams = \Modules\VCards\Models\VCardTeam::where('listing_id', $listing->id)
             ->active()
@@ -257,6 +267,14 @@ class VCardController extends Controller
             'body_primary_color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'body_gradient_direction' => ['nullable', 'string', 'max:20'],
             'body_pattern_key' => ['nullable', 'string', 'max:50'],
+            'search_engine_indexing' => ['boolean'],
+            'renew' => ['boolean'],
+            'tracking_code' => ['nullable', 'array'],
+            'paused' => ['boolean'],
+            'meta_pixel_id' => ['nullable', 'string', 'max:255'],
+            'google_analytics_id' => ['nullable', 'string', 'max:255'],
+            'google_webmasters_verification' => ['nullable', 'string', 'max:255'],
+            'bing_webmasters_verification' => ['nullable', 'string', 'max:255'],
         ]);
 
         if (isset($validated['slug']) && $validated['slug'] !== $vcard->slug) {
@@ -444,6 +462,12 @@ class VCardController extends Controller
         $validated = $request->validated();
         $validated['vcard_id'] = $vcard->id;
 
+        if ($request->hasFile('config_file')) {
+            $file = $request->file('config_file');
+            $path = $file->store('vcard-fields', 'public');
+            $validated['config']['file'] = $path;
+        }
+
         $maxOrder = VCardField::where('vcard_id', $vcard->id)->max('sort_order') ?? 0;
         $validated['sort_order'] = $maxOrder + 1;
 
@@ -459,6 +483,17 @@ class VCardController extends Controller
         abort_unless($field->vcard_id === $vcard->id, 403);
 
         $validated = $request->validated();
+
+        if ($request->hasFile('config_file')) {
+            $oldConfig = $field->config;
+            if (!empty($oldConfig['file'])) {
+                Storage::disk('public')->delete($oldConfig['file']);
+            }
+            $file = $request->file('config_file');
+            $path = $file->store('vcard-fields', 'public');
+            $validated['config']['file'] = $path;
+        }
+
         $field->update($validated);
 
         return redirect()->back()->with('success', 'Campo actualizado correctamente.');
@@ -490,5 +525,26 @@ class VCardController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function updateSections(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'sections' => ['required', 'array'],
+            'sections.*.key' => ['required', 'string'],
+            'sections.*.enabled' => ['required', 'boolean'],
+        ]);
+
+        foreach ($validated['sections'] as $section) {
+            VCardSection::updateOrCreate(
+                ['vcard_id' => $vcard->id, 'section_key' => $section['key']],
+                ['enabled' => $section['enabled']]
+            );
+        }
+
+        return redirect()->back()->with('success', 'Secciones actualizadas correctamente.');
     }
 }

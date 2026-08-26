@@ -286,6 +286,28 @@ class ModuleDefinitionSeeder extends Seeder
                 'show_in_menu' => true,
                 'menu_title' => 'vCards',
             ],
+            [
+                'key' => 'vcards_seo',
+                'name' => 'vCards SEO',
+                'description' => 'Configuración SEO para vCards',
+                'icon' => 'bi bi-graph-up',
+                'sort_order' => 28,
+                'has_settings' => false,
+                'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'SEO vCards',
+            ],
+            [
+                'key' => 'vcards_packages',
+                'name' => 'vCards Packages',
+                'description' => 'Paquetes para vCards',
+                'icon' => 'bi bi-box-seam',
+                'sort_order' => 29,
+                'has_settings' => false,
+                'is_premium' => false,
+                'show_in_menu' => true,
+                'menu_title' => 'Paquetes vCards',
+            ],
         ];
 
         foreach ($modules as $module) {

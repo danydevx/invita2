@@ -20,18 +20,20 @@
 
       <div class="vcard__content">
         <VCardIdentity :vcard="vcard" :shape="shape" />
+        <VCardWhatsApp :contacts="contacts" :shape="shape" />
         <VCardContactList :contacts="contacts" :shape="shape" />
         <VCardFieldList :fields="fields" :shape="shape" />
-        <VCardSocials />
-        <VCardAppointments :shape="shape" />
-        <VCardServices />
-        <VCardGallery />
-        <VCardProducts />
-        <VCardTestimonials />
-        <VCardBusinessHours />
-        <VCardMenu />
-        <VCardContactForm />
+        <VCardAppointments v-if="sections.appointments === true" :shape="shape" />
+        <VCardServices v-if="sections.services === true" />
+        <VCardPackages v-if="sections.packages === true" :packages="packages" />
+        <VCardGallery v-if="sections.gallery === true" />
+        <VCardProducts v-if="sections.products === true" />
+        <VCardTestimonials v-if="sections.testimonials === true" />
+        <VCardBusinessHours v-if="sections.business_hours === true" />
+        <VCardMenu v-if="sections.menu === true" />
+        <VCardContactForm v-if="sections.contact_form === true" />
         <VCardMap
+          v-if="sections.location === true"
           :lat="vcard.latitude"
           :lng="vcard.longitude"
           :address="vcard.address"
@@ -54,6 +56,7 @@
 
         <VCardActions :vcard="vcard" :shape="shape" />
         <VCardShare :vcard="vcard" :vcard-url="shareUrl" />
+        <VCardCopy />
       </div>
     </section>
   </article>
@@ -65,8 +68,8 @@ import VCardHeroClassic from './VCardHeroClassic.vue'
 import VCardIdentity from './VCardIdentity.vue'
 import VCardActions from './VCardActions.vue'
 import VCardContactList from './VCardContactList.vue'
+import VCardWhatsApp from './VCardWhatsApp.vue'
 import VCardFieldList from './VCardFieldList.vue'
-import VCardSocials from './VCardSocials.vue'
 import VCardAppointments from './VCardAppointments.vue'
 import VCardServices from './VCardServices.vue'
 import VCardGallery from './VCardGallery.vue'
@@ -77,6 +80,8 @@ import VCardContactForm from './VCardContactForm.vue'
 import VCardMap from './VCardMap.vue'
 import VCardShare from './VCardShare.vue'
 import VCardMenu from './VCardMenu.vue'
+import VCardPackages from './VCardPackages.vue'
+import VCardCopy from './VCardCopy.vue'
 
 const props = defineProps({
   vcard: {
@@ -146,6 +151,14 @@ const props = defineProps({
   vcardUrl: {
     type: String,
     default: '',
+  },
+  packages: {
+    type: Array,
+    default: () => [],
+  },
+  sections: {
+    type: Object,
+    default: () => ({}),
   },
 })
 

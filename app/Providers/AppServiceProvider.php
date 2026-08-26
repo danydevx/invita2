@@ -160,6 +160,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\Modules\ListingPackages\Models\ListingPackage::class, ListingPackagePolicy::class);
         Gate::policy(\Modules\VCards\Models\VCard::class, VCardPolicy::class);
         Gate::policy(\Modules\VCards\Models\VCardTeam::class, VCardTeamPolicy::class);
+        Gate::policy(\Modules\VCards\Models\VCardSeoSetting::class, VCardSeoSettingPolicy::class);
+        Gate::policy(\Modules\VCards\Models\VCardPackage::class, VCardPackagePolicy::class);
 
         PropertyType::observe(PropertyTypeObserver::class);
 

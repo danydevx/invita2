@@ -124,6 +124,35 @@
                   v-model="form.active"
                 />
               </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-search-engine-indexing"
+                  label="Indexación en motores de búsqueda"
+                  v-model="form.search_engine_indexing"
+                />
+              </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-renew"
+                  label="Renovar"
+                  v-model="form.renew"
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-tracking-code"
+                  label="Código de seguimiento"
+                  v-model="trackingCodeInput"
+                  placeholder="UTM1, UTM2"
+                />
+              </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-paused"
+                  label="Pausar tarjeta"
+                  v-model="form.paused"
+                />
+              </div>
             </div>
           </div>
 
@@ -365,6 +394,10 @@ const form = reactive({
   type: 'single',
   vcard_team_id: '',
   active: true,
+  search_engine_indexing: true,
+  renew: true,
+  tracking_code: [],
+  paused: false,
   design: 'classic',
   primary_color: '#2563EB',
   font: 'Inter',
@@ -387,6 +420,20 @@ const breadcrumbs = computed(() => [
   { label: 'vCards', href: `/member/listings/${props.listing?.id}/vcards` },
   { label: 'Nueva' },
 ])
+
+const trackingCodeInput = computed({
+  get() {
+    if (!form.tracking_code || !Array.isArray(form.tracking_code)) return ''
+    return form.tracking_code.join(', ')
+  },
+  set(value) {
+    if (!value || value.trim() === '') {
+      form.tracking_code = []
+      return
+    }
+    form.tracking_code = value.split(',').map(s => s.trim()).filter(s => s.length > 0)
+  }
+})
 
 function submit() {
   sending.value = true

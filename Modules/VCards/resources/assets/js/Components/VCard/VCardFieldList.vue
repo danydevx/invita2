@@ -148,6 +148,8 @@ function getActionUrl(field) {
       return config.phone ? `https://wa.me/${config.phone.replace(/\D/g, '')}` : null
     case 'email':
       return config.email ? `mailto:${config.email}` : null
+    case 'pdf':
+      return config.file ? `/storage/${config.file}` : null
     default:
       return null
   }

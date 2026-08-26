@@ -15,7 +15,8 @@ class VCardPublicController extends Controller
     {
         $vcard = VCard::where('slug', $slug)
             ->where('active', true)
-            ->with(['contacts', 'activeFields', 'team', 'listing'])
+            ->where('paused', false)
+            ->with(['contacts', 'activeFields', 'team', 'listing', 'seoSetting'])
             ->firstOrFail();
 
         $vcard->incrementViews();
@@ -29,6 +30,7 @@ class VCardPublicController extends Controller
     {
         $vcard = VCard::where('slug', $slug)
             ->where('active', true)
+            ->where('paused', false)
             ->firstOrFail();
 
         $encoded = urlencode($vcard->public_url);
@@ -41,6 +43,7 @@ class VCardPublicController extends Controller
     {
         $vcard = VCard::where('slug', $slug)
             ->where('active', true)
+            ->where('paused', false)
             ->with(['contacts', 'activeFields'])
             ->firstOrFail();
 

@@ -5,6 +5,7 @@ namespace Modules\VCards\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 use Modules\Listings\Models\Listing;
 use Modules\VCards\Enums\VCardDesign;
@@ -22,6 +23,14 @@ class VCard extends Model
         'name',
         'slug',
         'active',
+        'search_engine_indexing',
+        'renew',
+        'tracking_code',
+        'paused',
+        'meta_pixel_id',
+        'google_analytics_id',
+        'google_webmasters_verification',
+        'bing_webmasters_verification',
         'design',
         'primary_color',
         'font',
@@ -66,6 +75,10 @@ class VCard extends Model
         'design' => VCardDesign::class,
         'pronouns' => VCardPronouns::class,
         'active' => 'boolean',
+        'search_engine_indexing' => 'boolean',
+        'renew' => 'boolean',
+        'paused' => 'boolean',
+        'tracking_code' => 'array',
         'views' => 'integer',
     ];
 
@@ -132,6 +145,41 @@ class VCard extends Model
     public function activeFields(): HasMany
     {
         return $this->hasMany(VCardField::class, 'vcard_id')->where('active', true)->orderBy('sort_order');
+    }
+
+    public function seoSetting(): HasOne
+    {
+        return $this->hasOne(VCardSeoSetting::class, 'vcard_id');
+    }
+
+    public function packages(): HasMany
+    {
+        return $this->hasMany(VCardPackage::class, 'vcard_id')->where('active', true)->orderBy('sort_order');
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(VCardSection::class, 'vcard_id');
+    }
+
+    public function getSectionsConfigAttribute(): array
+    {
+        $defaults = [
+            'appointments' => false,
+            'services' => false,
+            'packages' => false,
+            'gallery' => false,
+            'products' => false,
+            'testimonials' => false,
+            'business_hours' => false,
+            'menu' => false,
+            'contact_form' => false,
+            'location' => false,
+        ];
+
+        $saved = $this->sections->pluck('enabled', 'section_key')->toArray();
+
+        return array_merge($defaults, $saved);
     }
 
     public function getFullNameAttribute(): string

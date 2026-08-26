@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Modules\Listings\Models\Listing;
 use Modules\VCards\Http\Controllers\Member\VCardController;
 use Modules\VCards\Http\Controllers\Member\VCardImageController;
+use Modules\VCards\Http\Controllers\Member\VCardPackageController;
+use Modules\VCards\Http\Controllers\Member\VCardSeoController;
 use Modules\VCards\Http\Controllers\Member\VCardTeamController;
 
 Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function () {
@@ -26,6 +28,13 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function
         ->name('member.listings.vcards.toggle-active');
     Route::get('/member/listings/{listing}/vcards/{vcard}/download', [VCardController::class, 'download'])
         ->name('member.listings.vcards.download');
+
+    Route::get('/member/listings/{listing}/vcards-seo', [VCardSeoController::class, 'index'])
+        ->name('member.listings.vcards.seo.index');
+    Route::get('/member/listings/{listing}/vcards/{vcard}/seo', [VCardSeoController::class, 'edit'])
+        ->name('member.listings.vcards.seo.edit');
+    Route::post('/member/listings/{listing}/vcards/{vcard}/seo', [VCardSeoController::class, 'update'])
+        ->name('member.listings.vcards.seo.update');
 
     Route::post('/member/listings/{listing}/vcards/{vcard}/logo', [VCardImageController::class, 'uploadLogo'])
         ->name('member.listings.vcards.logo.upload');
@@ -66,6 +75,8 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function
         ->name('member.listings.vcards.fields.destroy');
     Route::post('/member/listings/{listing}/vcards/{vcard}/fields/reorder', [VCardController::class, 'reorderFields'])
         ->name('member.listings.vcards.fields.reorder');
+    Route::post('/member/listings/{listing}/vcards/{vcard}/sections', [VCardController::class, 'updateSections'])
+        ->name('member.listings.vcards.sections.update');
 
     Route::get('/member/listings/{listing}/vcard-teams', [VCardTeamController::class, 'index'])
         ->name('member.listings.vcard-teams.index');
@@ -81,4 +92,15 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function
         ->name('member.listings.vcard-teams.destroy');
     Route::post('/member/listings/{listing}/vcard-teams/reorder', [VCardTeamController::class, 'reorder'])
         ->name('member.listings.vcard-teams.reorder');
+
+    Route::get('/member/listings/{listing}/vcards/{vcard}/packages', [VCardPackageController::class, 'index'])
+        ->name('member.listings.vcards.packages.index');
+    Route::post('/member/listings/{listing}/vcards/{vcard}/packages', [VCardPackageController::class, 'store'])
+        ->name('member.listings.vcards.packages.store');
+    Route::put('/member/listings/{listing}/vcards/{vcard}/packages/{package}', [VCardPackageController::class, 'update'])
+        ->name('member.listings.vcards.packages.update');
+    Route::delete('/member/listings/{listing}/vcards/{vcard}/packages/{package}', [VCardPackageController::class, 'destroy'])
+        ->name('member.listings.vcards.packages.destroy');
+    Route::post('/member/listings/{listing}/vcards/{vcard}/packages/reorder', [VCardPackageController::class, 'reorder'])
+        ->name('member.listings.vcards.packages.reorder');
 });

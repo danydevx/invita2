@@ -1,6 +1,25 @@
 <template>
   <div class="public-vcard-page py-4 px-3" :style="pageBackgroundStyle">
-    <Head :title="vcard.name" />
+    <Head>
+      <title>{{ seoTitle }}</title>
+      <meta name="description" :content="seoDescription" v-if="seoDescription" />
+      <meta name="robots" :content="robotsContent" v-if="seoSetting" />
+      <link rel="canonical" :href="canonicalUrl" v-if="canonicalUrl" />
+      <meta name="theme-color" :content="themeColor" />
+      <meta name="msapplication-TileColor" :content="themeColor" />
+      <meta name="apple-mobile-web-app-title" :content="seoTitle" />
+      <link rel="icon" type="image/png" sizes="32x32" :href="logoUrl || '/icons/default-vcard.png'" />
+      <link rel="icon" type="image/png" sizes="192x192" :href="logoUrl || '/icons/default-vcard-192.png'" />
+      <link rel="apple-touch-icon" :href="logoUrl || '/icons/default-vcard-apple.png'" />
+      <meta property="og:title" :content="ogTitle" />
+      <meta property="og:description" :content="ogDescription" v-if="ogDescription" />
+      <meta property="og:type" content="profile" />
+      <meta property="og:url" :content="vcard.public_url" />
+      <meta property="og:image" :content="ogImage" v-if="ogImage" />
+      <meta property="og:image:alt" :content="ogImageAlt" v-if="ogImageAlt" />
+      <meta property="profile:first_name" :content="vcard.first_name" v-if="vcard.first_name" />
+      <meta property="profile:last_name" :content="vcard.last_name" v-if="vcard.last_name" />
+    </Head>
 
     <VCard
       :vcard="vcard"
@@ -18,6 +37,7 @@
       :patternKey="vcard.pattern_key || 'dots'"
       :heroImageAlpha="vcard.hero_image_alpha || 100"
       :qrCodeUrl="vcard.qr_code_url"
+      :sections="vcard.sections || {}"
     />
   </div>
 </template>
@@ -32,6 +52,58 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+})
+
+const seoSetting = computed(() => props.vcard?.seo_setting || null)
+
+const logoUrl = computed(() => {
+  return props.vcard.logo ? `/storage/${props.vcard.logo}` : null
+})
+
+const themeColor = computed(() => {
+  return props.vcard.primary_color || '#2563EB'
+})
+
+const seoTitle = computed(() => {
+  return seoSetting.value?.seo_title || props.vcard.name || 'vCard'
+})
+
+const seoDescription = computed(() => {
+  return seoSetting.value?.seo_description || props.vcard.headline || ''
+})
+
+const ogTitle = computed(() => {
+  return seoSetting.value?.og_title || seoTitle.value
+})
+
+const ogDescription = computed(() => {
+  return seoSetting.value?.og_description || seoDescription.value
+})
+
+const ogImage = computed(() => {
+  if (seoSetting.value?.og_image) {
+    return seoSetting.value.og_image
+  }
+  if (props.vcard.profile_photo) {
+    return `/storage/${props.vcard.profile_photo}`
+  }
+  return null
+})
+
+const ogImageAlt = computed(() => {
+  return seoSetting.value?.og_image_alt || props.vcard.name || 'vCard'
+})
+
+const canonicalUrl = computed(() => {
+  return seoSetting.value?.canonical_url || props.vcard.public_url
+})
+
+const robotsContent = computed(() => {
+  if (!seoSetting.value) return 'index, follow'
+  const parts = []
+  parts.push(seoSetting.value.allow_indexing !== false ? 'index' : 'noindex')
+  parts.push(seoSetting.value.follow_links !== false ? 'follow' : 'nofollow')
+  return parts.join(', ')
 })
 
 const patterns = {

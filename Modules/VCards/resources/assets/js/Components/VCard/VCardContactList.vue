@@ -1,7 +1,7 @@
 <template>
-  <div v-if="contacts && contacts.length > 0" class="vcard__contacts">
+  <div v-if="nonWhatsappContacts.length > 0" class="vcard__contacts">
     <a
-      v-for="contact in contacts"
+      v-for="contact in nonWhatsappContacts"
       :key="contact.id"
       :href="getContactLink(contact)"
       class="vcard__contact"
@@ -18,6 +18,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   contacts: {
     type: Array,
@@ -27,6 +29,10 @@ const props = defineProps({
     type: String,
     default: 'rounded',
   },
+})
+
+const nonWhatsappContacts = computed(() => {
+  return props.contacts.filter(c => c.type !== 'whatsapp')
 })
 
 const contactIcons = {

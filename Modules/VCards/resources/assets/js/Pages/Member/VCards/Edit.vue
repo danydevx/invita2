@@ -8,6 +8,13 @@
       :backHref="`/member/listings/${listing?.id}/vcards`"
     >
       <template #actions>
+        <a
+          :href="`/member/listings/${listing?.id}/vcards/${vcard?.id}/seo`"
+          class="btn btn-outline-dark btn-sm"
+        >
+          <i class="bi bi-graph-up me-1"></i>
+          SEO
+        </a>
         <button
           class="btn btn-outline-secondary btn-sm"
           @click="copyLink"
@@ -83,6 +90,28 @@
               Campos
             </button>
           </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              :class="{ active: activeTab === 'seguimiento' }"
+              @click="activeTab = 'seguimiento'"
+              type="button"
+            >
+              <i class="bi bi-graph-up me-1"></i>
+              Seguimiento
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              :class="{ active: activeTab === 'secciones' }"
+              @click="activeTab = 'secciones'"
+              type="button"
+            >
+              <i class="bi bi-layout-sidebar me-1"></i>
+              Secciones
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -142,6 +171,16 @@
                   label="Tarjeta activa"
                   v-model="form.active"
                 />
+              </div>
+              <div class="col-12 mt-4">
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  @click="deleteCard"
+                >
+                  <i class="bi bi-trash me-1"></i>
+                  Eliminar tarjeta
+                </button>
               </div>
             </div>
 
@@ -647,8 +686,8 @@
                         id="contact-value"
                         label="Valor"
                         v-model="contactForm.value"
-                        :placeholder="contactForm.type === 'email' ? 'email@ejemplo.com' : 'Número o email'"
-                        :type="contactForm.type === 'email' ? 'email' : 'text'"
+                        :placeholder="contactForm.type === 'email' ? 'email@ejemplo.com' : 'Número'"
+                        :type="contactForm.type === 'email' ? 'email' : 'tel'"
                         :formError="contactErrors.value"
                       />
                     </div>
@@ -879,6 +918,95 @@
             </div>
           </div>
 
+          <div v-show="activeTab === 'seguimiento'">
+            <div class="row g-3">
+              <div class="col-12">
+                <h5 class="mb-3">Indexación</h5>
+              </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-search-engine-indexing"
+                  label="Indexación en motores de búsqueda"
+                  v-model="form.search_engine_indexing"
+                />
+              </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-renew"
+                  label="Renovar automáticamente"
+                  v-model="form.renew"
+                />
+              </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-paused"
+                  label="Pausar tarjeta"
+                  v-model="form.paused"
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-tracking-code"
+                  label="Codigos de seguimiento (UTM)"
+                  v-model="trackingCodeInput"
+                  placeholder="utm_source, utm_medium, utm_campaign"
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-meta-pixel-id"
+                  label="Meta Pixel ID"
+                  v-model="form.meta_pixel_id"
+                  placeholder="1234567890123456"
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-google-analytics-id"
+                  label="Google Analytics ID (G-XXXXXXXXXX)"
+                  v-model="form.google_analytics_id"
+                  placeholder="G-XXXXXXXXXX"
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-google-webmasters"
+                  label="Google Search Console (verificacion)"
+                  v-model="form.google_webmasters_verification"
+                  placeholder="google-site-verification=..."
+                />
+              </div>
+              <div class="col-12">
+                <FieldText
+                  id="vcard-bing-webmasters"
+                  label="Bing Webmasters (verificacion)"
+                  v-model="form.bing_webmasters_verification"
+                  placeholder="BingSiteAuth=..."
+                />
+              </div>
+            </div>
+          </div>
+
+          <div v-show="activeTab === 'secciones'">
+            <div class="row g-3">
+              <div class="col-12">
+                <p class="text-muted small mb-3">Activa o desactiva las secciones que aparecen en tu tarjeta digital.</p>
+              </div>
+              <div class="col-12" v-for="section in sectionsList" :key="section.key">
+                <FieldSwitch
+                  :id="`section-${section.key}`"
+                  :label="section.label"
+                  v-model="form.sections[section.key]"
+                />
+              </div>
+              <div class="col-12 mt-3">
+                <button type="button" class="btn btn-primary" @click="saveSections" :disabled="savingSections">
+                  {{ savingSections ? 'Guardando...' : 'Guardar Secciones' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
           <FormActions
             :submitText="'Guardar Cambios'"
             :submittingText="'Guardando...'"
@@ -898,6 +1026,8 @@
               :profilePhotoUrl="profilePhotoUrl"
               :heroBackgroundImageUrl="heroBackgroundImageUrl"
               :shape="form.shape"
+              :packages="previewPackages"
+              :sections="form.sections"
               @change-image-position="updateImagePosition"
             />
           </div>
@@ -944,6 +1074,20 @@ const props = defineProps({
 
 const activeTab = ref('card')
 const sending = ref(false)
+const savingSections = ref(false)
+
+const sectionsList = [
+  { key: 'appointments', label: 'Agendar Cita' },
+  { key: 'services', label: 'Servicios' },
+  { key: 'packages', label: 'Paquetes' },
+  { key: 'gallery', label: 'Galeria' },
+  { key: 'products', label: 'Productos' },
+  { key: 'testimonials', label: 'Testimonios' },
+  { key: 'business_hours', label: 'Horario' },
+  { key: 'menu', label: 'Menu' },
+  { key: 'contact_form', label: 'Contacto' },
+  { key: 'location', label: 'Ubicacion' },
+]
 const errors = ref({})
 const showContactModal = ref(false)
 const showFieldModal = ref(false)
@@ -975,6 +1119,12 @@ const patterns = [
 ]
 
 const localContacts = ref([...(props.vcard?.contacts || [])])
+
+const previewPackages = [
+  { id: 1, name: 'Basico', description: 'Plan basico con funciones esenciales', price: 9.99, currency: 'USD', duration_days: 30, active: true },
+  { id: 2, name: 'Profesional', description: 'Plan profesional con todas las funciones', price: 19.99, currency: 'USD', duration_days: 30, active: true },
+  { id: 3, name: 'Premium', description: 'Plan premium con soporte prioritario', price: 39.99, currency: 'USD', duration_days: 30, active: true },
+]
 const localFields = ref([...(props.vcard?.fields || [])])
 
 watch(() => props.vcard?.contacts, (newContacts) => {
@@ -991,6 +1141,14 @@ const form = reactive({
   type: props.vcard?.type || 'single',
   vcard_team_id: props.vcard?.vcard_team_id || '',
   active: props.vcard?.active ?? true,
+  search_engine_indexing: props.vcard?.search_engine_indexing ?? true,
+  renew: props.vcard?.renew ?? true,
+  tracking_code: props.vcard?.tracking_code || [],
+  paused: props.vcard?.paused ?? false,
+  meta_pixel_id: props.vcard?.meta_pixel_id || '',
+  google_analytics_id: props.vcard?.google_analytics_id || '',
+  google_webmasters_verification: props.vcard?.google_webmasters_verification || '',
+  bing_webmasters_verification: props.vcard?.bing_webmasters_verification || '',
   design: props.vcard?.design || 'classic',
   primary_color: props.vcard?.primary_color || '#2563EB',
   font: props.vcard?.font || 'Inter',
@@ -1020,6 +1178,18 @@ const form = reactive({
   body_primary_color: props.vcard?.body_primary_color || '#ffffff',
   body_gradient_direction: props.vcard?.body_gradient_direction || '135deg',
   body_pattern_key: props.vcard?.body_pattern_key || 'dots',
+  sections: props.vcard?.sections || {
+    appointments: false,
+    services: false,
+    packages: false,
+    gallery: false,
+    products: false,
+    testimonials: false,
+    business_hours: false,
+    menu: false,
+    contact_form: false,
+    location: false,
+  },
 })
 
 const contactForm = reactive({
@@ -1076,6 +1246,20 @@ const badgeUrl = computed(() => {
 const profilePhotoUrl = computed(() => {
   if (profileFile.value) return URL.createObjectURL(profileFile.value)
   return form.profile_photo ? `/storage/${form.profile_photo}` : null
+})
+
+const trackingCodeInput = computed({
+  get() {
+    if (!form.tracking_code || !Array.isArray(form.tracking_code)) return ''
+    return form.tracking_code.join(', ')
+  },
+  set(value) {
+    if (!value || value.trim() === '') {
+      form.tracking_code = []
+      return
+    }
+    form.tracking_code = value.split(',').map(s => s.trim()).filter(s => s.length > 0)
+  }
 })
 
 const heroBackgroundImageUrl = computed(() => {
@@ -1211,6 +1395,30 @@ function downloadVCard() {
   window.location.href = `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/download`
 }
 
+function saveSections() {
+  if (savingSections.value) return
+  savingSections.value = true
+
+  const sections = sectionsList.map(s => ({
+    key: s.key,
+    enabled: form.sections[s.key] ?? true,
+  }))
+
+  router.post(
+    `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/sections`,
+    { sections },
+    {
+      onSuccess: () => {
+        toast.success('Secciones actualizadas')
+        savingSections.value = false
+      },
+      onError: () => {
+        savingSections.value = false
+      },
+    }
+  )
+}
+
 function selectFieldType(key) {
   const field = props.mostPopularFields.find(f => f.key === key) ||
     Object.values(props.fieldTypes).flat().find(f => f.key === key)
@@ -1262,6 +1470,14 @@ function saveContact() {
   if (!contactForm.value || contactForm.value.trim() === '') {
     contactErrors.value = 'El valor es obligatorio.'
     isValid = false
+  }
+
+  if ((contactForm.type === 'phone' || contactForm.type === 'whatsapp') && contactForm.value) {
+    const phoneRegex = /^[+\d\s\-()]+$/
+    if (!phoneRegex.test(contactForm.value)) {
+      contactErrors.value = 'Solo se permiten números, espacios, guiones y el prefijo +.'
+      isValid = false
+    }
   }
 
   if ((contactForm.type === 'phone' || contactForm.type === 'whatsapp') && !contactForm.country_code) {
@@ -1376,38 +1592,88 @@ function saveField() {
     }
   }
 
-  if (editingField.value) {
-    router.put(
-      `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields/${editingField.value.id}`,
-      fieldForm,
-      {
-        onSuccess: () => {
-          toast.success('Campo actualizado')
-          closeFieldModal()
-          savingField.value = false
-          router.reload({ only: ['vcard'] })
-        },
-        onError: () => {
-          savingField.value = false
-        },
+  const hasFileField = selectedFieldType.value?.schema?.some(s => s.type === 'file' && fieldForm.config[s.name] instanceof File)
+
+  if (hasFileField) {
+    const formData = new FormData()
+    formData.append('field_type_key', fieldForm.field_type_key)
+    formData.append('label', fieldForm.label || '')
+    formData.append('active', fieldForm.active ? '1' : '0')
+    formData.append('config', JSON.stringify(fieldForm.config))
+
+    for (const schemaField of selectedFieldType.value.schema) {
+      if (schemaField.type === 'file' && fieldForm.config[schemaField.name] instanceof File) {
+        formData.append(`config_${schemaField.name}`, fieldForm.config[schemaField.name])
       }
-    )
+    }
+
+    if (editingField.value) {
+      router.post(
+        `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields/${editingField.value.id}?_method=PUT`,
+        formData,
+        {
+          onSuccess: () => {
+            toast.success('Campo actualizado')
+            closeFieldModal()
+            savingField.value = false
+            router.reload({ only: ['vcard'] })
+          },
+          onError: () => {
+            savingField.value = false
+          },
+        }
+      )
+    } else {
+      router.post(
+        `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields`,
+        formData,
+        {
+          onSuccess: () => {
+            toast.success('Campo agregado')
+            closeFieldModal()
+            savingField.value = false
+            router.reload({ only: ['vcard'] })
+          },
+          onError: () => {
+            savingField.value = false
+          },
+        }
+      )
+    }
   } else {
-    router.post(
-      `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields`,
-      fieldForm,
-      {
-        onSuccess: () => {
-          toast.success('Campo agregado')
-          closeFieldModal()
-          savingField.value = false
-          router.reload({ only: ['vcard'] })
-        },
-        onError: () => {
-          savingField.value = false
-        },
-      }
-    )
+    if (editingField.value) {
+      router.put(
+        `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields/${editingField.value.id}`,
+        fieldForm,
+        {
+          onSuccess: () => {
+            toast.success('Campo actualizado')
+            closeFieldModal()
+            savingField.value = false
+            router.reload({ only: ['vcard'] })
+          },
+          onError: () => {
+            savingField.value = false
+          },
+        }
+      )
+    } else {
+      router.post(
+        `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/fields`,
+        fieldForm,
+        {
+          onSuccess: () => {
+            toast.success('Campo agregado')
+            closeFieldModal()
+            savingField.value = false
+            router.reload({ only: ['vcard'] })
+          },
+          onError: () => {
+            savingField.value = false
+          },
+        }
+      )
+    }
   }
 }
 
@@ -1443,6 +1709,23 @@ function onFieldsDragEnd() {
     { order },
     {
       preserveScroll: true,
+    }
+  )
+}
+
+function deleteCard() {
+  if (!confirm('¿Estás seguro de que deseas eliminar esta tarjeta? Esta acción no se puede deshacer.')) return
+
+  router.delete(
+    `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}`,
+    {
+      onSuccess: () => {
+        toast.success('Tarjeta eliminada correctamente')
+        window.location.href = `/member/listings/${props.listing.id}/vcards`
+      },
+      onError: () => {
+        toast.error('Error al eliminar la tarjeta')
+      },
     }
   )
 }

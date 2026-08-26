@@ -17,6 +17,8 @@
         :patternKey="vcard.pattern_key || 'dots'"
         :heroImageAlpha="vcard.hero_image_alpha || 100"
         :qrCodeUrl="qrCodeUrl"
+        :packages="packages"
+        :sections="sections"
         @openImagePosition="openImagePositionModal"
       />
     </div>
@@ -69,6 +71,14 @@ const props = defineProps({
   shape: {
     type: String,
     default: 'rounded',
+  },
+  packages: {
+    type: Array,
+    default: () => [],
+  },
+  sections: {
+    type: Object,
+    default: () => ({}),
   },
 })
 

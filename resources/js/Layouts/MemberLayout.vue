@@ -235,8 +235,30 @@
                 <span>Historial</span>
               </Link>
             </div>
+
+            <a
+              v-if="currentVcardId"
+              href="#"
+              class="sidebar-link"
+              :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/vcards/${currentVcardId}/edit`) }"
+              @click.prevent="vcardSubmenuOpen = !vcardSubmenuOpen"
+            >
+              <i class="bi bi-person-vcard"></i>
+              <span>vCard</span>
+              <i class="bi bi-chevron-right ms-auto" :class="{ 'rotate-90': vcardSubmenuOpen }"></i>
+            </a>
+            <div v-show="vcardSubmenuOpen && currentVcardId" class="sidebar-submenu">
+              <Link
+                :href="`/member/listings/${primaryBusiness.id}/vcards/${currentVcardId}/edit`"
+                class="sidebar-link sidebar-link-sub"
+                :class="{ active: isActive(`/member/listings/${primaryBusiness.id}/vcards/${currentVcardId}/edit`) }"
+              >
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+              </Link>
+            </div>
           </template>
-          
+
           <div v-else class="sidebar-link text-muted">
             <span class="small">Sin negocio configurado</span>
           </div>
@@ -553,6 +575,7 @@ const productsSubmenuOpen = ref(false)
 const menuSubmenuOpen = ref(false)
 const servicesSubmenuOpen = ref(false)
 const fidelitySubmenuOpen = ref(false)
+const vcardSubmenuOpen = ref(false)
 
 const checkAndOpenSubmenu = (path) => {
   if (!primaryBusiness.value) return
@@ -579,6 +602,10 @@ const checkAndOpenSubmenu = (path) => {
       path.startsWith(`/member/listings/${bizId}/client-fidelity`)) {
     fidelitySubmenuOpen.value = true
   }
+  if (path.match(/\/member\/listings\/\d+\/vcards\/\d+\/edit/) ||
+      path.match(/\/member\/listings\/\d+\/vcards\/\d+\/seo/)) {
+    vcardSubmenuOpen.value = true
+  }
 }
 
 onMounted(() => {
@@ -602,6 +629,11 @@ const toggleBusiness = (id) => {
 
 const currentBusinessId = computed(() => {
   const match = currentPath.value.match(/^\/member\/listings\/(\d+)/)
+  return match ? parseInt(match[1]) : null
+})
+
+const currentVcardId = computed(() => {
+  const match = currentPath.value.match(/\/vcards\/(\d+)\/edit/)
   return match ? parseInt(match[1]) : null
 })
 
@@ -827,6 +859,10 @@ const alertClass = (type, priority) => {
 
 .sidebar-submenu {
   padding-left: 1rem;
+}
+
+.sidebar-submenu-title {
+  letter-spacing: 0.05em;
 }
 
 .sidebar-link-sub {
