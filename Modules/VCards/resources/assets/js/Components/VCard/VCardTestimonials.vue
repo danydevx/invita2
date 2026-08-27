@@ -81,16 +81,15 @@ const touchEndX = ref(0)
 
 const displayTestimonials = computed(() => {
   if (props.testimonials && props.testimonials.length > 0) {
-    return props.testimonials.slice(0, props.limit)
+    return props.testimonials.slice(0, props.limit).map(t => ({
+      name: t.client_name || t.name || 'Cliente',
+      role: t.company || t.role || '',
+      text: t.comment || t.text || '',
+      rating: t.rating || 0,
+      avatar: t.avatar || null,
+    }))
   }
-  return [
-    { name: 'María García', role: 'CEO', text: 'Excelente servicio y muy buen trato. Recomendados totalmente.', rating: 5 },
-    { name: 'Carlos Rodríguez', role: 'Directora', text: 'Muy profesional y claro en todo el proceso. Superaron mis expectativas.', rating: 5 },
-    { name: 'Ana Martínez', role: 'Empresaria', text: 'Atención de primera. El resultado fue exactamente lo que buscaba.', rating: 4 },
-    { name: 'Luis Hernández', role: 'Gerente', text: 'Gran experiencia. El equipo es muy atento y los resultados son evidentes.', rating: 5 },
-    { name: 'Sofia López', role: 'Diseñadora', text: 'Me encantó el enfoque personalizado. Definitivamente volveré.', rating: 5 },
-    { name: 'Miguel Torres', role: 'Abogado', text: 'Servicio de calidad con atención al detalle. Muy recomendados.', rating: 4 },
-  ].slice(0, props.limit)
+  return []
 })
 
 function getInitials(name) {

@@ -99,22 +99,9 @@ class VCardController extends Controller
             ->orderBy('sort_order')
             ->get(['id', 'name']);
 
-        $fieldTypes = VCardFieldType::getGrouped();
-        $fieldTypeCategories = VCardFieldType::getCategories();
-        $mostPopularFields = VCardFieldType::getMostPopular();
-
         return Inertia::render('Member/VCards/Create', [
             'listing' => $listing,
             'teams' => $teams,
-            'fieldTypes' => $fieldTypes,
-            'fieldTypeCategories' => $fieldTypeCategories,
-            'mostPopularFields' => $mostPopularFields,
-            'designs' => array_map(fn($d) => ['value' => $d->value, 'label' => $d->label()], \Modules\VCards\Enums\VCardDesign::cases()),
-            'fonts' => ['Inter', 'Roboto', 'Open Sans', 'Montserrat', 'Poppins', 'Lato', 'Nunito', 'Raleway', 'Merriweather', 'Playfair Display'],
-            'colors' => ['#2563EB', '#4F46E5', '#7C3AED', '#DB2777', '#DC2626', '#EA580C', '#CA8A04', '#16A34A', '#0891B2', '#111827'],
-            'contactTypes' => array_map(fn($c) => ['value' => $c->value, 'label' => $c->label()], \Modules\VCards\Enums\VCardContactType::cases()),
-            'contactSubtypes' => array_map(fn($c) => ['value' => $c->value, 'label' => $c->label()], \Modules\VCards\Enums\VCardContactSubtype::cases()),
-            'pronouns' => array_map(fn($c) => ['value' => $c->value, 'label' => $c->label()], \Modules\VCards\Enums\VCardPronouns::cases()),
         ]);
     }
 
@@ -128,26 +115,6 @@ class VCardController extends Controller
             'type' => ['required', 'in:single,team'],
             'vcard_team_id' => ['nullable', 'exists:vcard_teams,id'],
             'active' => ['boolean'],
-            'design' => ['in:classic,flat,modern,sleek,blend'],
-            'primary_color' => ['string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'font' => ['string'],
-            'prefix' => ['nullable', 'string', 'max:50'],
-            'first_name' => ['nullable', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
-            'last_name' => ['nullable', 'string', 'max:100'],
-            'accreditations' => ['nullable', 'string', 'max:255'],
-            'preferred_name' => ['nullable', 'string', 'max:100'],
-            'pronouns' => ['nullable', 'in:he,she,they'],
-            'title' => ['nullable', 'string', 'max:255'],
-            'department' => ['nullable', 'string', 'max:255'],
-            'company' => ['nullable', 'string', 'max:255'],
-            'headline' => ['nullable', 'string', 'max:1000'],
-            'logo' => ['nullable', 'string', 'max:500'],
-            'badge' => ['nullable', 'string', 'max:500'],
-            'hero_background_image' => ['nullable', 'string', 'max:500'],
-            'shape' => ['nullable', 'in:circle,rounded'],
-            'image_x' => ['nullable', 'numeric'],
-            'image_y' => ['nullable', 'numeric'],
             'search_engine_indexing' => ['boolean'],
             'renew' => ['boolean'],
             'tracking_code' => ['nullable', 'array'],
@@ -170,23 +137,9 @@ class VCardController extends Controller
             'name' => $validated['name'],
             'slug' => $slug,
             'active' => $validated['active'] ?? true,
-            'design' => $validated['design'] ?? 'classic',
-            'primary_color' => $validated['primary_color'] ?? '#2563EB',
-            'font' => $validated['font'] ?? 'Inter',
-            'prefix' => $validated['prefix'] ?? null,
-            'first_name' => $validated['first_name'] ?? null,
-            'middle_name' => $validated['middle_name'] ?? null,
-            'last_name' => $validated['last_name'] ?? null,
-            'accreditations' => $validated['accreditations'] ?? null,
-            'preferred_name' => $validated['preferred_name'] ?? null,
-            'pronouns' => $validated['pronouns'] ?? null,
-            'title' => $validated['title'] ?? null,
-            'department' => $validated['department'] ?? null,
-            'company' => $validated['company'] ?? null,
-            'headline' => $validated['headline'] ?? null,
-            'logo' => $validated['logo'] ?? null,
-            'badge' => $validated['badge'] ?? null,
-            'hero_background_image' => $validated['hero_background_image'] ?? null,
+            'design' => 'classic',
+            'primary_color' => '#2563EB',
+            'font' => 'Inter',
             'search_engine_indexing' => $validated['search_engine_indexing'] ?? true,
             'renew' => $validated['renew'] ?? true,
             'tracking_code' => $validated['tracking_code'] ?? [],
@@ -202,7 +155,7 @@ class VCardController extends Controller
         abort_unless($listing->user_id === Auth::id(), 403);
         abort_unless($vcard->listing_id === $listing->id, 403);
 
-        $vcard->load(['contacts', 'fields', 'sections', 'selectedServices.service']);
+        $vcard->load(['contacts', 'fields', 'sections', 'listing', 'listing.about', 'selectedServices.service', 'selectedPackages.package', 'selectedGallery.gallery.images', 'selectedProducts.product', 'selectedTestimonials.review', 'businessHours', 'selectedMenuCategories.category', 'selectedMenuCategories.category.activeProducts', 'selectedLocation', 'selectedFeatures.feature']);
 
         $teams = \Modules\VCards\Models\VCardTeam::where('listing_id', $listing->id)
             ->active()
@@ -212,6 +165,8 @@ class VCardController extends Controller
         $fieldTypes = VCardFieldType::getGrouped();
         $fieldTypeCategories = VCardFieldType::getCategories();
         $mostPopularFields = VCardFieldType::getMostPopular();
+
+        $listing->load('about');
 
         return Inertia::render('Member/VCards/Edit', [
             'listing' => $listing,
@@ -572,6 +527,42 @@ class VCardController extends Controller
         return response()->json(['success' => true, 'message' => 'Servicios actualizados correctamente.']);
     }
 
+    public function updateSelectedPackages(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'package_ids' => ['required', 'array'],
+            'package_ids.*' => ['exists:listing_packages,id'],
+        ]);
+
+        $vcard->selectedPackages()->delete();
+
+        foreach ($validated['package_ids'] as $index => $packageId) {
+            \Modules\VCards\Models\VCardSelectedPackage::create([
+                'vcard_id' => $vcard->id,
+                'package_id' => $packageId,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Paquetes actualizados correctamente.']);
+    }
+
+    public function getListingPackages(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $packages = \Modules\ListingPackages\Models\ListingPackage::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->with('features')
+            ->get(['id', 'title', 'short_description', 'price', 'promo_price']);
+
+        return response()->json(['packages' => $packages]);
+    }
+
     public function getListingServices(Listing $listing)
     {
         abort_unless($listing->user_id === Auth::id(), 403);
@@ -582,5 +573,296 @@ class VCardController extends Controller
             ->get(['id', 'name', 'price', 'duration_minutes', 'description']);
 
         return response()->json(['services' => $services]);
+    }
+
+    public function updateSelectedGallery(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'gallery_id' => ['nullable', 'exists:listing_galleries,id'],
+        ]);
+
+        if ($validated['gallery_id']) {
+            \Modules\VCards\Models\VCardSelectedGallery::updateOrCreate(
+                ['vcard_id' => $vcard->id],
+                ['gallery_id' => $validated['gallery_id']]
+            );
+        } else {
+            $vcard->selectedGallery()?->delete();
+        }
+
+        return response()->json(['success' => true, 'message' => 'Galeria actualizada correctamente.']);
+    }
+
+    public function getListingGalleries(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $galleries = \Modules\ListingGallery\Models\ListingGallery::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->with(['images' => function ($q) {
+                $q->where('is_active', true)->orderBy('sort_order')->limit(4);
+            }])
+            ->get(['id', 'name', 'description']);
+
+        return response()->json(['galleries' => $galleries]);
+    }
+
+    public function updateSelectedProducts(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'product_ids' => ['required', 'array'],
+            'product_ids.*' => ['exists:listing_products,id'],
+        ]);
+
+        $vcard->selectedProducts()->delete();
+
+        foreach ($validated['product_ids'] as $index => $productId) {
+            \Modules\VCards\Models\VCardSelectedProduct::create([
+                'vcard_id' => $vcard->id,
+                'product_id' => $productId,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Productos actualizados correctamente.']);
+    }
+
+    public function getListingProducts(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $products = \Modules\ListingProducts\Models\ListingProduct::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->with('images')
+            ->get(['id', 'name', 'description', 'price', 'image']);
+
+        return response()->json(['products' => $products]);
+    }
+
+    public function updateSelectedTestimonials(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'review_ids' => ['required', 'array'],
+            'review_ids.*' => ['exists:listing_reviews,id'],
+        ]);
+
+        $vcard->selectedTestimonials()->delete();
+
+        foreach ($validated['review_ids'] as $index => $reviewId) {
+            \Modules\VCards\Models\VCardSelectedTestimonial::create([
+                'vcard_id' => $vcard->id,
+                'review_id' => $reviewId,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Testimonios actualizados correctamente.']);
+    }
+
+    public function getListingTestimonials(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $reviews = \Modules\ListingReviews\Models\ListingReview::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get(['id', 'client_name', 'company', 'comment', 'rating', 'google_link']);
+
+        return response()->json(['testimonials' => $reviews]);
+    }
+
+    public function updateBusinessHours(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'hours' => ['required', 'array'],
+            'hours.*.day_of_week' => ['required', 'integer', 'between:0,6'],
+            'hours.*.is_open' => ['required', 'boolean'],
+            'hours.*.opening_time' => ['nullable', 'date_format:H:i'],
+            'hours.*.closing_time' => ['nullable', 'date_format:H:i'],
+            'hours.*.lunch_start_time' => ['nullable', 'date_format:H:i'],
+            'hours.*.lunch_end_time' => ['nullable', 'date_format:H:i'],
+        ]);
+
+        $vcard->businessHours()->delete();
+
+        foreach ($validated['hours'] as $index => $hour) {
+            \Modules\VCards\Models\VCardBusinessHour::create([
+                'vcard_id' => $vcard->id,
+                'day_of_week' => $hour['day_of_week'],
+                'is_open' => $hour['is_open'],
+                'opening_time' => $hour['opening_time'] ?? '08:00',
+                'closing_time' => $hour['closing_time'] ?? '18:00',
+                'lunch_start_time' => $hour['lunch_start_time'] ?? null,
+                'lunch_end_time' => $hour['lunch_end_time'] ?? null,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Horario actualizado correctamente.']);
+    }
+
+    public function getBusinessHours(Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $hours = $vcard->businessHours()->get()->map(fn($h) => [
+            'id' => $h->id,
+            'day_of_week' => $h->day_of_week,
+            'day_name' => $h->day_name,
+            'is_open' => $h->is_open,
+            'opening_time' => $h->opening_time,
+            'closing_time' => $h->closing_time,
+            'lunch_start_time' => $h->lunch_start_time,
+            'lunch_end_time' => $h->lunch_end_time,
+        ]);
+
+        return response()->json(['hours' => $hours]);
+    }
+
+    public function updateMenuCategories(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'categories' => ['required', 'array', 'max:6'],
+            'categories.*.category_id' => ['required', 'exists:menu_categories,id'],
+            'categories.*.product_ids' => ['required', 'array', 'max:5'],
+            'categories.*.product_ids.*' => ['exists:menu_products,id'],
+        ]);
+
+        $vcard->selectedMenuCategories()->delete();
+
+        foreach ($validated['categories'] as $index => $cat) {
+            \Modules\VCards\Models\VCardSelectedMenuCategory::create([
+                'vcard_id' => $vcard->id,
+                'category_id' => $cat['category_id'],
+                'product_ids' => $cat['product_ids'],
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Menú actualizado correctamente.']);
+    }
+
+    public function getListingMenus(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $categories = \Modules\ListingRestaurantMenu\Entities\MenuCategory::where('listing_id', $listing->id)
+            ->where('active', true)
+            ->whereNull('parent_id')
+            ->with(['children', 'activeProducts'])
+            ->orderBy('sort_order')
+            ->get(['id', 'title', 'description', 'parent_id']);
+
+        $result = $categories->map(fn($cat) => [
+            'id' => $cat->id,
+            'title' => $cat->title,
+            'description' => $cat->description,
+            'parent_id' => $cat->parent_id,
+            'products' => $cat->activeProducts->map(fn($p) => [
+                'id' => $p->id,
+                'title' => $p->title,
+                'description' => $p->description,
+                'price' => $p->price,
+                'image' => $p->image,
+            ])->values(),
+        ]);
+
+        return response()->json(['categories' => $result]);
+    }
+
+    public function updateLocation(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'location_id' => ['nullable', 'exists:listing_locations,id'],
+        ]);
+
+        $vcard->selectedLocation()->delete();
+
+        if ($validated['location_id']) {
+            \Modules\VCards\Models\VCardSelectedLocation::create([
+                'vcard_id' => $vcard->id,
+                'location_id' => $validated['location_id'],
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Ubicación actualizada correctamente.']);
+    }
+
+    public function getListingLocations(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $locations = \Modules\ListingLocations\Models\ListingLocation::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->orderBy('is_primary', 'desc')
+            ->get(['id', 'name', 'address_line_1', 'city', 'state', 'country', 'latitude', 'longitude', 'phone']);
+
+        return response()->json(['locations' => $locations]);
+    }
+
+    public function updateSelectedFeatures(Request $request, Listing $listing, VCard $vcard)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+        abort_unless($vcard->listing_id === $listing->id, 403);
+
+        $validated = $request->validate([
+            'feature_ids' => ['required', 'array'],
+            'feature_ids.*' => ['exists:features,id'],
+        ]);
+
+        $vcard->selectedFeatures()->delete();
+
+        foreach ($validated['feature_ids'] as $index => $featureId) {
+            \Modules\VCards\Models\VCardSelectedFeature::create([
+                'vcard_id' => $vcard->id,
+                'feature_id' => $featureId,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Características actualizadas correctamente.']);
+    }
+
+    public function getListingFeatures(Listing $listing)
+    {
+        abort_unless($listing->user_id === Auth::id(), 403);
+
+        $features = \Modules\ListingFeatures\Models\ListingFeature::where('listing_id', $listing->id)
+            ->where('is_active', true)
+            ->with(['feature' => function ($q) {
+                $q->where('is_active', true);
+            }])
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn($lf) => [
+                'id' => $lf->feature_id,
+                'title' => $lf->feature->title ?? null,
+                'description' => $lf->feature->description ?? null,
+                'icon' => $lf->feature->icon ?? null,
+            ])
+            ->filter();
+
+        return response()->json(['features' => $features]);
     }
 }

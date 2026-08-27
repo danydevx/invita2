@@ -4,16 +4,22 @@
 
     <div v-if="hasLocation" class="card border-0 shadow-sm overflow-hidden">
       <div class="vcard-map__content">
-        <div class="vcard-map__iframe-container">
-          <iframe
-            width="100%"
-            height="250"
-            style="border:0;"
-            loading="lazy"
-            allowfullscreen
-            referrerpolicy="no-referrer-when-downgrade"
-            :src="mapEmbedUrl"
-          ></iframe>
+        <div class="vcard-map__map-container">
+          <l-map
+            ref="map"
+            :zoom="14"
+            :center="[latNum, lngNum]"
+            :options="{ scrollWheelZoom: false, zoomControl: true }"
+            style="height: 250px; width: 100%;"
+          >
+            <l-tile-layer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              layer-type="base"
+              name="OpenStreetMap"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            <l-marker :lat-lng="[latNum, lngNum]" />
+          </l-map>
         </div>
 
         <div class="vcard-map__info p-3">
@@ -47,6 +53,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
+import 'leaflet/dist/leaflet.css'
 
 const props = defineProps({
   lat: {
@@ -77,31 +85,61 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  location: {
+    type: Object,
+    default: null,
+  },
 })
 
-const latNum = computed(() => props.lat != null && props.lat !== '' ? Number(props.lat) : 19.4326)
-const lngNum = computed(() => props.lng != null && props.lng !== '' ? Number(props.lng) : -99.1332)
-const hasLocation = computed(() => true)
+const loc = computed(() => props.location)
 
-const displayAddress = computed(() => props.address || 'Av. Reforma 505, Juárez, 06600 Ciudad de México, CDMX')
-const displayCity = computed(() => props.city || 'Ciudad de México')
-const displayState = computed(() => props.state || 'CDMX')
-const displayCountry = computed(() => props.country || 'México')
-const displayZip = computed(() => props.zip || '06600')
+const latNum = computed(() => {
+  if (loc.value?.latitude != null) return Number(loc.value.latitude)
+  if (props.lat != null && props.lat !== '') return Number(props.lat)
+  return null
+})
+
+const lngNum = computed(() => {
+  if (loc.value?.longitude != null) return Number(loc.value.longitude)
+  if (props.lng != null && props.lng !== '') return Number(props.lng)
+  return null
+})
+
+const hasLocation = computed(() => latNum.value != null && lngNum.value != null)
+
+const displayAddress = computed(() => {
+  if (loc.value?.address_line_1) return loc.value.address_line_1
+  return props.address
+})
+
+const displayCity = computed(() => {
+  if (loc.value?.city) return loc.value.city
+  return props.city
+})
+
+const displayState = computed(() => {
+  if (loc.value?.state) return loc.value.state
+  return props.state
+})
+
+const displayCountry = computed(() => {
+  if (loc.value?.country) return loc.value.country
+  return props.country
+})
+
+const displayZip = computed(() => {
+  if (loc.value?.postal_code) return loc.value.postal_code
+  return props.zip
+})
 
 const fullAddressLine = computed(() => {
   const parts = [displayCity.value, displayState.value, displayZip.value, displayCountry.value].filter(Boolean)
   return parts.join(', ')
 })
 
-const mapEmbedUrl = computed(() => {
-  if (!hasLocation.value) return ''
-  return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${latNum.value},${lngNum.value}`
-})
-
 const directionsUrl = computed(() => {
   const query = encodeURIComponent(fullAddress.value)
-  return `https://www.google.com/maps/dir/?api=1&destination=${query}`
+  return `https://www.openstreetmap.org/directions?from=&to=${query}`
 })
 
 const fullAddress = computed(() => {
@@ -116,7 +154,7 @@ const fullAddress = computed(() => {
   flex-direction: column;
 }
 
-.vcard-map__iframe-container {
+.vcard-map__map-container {
   line-height: 0;
 }
 

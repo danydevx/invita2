@@ -167,9 +167,129 @@ class VCard extends Model
         return $this->hasMany(VCardSelectedService::class, 'vcard_id')->orderBy('sort_order');
     }
 
+    public function selectedPackages(): HasMany
+    {
+        return $this->hasMany(VCardSelectedPackage::class, 'vcard_id')->orderBy('sort_order');
+    }
+
+    public function selectedGallery(): HasOne
+    {
+        return $this->hasOne(VCardSelectedGallery::class, 'vcard_id');
+    }
+
+    public function selectedProducts(): HasMany
+    {
+        return $this->hasMany(VCardSelectedProduct::class, 'vcard_id')->orderBy('sort_order');
+    }
+
+    public function selectedTestimonials(): HasMany
+    {
+        return $this->hasMany(VCardSelectedTestimonial::class, 'vcard_id')->orderBy('sort_order');
+    }
+
+    public function businessHours(): HasMany
+    {
+        return $this->hasMany(VCardBusinessHour::class, 'vcard_id')->orderBy('day_of_week');
+    }
+
+    public function selectedMenuCategories(): HasMany
+    {
+        return $this->hasMany(VCardSelectedMenuCategory::class, 'vcard_id')->orderBy('sort_order');
+    }
+
+    public function selectedLocation(): HasOne
+    {
+        return $this->hasOne(VCardSelectedLocation::class, 'vcard_id');
+    }
+
+    public function selectedFeatures(): HasMany
+    {
+        return $this->hasMany(VCardSelectedFeature::class, 'vcard_id')->orderBy('sort_order');
+    }
+
     public function getServicesAttribute(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->selectedServices->map(fn($s) => $s->service)->filter();
+    }
+
+    public function getPackagesAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedPackages->map(fn($p) => $p->package)->filter();
+    }
+
+    public function getGalleryAttribute(): ?\Modules\ListingGallery\Models\ListingGallery
+    {
+        return $this->selectedGallery?->gallery;
+    }
+
+    public function getProductsAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedProducts->map(fn($p) => $p->product)->filter();
+    }
+
+    public function getTestimonialsAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedTestimonials->map(fn($t) => $t->review)->filter();
+    }
+
+    public function getMenuAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedMenuCategories->map(function ($sc) {
+            return [
+                'id' => $sc->category?->id,
+                'title' => $sc->category?->title,
+                'description' => $sc->category?->description,
+                'products' => $sc->products->map(fn($p) => [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'description' => $p->description,
+                    'price' => $p->price,
+                    'image' => $p->image,
+                ])->values(),
+            ];
+        })->filter()->values();
+    }
+
+    public function getLocationAttribute(): ?array
+    {
+        $loc = $this->selectedLocation?->location;
+        if (!$loc) {
+            return null;
+        }
+        return [
+            'id' => $loc->id,
+            'name' => $loc->name,
+            'address_line_1' => $loc->address_line_1,
+            'address_line_2' => $loc->address_line_2,
+            'city' => $loc->city,
+            'state' => $loc->state,
+            'postal_code' => $loc->postal_code,
+            'country' => $loc->country,
+            'phone' => $loc->phone,
+            'email' => $loc->email,
+            'latitude' => $loc->latitude,
+            'longitude' => $loc->longitude,
+            'directions_url' => $loc->directions_url,
+        ];
+    }
+
+    public function getFeaturesAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->selectedFeatures->map(fn($sf) => $sf->feature)->filter();
+    }
+
+    public function getAboutAttribute(): ?array
+    {
+        $about = $this->listing?->about;
+        if (!$about) {
+            return null;
+        }
+        return [
+            'title' => $about->title,
+            'subtitle' => $about->subtitle,
+            'description' => $about->description,
+            'image_path' => $about->image_path,
+        ];
     }
 
     public function getSectionsConfigAttribute(): array
@@ -185,6 +305,8 @@ class VCard extends Model
             'menu' => false,
             'contact_form' => false,
             'location' => false,
+            'features' => false,
+            'about' => false,
         ];
 
         $saved = $this->sections->pluck('enabled', 'section_key')->toArray();
@@ -237,13 +359,31 @@ class VCard extends Model
             'VERSION:3.0',
         ];
 
+        // Name
         $fullName = $this->full_name;
         if ($fullName) {
             $lines[] = "FN:{$fullName}";
-            $nameParts = array_filter([$this->last_name, $this->first_name, $this->middle_name]);
-            $lines[] = "N:" . implode(';', array_pad($nameParts, 3, ''));
+            $nameParts = array_filter([
+                $this->last_name ?? '',
+                $this->first_name ?? '',
+                $this->middle_name ?? '',
+                $this->prefix ?? '',
+            ]);
+            $lines[] = "N:" . implode(';', array_pad($nameParts, 4, ''));
         }
 
+        // Preferred name
+        if ($this->preferred_name) {
+            $lines[] = "NICKNAME:{$this->preferred_name}";
+        }
+
+        // Profile photo
+        if ($this->profile_photo) {
+            $photoUrl = url("/storage/{$this->profile_photo}");
+            $lines[] = "PHOTO;VALUE=URI:{$photoUrl}";
+        }
+
+        // Company and organization
         if ($this->company) {
             $lines[] = "ORG:{$this->company}";
         }
@@ -256,6 +396,26 @@ class VCard extends Model
             $lines[] = "ROLE:{$this->department}";
         }
 
+        // Headline / Description
+        if ($this->headline) {
+            $lines[] = "NOTE:{$this->headline}";
+        }
+
+        // Address
+        if ($this->address || $this->city || $this->state || $this->zip || $this->country) {
+            $addressParts = [
+                '', // PO Box
+                '', // Extended address
+                $this->address ?? '',
+                $this->city ?? '',
+                $this->state ?? '',
+                $this->zip ?? '',
+                $this->country ?? '',
+            ];
+            $lines[] = "ADR;TYPE=WORK:" . implode(';', $addressParts);
+        }
+
+        // Contacts (phones, whatsapp, etc.)
         foreach ($this->contacts as $contact) {
             $type = strtoupper($contact->type->value);
             $value = $contact->value;
@@ -269,12 +429,29 @@ class VCard extends Model
             $lines[] = "TEL;TYPE={$type}:{$value}";
         }
 
+        // Fields (email, website, social)
         foreach ($this->activeFields as $field) {
             if ($field->field_type_key === 'email' && !empty($field->config['email'])) {
-                $lines[] = "EMAIL:{$field->config['email']}";
+                $lines[] = "EMAIL;TYPE=WORK:{$field->config['email']}";
             } elseif ($field->field_type_key === 'website' && !empty($field->config['url'])) {
-                $lines[] = "URL:{$field->config['url']}";
+                $lines[] = "URL;TYPE=WORK:{$field->config['url']}";
+            } elseif ($field->field_type_key === 'linkedin' && !empty($field->config['url'])) {
+                $lines[] = "X-SOCIALPROFILE;TYPE=linkedin:{$field->config['url']}";
+            } elseif ($field->field_type_key === 'facebook' && !empty($field->config['url'])) {
+                $lines[] = "X-SOCIALPROFILE;TYPE=facebook:{$field->config['url']}";
+            } elseif ($field->field_type_key === 'twitter' && !empty($field->config['url'])) {
+                $lines[] = "X-SOCIALPROFILE;TYPE=twitter:{$field->config['url']}";
+            } elseif ($field->field_type_key === 'instagram' && !empty($field->config['url'])) {
+                $lines[] = "X-SOCIALPROFILE;TYPE=instagram:{$field->config['url']}";
+            } elseif ($field->field_type_key === 'tiktok' && !empty($field->config['url'])) {
+                $lines[] = "X-SOCIALPROFILE;TYPE=tiktok:{$field->config['url']}";
             }
+        }
+
+        // Logo
+        if ($this->logo) {
+            $logoUrl = url("/storage/{$this->logo}");
+            $lines[] = "LOGO;VALUE=URI:{$logoUrl}";
         }
 
         $lines[] = 'END:VCARD';

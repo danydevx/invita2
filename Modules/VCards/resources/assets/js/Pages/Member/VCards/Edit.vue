@@ -988,19 +988,28 @@
           </div>
 
           <div v-show="activeTab === 'secciones'">
-            <div class="row g-3">
-              <div class="col-12">
-                <p class="text-muted small mb-3">Activa o desactiva las secciones que aparecen en tu tarjeta digital.</p>
-              </div>
-              <div class="col-12" v-for="section in sectionsList" :key="section.key">
-                <div v-if="section.key === 'services'" class="d-flex align-items-center gap-2">
-                  <FieldSwitch
-                    :id="`section-${section.key}`"
-                    :label="section.label"
-                    v-model="form.sections[section.key]"
-                  />
+            <p class="text-muted small mb-3">Activa o desactiva las secciones que aparecen en tu tarjeta digital.</p>
+            <div class="sections-list">
+              <div
+                v-for="section in sectionsList"
+                :key="section.key"
+                class="section-item"
+                :class="{ 'section-item--active': form.sections[section.key] }"
+              >
+                <div class="section-item__content">
+                  <div class="section-item__toggle">
+                    <FieldSwitch
+                      :id="`section-${section.key}`"
+                      :label="section.label"
+                      v-model="form.sections[section.key]"
+                    />
+                  </div>
+                  <div class="section-item__description small text-muted">
+                    {{ getSectionDescription(section.key) }}
+                  </div>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'services' && form.sections[section.key]">
                   <button
-                    v-if="form.sections[section.key]"
                     type="button"
                     class="btn btn-outline-secondary btn-sm"
                     @click="showServicesModal = true"
@@ -1008,18 +1017,84 @@
                     <i class="bi bi-pencil me-1"></i>Editar
                   </button>
                 </div>
-                <FieldSwitch
-                  v-else
-                  :id="`section-${section.key}`"
-                  :label="section.label"
-                  v-model="form.sections[section.key]"
-                />
+                <div class="section-item__action" v-if="section.key === 'packages' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showPackagesModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'gallery' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showGalleryModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'products' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showProductsModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'testimonials' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showTestimonialsModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'business_hours' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showBusinessHoursModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'menu' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showMenuModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'location' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showLocationModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
+                <div class="section-item__action" v-if="section.key === 'features' && form.sections[section.key]">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="showFeaturesModal = true"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </button>
+                </div>
               </div>
-              <div class="col-12 mt-3">
-                <button type="button" class="btn btn-primary" @click="saveSections" :disabled="savingSections">
-                  {{ savingSections ? 'Guardando...' : 'Guardar Secciones' }}
-                </button>
-              </div>
+            </div>
+            <div class="mt-3">
+              <button type="button" class="btn btn-primary" @click="saveSections" :disabled="savingSections">
+                {{ savingSections ? 'Guardando...' : 'Guardar Secciones' }}
+              </button>
             </div>
           </div>
 
@@ -1034,17 +1109,25 @@
           </div>
           <div class="col-12 col-lg-4">
             <VCardPreview
-              :vcard="form"
+              :vcard="debouncedForm"
               :contacts="localContacts"
               :fields="localFields"
               :logoUrl="logoUrl"
               :badgeUrl="badgeUrl"
               :profilePhotoUrl="profilePhotoUrl"
               :heroBackgroundImageUrl="heroBackgroundImageUrl"
-              :shape="form.shape"
-              :packages="previewPackages"
-              :sections="form.sections"
+              :shape="debouncedForm.shape"
+              :packages="localSelectedPackages"
+              :sections="debouncedForm.sections"
               :selectedServices="localSelectedServices"
+              :gallery="localSelectedGallery"
+              :products="localSelectedProducts"
+              :testimonials="localSelectedTestimonials"
+              :businessHours="localBusinessHours"
+              :menu="localMenu"
+              :location="localSelectedLocation"
+              :features="localSelectedFeatures"
+              :about="aboutData"
               @change-image-position="updateImagePosition"
             />
           </div>
@@ -1061,10 +1144,82 @@
     @close="showServicesModal = false"
     @updated="onServicesUpdated"
   />
+
+  <PackagesSelectionModal
+    :show="showPackagesModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedPackages="localSelectedPackages"
+    @close="showPackagesModal = false"
+    @updated="onPackagesUpdated"
+  />
+
+  <GallerySelectionModal
+    :show="showGalleryModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedGallery="localSelectedGallery"
+    @close="showGalleryModal = false"
+    @updated="onGalleryUpdated"
+  />
+
+  <ProductSelectionModal
+    :show="showProductsModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedProducts="localSelectedProducts"
+    @close="showProductsModal = false"
+    @updated="onProductsUpdated"
+  />
+
+  <TestimonialsSelectionModal
+    :show="showTestimonialsModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedTestimonials="localSelectedTestimonials"
+    @close="showTestimonialsModal = false"
+    @updated="onTestimonialsUpdated"
+  />
+
+  <BusinessHoursSelectionModal
+    :show="showBusinessHoursModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedHours="localBusinessHours"
+    @close="showBusinessHoursModal = false"
+    @updated="onBusinessHoursUpdated"
+  />
+
+  <MenuSelectionModal
+    :show="showMenuModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedMenu="localMenu"
+    @close="showMenuModal = false"
+    @updated="onMenuUpdated"
+  />
+
+  <LocationSelectionModal
+    :show="showLocationModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedLocation="localSelectedLocation"
+    @close="showLocationModal = false"
+    @updated="onLocationUpdated"
+  />
+
+  <FeaturesSelectionModal
+    :show="showFeaturesModal"
+    :listingId="listing?.id"
+    :vcardId="vcard?.id"
+    :selectedFeatures="localSelectedFeatures"
+    @close="showFeaturesModal = false"
+    @updated="onFeaturesUpdated"
+  />
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, shallowRef, toRaw } from 'vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import { toast } from 'vue3-toastify'
 import axios from 'axios'
@@ -1083,6 +1238,28 @@ import FormActions from '@/Components/FormActions.vue'
 import QRCode from '@/Components/QRCode/QRCode.vue'
 import VCardPreview from './VCardPreview.vue'
 import ServicesSelectionModal from '../../../Components/VCard/ServicesSelectionModal.vue'
+import PackagesSelectionModal from '../../../Components/VCard/PackagesSelectionModal.vue'
+import GallerySelectionModal from '../../../Components/VCard/GallerySelectionModal.vue'
+import ProductSelectionModal from '../../../Components/VCard/ProductSelectionModal.vue'
+import TestimonialsSelectionModal from '../../../Components/VCard/TestimonialsSelectionModal.vue'
+import BusinessHoursSelectionModal from '../../../Components/VCard/BusinessHoursSelectionModal.vue'
+import MenuSelectionModal from '../../../Components/VCard/MenuSelectionModal.vue'
+import LocationSelectionModal from '../../../Components/VCard/LocationSelectionModal.vue'
+import FeaturesSelectionModal from '../../../Components/VCard/FeaturesSelectionModal.vue'
+
+let debounceTimer = null
+const debouncedForm = reactive({})
+
+function debouncedFormUpdate() {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    const raw = toRaw(form)
+    const { sections, ...rest } = raw
+    Object.assign(debouncedForm, rest, {
+      sections: sections ? { ...sections } : {}
+    })
+  }, 150)
+}
 
 const props = defineProps({
   listing: Object,
@@ -1103,6 +1280,14 @@ const activeTab = ref('card')
 const sending = ref(false)
 const savingSections = ref(false)
 const showServicesModal = ref(false)
+const showPackagesModal = ref(false)
+const showGalleryModal = ref(false)
+const showProductsModal = ref(false)
+const showTestimonialsModal = ref(false)
+const showBusinessHoursModal = ref(false)
+const showMenuModal = ref(false)
+const showLocationModal = ref(false)
+const showFeaturesModal = ref(false)
 
 const sectionsList = [
   { key: 'appointments', label: 'Agendar Cita' },
@@ -1115,6 +1300,8 @@ const sectionsList = [
   { key: 'menu', label: 'Menu' },
   { key: 'contact_form', label: 'Contacto' },
   { key: 'location', label: 'Ubicacion' },
+  { key: 'features', label: 'Caracteristicas' },
+  { key: 'about', label: 'Acerca de' },
 ]
 const errors = ref({})
 const showContactModal = ref(false)
@@ -1146,36 +1333,67 @@ const patterns = [
   { value: 'crosshatch', label: 'Cruz', preview: `url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='6' x2='12' y2='6' stroke='%23333' stroke-opacity='0.4' stroke-width='1'/%3E%3Cline x1='6' y1='0' x2='6' y2='12' stroke='%23333' stroke-opacity='0.4' stroke-width='1'/%3E%3C/svg%3E")` },
 ]
 
-const localContacts = ref([...(props.vcard?.contacts || [])])
+const localContacts = shallowRef([...(props.vcard?.contacts || [])])
 
 const previewPackages = [
   { id: 1, name: 'Basico', description: 'Plan basico con funciones esenciales', price: 9.99, currency: 'USD', duration_days: 30, active: true },
   { id: 2, name: 'Profesional', description: 'Plan profesional con todas las funciones', price: 19.99, currency: 'USD', duration_days: 30, active: true },
   { id: 3, name: 'Premium', description: 'Plan premium con soporte prioritario', price: 39.99, currency: 'USD', duration_days: 30, active: true },
 ]
-const localFields = ref([...(props.vcard?.fields || [])])
-const localSelectedServices = ref([...(props.vcard?.services || [])])
-
-console.log('Initial props.vcard?.services:', props.vcard?.services)
-console.log('Initial localSelectedServices:', localSelectedServices.value)
+const localFields = shallowRef([...(props.vcard?.fields || [])])
+const localSelectedServices = shallowRef([...(props.vcard?.services || [])])
+const localSelectedPackages = shallowRef([...(props.vcard?.packages || [])])
+const localSelectedGallery = shallowRef(props.vcard?.gallery || null)
+const localSelectedProducts = shallowRef([...(props.vcard?.products || [])])
+const localSelectedTestimonials = shallowRef([...(props.vcard?.testimonials || [])])
+const localBusinessHours = shallowRef([...(props.vcard?.business_hours || [])])
+const localMenu = shallowRef([...(props.vcard?.menu || [])])
+const localSelectedLocation = shallowRef(props.vcard?.location || null)
+const localSelectedFeatures = shallowRef([...(props.vcard?.features || [])])
 
 watch(() => props.vcard?.contacts, (newContacts) => {
   localContacts.value = [...(newContacts || [])]
-}, { deep: true })
+})
 
 watch(() => props.vcard?.fields, (newFields) => {
   localFields.value = [...(newFields || [])]
-}, { deep: true })
+})
 
 watch(() => props.vcard?.services, (newServices) => {
-  console.log('Watch triggered - props.vcard.services:', newServices)
   localSelectedServices.value = [...(newServices || [])]
-  console.log('localSelectedServices is now:', localSelectedServices.value)
-}, { deep: true })
+})
 
-watch(localSelectedServices, (newVal) => {
-  console.log('localSelectedServices changed:', newVal)
-}, { deep: true })
+watch(() => props.vcard?.packages, (newPackages) => {
+  localSelectedPackages.value = [...(newPackages || [])]
+})
+
+watch(() => props.vcard?.gallery, (newGallery) => {
+  localSelectedGallery.value = newGallery || null
+})
+
+watch(() => props.vcard?.products, (newProducts) => {
+  localSelectedProducts.value = [...(newProducts || [])]
+})
+
+watch(() => props.vcard?.testimonials, (newTestimonials) => {
+  localSelectedTestimonials.value = [...(newTestimonials || [])]
+})
+
+watch(() => props.vcard?.business_hours, (newHours) => {
+  localBusinessHours.value = [...(newHours || [])]
+})
+
+watch(() => props.vcard?.menu, (newMenu) => {
+  localMenu.value = [...(newMenu || [])]
+})
+
+watch(() => props.vcard?.location, (newLocation) => {
+  localSelectedLocation.value = newLocation || null
+})
+
+watch(() => props.vcard?.features, (newFeatures) => {
+  localSelectedFeatures.value = [...(newFeatures || [])]
+})
 
 const form = reactive({
   name: props.vcard?.name || '',
@@ -1231,8 +1449,20 @@ const form = reactive({
     menu: false,
     contact_form: false,
     location: false,
+    features: false,
+    about: false,
   },
 })
+
+const rawForm = toRaw(form)
+const { sections: rawSections, ...rawRest } = rawForm
+Object.assign(debouncedForm, rawRest, {
+  sections: rawSections ? { ...rawSections } : {}
+})
+
+watch(form, () => {
+  debouncedFormUpdate()
+}, { deep: true })
 
 const contactForm = reactive({
   type: 'phone',
@@ -1262,6 +1492,10 @@ const fieldErrors = reactive({
 const vcardPublicUrl = computed(() => {
   const slug = props.vcard?.data?.slug ?? props.vcard?.slug
   return `${window.location.origin}/v/${slug}`
+})
+
+const aboutData = computed(() => {
+  return props.listing?.about || null
 })
 
 function updateImagePosition({ x, y }) {
@@ -1437,6 +1671,24 @@ function downloadVCard() {
   window.location.href = `/member/listings/${props.listing.id}/vcards/${props.vcard.data?.id ?? props.vcard.id}/download`
 }
 
+function getSectionDescription(key) {
+  const descriptions = {
+    appointments: 'Permite agendar citas con tus clientes',
+    services: 'Muestra tus servicios disponibles',
+    packages: 'Agrega paquetes o planes',
+    gallery: 'Comparte fotos de tu negocio',
+    products: 'Muestra tu catalogo de productos',
+    testimonials: 'Agrega reseñas de clientes',
+    business_hours: 'Muestra tu horario de atencion',
+    menu: 'Incluye un menu digital',
+    contact_form: 'Permite recibir mensajes',
+    location: 'Muestra tu ubicacion en el mapa',
+    features: 'Muestra las características de tu negocio',
+    about: 'Muestra la sección Acerca de tu negocio',
+  }
+  return descriptions[key] || ''
+}
+
 function saveSections() {
   if (savingSections.value) return
   savingSections.value = true
@@ -1462,9 +1714,39 @@ function saveSections() {
 }
 
 function onServicesUpdated(services) {
-  console.log('onServicesUpdated called with:', services)
   localSelectedServices.value = [...services]
-  console.log('localSelectedServices.value is now:', localSelectedServices.value)
+}
+
+function onPackagesUpdated(packages) {
+  localSelectedPackages.value = [...packages]
+}
+
+function onGalleryUpdated(gallery) {
+  localSelectedGallery.value = gallery
+}
+
+function onProductsUpdated(products) {
+  localSelectedProducts.value = [...products]
+}
+
+function onTestimonialsUpdated(testimonials) {
+  localSelectedTestimonials.value = [...testimonials]
+}
+
+function onBusinessHoursUpdated(hours) {
+  localBusinessHours.value = [...hours]
+}
+
+function onMenuUpdated(menu) {
+  localMenu.value = [...menu]
+}
+
+function onLocationUpdated(location) {
+  localSelectedLocation.value = location
+}
+
+function onFeaturesUpdated(features) {
+  localSelectedFeatures.value = [...features]
 }
 
 function selectFieldType(key) {
@@ -1892,5 +2174,45 @@ function deleteCard() {
 
 .card:hover {
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+.sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fff;
+  transition: all 0.2s;
+}
+
+.section-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-item--active {
+  border-color: #3b82f6;
+  background: #f8fafc;
+}
+
+.section-item__content {
+  flex: 1;
+}
+
+.section-item__description {
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+}
+
+.section-item__action {
+  margin-left: 1rem;
 }
 </style>

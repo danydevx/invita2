@@ -107,6 +107,54 @@ Route::middleware(['auth', 'verified', 'active', 'role:member'])->group(function
     Route::post('/member/listings/{listing}/vcards/{vcard}/selected-services', [VCardController::class, 'updateSelectedServices'])
         ->name('member.listings.vcards.selected-services.update');
 
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-packages', [VCardController::class, 'updateSelectedPackages'])
+        ->name('member.listings.vcards.selected-packages.update');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-gallery', [VCardController::class, 'updateSelectedGallery'])
+        ->name('member.listings.vcards.selected-gallery.update');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-products', [VCardController::class, 'updateSelectedProducts'])
+        ->name('member.listings.vcards.selected-products.update');
+
     Route::get('/member/listings/{listing}/vcard-services', [VCardController::class, 'getListingServices'])
         ->name('member.listings.vcard-services');
+
+    Route::get('/member/listings/{listing}/vcard-packages', [VCardController::class, 'getListingPackages'])
+        ->name('member.listings.vcard-packages');
+
+    Route::get('/member/listings/{listing}/vcard-galleries', [VCardController::class, 'getListingGalleries'])
+        ->name('member.listings.vcard-galleries');
+
+    Route::get('/member/listings/{listing}/vcard-products', [VCardController::class, 'getListingProducts'])
+        ->name('member.listings.vcard-products');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-testimonials', [VCardController::class, 'updateSelectedTestimonials'])
+        ->name('member.listings.vcards.selected-testimonials.update');
+
+    Route::get('/member/listings/{listing}/vcard-testimonials', [VCardController::class, 'getListingTestimonials'])
+        ->name('member.listings.vcard-testimonials');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/business-hours', [VCardController::class, 'updateBusinessHours'])
+        ->name('member.listings.vcards.business-hours.update');
+
+    Route::get('/member/listings/{listing}/vcards/{vcard}/business-hours', [VCardController::class, 'getBusinessHours'])
+        ->name('member.listings.vcards.business-hours');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/menu-categories', [VCardController::class, 'updateMenuCategories'])
+        ->name('member.listings.vcards.menu-categories.update');
+
+    Route::get('/member/listings/{listing}/vcard-menus', [VCardController::class, 'getListingMenus'])
+        ->name('member.listings.vcard-menus');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/location', [VCardController::class, 'updateLocation'])
+        ->name('member.listings.vcards.location.update');
+
+    Route::get('/member/listings/{listing}/vcard-locations', [VCardController::class, 'getListingLocations'])
+        ->name('member.listings.vcard-locations');
+
+    Route::post('/member/listings/{listing}/vcards/{vcard}/selected-features', [VCardController::class, 'updateSelectedFeatures'])
+        ->name('member.listings.vcards.selected-features.update');
+
+    Route::get('/member/listings/{listing}/vcard-features', [VCardController::class, 'getListingFeatures'])
+        ->name('member.listings.vcard-features');
 });

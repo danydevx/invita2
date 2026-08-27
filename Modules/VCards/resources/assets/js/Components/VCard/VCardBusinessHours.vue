@@ -54,19 +54,12 @@ function isOpenDay(dayName) {
 const displayHours = computed(() => {
   if (props.hours && props.hours.length > 0) {
     return props.hours.map(h => ({
-      ...h,
-      is_open: h.is_open ?? isOpenDay(h.day),
+      day: h.day_name || h.day || '',
+      range: h.is_open ? `${h.opening_time || '08:00'} - ${h.closing_time || '18:00'}` : 'Cerrado',
+      is_open: h.is_open ?? false,
     }))
   }
-  return [
-    { day: 'Lunes', range: '08:00 - 20:00', is_open: true },
-    { day: 'Martes', range: '08:00 - 20:00', is_open: true },
-    { day: 'Miércoles', range: '08:00 - 20:00', is_open: true },
-    { day: 'Jueves', range: '08:00 - 20:00', is_open: true },
-    { day: 'Viernes', range: '08:00 - 20:00', is_open: true },
-    { day: 'Sábado', range: '08:00 - 14:00', is_open: false },
-    { day: 'Domingo', range: 'Cerrado', is_open: false },
-  ]
+  return []
 })
 </script>
 

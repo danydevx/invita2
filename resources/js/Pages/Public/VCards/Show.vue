@@ -38,6 +38,15 @@
       :heroImageAlpha="vcard.hero_image_alpha || 100"
       :qrCodeUrl="vcard.qr_code_url"
       :sections="vcard.sections || {}"
+      :selectedServices="vcard.services || []"
+      :packages="vcard.packages || []"
+      :gallery="vcard.gallery || null"
+      :products="vcard.products || []"
+      :testimonials="vcard.testimonials || []"
+      :businessHours="vcard.business_hours || []"
+      :menu="vcard.menu || []"
+      :location="vcard.location || null"
+      :features="vcard.features || []"
     />
   </div>
 </template>

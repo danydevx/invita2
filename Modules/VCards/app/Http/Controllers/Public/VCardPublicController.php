@@ -16,7 +16,7 @@ class VCardPublicController extends Controller
         $vcard = VCard::where('slug', $slug)
             ->where('active', true)
             ->where('paused', false)
-            ->with(['contacts', 'activeFields', 'team', 'listing', 'seoSetting'])
+            ->with(['contacts', 'activeFields', 'team', 'listing', 'listing.about', 'seoSetting', 'sections', 'selectedProducts', 'selectedProducts.product', 'selectedTestimonials', 'selectedTestimonials.review', 'businessHours', 'selectedMenuCategories.category', 'selectedMenuCategories.category.activeProducts', 'selectedLocation', 'selectedFeatures.feature'])
             ->firstOrFail();
 
         $vcard->incrementViews();

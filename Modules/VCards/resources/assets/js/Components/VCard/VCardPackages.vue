@@ -10,16 +10,15 @@
       >
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-start mb-2">
-            <h3 class="vcard-package__title">{{ pkg.name }}</h3>
-            <span v-if="pkg.price" class="vcard-package__price">
-              {{ formatPrice(pkg.price, pkg.currency) }}
+            <h3 class="vcard-package__title">{{ pkg.title }}</h3>
+            <span v-if="pkg.promo_price" class="vcard-package__price">
+              {{ formatPrice(pkg.promo_price) }}
+            </span>
+            <span v-else-if="pkg.price" class="vcard-package__price">
+              {{ formatPrice(pkg.price) }}
             </span>
           </div>
-          <p v-if="pkg.description" class="vcard-package__description">{{ pkg.description }}</p>
-          <p v-if="pkg.duration_days" class="vcard-package__duration">
-            <i class="bi bi-calendar3 me-1"></i>
-            {{ pkg.duration_days }} dias
-          </p>
+          <p v-if="pkg.short_description" class="vcard-package__description">{{ pkg.short_description }}</p>
         </div>
       </article>
     </div>
@@ -34,10 +33,11 @@ const props = defineProps({
   },
 })
 
-function formatPrice(price, currency) {
+function formatPrice(price) {
+  if (!price && price !== 0) return ''
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
-    currency: currency || 'USD',
+    currency: 'USD',
   }).format(price)
 }
 </script>

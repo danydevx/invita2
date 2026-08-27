@@ -62,7 +62,7 @@ class HandleInertiaRequests extends Middleware
         }
 
         $businessMenu = [];
-        if ($user && $user->hasRole('member')) {
+        if ($user && ($user->hasRole('member') || $user->hasAnyRole(['superadmin', 'admin']))) {
             $businessMenu = $this->buildBusinessMenu($user);
         }
 

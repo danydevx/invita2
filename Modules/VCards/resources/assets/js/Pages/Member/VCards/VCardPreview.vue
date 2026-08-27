@@ -20,6 +20,14 @@
         :packages="packages"
         :sections="sections"
         :selectedServices="selectedServices"
+        :gallery="gallery"
+        :products="products"
+        :testimonials="testimonials"
+        :businessHours="businessHours"
+        :menu="menu"
+        :location="location"
+        :features="features"
+        :about="about"
         @openImagePosition="openImagePositionModal"
       />
     </div>
@@ -36,7 +44,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import VCard from '../../../Components/VCard/VCard.vue'
 import ImagePositionModal from '../../../Components/VCard/ImagePositionModal.vue'
 
@@ -85,17 +93,68 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  gallery: {
+    type: Object,
+    default: null,
+  },
+  products: {
+    type: Array,
+    default: () => [],
+  },
+  testimonials: {
+    type: Array,
+    default: () => [],
+  },
+  businessHours: {
+    type: Array,
+    default: () => [],
+  },
+  menu: {
+    type: Array,
+    default: () => [],
+  },
+  location: {
+    type: Object,
+    default: null,
+  },
+  features: {
+    type: Array,
+    default: () => [],
+  },
+  about: {
+    type: Object,
+    default: null,
+  },
 })
 
 const showImagePositionModal = ref(false)
 const imagePositionUrl = ref('')
 const emit = defineEmits(['change-image-position'])
 
-const qrCodeUrl = computed(() => {
-  const url = `${window.location.origin}/v/${props.vcard.slug}`
+const qrCodeUrl = ref('')
+let lastSlug = ''
+
+function buildQrCodeUrl(slug) {
+  if (!slug) return ''
+  const url = `${window.location.origin}/v/${slug}`
   const encoded = encodeURIComponent(url)
   return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encoded}`
-})
+}
+
+function updateQrCode() {
+  const slug = props.vcard.slug
+  if (slug && slug !== lastSlug) {
+    lastSlug = slug
+    qrCodeUrl.value = buildQrCodeUrl(slug)
+  }
+}
+
+watch(() => props.vcard.slug, (newSlug) => {
+  if (newSlug && newSlug !== lastSlug) {
+    lastSlug = newSlug
+    qrCodeUrl.value = buildQrCodeUrl(newSlug)
+  }
+}, { immediate: true })
 
 function openImagePositionModal() {
   imagePositionUrl.value = props.profilePhotoUrl || props.logoUrl || ''

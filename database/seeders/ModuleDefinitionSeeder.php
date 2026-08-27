@@ -84,6 +84,7 @@ class ModuleDefinitionSeeder extends Seeder
                 'sort_order' => 8,
                 'has_settings' => true,
                 'is_premium' => true,
+                'show_in_menu' => true,
                 'settings_url' => '/admin/modules/ai_chatbot/settings',
             ],
             [

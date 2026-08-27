@@ -94,7 +94,6 @@ class AiChatbotController extends Controller
             'presets' => $presets,
             'contexts' => $contexts,
             'embeddingCounts' => $embeddingCounts,
-            'businessMenu' => $request->attributes->get('businessMenu', []),
         ]);
     }
 

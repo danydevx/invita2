@@ -1,23 +1,23 @@
 <template>
-  <section class="vcard-section vcard-gallery" v-if="displayItems.length > 0">
-    <h2 class="vcard-section__title">Galería</h2>
+  <section class="vcard-section vcard-gallery" v-if="galleryImages.length > 0">
+    <h2 class="vcard-section__title">{{ gallery?.name || 'Galeria' }}</h2>
 
     <div class="vcard-gallery__carousel" ref="carouselRef">
       <div class="vcard-gallery__track">
         <div
           v-for="(item, index) in displayItems"
-          :key="index"
+          :key="item.id || index"
           class="vcard-gallery__slide"
         >
           <div class="vcard-gallery__item">
             <img
-              :src="item.image"
-              :alt="item.label || `Imagen ${index + 1}`"
+              :src="getImageUrl(item.path)"
+              :alt="item.title || `Imagen ${index + 1}`"
               class="vcard-gallery__image"
               loading="lazy"
             >
-            <div v-if="item.label" class="vcard-gallery__caption">
-              {{ item.label }}
+            <div v-if="item.title" class="vcard-gallery__caption">
+              {{ item.title }}
             </div>
           </div>
         </div>
@@ -56,9 +56,9 @@
 import { computed, ref, onMounted } from 'vue'
 
 const props = defineProps({
-  images: {
-    type: Array,
-    default: () => [],
+  gallery: {
+    type: Object,
+    default: null,
   },
   limit: {
     type: Number,
@@ -71,17 +71,23 @@ const carouselRef = ref(null)
 const touchStartX = ref(0)
 const touchEndX = ref(0)
 
-const displayItems = computed(() => {
-  if (props.images && props.images.length > 0) {
-    return props.images.slice(0, props.limit)
+const galleryImages = computed(() => {
+  if (props.gallery?.images && props.gallery.images.length > 0) {
+    return props.gallery.images
   }
-  return [
-    { image: 'https://placehold.co/600x400/2563EB/ffffff?text=Imagen+1', label: 'Producto destacado' },
-    { image: 'https://placehold.co/600x400/7C3AED/ffffff?text=Imagen+2', label: 'Servicio especial' },
-    { image: 'https://placehold.co/600x400/DB2777/ffffff?text=Imagen+3', label: 'Nuestro equipo' },
-    { image: 'https://placehold.co/600x400/16A34A/ffffff?text=Imagen+4', label: 'Instalaciones' },
-    { image: 'https://placehold.co/600x400/EA580C/ffffff?text=Imagen+5', label: 'Detalle' },
-  ].slice(0, props.limit)
+  return []
+})
+
+function getImageUrl(path) {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/storage/')) {
+    return path
+  }
+  return '/storage/' + path
+}
+
+const displayItems = computed(() => {
+  return galleryImages.value.slice(0, props.limit)
 })
 
 function updateCarousel() {

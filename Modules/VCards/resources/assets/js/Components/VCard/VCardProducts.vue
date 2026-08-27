@@ -1,100 +1,59 @@
 <template>
-  <section class="vcard-section vcard-products" v-if="allProducts.length > 0">
+  <section class="vcard-section vcard-products" v-if="displayProducts.length > 0">
     <h2 class="vcard-section__title">Productos</h2>
 
     <div class="vcard-products__grid">
       <article
-        v-for="product in visibleProducts"
-        :key="product.title"
+        v-for="product in displayProducts"
+        :key="product.id"
         class="vcard-product card border-0 shadow-sm h-100"
       >
-        <div class="vcard-product__image-wrap" v-if="product.image || showPlaceholders">
+        <div class="vcard-product__image-wrap" v-if="product.image">
           <img
-            :src="product.image || `https://placehold.co/400x300/${getProductColor(product.title)}/ffffff?text=${encodeURIComponent(product.title)}`"
-            :alt="product.title"
+            :src="getImageUrl(product.image)"
+            :alt="product.name"
             class="vcard-product__image"
             loading="lazy"
           >
         </div>
         <div class="card-body">
-          <h3 class="vcard-product__title">{{ product.title }}</h3>
+          <h3 class="vcard-product__title">{{ product.name }}</h3>
           <p v-if="product.description" class="vcard-product__text">{{ product.description }}</p>
-          <p v-else-if="product.text" class="vcard-product__text">{{ product.text }}</p>
-          <strong v-if="product.price" class="vcard-product__price">{{ product.price }}</strong>
+          <strong v-if="product.price" class="vcard-product__price">{{ formatPrice(product.price) }}</strong>
         </div>
       </article>
-    </div>
-
-    <div v-if="hasMore" class="vcard-products__load-more text-center mt-3">
-      <button class="btn btn-outline-primary btn-sm" @click="loadMore">
-        Ver más ({{ remaining }})
-      </button>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   products: {
     type: Array,
     default: () => [],
   },
-  initialLimit: {
-    type: Number,
-    default: 4,
-  },
-  showPlaceholders: {
-    type: Boolean,
-    default: true,
-  },
 })
 
-const visibleCount = ref(props.initialLimit)
-
-const allProducts = computed(() => {
+const displayProducts = computed(() => {
   if (props.products && props.products.length > 0) {
     return props.products
   }
-  return [
-    { title: 'Servicio de Barbería', description: 'Corte clásico y moderno con tratamiento facial incluido.', price: '$250', image: '' },
-    { title: 'Arreglo de Barba', description: 'Diseño y perfilado de barba con toalla caliente.', price: '$120', image: '' },
-    { title: 'Tintura', description: 'Aplicación de tintura profesional con garantía de duración.', price: '$350', image: '' },
-    { title: 'Paquete Completo', description: 'Incluye corte, barba, tintura y tratamiento capilar.', price: '$550', image: '' },
-    { title: 'Corte Infantil', description: 'Para niños de 3 a 12 años.', price: '$150', image: '' },
-    { title: 'Tratamiento Capilar', description: 'Hidratación profunda para tu cabello.', price: '$200', image: '' },
-    { title: 'Cejas', description: 'Diseño y perfilado de cejas.', price: '$80', image: '' },
-    { title: 'Masaje Facial', description: 'Relajante y rejuvenecedor.', price: '$180', image: '' },
-  ]
+  return []
 })
 
-const visibleProducts = computed(() => {
-  return allProducts.value.slice(0, visibleCount.value)
-})
-
-const hasMore = computed(() => {
-  return visibleCount.value < allProducts.value.length
-})
-
-const remaining = computed(() => {
-  return allProducts.value.length - visibleCount.value
-})
-
-function loadMore() {
-  visibleCount.value += props.initialLimit
+function getImageUrl(path) {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/storage/')) {
+    return path
+  }
+  return '/storage/' + path
 }
 
-function getProductColor(title) {
-  const colors = [
-    '2563EB', '7C3AED', 'DB2777', '16A34A', 'EA580C',
-    '0891B2', '4F46E5', 'DC2626', 'CA8A04', '059669'
-  ]
-  let hash = 0
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return colors[Math.abs(hash) % colors.length]
+function formatPrice(price) {
+  if (!price && price !== 0) return ''
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(price)
 }
 </script>
 

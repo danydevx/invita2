@@ -26,11 +26,13 @@
         <VCardAppointments v-if="sections.appointments === true" :shape="shape" />
         <VCardServices v-if="sections.services === true" :services="selectedServices" />
         <VCardPackages v-if="sections.packages === true" :packages="packages" />
-        <VCardGallery v-if="sections.gallery === true" />
-        <VCardProducts v-if="sections.products === true" />
-        <VCardTestimonials v-if="sections.testimonials === true" />
-        <VCardBusinessHours v-if="sections.business_hours === true" />
-        <VCardMenu v-if="sections.menu === true" />
+        <VCardGallery v-if="sections.gallery === true" :gallery="gallery" />
+        <VCardProducts v-if="sections.products === true" :products="products" />
+        <VCardTestimonials v-if="sections.testimonials === true" :testimonials="testimonials" />
+        <VCardBusinessHours v-if="sections.business_hours === true" :hours="businessHours" />
+        <VCardMenu v-if="sections.menu === true" :categories="menu" />
+        <VCardAbout v-if="sections.about === true" :about="about" />
+        <VCardFeatures v-if="sections.features === true" :features="features" />
         <VCardContactForm v-if="sections.contact_form === true" />
         <VCardMap
           v-if="sections.location === true"
@@ -41,6 +43,7 @@
           :state="vcard.state"
           :country="vcard.country"
           :zip="vcard.zip"
+          :location="location"
         />
 
         <div class="vcard__qr text-center" v-if="qrCodeUrl">
@@ -82,6 +85,8 @@ import VCardShare from './VCardShare.vue'
 import VCardMenu from './VCardMenu.vue'
 import VCardPackages from './VCardPackages.vue'
 import VCardCopy from './VCardCopy.vue'
+import VCardFeatures from './VCardFeatures.vue'
+import VCardAbout from './VCardAbout.vue'
 
 const props = defineProps({
   vcard: {
@@ -163,6 +168,38 @@ const props = defineProps({
   selectedServices: {
     type: Array,
     default: () => [],
+  },
+  gallery: {
+    type: Object,
+    default: null,
+  },
+  products: {
+    type: Array,
+    default: () => [],
+  },
+  testimonials: {
+    type: Array,
+    default: () => [],
+  },
+  businessHours: {
+    type: Array,
+    default: () => [],
+  },
+  menu: {
+    type: Array,
+    default: () => [],
+  },
+  location: {
+    type: Object,
+    default: null,
+  },
+  features: {
+    type: Array,
+    default: () => [],
+  },
+  about: {
+    type: Object,
+    default: null,
   },
 })
 

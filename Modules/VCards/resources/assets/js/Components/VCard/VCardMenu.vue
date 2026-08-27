@@ -1,36 +1,36 @@
 <template>
-  <section class="vcard-section vcard-menu">
+  <section class="vcard-section vcard-menu" v-if="displayCategories.length > 0">
     <h2 class="vcard-section__title">Menú</h2>
 
     <div v-if="displayCategories.length > 0" class="vcard-menu__categories">
       <button
         v-for="(cat, index) in displayCategories"
-        :key="cat.name"
+        :key="cat.id"
         class="vcard-menu__category-btn"
         :class="{ active: activeCategory === index }"
         @click="selectCategory(index)"
       >
-        {{ cat.name }}
+        {{ cat.title }}
       </button>
     </div>
 
     <div v-if="displayCategories.length > 0 && currentCategoryProducts.length > 0" class="vcard-menu__products">
       <article
         v-for="product in visibleProducts"
-        :key="product.name"
+        :key="product.id"
         class="vcard-menu__product card border-0 shadow-sm"
       >
         <div v-if="product.image" class="vcard-menu__product-image">
-          <img :src="product.image" :alt="product.name">
+          <img :src="getImageUrl(product.image)" :alt="product.title">
         </div>
         <div class="vcard-menu__product-placeholder" v-else>
           <i class="bi bi-image"></i>
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-start mb-1">
-            <h3 class="vcard-menu__product-name">{{ product.name }}</h3>
-            <span class="vcard-menu__product-price" :style="{ color: 'var(--vcard-primary)' }">
-              {{ product.price }}
+            <h3 class="vcard-menu__product-name">{{ product.title }}</h3>
+            <span v-if="product.price" class="vcard-menu__product-price" :style="{ color: 'var(--vcard-primary)' }">
+              {{ formatPrice(product.price) }}
             </span>
           </div>
           <p v-if="product.description" class="vcard-menu__product-desc text-muted small mb-0">
@@ -44,13 +44,6 @@
           Ver más ({{ remainingProducts }})
         </button>
       </div>
-    </div>
-
-    <div v-else class="card border-0 shadow-sm p-4 text-center">
-      <p class="text-muted mb-0">
-        <i class="bi bi utensils me-2"></i>
-        Menú no disponible
-      </p>
     </div>
   </section>
 </template>
@@ -69,7 +62,7 @@ const props = defineProps({
   },
   initialProductsPerCategory: {
     type: Number,
-    default: 6,
+    default: 5,
   },
 })
 
@@ -80,7 +73,7 @@ const displayCategories = computed(() => {
   if (props.categories && props.categories.length > 0) {
     return props.categories.slice(0, props.maxCategories)
   }
-  return getMockCategories()
+  return []
 })
 
 const currentCategoryProducts = computed(() => {
@@ -109,70 +102,17 @@ function loadMore() {
   visibleCount.value += props.initialProductsPerCategory
 }
 
-function getMockCategories() {
-  return [
-    {
-      name: 'Entradas',
-      products: [
-        { name: 'Bruschetta', price: '$120', description: 'Tomates frescos, ajo y albahaca' },
-        { name: 'Carpaccio', price: '$180', description: 'Res con aceite de oliva y parmesano' },
-        { name: 'Calamares Fritos', price: '$150', description: 'Con salsa tártara casera' },
-        { name: 'Sopa de Tomate', price: '$90', description: 'Al horno con crema' },
-        { name: 'Ensalada César', price: '$130', description: 'Lechuga, parmesano y crutones' },
-        { name: 'Croquetas', price: '$110', description: 'De jamón y pollo' },
-      ]
-    },
-    {
-      name: 'Pastas',
-      products: [
-        { name: 'Spaghetti Carbonara', price: '$220', description: 'Huevo, panceta y parmesano' },
-        { name: 'Fettuccine Alfredo', price: '$200', description: 'Crema y parmesano' },
-        { name: 'Ravioli', price: '$240', description: 'Relleno de ricota y espinaca' },
-        { name: 'Lasagna', price: '$250', description: 'Carne molida y bechamel' },
-        { name: 'Penne Arrabiata', price: '$190', description: 'Salsa picante de tomate' },
-      ]
-    },
-    {
-      name: 'Carnes',
-      products: [
-        { name: 'Ribeye 400g', price: '$450', description: 'A la parrilla con hierbas' },
-        { name: 'Filete Mignon', price: '$480', description: 'Salsa de vino tinto' },
-        { name: 'T-Bone 500g', price: '$520', description: 'Puro sabor' },
-        { name: 'Costillas', price: '$380', description: 'BBQ casero' },
-        { name: 'Arrachera', price: '$360', description: 'Con chimichurri' },
-      ]
-    },
-    {
-      name: 'Pescados',
-      products: [
-        { name: 'Salmón', price: '$320', description: 'Al horno con limón' },
-        { name: 'Bacalao', price: '$350', description: 'A la vizcaína' },
-        { name: 'Camarones', price: '$380', description: 'Al ajillo' },
-        { name: 'Pulpo', price: '$420', description: 'A la gallega' },
-        { name: 'Robalo', price: '$340', description: 'Fresco del día' },
-      ]
-    },
-    {
-      name: 'Bebidas',
-      products: [
-        { name: 'Refresco', price: '$50', description: 'Coca-Cola, Sprite o Fanta' },
-        { name: 'Jugo Natural', price: '$70', description: 'Naranja o piña' },
-        { name: 'Agua', price: '$35', description: 'Sin gas o con gas' },
-        { name: 'Café', price: '$45', description: 'Americano o espresso' },
-        { name: 'Licuado', price: '$80', description: 'Fresa, chocolate o vainilla' },
-      ]
-    },
-    {
-      name: 'Postres',
-      products: [
-        { name: 'Flan', price: '$90', description: 'Casero con caramelo' },
-        { name: 'Brownie', price: '$110', description: 'Con helado de vainilla' },
-        { name: 'Tiramisú', price: '$130', description: 'Café y mascarpone' },
-        { name: 'Cheesecake', price: '$120', description: 'Fresa o zarzamora' },
-        { name: 'Helado', price: '$85', description: '2 bolas a elección' },
-      ]
-    },
-  ]
+function getImageUrl(path) {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/storage/')) {
+    return path
+  }
+  return '/storage/' + path
+}
+
+function formatPrice(price) {
+  if (!price && price !== 0) return ''
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(price)
 }
 </script>
 
