@@ -12,6 +12,8 @@ class VCardResource extends JsonResource
         return [
             'id' => $this->id,
             'listing_id' => $this->listing_id,
+            'listing_slug' => $this->listing?->slug,
+            'listing_name' => $this->listing?->name,
             'vcard_team_id' => $this->vcard_team_id,
             'type' => $this->type->value,
             'name' => $this->name,
@@ -21,6 +23,7 @@ class VCardResource extends JsonResource
             'renew' => $this->renew ?? true,
             'tracking_code' => $this->tracking_code ?? [],
             'paused' => $this->paused ?? false,
+            'ai_chat_enabled' => $this->ai_chat_enabled ?? false,
             'design' => $this->design->value,
             'primary_color' => $this->primary_color,
             'shape' => $this->shape ?? 'circle',

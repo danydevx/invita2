@@ -10,6 +10,8 @@ Route::middleware(['web'])
     ->name('minisite.listing-aichatbot.')
     ->group(function () {
         Route::post('/chat', [ChatController::class, 'chat'])->name('chat');
+        Route::post('/stream-chat', [ChatController::class, 'streamChat'])->name('stream-chat');
+        Route::post('/capture-lead', [ChatController::class, 'captureLead'])->name('capture-lead');
         Route::get('/settings', [ChatController::class, 'getSettings'])->name('settings');
         Route::get('/conversation', [ChatController::class, 'conversation'])->name('conversation');
     });

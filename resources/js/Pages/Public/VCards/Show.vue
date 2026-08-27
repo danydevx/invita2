@@ -48,6 +48,17 @@
       :location="vcard.location || null"
       :features="vcard.features || []"
     />
+
+    <AiChatWidget
+      v-if="aiChatbot && aiChatbot.is_enabled"
+      :businessSlug="vcard.listing_slug"
+      :businessName="vcard.listing_name || vcard.name"
+      :chatbotName="aiChatbot.chatbot_name || 'Asistente Virtual'"
+      :chatbotAvatar="aiChatbot.chatbot_avatar || ''"
+      :widgetColor="aiChatbot.widget_color || '#3B82F6'"
+      :widgetTheme="aiChatbot.widget_theme || 'light'"
+      :allowReset="aiChatbot.allow_reset_chat"
+    />
   </div>
 </template>
 
@@ -55,11 +66,16 @@
 import { computed } from 'vue'
 import { Head } from '@inertiajs/vue3'
 import VCard from '../../../../../Modules/VCards/resources/assets/js/Components/VCard/VCard.vue'
+import AiChatWidget from '@/Components/Minisite/AiChatWidget.vue'
 
 const props = defineProps({
   vcard: {
     type: Object,
     required: true,
+  },
+  aiChatbot: {
+    type: Object,
+    default: null,
   },
 })
 

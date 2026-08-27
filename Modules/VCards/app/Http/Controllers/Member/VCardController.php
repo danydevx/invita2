@@ -227,6 +227,7 @@ class VCardController extends Controller
             'renew' => ['boolean'],
             'tracking_code' => ['nullable', 'array'],
             'paused' => ['boolean'],
+            'ai_chat_enabled' => ['boolean'],
             'meta_pixel_id' => ['nullable', 'string', 'max:255'],
             'google_analytics_id' => ['nullable', 'string', 'max:255'],
             'google_webmasters_verification' => ['nullable', 'string', 'max:255'],

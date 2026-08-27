@@ -21,9 +21,36 @@ class VCardPublicController extends Controller
 
         $vcard->incrementViews();
 
+        $aiChatbot = $this->getAiChatbotSettings($vcard);
+
         return Inertia::render('Public/VCards/Show', [
             'vcard' => (new VCardResource($vcard))->resolve(request()),
+            'aiChatbot' => $aiChatbot,
         ]);
+    }
+
+    private function getAiChatbotSettings(VCard $vcard): ?array
+    {
+        if (!$vcard->listing_id || !$vcard->ai_chat_enabled) {
+            return null;
+        }
+
+        $aiSetting = \Modules\ListingAiChatbot\Models\ListingAiSetting::where('listing_id', $vcard->listing_id)
+            ->where('is_enabled', true)
+            ->first();
+
+        if (!$aiSetting) {
+            return null;
+        }
+
+        return [
+            'is_enabled' => true,
+            'chatbot_name' => $aiSetting->chatbot_name ?? 'Asistente Virtual',
+            'chatbot_avatar' => $aiSetting->chatbot_avatar ?? '',
+            'widget_color' => $aiSetting->widget_color ?? '#3B82F6',
+            'widget_theme' => $aiSetting->widget_theme ?? 'light',
+            'allow_reset_chat' => $aiSetting->allow_reset_chat ?? false,
+        ];
     }
 
     public function qr(Request $request, string $slug)

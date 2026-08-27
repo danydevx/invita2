@@ -155,20 +155,10 @@
           type="text"
           v-model="inputMessage"
           placeholder="Escribe un mensaje..."
-          :disabled="sending && !isStreaming"
+          :disabled="sending"
           @keypress.enter="sendMessage"
         />
         <button
-          v-if="isStreaming"
-          class="send-btn stop-btn"
-          style="background-color: #dc3545;"
-          @click="stopStreaming"
-          title="Detener respuesta"
-        >
-          <i class="bi bi-stop-fill"></i>
-        </button>
-        <button
-          v-else
           class="send-btn"
           :style="{ backgroundColor: widgetColor }"
           :disabled="!inputMessage.trim() || sending"
@@ -235,8 +225,6 @@ const localSuggestions = ref([])
 const localExpandableResponses = ref(true)
 const localShowCitations = ref(true)
 const localIntentCta = ref(null)
-const isStreaming = ref(false)
-let abortController = null
 const leadCaptureEnabled = ref(false)
 const leadCaptureTitle = ref('')
 const leadCaptureDescription = ref('')
@@ -303,7 +291,6 @@ const sendMessage = () => {
 
   sending.value = true
   isTyping.value = true
-  isStreaming.value = false
 
   const msgIndex = messages.value.length
   messages.value.push({
@@ -318,95 +305,48 @@ const sendMessage = () => {
     timestamp: new Date().toISOString(),
   })
 
-  abortController = new AbortController()
-
-  fetch(`/m/${props.businessSlug}/ai-chatbot/stream-chat`, {
+  const url = `/m/${props.businessSlug}/ai-chatbot/chat`
+  console.log('[Chat] fetching:', url)
+  fetch(url, {
     method: 'POST',
-    signal: abortController.signal,
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-      'Accept': 'text/event-stream',
     },
     body: JSON.stringify({
       message: userMessage,
       session_id: sessionId.value,
     }),
   })
-    .then(async (res) => {
-      isStreaming.value = true
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
+    .then((res) => res.json())
+    .then((data) => {
+      console.log('[Chat] response:', data)
+      isTyping.value = false
+      sending.value = false
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6))
-              if (data.type === 'token') {
-                messages.value[msgIndex].content += data.content
-                scrollToBottom()
-              } else if (data.type === 'done') {
-                messages.value[msgIndex].content = data.content
-                messages.value[msgIndex].preview = data.content.substring(0, 300)
-                messages.value[msgIndex].isLong = data.content.length > 300
-                messages.value[msgIndex].sources = data.sources || []
-                messages.value[msgIndex].expanded = !data.expandable_responses
-
-                if (data.cta_settings) {
-                  if (data.cta_settings.intent_cta) {
-                    localIntentCta.value = data.cta_settings.intent_cta
-                  }
-                }
-
-                messages.value[msgIndex].showCta = shouldShowCta(data.content, data.intent_cta)
-                saveMessages()
-              } else if (data.type === 'error') {
-                messages.value[msgIndex].content = 'Error: ' + data.error
-              } else if (data.success === false) {
-                messages.value[msgIndex].content = data.message || data.error || 'Disculpa, estoy teniendo problemas para responder.'
-              }
-            } catch (e) {
-              // Ignore parse errors for incomplete JSON
-            }
-          }
+      if (data.success && data.message) {
+        messages.value[msgIndex].content = data.message
+        messages.value[msgIndex].preview = data.message.substring(0, 300)
+        messages.value[msgIndex].isLong = data.message.length > 300
+        messages.value[msgIndex].sources = data.sources || []
+        messages.value[msgIndex].expanded = !data.expandable_responses
+        messages.value[msgIndex].showCta = shouldShowCta(data.message, data.intent_cta)
+        if (data.cta_settings?.intent_cta) {
+          localIntentCta.value = data.cta_settings.intent_cta
         }
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'AbortError') {
-        messages.value[msgIndex].content += '\n[Respuesta detenida]'
       } else {
-        messages.value[msgIndex].content = 'Disculpa, estoy teniendo problemas para responder. Intenta de nuevo.'
+        messages.value[msgIndex].content = data.message || 'Disculpa, estoy teniendo problemas para responder.'
       }
-      isTyping.value = false
-      sending.value = false
-      isStreaming.value = false
-      saveMessages()
-    })
-    .finally(() => {
-      isTyping.value = false
-      sending.value = false
-      isStreaming.value = false
-      abortController = null
       saveMessages()
       scrollToBottom()
     })
-}
-
-const stopStreaming = () => {
-  if (abortController) {
-    abortController.abort()
-    isStreaming.value = false
-  }
+    .catch((err) => {
+      console.log('[Chat] catch error:', err)
+      messages.value[msgIndex].content = 'Disculpa, estoy teniendo problemas para responder. Intenta de nuevo.'
+      isTyping.value = false
+      sending.value = false
+      saveMessages()
+    })
 }
 
 const submitLead = () => {

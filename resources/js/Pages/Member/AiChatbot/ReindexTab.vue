@@ -172,11 +172,11 @@ const reindex = () => {
   router.post(`/member/listings/${props.business.id}/ai-chatbot/reindex`, {}, {
     preserveScroll: true,
     onSuccess: (page) => {
-      if (page.props.reindexResult) {
-        reindexResult.value = page.props.reindexResult
-      }
       lastReindex.value = new Date().toLocaleString('es-MX')
-      emit('reindex')
+      if (page.props.jetstream?.flash?.reindexStats) {
+        reindexResult.value = page.props.jetstream.flash.reindexStats
+      }
+      window.location.reload()
     },
     onError: (errors) => {
       alert(Object.values(errors).join('\n') || 'Error al reindexar contenido')

@@ -172,6 +172,14 @@
                   v-model="form.active"
                 />
               </div>
+              <div class="col-12">
+                <FieldSwitch
+                  id="vcard-ai-chat"
+                  label="Chat de IA"
+                  v-model="form.ai_chat_enabled"
+                  hint="Muestra el chatbot de IA en la tarjeta digital"
+                />
+              </div>
               <div class="col-12 mt-4">
                 <button
                   type="button"
@@ -1405,6 +1413,7 @@ const form = reactive({
   renew: props.vcard?.renew ?? true,
   tracking_code: props.vcard?.tracking_code || [],
   paused: props.vcard?.paused ?? false,
+  ai_chat_enabled: props.vcard?.ai_chat_enabled ?? false,
   meta_pixel_id: props.vcard?.meta_pixel_id || '',
   google_analytics_id: props.vcard?.google_analytics_id || '',
   google_webmasters_verification: props.vcard?.google_webmasters_verification || '',

@@ -27,6 +27,7 @@ class VCard extends Model
         'renew',
         'tracking_code',
         'paused',
+        'ai_chat_enabled',
         'meta_pixel_id',
         'google_analytics_id',
         'google_webmasters_verification',
@@ -78,6 +79,7 @@ class VCard extends Model
         'search_engine_indexing' => 'boolean',
         'renew' => 'boolean',
         'paused' => 'boolean',
+        'ai_chat_enabled' => 'boolean',
         'tracking_code' => 'array',
         'views' => 'integer',
     ];

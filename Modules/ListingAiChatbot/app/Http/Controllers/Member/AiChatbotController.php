@@ -29,24 +29,21 @@ class AiChatbotController extends Controller
             ->get(['id', 'title', 'content', 'is_active', 'created_at']);
 
         $embeddingCounts = [];
-        if ($settings && $settings->is_enabled) {
-            $vectorStore = new \Modules\ListingAiChatbot\Services\VectorStoreService($settings);
-            $counts = [
-                'product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'product')->count(),
-                'service' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'service')->count(),
-                'promotion' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'promotion')->count(),
-                'faq' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'faq')->count(),
-                'location' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'location')->count(),
-                'about' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'about')->count(),
-                'custom' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'custom')->count(),
-                'restaurant_category' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_category')->count(),
-                'restaurant_product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_product')->count(),
-                'social_network' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'social_network')->count(),
-                'appointment' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment')->count(),
-                'appointment_exception' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment_exception')->count(),
-            ];
-            $embeddingCounts = $counts;
-        }
+        $counts = [
+            'product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'product')->count(),
+            'service' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'service')->count(),
+            'promotion' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'promotion')->count(),
+            'faq' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'faq')->count(),
+            'location' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'location')->count(),
+            'about' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'about')->count(),
+            'custom' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'custom')->count(),
+            'restaurant_category' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_category')->count(),
+            'restaurant_product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'restaurant_product')->count(),
+            'social_network' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'social_network')->count(),
+            'appointment' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment')->count(),
+            'appointment_exception' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $business->id)->where('source_type', 'appointment_exception')->count(),
+        ];
+        $embeddingCounts = $counts;
 
         return Inertia::render('Member/AiChatbot/Index', [
             'business' => [
@@ -180,7 +177,7 @@ class AiChatbotController extends Controller
         }
 
         if (!empty($data['api_key']) && $data['api_key'] !== '********') {
-            $updateData['api_key'] = Crypt::encryptString($data['api_key']);
+            $updateData['api_key'] = $data['api_key'];
         }
 
         $settings = ListingAiSetting::updateOrCreate(
@@ -265,19 +262,28 @@ class AiChatbotController extends Controller
             $chatbotService = new AiChatbotService($settings);
             $stats = $chatbotService->reindexContent();
 
-            $message = "Contenido reindexado: ";
-            $message .= "{$stats['products']} productos, ";
-            $message .= "{$stats['services']} servicios, ";
-            $message .= "{$stats['promotions']} promociones, ";
-            $message .= "{$stats['faqs']} FAQs, ";
-            $message .= "{$stats['locations']} ubicaciones, ";
-            $message .= "{$stats['about']} acerca de, ";
-            $message .= "{$stats['custom']} contextos personalizados.";
-
-            return redirect()->back()->with('success', $message);
+            return redirect()->back()->with('success', "Contenido reindexado: {$stats['products']} productos, {$stats['services']} servicios, {$stats['promotions']} promociones, {$stats['faqs']} FAQs, {$stats['locations']} ubicaciones, {$stats['about']} acerca de, {$stats['custom']} contextos personalizados.")->with('reindexStats', $stats);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error al reindexar: ' . $e->getMessage());
         }
+    }
+
+    private function getEmbeddingCounts(int $businessId): array
+    {
+        return [
+            'product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'product')->count(),
+            'service' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'service')->count(),
+            'promotion' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'promotion')->count(),
+            'faq' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'faq')->count(),
+            'location' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'location')->count(),
+            'about' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'about')->count(),
+            'custom' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'custom')->count(),
+            'restaurant_category' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'restaurant_category')->count(),
+            'restaurant_product' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'restaurant_product')->count(),
+            'social_network' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'social_network')->count(),
+            'appointment' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'appointment')->count(),
+            'appointment_exception' => \Modules\ListingAiChatbot\Models\AiEmbedding::where('listing_id', $businessId)->where('source_type', 'appointment_exception')->count(),
+        ];
     }
 
     public function extractUrl(Request $request, \Modules\Listings\Models\Listing $business)

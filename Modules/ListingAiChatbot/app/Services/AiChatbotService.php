@@ -413,6 +413,11 @@ class AiChatbotService
                 $temperature = (float) $preset->configuration['temperature'];
             }
 
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+            ob_implicit_flush(true);
+
             $client = new \GuzzleHttp\Client();
 
             try {
@@ -539,7 +544,7 @@ class AiChatbotService
         }, 200, [
             'Content-Type' => 'text/event-stream',
             'Cache-Control' => 'no-cache',
-            'Connection' => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
         ]);
     }
 }

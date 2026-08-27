@@ -30,7 +30,7 @@ class ChatbotPresetsController extends Controller
         $globalPresets = $presets->whereNull('listing_id');
 
         return Inertia::render('Member/AiChatbot/Presets/Index', [
-            'business' => $business,
+            'listing' => $business,
             'businessPresets' => $businessPresets->values(),
             'globalPresets' => $globalPresets->values(),
         ]);
@@ -48,7 +48,7 @@ class ChatbotPresetsController extends Controller
             ->map(fn($c) => ['id' => (string) $c->id, 'title' => $c->title]);
 
         return Inertia::render('Member/AiChatbot/Presets/Create', [
-            'business' => $business,
+            'listing' => $business,
             'personalities' => $personalities,
             'languages' => ['es', 'en', 'pt', 'fr'],
             'contexts' => $contexts,
@@ -119,7 +119,7 @@ class ChatbotPresetsController extends Controller
             ->map(fn($c) => ['id' => (string) $c->id, 'title' => $c->title]);
 
         return Inertia::render('Member/AiChatbot/Presets/Edit', [
-            'business' => $business,
+            'listing' => $business,
             'preset' => $preset,
             'personalities' => $personalities,
             'languages' => ['es', 'en', 'pt', 'fr'],
